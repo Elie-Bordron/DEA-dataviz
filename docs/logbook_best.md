@@ -21,7 +21,7 @@ Oncoscan a une résolution et une couverture génomique plus large. cela devrait
 
 
 ## Suivre la manip cette semaine
-TODO: Remise en contexte: qu'est-ce que cette manip cherche à faire?
+Remise en contexte: qu'est-ce que cette manip cherche à faire?
 -> produire un index génomique
     -> comment est calculé l'index génomique?
     GI = A^2/C
@@ -87,9 +87,7 @@ les étapes 2 et 3 sont répétées pour plusieurs cycles, ce qui double le nomb
 
 Utiliser la partie précédente dans l'écriture du rapport de stage.
 
-Je commence à bien connaître le protocole. Le but final est de déterminer l'index génomique et
-
-je cite `/home/waren/Desktop/stage_M2/sent_by_claire/sujet_stage_projet_GIRONDE__copie_from_administration.pdf` : "bien appréhender les critères utilisés [en utilisant les puces Agilent] pour la détection des variants afin de pouvoir proposer et développer une approche automatisée [...]\[à partir des] données Affymetrix".
+Je commence à bien connaître le protocole. Le but final est de déterminer l'index génomique et je cite `/home/waren/Desktop/stage_M2/sent_by_claire/sujet_stage_projet_GIRONDE__copie_from_administration.pdf` : "bien appréhender les critères utilisés [en utilisant les puces Agilent] pour la détection des variants afin de pouvoir proposer et développer une approche automatisée [...]\[à partir des] données Affymetrix".
 je cite également `Projet_GIRONDE_synopsis23052019.pdf`: "L’objectif de cette étude est de transposer le calcul de l’index génomique et la détermination du seuil de classification des tumeurs de la technologie Agilent à la technologie Affymetrix/Oncoscan".
 
 ─> comment l'index génomique est-il déterminé pour Agilent?
@@ -99,13 +97,59 @@ je cite également `Projet_GIRONDE_synopsis23052019.pdf`: "L’objectif de cette
     -> C est déterminé par le protocole. on travaille sur l'humain donc 23 paires de chromosomes.
     -> A est calculé par l'expérience.
 
-─> comment la détermination du seuil de classification des tumeurs est-elle faite pour Agilent?
-
-
+─> comment la détermination du seuil de classification des tumeurs est-elle faite pour Agilent? parle-t-on de la valeur de 10 pour le GI?
 
 TODO: lire la prise de notes que j'ai fait avec claire et élodie. noter les infos ici, et les choses à faire.
 arrivée à 8h30 ----> départ à 17h. 30 min pause midi.
 Donc 8h de travail.
 
+
+
 # 16/02/2022
-arrivée à 9h10 ----> départ à 17h. 30 min pause midi.
+J'ai suivi la fin de la manip avec Laetitia. J'ai vu comment les résultats sortaient d'affymétrix (.CEL, .ARR, .DAT), et le logiciel qui est utilisé pour les traiter. Cependant, je vais utiliser autre chose pour traiter ces fichiers, certainement des packages R.
+
+TODO:
+- lire la prise de notes que j'ai fait avec claire et élodie. noter les infos ici, et les choses à faire.
+- voir les infos que contiennent les .CEL, .DAT et .ARR
+- chercher les logiciels/packages qui lisent ces fichiers
+- faire un bon récap de la manip et éclaircir les points obscurs:
+    - PCR double brin
+    - SNP?
+- ~~organiser les dossiers comme élodie l'a indiqué~~
+- bloquer le Jeudi 3 mars à 11h: https://u-bordeaux-fr.zoom.us/j/82532998606?pwd=a0Q3aWZ3ZjZMdC9udXcxem85clJPUT09
+- noter les mardis de 12h à 14h: faire un point avec Élodie et Claire (et Sabrina!)
+- noter qu'au début de chaque semaine, je dois aller voir la team CGH pour savoir qui analyse les résultats de la semaine et quand.
+
+J'ai obtenu les codes pour me connecter à un ordi fixe de l'institut. la question actuelle est: ai-je un mail \@bordeaux.unicancer.fr ?
+
+Un repository git est créé et a été cloné sur le PC fixe de bergonié et sur le mien. la version la plus avancé est cassebriques.
+
+Prochaine étape: récupérer des .CEL , .DAT , .ARR, et les explorer avec un logiciel/package R que j'aurai trouvé. sinon relire la todo list.
+arrivée à 9h10 ----> départ à 17h10. 30 min pause midi.
+Donc 7h30 de travail
+
+
+
+# 17/02/2022
+
+TODO:
+- lire la prise de notes que j'ai fait avec claire et élodie. noter les infos ici, et les choses à faire.
+- voir les infos que contiennent les .CEL, .DAT et .ARR
+- chercher les logiciels/packages qui lisent ces fichiers --> le package R de l'article.
+- faire un bon récap de la manip et éclaircir les points obscurs:
+    - ~~PCR double brin~~\
+    les 2 brins sont formés séparément come le montre la vidéo, et se lient l'un à l'autre pour former le produit final double brin.
+    - SNP?
+- ~~organiser les dossiers comme élodie l'a indiqué~~
+- bloquer le Jeudi 3 mars à 11h: https://u-bordeaux-fr.zoom.us/j/82532998606?pwd=a0Q3aWZ3ZjZMdC9udXcxem85clJPUT09
+- noter les mardis de 12h à 14h: faire un point avec Élodie et Claire (et Sabrina!)
+- noter qu'au début de chaque semaine, je dois aller voir la team CGH pour savoir qui analyse les résultats de la semaine et quand.
+- ~~lire en profondeur l'article arm-level.~~ CCL & discussion: "notre méthode est aussi efficace que les experts humains et bien plus rapide."
+    - savoir expliquer cette méthode et comment l'utiliser.
+    - prendre des données auprès de l'équipe technique. apporter une clé USB demain! récupérer les .ARR, .DAT et surtout .CEL .
+    - l'utiliser sur nos données.
+
+Ai installé R et Rstudio sur Bergonié, ai téléchargé le package R de l'article arm-level à https://github.com/yannchristinat/oncoscanR-public.
+faire un push propre sur cass et (tenter de) le pull sur bergonié.
+
+arrivée à 10h -> départ à 16h30 = 6h de travail
