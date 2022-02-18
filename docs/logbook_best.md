@@ -1,4 +1,4 @@
-# 14/02/2022
+# <span style="color:#999900"> 14/02/2022
 tomorrow: meeting on the planning of the internship
 
 I received pdfs from claire:
@@ -75,7 +75,7 @@ Questions:
 aujourd'hui, j'ai fait 9h30-18h00 avec 30 minutes de pause le midi.
 Donc 8h de travail.
 
-# 15/02/2022
+# <span style="color:#999900"> 15/02/2022
 Je continue de suivre la manip avec Laetitia. ce matin, on s'est arrêtés après avoir fini la PCR 1.
 Pour comprendre le fonctionnement global de la manip, voir https://en.wikipedia.org/wiki/DNA_microarray , la vidéo explique très bien le fonctionnement.
 
@@ -105,7 +105,7 @@ Donc 8h de travail.
 
 
 
-# 16/02/2022
+# <span style="color:#999900"> 16/02/2022
 J'ai suivi la fin de la manip avec Laetitia. J'ai vu comment les résultats sortaient d'affymétrix (.CEL, .ARR, .DAT), et le logiciel qui est utilisé pour les traiter. Cependant, je vais utiliser autre chose pour traiter ces fichiers, certainement des packages R.
 
 TODO:
@@ -130,7 +130,7 @@ Donc 7h30 de travail
 
 
 
-# 17/02/2022
+# <span style="color:#999900"> 17/02/2022
 
 TODO:
 - lire la prise de notes que j'ai fait avec claire et élodie. noter les infos ici, et les choses à faire.
@@ -151,5 +151,20 @@ TODO:
 
 Ai installé R et Rstudio sur Bergonié, ai téléchargé le package R de l'article arm-level à https://github.com/yannchristinat/oncoscanR-public.
 faire un push propre sur cass et (tenter de) le pull sur bergonié.
+le push c'est bon mais bergonié ne peut même pas faire de commits. la commande `git add` à elle seule trigger ce message:
+```
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie>git add
+warning: unable to access 'P://.gitconfig': Permission denied
+warning: unable to access 'P://.gitconfig': Permission denied
+warning: unable to access 'P://.gitconfig': Permission denied
+fatal: unknown error occurred while reading the configuration files
+```
+voir la réponse de jennifer pour ça. potentiellement demander un linux
 
-arrivée à 10h -> départ à 16h30 = 6h de travail
+arrivée à 10h -> départ à 16h50 = 6h20 de travail
+total cumulé sur la semaine: 29h50.
+pour faire 35h, reste 5h10.
+
+# <span style="color:#999900"> 18/02/2022
+arrivée à 10h10.
+ai résolu le pb qui m'empêchait de pull en supprimant la variable d'envt HOMEPATH: https://stackoverflow.com/questions/14774159/git-warning-unable-to-access-p-gitconfig-invalid-argument
