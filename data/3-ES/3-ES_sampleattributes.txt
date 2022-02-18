@@ -1,2 +1,0 @@
-Track ID	Probe Array Type	Genomic Version	Gender
-MV137.OSCHP	OncoScan_CNV	hg19	male

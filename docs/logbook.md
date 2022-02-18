@@ -49,7 +49,7 @@ Où:\
 
 Deux PCR sont ensuite effectuées pour multiplier les sondes, puis une digestion Hae III est appliquée pour cliver la séquence ADN du reste de la sonde:  
 
-%%%%########### @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+%%%%###########@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 L'hybridation sur puce affymetrix a ensuite lieu. Le tag effectue cette hybridation. Ce dernier est spécifique de la région d'ADNg. Ainsi, le nombre de copies de ce tag permet de connaître le nombre de copies de la région à laquelle il correspond. Le statut allélique de ces copies pourra également être déterminé en fonction de si ces copies sont présentes sur la puce AT ou la puce GC (car on utilise une puce par paire de bases.)
 
@@ -165,7 +165,126 @@ arrivée à 10h -> départ à 16h50 = 6h20 de travail
 total cumulé sur la semaine: 29h50.
 pour faire 35h, reste 5h10.
 
+
+
 # <span style="color:#999900"> 18/02/2022
-arrivée à 10h10.
 ai résolu le pb qui m'empêchait de pull en supprimant la variable d'envt HOMEPATH: https://stackoverflow.com/questions/14774159/git-warning-unable-to-access-p-gitconfig-invalid-argument
 
+Ai fait un push clean. je travaille maintenant essentiellement sur bergo.
+
+TODO:
+- lire la prise de notes que j'ai fait avec claire et élodie. noter les infos ici, et les choses à faire.
+- faire un bon récap de la manip et éclaircir les points obscurs:
+    - ~~PCR double brin~~\
+    les 2 brins sont formés séparément come le montre la vidéo, et se lient l'un à l'autre pour former le produit final double brin.
+    - SNP?
+- ~~organiser les dossiers comme élodie l'a indiqué~~
+- bloquer le Jeudi 3 mars à 11h: https://u-bordeaux-fr.zoom.us/j/82532998606?pwd=a0Q3aWZ3ZjZMdC9udXcxem85clJPUT09
+- noter les mardis de 12h à 14h: faire un point avec Élodie et Claire (et Sabrina!)
+- noter qu'au début de chaque semaine, je dois aller voir la team CGH pour savoir qui analyse les résultats de la semaine et quand.
+- ~~voir les infos que contiennent les .CEL, .DAT et .ARR~~
+- ~~chercher les logiciels/packages qui lisent ces fichiers~~ --> le package R de l'article.
+- ~~lire en profondeur l'article arm-level.~~ CCL & discussion: "notre méthode est aussi efficace que les experts humains et bien plus rapide."
+    - savoir expliquer cette méthode et comment l'utiliser.
+    - ~~prendre des données auprès de l'équipe technique. apporter une clé USB demain! récupérer les .ARR, .DAT et surtout .CEL .~~
+    - l'utiliser sur nos données.
+
+.ARR = du xml
+
+Laetitia m'a passé les données anonymisées d'affymetrix. Je fais passer le premier échantillon dans le package R.
+
+path to R.exe: "C:\Users\e.bordron\Documents\R\R-4.1.2\bin\R.exe"
+path to Oncoscan-R script: "C:\Users\e.bordron\Documents\R\R-4.1.2\library\oncoscanR\bin\run_oncoscan_workflow.R"
+path to first txt file: "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\1-RV.OSCHP.segments.txt"
+
+to set an environment variable:
+> setx r_exe "C:\Users\e.bordron\Documents\R\R-4.1.2\bin\R.exe"
+
+to use it:
+> %r_exe%
+
+output:
+```
+R version 4.1.2 (2021-11-01) -- "Bird Hippie"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R est un logiciel libre livré sans AUCUNE GARANTIE.
+Vous pouvez le redistribuer sous certaines conditions.
+Tapez 'license()' ou 'licence()' pour plus de détails.
+
+R est un projet collaboratif avec de nombreux contributeurs.
+Tapez 'contributors()' pour plus d'information et
+'citation()' pour la façon de le citer dans les publications.
+
+Tapez 'demo()' pour des démonstrations, 'help()' pour l'aide
+en ligne ou 'help.start()' pour obtenir l'aide au format HTML.
+Tapez 'q()' pour quitter R.
+>
+```
+
+commands entered to create envt variables:
+> setx r_exe "C:\Users\e.bordron\Documents\R\R-4.1.2\bin\Rscript.exe"\
+> setx oncos-r "C:\Users\e.bordron\Documents\R\R-4.1.2\library\oncoscanR\bin\oncoscan-workflow.R"\
+> setx data_folder "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data"\
+
+command to run workflow: 
+> r_exe 
+
+
+Unrelated but the theme Shades of Purple is cool but for markdown editing I prefer built-in theme Monokai Dimmed.
+Also on Bergo I save my keybindings.json file in C:\Users\e.bordron\Documents .
+
+I created 2 folders for data: raw_data, a backup folder, and working_data, which I will be working on. Before doing that, I unintentionaly lost the file segments.txt for the first sample by sending the output of a command into it.
+
+I did this:
+
+```
+> "C:\Users\e.bordron\Documents\R\R-4.1.2\bin\Rscript.exe" "C:\Users\e.bordron\Documents\R\R-4.1.2\library\oncoscanR\bin\run_oncoscan_workflow.R"  "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\1-RV.OSCHP.segments.txt" M
+
+Erreur dans UseMethod("collector_value") :
+  pas de méthode pour 'collector_value' applicable pour un objet de classe "c('collector_skip', 'collector')"
+Appels : workflow_oncoscan.run ... load_chas -> read_tsv -> <Anonymous> -> collector_value
+De plus : Message d'avis :
+The following named parsers don't match the column names: CN State, Type, Full Location
+Exécution arrêtée
+```
+
+Prochaine chose à faire: modifier les colonnes du .txt pour qu'il y ait seulement le s3 dont le package a besoin.
+
+nouveau problème quand je lance cette ligne de commande:
+> "C:\Users\e.bordron\Documents\R\R-4.1.2\bin\Rscript.exe" "C:\Users\e.bordron\Documents\R\R-4.1.2\library\oncoscanR\bin\run_oncoscan_workflow.R"  "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\woring_data\2-AD\2-ADREC.RC.OSCHP.segments.txt" F
+
+> Accès refusé.
+
+et une pop-up apparaît: 
+```
+Cette application ne peut pas s'exécuter sur votre PC.
+```
+même quand je vais dans C:\Users\e.bordron\Documents\R\R-4.1.2\bin et que je fais:
+> Rscript.exe
+
+le même problème survient.
+essayer de redémarrer.
+
+Je viens de redémarrer. je me rends compte sur `https://helpdeskgeek.com/windows-10/how-to-fix-this-app-cant-run-on-your-pc-in-windows-10/` que Rscript.exe est en 32 bit.
+edit: j'ai les 2 Rscript: le 32bit et le 64bit.
+le chemin du 32bit: `C:\Users\e.bordron\Documents\R\R-4.1.2\bin`
+le chemin du 64bit: `C:\Users\e.bordron\Documents\R\R-4.1.2\bin\x64`
+
+J'ai le problème suivant, en tapant la bonne ligne de commande:
+> "C:\Users\e.bordron\Documents\R\R-4.1.2\bin\x64\Rscript.exe" "C:\Users\e.bordron\Documents\R\R-4.1.2\library\oncoscanR\bin\run_oncoscan_workflow.R"  "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\2-AD\2-ADREC.RC.OSCHP.segments.txt" F
+```
+Erreur dans load_chas(chas.fn, oncoscan.cov) : Parsing ChAS file failed.
+Appels : workflow_oncoscan.run -> load_chas
+De plus : Message d'avis :
+The following named parsers don't match the column names: Full Location
+Exécution arrêtée
+```
+
+on en revient à cette solution: Prochaine chose à faire: modifier les colonnes du .txt pour qu'il y ait seulement les 3 dont le package a besoin:  `Type, CN State and Full Location`
+Je viens d'essayer: les colonnes Type et CN state sont bien présentes, mais pas la colonne Full Location. J'aurais du lui dire plus tôt, mais je vais demander à Laetita si il est possible d'avoir cette 3eme colonne. Si ce n'est pas possible, peut-être qu'il est possible de récupérer cette information à partir d'autres colonnes, auquel cas je regarderai d'autres moyens d'obtenir des données de ces .CEL. parser moi-même ce fichier est aussi une option
+
+
+arrivée à 10h10 -> 17:30 = 6h50 de travail et 30 min de pause le midi.
+1h40 est déjà faite pour la semaine prochaine.
