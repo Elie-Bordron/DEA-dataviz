@@ -1,11 +1,5 @@
-<<<<<<< HEAD
-# Comparaison de l’évaluation de l’index génomique en méthodologie Agilent versus Affymetrix
-
-Agilent: Agilent/SurePrint G3 Human CGH microarray kit/CGH analytics V4.076 software
-=======
 # Comparaison de l’évaluation de l’index génomique en méthodologie Agilent versus Affymetrix.
 Agilent: Agilent/SurePrint G3 Human CGH microarray kit/CGH analytics V4.076 software\
->>>>>>> 7d2b424806e377264c29361aef9e80813f081a50
 Affymetrix: Affymetrix/ Oncoscan CNV FFPE assay/ ChAs Software
 
 

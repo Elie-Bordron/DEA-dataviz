@@ -110,4 +110,4 @@ Donc 8h de travail.
 # 16/02/2022
 arrivée à 9h10 ----> départ à 17h. 30 min pause midi.
 
-Je lis plus en détail
+Je lis plus en détail l'article 
