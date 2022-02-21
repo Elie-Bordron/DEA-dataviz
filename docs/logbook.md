@@ -288,3 +288,47 @@ Je viens d'essayer: les colonnes Type et CN state sont bien présentes, mais pas
 
 arrivée à 10h10 -> 17:30 = 6h50 de travail et 30 min de pause le midi.
 1h40 est déjà faite pour la semaine prochaine.
+
+
+
+# <span style="color:#999900"> 21/02/2022
+
+Je regarde vite fait si l'une des colonnes contient par hasard l'information "Full location", sinon je demande à Laetitia.
+La colonne `Full location` semble être un arrondi au 100 des valeurs de position contenues dans `Microarray Nomenclature`. Je fais une colonne Full location à partir de ça. en R:
+- import CSV as dataframe
+- get value between parenthesis: `(754,192-145,095,477)` from column `Microarray Nomenclature`
+- get chromosome from column `Chromosome`
+- create column `Full location` that contains such values: `chr7:129199300-129813700`
+
+fait. je lance oncoscan-R dessus:
+> "C:\Users\e.bordron\Documents\R\R-4.1.2\bin\x64\Rscript.exe" "C:\Users\e.bordron\Documents\R\R-4.1.2\library\oncoscanR\bin\run_oncoscan_workflow.R"  "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\2-AD\2-ADREC.RC.OSCHP.segments_FULL_LOCATION.txt" F
+
+Cela me donne une erreur: 
+```
+Erreur dans load_chas(chas.fn, oncoscan.cov) : Parsing ChAS file failed.
+Appels : workflow_oncoscan.run -> load_chas
+De plus : Message d'avis :
+The following named parsers don't match the column names: Full Location
+Exécution arrêtée
+```
+
+je le lance aussi dans R. voir csv_formatting.R. le message d'erreur est:
+```
+Error in load_chas(chas.fn, oncoscan.cov) : Parsing ChAS file failed.                                                                                       
+In addition: Warning message:
+The following named parsers don't match the column names: Full Location 
+```
+Or, la colonne Full location est bien écrite.
+
+résolu. maintenant:
+> workflow_oncoscan.run("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/2-AD/2-ADREC.RC.OSCHP.segments_FULL_LOCA ..." ... [TRUNCATED] 
+```
+Error in if (length(parm) == 0 || seg_start > end(parm)) {:
+
+    missing value where TRUE/FALSE needed
+In addition: Warning messages:
+1: In load_chas(chas.fn, oncoscan.cov) : NAs introduced by coercion
+2: In load_chas(chas.fn, oncoscan.cov) : NAs introduced by coercion
+```
+
+arrivée à 10h25, départ à 19:25
