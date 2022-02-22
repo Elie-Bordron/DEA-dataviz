@@ -335,7 +335,6 @@ arrivée à 10h25, départ à 19:25
 
 
 # <span style="color:#999900"> 22/02/2022
-arrivée à 10h30
 
 obj du jour: lancer l'analyse par oncoscanR et obtenir des résultats.
 
@@ -416,4 +415,58 @@ l'index génomique est calculé à partir du (nombre d'altérations)^2 / nombre 
 
 Aussi tester EaCoN (Easy Copy Number).
 
-!! Dans windows -> Options internet -> avancé, j'ai décoché la case "utiliser TLS 1.2" sur bergo. !!
+!! Pour info, Dans windows -> Options internet -> avancé, j'ai décoché la case "utiliser TLS 1.2" sur bergo. !!
+
+
+I am currently trying to install EaCoN on R. I follow the install instructions at https://github.com/gustaveroussy/EaCoN.
+I installed the `Core` part, including BiocManager from R's menus.
+In `MICROARRAY-SPECIFIC` part, I install the `ONCOSCAN FAMILY (OncoScan / OncoScan_CNV)` part:
+> devtools::install_github("gustaveroussy/apt.oncoscan.2.4.0") 
+```
+Downloading GitHub repo gustaveroussy/apt.oncoscan.2.4.0@HEAD
+Error in utils::download.file(url, path, method = method, quiet = quiet,  : 
+  cannot open URL 'https://api.github.com/repos/gustaveroussy/apt.oncoscan.2.4.0/tarball/HEAD'
+```
+I do (removing the s from https):
+> utils::download.file('http://api.github.com/repos/gustaveroussy/apt.oncoscan.2.4.0/tarball/HEAD', "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/delme")
+
+it doesn't work. :/
+
+edit: after going to Windows -> Options internet -> avancé -> tout en bas: cocher la case "Utiliser TLS 1.2", ça a marché:
+> devtools::install_github("gustaveroussy/apt.oncoscan.2.4.0")
+```
+Downloading GitHub repo gustaveroussy/apt.oncoscan.2.4.0@HEAD
+Skipping 1 packages not available: affxparser
+√  checking for file 'C:\Users\e.bordron\AppData\Local\Temp\RtmpmOFoai\remotes7083e8f37f4\gustaveroussy-apt.oncoscan.2.4.0-e14fca3/DESCRIPTION' (426ms)
+-  preparing 'apt.oncoscan.2.4.0': (649ms)
+√  checking DESCRIPTION meta-information ... 
+-  checking for LF line-endings in source and make files and shell scripts
+-  checking for empty or unneeded directories
+   Omitted 'LazyData' from DESCRIPTION
+-  building 'apt.oncoscan.2.4.0_0.1.6.tar.gz'
+   
+* installing *source* package 'apt.oncoscan.2.4.0' ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+  converting help for package 'apt.oncoscan.2.4.0'
+    finding HTML links ... done
+    apt_oncoscan_process                    html  
+    apt_oncoscan_process_batch              html  
+** building package indices
+** testing if installed package can be loaded from temporary location
+*** arch - i386
+*** arch - x64
+** testing if installed package can be loaded from final location
+*** arch - i386
+*** arch - x64
+** testing if installed package keeps a record of temporary installation path
+* DONE (apt.oncoscan.2.4.0)
+```
+
+next step: continue installing from Eacon github.
+
+arrivée à 10h30, pas de pause le midi. départ à 15h30

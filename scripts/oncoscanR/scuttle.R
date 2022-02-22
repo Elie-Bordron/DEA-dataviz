@@ -6,3 +6,6 @@ pathToATCelFile = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie
 pathToGCCelFile = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/2-AD/2-AD_GC_(OncoScan_CNV).CEL"
 outputFolder = "2-AD"
 OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = outputFolder)
+
+
+# if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
