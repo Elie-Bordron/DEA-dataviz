@@ -1,3 +1,11 @@
+#!/usr/bin/Rscript
+# csv_formatting.R
+# 
+# create column "Full Location" from column "Microarray.Nomenclature..ISCN.2013."
+# 
+#
+# Author: Elie Bordron
+# Date: 2022/02/22
 
 pathDataDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/2-AD"
 celFile = "2-ADREC.RC.OSCHP.segments.csv"
@@ -38,8 +46,5 @@ sample2AD <- sample2AD[, c(
 )]
 write.table(sample2AD, path_out, sep='\t', quote=FALSE, row.names=FALSE)
 colnames(sample2AD) 
-
-workflow_oncoscan.run("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/2-AD/2-ADREC.RC.OSCHP.segments_FULL_LOCATION.txt", "F")
-# workflow_oncoscan.run("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/chas_example.txt", "M")
 
 

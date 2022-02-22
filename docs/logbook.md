@@ -330,5 +330,90 @@ In addition: Warning messages:
 1: In load_chas(chas.fn, oncoscan.cov) : NAs introduced by coercion
 2: In load_chas(chas.fn, oncoscan.cov) : NAs introduced by coercion
 ```
-
 arrivée à 10h25, départ à 19:25
+
+
+
+# <span style="color:#999900"> 22/02/2022
+arrivée à 10h30
+
+obj du jour: lancer l'analyse par oncoscanR et obtenir des résultats.
+
+```
+Error in seg_cntype %in% c(cntype.gain, cntype.loss, cntype.loh) :                                                                                         
+  object 'cntype.gain' not found
+```
+--> pour éviter cette erreur, faire library(oncoscanR), même si la commande est appelée avec la syntaxe "oncoscanR::workflow_oncoscan.run(path, gender)".
+
+l'analyse fonctionne.
+en script:
+> oncoscanR::workflow_oncoscan.run("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/2-AD/2-ADREC.RC.OSCHP.segments_FULL_LOCATION.txt", "F")
+```
+$armlevel                                                                                                                                                  
+$armlevel$AMP
+character(0)
+
+$armlevel$LOSS
+[1] "14q" "15q" "17p" "1p"  "22q" "3q" 
+
+$armlevel$LOH
+[1] "17q" "18q" "21q"
+
+$armlevel$GAIN
+[1] "5p" "5q"
+
+
+$scores
+$scores$LST
+[1] 0
+
+$scores$LOH
+[1] 5
+
+$scores$TDplus
+[1] 0
+
+
+$gender
+[1] "F"
+
+$file
+[1] "2-ADREC.RC.OSCHP.segments_FULL_LOCATION.txt"
+```
+
+en ligne de commande:
+>"C:\Users\e.bordron\Documents\R\R-4.1.2\bin\x64\Rscript.exe" "C:\Users\e.bordron\Documents\R\R-4.1.2\library\oncoscanR\bin\run_oncoscan_workflow.R"  "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\2-AD\2-ADREC.RC.OSCHP.segments_FULL_LOCATION.txt" F
+```
+{
+  "armlevel": {
+    "AMP": [],
+    "LOSS": ["14q", "15q", "17p", "1p", "22q", "3q"],
+    "LOH": ["17q", "18q", "21q"],
+    "GAIN": ["5p", "5q"]
+  },
+  "scores": {
+    "LST": 0,
+    "LOH": 5,
+    "TDplus": 0
+  },
+  "gender": "F",
+  "file": "2-ADREC.RC.OSCHP.segments_FULL_LOCATION.txt"
+}
+```
+I set environment variables on bergo:
+```
+setx oncos-r "C:\Users\e.bordron\Documents\R\R-4.1.2\library\oncoscanR\bin\run_oncoscan_workflow.R"
+setx r_exe "C:\Users\e.bordron\Documents\R\R-4.1.2\bin\x64\Rscript.exe"
+```
+la ligne de commande plus courte est donc:
+> %r_exe% %oncos-r% "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\2-AD\2-ADREC.RC.OSCHP.segments_FULL_LOCATION.txt" F.
+
+au fait, faire `set` permet d'afficher les variables d'environnement. et créer une variable avec setx nécessite de rouvrir le terminal pour pouvoir l'utiliser.
+
+Comment analyser ces données?
+l'index génomique est calculé à partir du (nombre d'altérations)^2 / nombre de chromosomes affectés.
+
+
+Aussi tester EaCoN (Easy Copy Number).
+
+!! Dans windows -> Options internet -> avancé, j'ai décoché la case "utiliser TLS 1.2" sur bergo. !!
