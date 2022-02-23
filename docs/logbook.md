@@ -470,3 +470,529 @@ Skipping 1 packages not available: affxparser
 next step: continue installing from Eacon github.
 
 arrivée à 10h30, pas de pause le midi. départ à 15h30
+
+# <span style="color:#999900"> 23/02/2022
+
+arrivée à 11h
+
+J'installe l'annotation pour le `NA33 (hg19) build` pour le `OncoScan_CNV design `:
+>  install.packages("https://zenodo.org/record/5494853/files/OncoScanCNV.na33.r2_0.1.0.tar.gz", repos = NULL, type = "source")
+
+```
+trying URL 'https://zenodo.org/record/5494853/files/OncoScanCNV.na33.r2_0.1.0.tar.gz'
+Content type 'application/octet-stream' length 170586701 bytes (162.7 MB)
+downloaded 162.7 MB
+
+* installing *source* package 'OncoScanCNV.na33.r2' ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+No man pages found in package  'OncoScanCNV.na33.r2' 
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+*** arch - i386
+*** arch - x64
+** testing if installed package can be loaded from final location
+*** arch - i386
+*** arch - x64
+** testing if installed package keeps a record of temporary installation path
+* DONE (OncoScanCNV.na33.r2)
+```
+Tout va bien. 
+
+et l'annotation pour le ` NA36 (hg38) build` pour le `OncoScan_CNV design `:
+> install.packages("https://zenodo.org/record/5494853/files/OncoScanCNV.na36.r1_0.1.0.tar.gz", repos = NULL, type = "source")
+```
+trying URL 'https://zenodo.org/record/5494853/files/OncoScanCNV.na36.r1_0.1.0.tar.gz'
+Content type 'application/octet-stream' length 195992364 bytes (186.9 MB)
+downloaded 23.9 MB
+
+Warning in install.packages :
+  downloaded length 25047040 != reported length 195992364
+Erreur dans untar2(tarfile, files, list, exdir, restore_times) : 
+  incomplete block on file
+Warning in install.packages :
+  installation of package ‘C:/Users/EC817~1.BOR/AppData/Local/Temp/RtmpgHYxuC/downloaded_packages/OncoScanCNV.na36.r1_0.1.0.tar.gz’ had non-zero exit status
+```
+c'est un problème. Je réessaie: 
+```
+trying URL 'https://zenodo.org/record/5494853/files/OncoScanCNV.na36.r1_0.1.0.tar.gz'
+Content type 'application/octet-stream' length 195992364 bytes (186.9 MB)
+downloaded 186.9 MB
+
+* installing *source* package 'OncoScanCNV.na36.r1' ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+No man pages found in package  'OncoScanCNV.na36.r1' 
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+*** arch - i386
+*** arch - x64
+** testing if installed package can be loaded from final location
+*** arch - i386
+*** arch - x64
+** testing if installed package keeps a record of temporary installation path
+* DONE (OncoScanCNV.na36.r1)
+```
+tout a l'air d'aller. j'essaie la partie `USAGE`, `Step by step mode`, `Raw data processing`, `Affymetrix OncoScan / OncoScan_CNV`: voir eacon.R
+
+I did this: 
+```require(EaCoN)
+library(EaCoN)
+pathToATCelFile = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/2-AD/2-AD_AT_(OncoScan_CNV).CEL"
+pathToGCCelFile = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/2-AD/2-AD_GC_(OncoScan_CNV).CEL"
+outputFolder = "2-AD"
+OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = "2-AD")
+```
+output:
+```
+'getOption("repos")' replaces Bioconductor standard repositories, see '?repositories' for details
+
+replacement repositories:
+    CRAN: https://cran.rstudio.com/
+
+ [PC2979:10580] BSgenome BSgenome.Hsapiens.UCSC.hg19 available but not installed. Please install it !
+Error:
+```
+Je dois installer ce génome à l'aide du github, partie `INSTALLATION`, `GENOMES`.
+
+> BiocManager::install('BSgenome.Hsapiens.UCSC.hg19')
+```
+'getOption("repos")' replaces Bioconductor standard repositories, see '?repositories' for details
+
+replacement repositories:
+    CRAN: https://cran.rstudio.com/
+
+Bioconductor version 3.14 (BiocManager 1.30.16), R 4.1.2 (2021-11-01)
+Installing package(s) 'BSgenome.Hsapiens.UCSC.hg19'
+installation du package source ‘BSgenome.Hsapiens.UCSC.hg19’
+
+trying URL 'https://bioconductor.org/packages/3.14/data/annotation/src/contrib/BSgenome.Hsapiens.UCSC.hg19_1.4.3.tar.gz'
+Content type 'application/x-gzip' length 710245413 bytes (677.3 MB)
+downloaded 677.3 MB
+
+* installing *source* package 'BSgenome.Hsapiens.UCSC.hg19' ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+  converting help for package 'BSgenome.Hsapiens.UCSC.hg19'
+    finding HTML links ... done
+    package                                 html  
+** building package indices
+** testing if installed package can be loaded from temporary location
+*** arch - i386
+*** arch - x64
+** testing if installed package can be loaded from final location
+*** arch - i386
+*** arch - x64
+** testing if installed package keeps a record of temporary installation path
+* DONE (BSgenome.Hsapiens.UCSC.hg19)
+
+The downloaded source packages are in
+	‘C:\Users\e.bordron\AppData\Local\Temp\RtmpgHYxuC\downloaded_packages’
+Old packages: 'cli'
+Update all/some/none? [a/s/n]: 
+a
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/cli_3.2.0.zip'
+Content type 'application/zip' length 1257150 bytes (1.2 MB)
+downloaded 1.2 MB
+
+package ‘cli’ successfully unpacked and MD5 sums checked
+Warning: cannot remove prior installation of package ‘cli’
+Warning: restored ‘cli’
+
+The downloaded binary packages are in
+	C:\Users\e.bordron\AppData\Local\Temp\RtmpgHYxuC\downloaded_packages
+Warning message:
+In file.copy(savedcopy, lib, recursive = TRUE) :
+  problem copying C:\Users\e.bordron\Documents\R\R-4.1.2\library\00LOCK\cli\libs\x64\cli.dll to C:\Users\e.bordron\Documents\R\R-4.1.2\library\cli\libs\x64\cli.dll: Permission denied
+```
+an error pop-up is triggered by this command. on `https://github.com/gustaveroussy/EaCoN/issues/16`, it is indicated that it is a known issue on windows, but it works on linux. So I guess it can't be used on windows in our case.
+
+at the last meeting, this was said:
+
+Objectifs
+- Tester VMware workstation sur le PC de Bergonié et évaluer si les données peuvent-être traitées en local
+- Lire et comprendre la documentation (manuel et papier) des packages oncoScanR, rCGH et EaCoN. Produire un tableau comparatif
+- Quelles sont les fichiers d'entrées ?
+- Quelles fonctionnalités sont disponibles ?
+- Quels type d'output ? Plots, résultats (log-ratio, prédiction des CNV _sous quelle forme?_ etc)
+- Ecrire une fonction d'implémentation du GI
+
+I tried to install VMware workstation Player and VMware workstation Pro. When I use them, both the installers warn me: 
+`Vous avez besoin des privilèges administrateur pour installer ce logiciel.`
+This is a pop-up, I have no way to interact with them.
+
+Je commence un tableau récap des 3 packages R (oncoScanR, rCGH et EaCoN). voir  https://annuel2.framapad.org/p/CR_r%C3%A9unions_CGH_-_Elie pour plus d'infos.
+
+OncoscanR :
+Computation of arm-level alteration. Method can be  tweaked
+Score LST -> see Popova et al, Can. Res. 2012 (PMID: 22933060).
+Score LOH -> see Abkevich et al., Br J Cancer 2012 (PMID: 23047548)
+Score Tdplus -> see Popova et al., Cancer Res 2016 (PMID: 26787835)
+
+EaCoN:
+
+
+j'installe  rCGH. l'output est long mais je le mets ici:
+
+>BiocManager::install("rCGH")
+
+```
+> BiocManager::install("rCGH")
+'getOption("repos")' replaces Bioconductor standard repositories, see '?repositories' for details
+
+replacement repositories:
+    CRAN: https://cran.rstudio.com/
+
+Bioconductor version 3.14 (BiocManager 1.30.16), R 4.1.2 (2021-11-01)
+Installing package(s) 'rCGH'
+installation des dépendances ‘assertthat’, ‘colorspace’, ‘dbplyr’, ‘filelock’, ‘farver’, ‘labeling’, ‘munsell’, ‘viridisLite’, ‘sass’, ‘blob’, ‘plogr’, ‘BiocFileCache’, ‘png’, ‘gtable’, ‘isoband’, ‘scales’, ‘httpuv’, ‘xtable’, ‘fontawesome’, ‘sourcetools’, ‘bslib’, ‘affyio’, ‘preprocessCore’, ‘DBI’, ‘RSQLite’, ‘biomaRt’, ‘KEGGREST’, ‘multtest’, ‘plyr’, ‘DNAcopy’, ‘ggplot2’, ‘shiny’, ‘affy’, ‘TxDb.Hsapiens.UCSC.hg18.knownGene’, ‘TxDb.Hsapiens.UCSC.hg19.knownGene’, ‘TxDb.Hsapiens.UCSC.hg38.knownGene’, ‘org.Hs.eg.db’, ‘GenomicFeatures’, ‘AnnotationDbi’, ‘aCGH’
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/assertthat_0.2.1.zip'
+Content type 'application/zip' length 55017 bytes (53 KB)
+downloaded 53 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/colorspace_2.0-3.zip'
+Content type 'application/zip' length 2651585 bytes (2.5 MB)
+downloaded 2.5 MB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/dbplyr_2.1.1.zip'
+Content type 'application/zip' length 835602 bytes (816 KB)
+downloaded 816 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/filelock_1.0.2.zip'
+Content type 'application/zip' length 39993 bytes (39 KB)
+downloaded 39 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/farver_2.1.0.zip'
+Content type 'application/zip' length 1752630 bytes (1.7 MB)
+downloaded 1.7 MB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/labeling_0.4.2.zip'
+Content type 'application/zip' length 62679 bytes (61 KB)
+downloaded 61 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/munsell_0.5.0.zip'
+Content type 'application/zip' length 245248 bytes (239 KB)
+downloaded 239 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/viridisLite_0.4.0.zip'
+Content type 'application/zip' length 1299509 bytes (1.2 MB)
+downloaded 1.2 MB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/sass_0.4.0.zip'
+Content type 'application/zip' length 3639310 bytes (3.5 MB)
+downloaded 3.5 MB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/blob_1.2.2.zip'
+Content type 'application/zip' length 48066 bytes (46 KB)
+downloaded 46 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/plogr_0.2.0.zip'
+Content type 'application/zip' length 18940 bytes (18 KB)
+downloaded 18 KB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/BiocFileCache_2.2.1.zip'
+Content type 'application/zip' length 562298 bytes (549 KB)
+downloaded 549 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/png_0.1-7.zip'
+Content type 'application/zip' length 336780 bytes (328 KB)
+downloaded 328 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/gtable_0.3.0.zip'
+Content type 'application/zip' length 434251 bytes (424 KB)
+downloaded 424 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/isoband_0.2.5.zip'
+Content type 'application/zip' length 2726831 bytes (2.6 MB)
+downloaded 2.6 MB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/scales_1.1.1.zip'
+Content type 'application/zip' length 558382 bytes (545 KB)
+downloaded 545 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/httpuv_1.6.5.zip'
+Content type 'application/zip' length 1695904 bytes (1.6 MB)
+downloaded 1.6 MB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/xtable_1.8-4.zip'
+Content type 'application/zip' length 706535 bytes (689 KB)
+downloaded 689 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/fontawesome_0.2.2.zip'
+Content type 'application/zip' length 1529199 bytes (1.5 MB)
+downloaded 1.5 MB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/sourcetools_0.1.7.zip'
+Content type 'application/zip' length 691390 bytes (675 KB)
+downloaded 675 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/bslib_0.3.1.zip'
+Content type 'application/zip' length 5038570 bytes (4.8 MB)
+downloaded 4.8 MB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/affyio_1.64.0.zip'
+Content type 'application/zip' length 170834 bytes (166 KB)
+downloaded 166 KB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/preprocessCore_1.56.0.zip'
+Content type 'application/zip' length 266353 bytes (260 KB)
+downloaded 260 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/DBI_1.1.2.zip'
+Content type 'application/zip' length 741964 bytes (724 KB)
+downloaded 724 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/RSQLite_2.2.10.zip'
+Content type 'application/zip' length 2545233 bytes (2.4 MB)
+downloaded 2.4 MB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/biomaRt_2.50.3.zip'
+Content type 'application/zip' length 979894 bytes (956 KB)
+downloaded 956 KB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/KEGGREST_1.34.0.zip'
+Content type 'application/zip' length 192380 bytes (187 KB)
+downloaded 187 KB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/multtest_2.50.0.zip'
+Content type 'application/zip' length 979735 bytes (956 KB)
+downloaded 956 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/plyr_1.8.6.zip'
+Content type 'application/zip' length 1499372 bytes (1.4 MB)
+downloaded 1.4 MB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/DNAcopy_1.68.0.zip'
+Content type 'application/zip' length 792263 bytes (773 KB)
+downloaded 773 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/ggplot2_3.3.5.zip'
+Content type 'application/zip' length 4130564 bytes (3.9 MB)
+downloaded 3.9 MB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/shiny_1.7.1.zip'
+Content type 'application/zip' length 4230764 bytes (4.0 MB)
+downloaded 4.0 MB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/affy_1.72.0.zip'
+Content type 'application/zip' length 1768641 bytes (1.7 MB)
+downloaded 1.7 MB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/GenomicFeatures_1.46.4.zip'
+Content type 'application/zip' length 2430857 bytes (2.3 MB)
+downloaded 2.3 MB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/AnnotationDbi_1.56.2.zip'
+Content type 'application/zip' length 5387247 bytes (5.1 MB)
+downloaded 5.1 MB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/aCGH_1.72.0.zip'
+Content type 'application/zip' length 2728819 bytes (2.6 MB)
+downloaded 2.6 MB
+
+trying URL 'https://bioconductor.org/packages/3.14/bioc/bin/windows/contrib/4.1/rCGH_1.24.0.zip'
+Content type 'application/zip' length 5180013 bytes (4.9 MB)
+downloaded 4.9 MB
+
+package ‘assertthat’ successfully unpacked and MD5 sums checked
+package ‘colorspace’ successfully unpacked and MD5 sums checked
+package ‘dbplyr’ successfully unpacked and MD5 sums checked
+package ‘filelock’ successfully unpacked and MD5 sums checked
+package ‘farver’ successfully unpacked and MD5 sums checked
+package ‘labeling’ successfully unpacked and MD5 sums checked
+package ‘munsell’ successfully unpacked and MD5 sums checked
+package ‘viridisLite’ successfully unpacked and MD5 sums checked
+package ‘sass’ successfully unpacked and MD5 sums checked
+package ‘blob’ successfully unpacked and MD5 sums checked
+package ‘plogr’ successfully unpacked and MD5 sums checked
+package ‘BiocFileCache’ successfully unpacked and MD5 sums checked
+package ‘png’ successfully unpacked and MD5 sums checked
+package ‘gtable’ successfully unpacked and MD5 sums checked
+package ‘isoband’ successfully unpacked and MD5 sums checked
+package ‘scales’ successfully unpacked and MD5 sums checked
+package ‘httpuv’ successfully unpacked and MD5 sums checked
+package ‘xtable’ successfully unpacked and MD5 sums checked
+package ‘fontawesome’ successfully unpacked and MD5 sums checked
+package ‘sourcetools’ successfully unpacked and MD5 sums checked
+package ‘bslib’ successfully unpacked and MD5 sums checked
+package ‘affyio’ successfully unpacked and MD5 sums checked
+package ‘preprocessCore’ successfully unpacked and MD5 sums checked
+package ‘DBI’ successfully unpacked and MD5 sums checked
+package ‘RSQLite’ successfully unpacked and MD5 sums checked
+package ‘biomaRt’ successfully unpacked and MD5 sums checked
+package ‘KEGGREST’ successfully unpacked and MD5 sums checked
+package ‘multtest’ successfully unpacked and MD5 sums checked
+package ‘plyr’ successfully unpacked and MD5 sums checked
+package ‘DNAcopy’ successfully unpacked and MD5 sums checked
+package ‘ggplot2’ successfully unpacked and MD5 sums checked
+package ‘shiny’ successfully unpacked and MD5 sums checked
+package ‘affy’ successfully unpacked and MD5 sums checked
+package ‘GenomicFeatures’ successfully unpacked and MD5 sums checked
+package ‘AnnotationDbi’ successfully unpacked and MD5 sums checked
+package ‘aCGH’ successfully unpacked and MD5 sums checked
+package ‘rCGH’ successfully unpacked and MD5 sums checked
+
+The downloaded binary packages are in
+	C:\Users\e.bordron\AppData\Local\Temp\RtmpoXryBf\downloaded_packages
+installation des packages sources ‘TxDb.Hsapiens.UCSC.hg18.knownGene’, ‘TxDb.Hsapiens.UCSC.hg19.knownGene’, ‘TxDb.Hsapiens.UCSC.hg38.knownGene’, ‘org.Hs.eg.db’
+
+trying URL 'https://bioconductor.org/packages/3.14/data/annotation/src/contrib/TxDb.Hsapiens.UCSC.hg18.knownGene_3.2.2.tar.gz'
+Content type 'application/x-gzip' length 16032792 bytes (15.3 MB)
+downloaded 15.3 MB
+
+trying URL 'https://bioconductor.org/packages/3.14/data/annotation/src/contrib/TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2.tar.gz'
+Content type 'application/x-gzip' length 18669702 bytes (17.8 MB)
+downloaded 17.8 MB
+
+trying URL 'https://bioconductor.org/packages/3.14/data/annotation/src/contrib/TxDb.Hsapiens.UCSC.hg38.knownGene_3.14.0.tar.gz'
+Content type 'application/x-gzip' length 43518321 bytes (41.5 MB)
+downloaded 41.5 MB
+
+trying URL 'https://bioconductor.org/packages/3.14/data/annotation/src/contrib/org.Hs.eg.db_3.14.0.tar.gz'
+Content type 'application/x-gzip' length 82195112 bytes (78.4 MB)
+downloaded 78.4 MB
+
+* installing *source* package 'TxDb.Hsapiens.UCSC.hg18.knownGene' ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+  converting help for package 'TxDb.Hsapiens.UCSC.hg18.knownGene'
+    finding HTML links ... done
+    package                                 html  
+** building package indices
+** testing if installed package can be loaded from temporary location
+*** arch - i386
+*** arch - x64
+** testing if installed package can be loaded from final location
+*** arch - i386
+*** arch - x64
+** testing if installed package keeps a record of temporary installation path
+* DONE (TxDb.Hsapiens.UCSC.hg18.knownGene)
+* installing *source* package 'TxDb.Hsapiens.UCSC.hg19.knownGene' ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+  converting help for package 'TxDb.Hsapiens.UCSC.hg19.knownGene'
+    finding HTML links ... done
+    package                                 html  
+** building package indices
+** testing if installed package can be loaded from temporary location
+*** arch - i386
+*** arch - x64
+** testing if installed package can be loaded from final location
+*** arch - i386
+*** arch - x64
+** testing if installed package keeps a record of temporary installation path
+* DONE (TxDb.Hsapiens.UCSC.hg19.knownGene)
+* installing *source* package 'TxDb.Hsapiens.UCSC.hg38.knownGene' ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+  converting help for package 'TxDb.Hsapiens.UCSC.hg38.knownGene'
+    finding HTML links ... done
+    package                                 html  
+** building package indices
+** testing if installed package can be loaded from temporary location
+*** arch - i386
+*** arch - x64
+** testing if installed package can be loaded from final location
+*** arch - i386
+*** arch - x64
+** testing if installed package keeps a record of temporary installation path
+* DONE (TxDb.Hsapiens.UCSC.hg38.knownGene)
+* installing *source* package 'org.Hs.eg.db' ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+  converting help for package 'org.Hs.eg.db'
+    finding HTML links ... done
+    org.Hs.egACCNUM                         html  
+    org.Hs.egALIAS2EG                       html  
+    org.Hs.egBASE                           html  
+    org.Hs.egCHR                            html  
+    org.Hs.egCHRLENGTHS                     html  
+    org.Hs.egCHRLOC                         html  
+    org.Hs.egENSEMBL                        html  
+    org.Hs.egENSEMBLPROT                    html  
+    org.Hs.egENSEMBLTRANS                   html  
+    org.Hs.egENZYME                         html  
+    org.Hs.egGENENAME                       html  
+    org.Hs.egGENETYPE                       html  
+    org.Hs.egGO                             html  
+    org.Hs.egMAP                            html  
+    org.Hs.egMAPCOUNTS                      html  
+    org.Hs.egOMIM                           html  
+    org.Hs.egORGANISM                       html  
+    org.Hs.egPATH                           html  
+    org.Hs.egPFAM                           html  
+    org.Hs.egPMID                           html  
+    org.Hs.egPROSITE                        html  
+    org.Hs.egREFSEQ                         html  
+    org.Hs.egSYMBOL                         html  
+    org.Hs.egUCSCKG                         html  
+    org.Hs.egUNIPROT                        html  
+    org.Hs.eg_dbconn                        html  
+** building package indices
+** testing if installed package can be loaded from temporary location
+*** arch - i386
+*** arch - x64
+** testing if installed package can be loaded from final location
+*** arch - i386
+*** arch - x64
+** testing if installed package keeps a record of temporary installation path
+* DONE (org.Hs.eg.db)
+
+The downloaded source packages are in
+	‘C:\Users\e.bordron\AppData\Local\Temp\RtmpoXryBf\downloaded_packages’
+Old packages: 'cli'
+Update all/some/none? [a/s/n]: 
+a
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.1/cli_3.2.0.zip'
+Content type 'application/zip' length 1257150 bytes (1.2 MB)
+downloaded 1.2 MB
+
+package ‘cli’ successfully unpacked and MD5 sums checked
+Warning: cannot remove prior installation of package ‘cli’
+Warning: restored ‘cli’
+
+The downloaded binary packages are in
+	C:\Users\e.bordron\AppData\Local\Temp\RtmpoXryBf\downloaded_packages
+Warning message:
+In file.copy(savedcopy, lib, recursive = TRUE) :
+  problem copying C:\Users\e.bordron\Documents\R\R-4.1.2\library\00LOCK\cli\libs\x64\cli.dll to C:\Users\e.bordron\Documents\R\R-4.1.2\library\cli\libs\x64\cli.dll: Permission denied
+```
+
+le mode d'emploi de rCGH est rCGH_manual.pdf dans docs. il va de paire avec rCGH.R dans scripts.
+à propos de l'input attendu de ce package:
+```
+Affymetrix SNP6.0 and cytoScanHD probeset.txt, cychp.txt, and cnchp.txt files exported from ChAS or Affymetrix Power Tools.
+rCGH also supports custom arrays, provided data complies with the expected format. 
+```
+Les fichiers que nous avons dont le nom ressemble le plus à ça sont `2-ADREC.RC.OSCHP.chpcar`. il faudrait les comparer avec le fichier d'exemple présent dans le manuel de rCGH pour savoir si on peut les utiliser pour nos données.
+
+J'ai aussi ajouté un tabbleur excel pour comparer les packages R. il  s'agit de `review_packages_R.xlsx` dans docs/docs_I_made

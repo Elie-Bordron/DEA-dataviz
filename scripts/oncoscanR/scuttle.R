@@ -8,4 +8,3 @@ outputFolder = "2-AD"
 OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = outputFolder)
 
 
-# if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
