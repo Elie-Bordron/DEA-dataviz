@@ -473,7 +473,7 @@ arrivée à 10h30, pas de pause le midi. départ à 15h30
 
 # <span style="color:#999900"> 23/02/2022
 
-arrivée à 11h
+
 
 J'installe l'annotation pour le `NA33 (hg19) build` pour le `OncoScan_CNV design `:
 >  install.packages("https://zenodo.org/record/5494853/files/OncoScanCNV.na33.r2_0.1.0.tar.gz", repos = NULL, type = "source")
@@ -996,3 +996,83 @@ rCGH also supports custom arrays, provided data complies with the expected forma
 Les fichiers que nous avons dont le nom ressemble le plus à ça sont `2-ADREC.RC.OSCHP.chpcar`. il faudrait les comparer avec le fichier d'exemple présent dans le manuel de rCGH pour savoir si on peut les utiliser pour nos données.
 
 J'ai aussi ajouté un tabbleur excel pour comparer les packages R. il  s'agit de `review_packages_R.xlsx` dans docs/docs_I_made
+
+arrivée à 11h -> pause 30 min , départ 18h15
+
+# <span style="color:#999900"> 24/02/2022
+la convention est signée par moi + la DRH de bergonié, je l'ai envoyée à claire.
+
+j'ai essayé d'installer des VM: workstation et virtualBox demandent le sdroits admin, donc il faut peut-être faire un ticket. J'essaie QEMU, qui possiblement marche sans droits admin mais est lent. si ça ne marche pas je fais un ticket.
+je continue l'excel qui compare les 3 packages. je veux me renseigner sur la question "peut-on ajuster la méthode de calcul, les coefficients, etc., dans al détermination des différents scores?" -> est-ce possible à l'aide de l'API?
+d'autre part,  continuer à lire la doc. voir l'output de RCGH, input aussi, et l'output de EaCoN.
+
+pour installer QEMU: j'ai choisi `C:\Users\e.bordron\Documents\qemu` comme dossier d'installation car celui par défaut renvoyait une erreur.
+Il s'est bien installé. Je suis ce tutoriel: `https://www.minitool.com/partition-disk/qemu-for-windows.html` pour lancer Ubuntu sur windows.
+edit: il est très recommandé d'installer une VM sur une partition spécialement dédiée, et je ne peux pas créer de partition. J'enverrai donc un ticket. en attendant, j'ai désinstallé QEMU.
+aussi: penser à installer le windows subsystem for Linux, ça peut être très pratique. voir si c'est nécessaire.
+
+arrivée à 10h30 ; pause de 13h à 14h pour manger + trajet à l'inrae. fin à 16h40.
+
+# <span style="color:#999900"> 25/02/2022
+télétravail + arrivée à 15h45
+
+rCGH manual (the pdf):
+la CGH sur array est largement utilisée en médecine, notamment pour détecter les altérations moléculaires précises. RCGH est un workflow d'analyses des données générées par cette technologie.
+
+un workflow typique est présenté dans le document. il produit un objet rCGH qui contient:
+- les infos de l'echantillon
+- le dataset par sonde 
+- les paramètres du workflow
+- les données de segmentation
+
+un objet rCGH peut être créé à partir de readGeneric().
+"CEL files have to be first read using ChAS or Affymetrix Power Tools (APT), and then exported as cychp.txt or cnchp.txt."-> peut-on faire ça?
+
+## Lire des fichiers:
+les fonctions readAffySNP6() et readAffyCytoScan() permettent respectivement de lire des fichiers cychp, cnchp and probeset (.txt), exportés (par ChAS ou APT) à partir de fichiers CEL provenant des technologies SNP6.0 et CytoScanHD, respectivement.
+à voir si des CEL d'oncoscan peuvent faire l'affaire.
+--> je compare mes fichiers 2-ADREC.RC.OSCHP.chpcar avec les fichiers provenant du manuel.
+en fait les cnchp.txt du manuel son zippés avec l'extension .bz2, que je ne peux pas ouvrir car je n'ai pas 7-zip ou un logiciel qui permet d'ouvrir ces extensions, et je ne peux pas en télécharger un non plus. j'ai téléchargé sur le NCBI un cnchp quelconque, que j'ai mis dans working_data. Sa structure est al suivante:
+
+```
+ProbeSetName	Chromosome	Position	CNState	Log2Ratio	SmoothSignal	LOH	Allele Difference
+CN_473963	1	61723	1	-0.869293	0.909996	nan	nan
+CN_473964	1	61796	1	-0.566018	0.91002	nan	nan
+CN_473965	1	61811	1	-0.360829	0.910024	nan	nan
+CN_473981	1	62908	1	-1.395133	0.910371	nan	nan
+CN_473982	1	62925	1	-0.353612	0.910377	nan	nan
+CN_497981	1	72764	1	-0.161369	0.913596	nan	nan
+CN_502615	1	85924	1	-0.643854	0.918221	nan	nan
+CN_502613	1	85986	1	-0.291606	0.918243	nan	nan
+CN_502614	1	86312	1	-0.487455	0.918363	nan	nan
+CN_502616	1	86329	1	-1.596017	0.918369	nan	nan
+CN_502843	1	98590	1	-0.152883	0.923038	nan	nan
+CN_466171	1	228694	2	-0.144197	2.308033	nan	nan
+CN_468414	1	229063	2	0.355558	2.308156	nan	nan
+CN_468412	1	229146	2	-0.523687	2.308184	nan	nan
+CN_468413	1	229161	2	-0.020418	2.308189	nan	nan
+CN_470565	1	229607	2	0.650146	2.308337	nan	nan
+CN_468424	1	235658	2	0.251713	2.310363	nan	nan
+CN_468425	1	235716	2	0.237548	2.310382	nan	nan
+CN_460512	1	356431	2	-0.589877	1.306899	nan	nan
+CN_460513	1	356530	2	-0.092504	1.3069	nan	nan
+SNP_A-8575125	1	564621	2	-0.237746	1.579906	1	0.840846
+CN_524192	1	625458	2	-0.08702	1.813097	nan	nan
+CN_496034	1	707087	2	-0.065015	1.985905	nan	nan
+CN_500339	1	712533	2	0.209689	1.986045	nan	nan
+CN_502639	1	718651	2	0.096094	1.983329	nan	nan
+SNP_A-8709646	1	721290	2	-0.163019	1.983204	1	0.864985
+SNP_A-8497791	1	740857	2	-0.080971	1.978729	1	0.940559
+SNP_A-1909444	1	752566	2	-0.123229	1.978289	1	-1.062374
+CN_029239	1	757457	2	0.105314	1.977908	nan	nan
+CN_029289	1	761356	2	-0.059604	1.977642	nan	nan
+```
+
+à voir si je peux retrouver les mêmes colonnes dans un de mes fichiers.
+
+17h00; je pars.
+
+
+
+
+
