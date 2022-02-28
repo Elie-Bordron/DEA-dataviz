@@ -1158,3 +1158,5 @@ en step-by-step:
 
 
 arrivée à 10h55 -> 17h30, 30min pause
+
+I move ``example_CN5.CNCHP.txt`` to `C:\Users\e.bordron\Desktop\CGH-scoring`.
