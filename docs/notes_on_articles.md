@@ -1,5 +1,5 @@
 
-## <span style="color:#009999">Automated Detection of Arm-Level Alterations for Individual Cancer Patients in the Clinical Setting
+# <span style="color:#ff9999">Automated Detection of Arm-Level Alterations for Individual Cancer Patients in the Clinical Setting
 2021_Christinat_HRD_Oncoscan.pdf
 
 Copy number alterations, a genetic event, promotes tumor development. these events are used as predictive biomarkers in clinical care. they are roughly classified as arm-level or focal. genome-wide techniques exist to classify arm-level ones, but challenges exist:
@@ -19,24 +19,29 @@ En utilisant la technique Oncoscan sur des échantillons FFPE, des .CEL ont ét�
 
 
 
-### Estimation of Percentage Arm Alteration
+## Estimation of Percentage Arm Alteration
 les données de nombre de copies ont été utilisées pour  détecter des arm-level alterations (ALA), puis ont été processées par un script R
 
 
-## <span style="color:#009999">Uterine smooth muscle tumor analysis by comparative genomic hybridization: a useful diagnostic tool in challenging lesions
+# <span style="color:#ff9999">Uterine smooth muscle tumor analysis by comparative genomic hybridization: a useful diagnostic tool in challenging lesions
 modpathol20153.pdf
 
 the diagnosis of STUMP tumors is often challenging. The authors proposed to test the hypothesis that GI could split those tumors in two groups: benign and malignant. A study was conducted, using a threshold of 10 to classify the STUMP.
 In conclusion, array-CGH is a useful technique to classify these tumors.
 
 
-## <span style="color:#009999">The Nanocind Signature Is an Independent Prognosticator of Recurrence and Death in Uterine Leiomyosarcomas
+# <span style="color:#ff9999">The Nanocind Signature Is an Independent Prognosticator of Recurrence and Death in Uterine Leiomyosarcomas
 
 Nanocind_signature_S._CROCE.pdf
 
 Uterine leiomyosarcoma is an aggressive tumor responsible for a signiﬁcant proportion of uterine cancer–related deaths. Plus, using the FIGO staging system, it is currently impossible to predict the clinical outcome of stage I leiomyosarcomas. However, the authors published in 2010 a transcriptomic signature (67 genes related to chromosome biogenesis, mitosis control, and chromosome segregation), which has proven since its predicting efficiency over different cancer types. Plus, it has been successfully used with NanoCind (Nanostring) technology, which makes it usable routinely.
 Uterine leiomyosarcoma were analyzed with the Nanocind signature. The process split the group in two groups. This result was validated.
 In conclusion, the NanoCind signature is a powerful prognostic indicator that outperforms FIGO staging and the genomic index. Plus, GI is platform-dependent. 
+
+# <span style="color:#ff9999"> A faster circular binary segmentation algorithm for the analysis of array CGH data
+segmentation_algo_for_CGH_data.pdf
+
+la technologie array-CGH recense le nombre de copies de milliers de sites d'un génome. l'algorithme CBS développé dans cet article permet de segmenter le génome en régions de même nombre de copies. Il peut être utilisé dans R à l'aide du package DNAcopy.
 
 
 

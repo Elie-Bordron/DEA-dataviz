@@ -622,7 +622,7 @@ an error pop-up is triggered by this command. on `https://github.com/gustaverous
 at the last meeting, this was said:
 
 Objectifs
-- Tester VMware workstation sur le PC de Bergonié et évaluer si les données peuvent-être traitées en local
+- ~Tester VMware workstation sur le PC de Bergonié et évaluer si les données peuvent-être traitées en local~ -> besoin droits admin, eacon ne marche pas avec linux a priori
 - Lire et comprendre la documentation (manuel et papier) des packages oncoScanR, rCGH et EaCoN. Produire un tableau comparatif
 - Quelles sont les fichiers d'entrées ?
 - Quelles fonctionnalités sont disponibles ?
@@ -1031,10 +1031,13 @@ un objet rCGH peut être créé à partir de readGeneric().
 ## Lire des fichiers:
 les fonctions readAffySNP6() et readAffyCytoScan() permettent respectivement de lire des fichiers cychp, cnchp and probeset (.txt), exportés (par ChAS ou APT) à partir de fichiers CEL provenant des technologies SNP6.0 et CytoScanHD, respectivement.
 à voir si des CEL d'oncoscan peuvent faire l'affaire.
+D'autre part, la fonction ReadGeneric() permet de lire un custom array. il doit comporter les colonnes suivantes:
+ProbeName, ChrNum, ChrStart, et Log2Ratio. it creates then an _rCGH-generic_ object.
 --> je compare mes fichiers 2-ADREC.RC.OSCHP.chpcar avec les fichiers provenant du manuel.
-en fait les cnchp.txt du manuel son zippés avec l'extension .bz2, que je ne peux pas ouvrir car je n'ai pas 7-zip ou un logiciel qui permet d'ouvrir ces extensions, et je ne peux pas en télécharger un non plus. j'ai téléchargé sur le NCBI un cnchp quelconque, que j'ai mis dans working_data. Sa structure est al suivante:
+en fait les cnchp.txt du manuel son zippés avec l'extension .bz2, que je ne peux pas ouvrir car je n'ai pas 7-zip ou un logiciel qui permet d'ouvrir ces extensions, et je ne peux pas en télécharger un non plus. j'ai téléchargé sur le NCBI un cnchp quelconque, que j'ai mis dans working_data sous le nom de `example_CN5.CNCHP.txt`. Sa structure est la suivante:
 
 ```
+ligne 1017:
 ProbeSetName	Chromosome	Position	CNState	Log2Ratio	SmoothSignal	LOH	Allele Difference
 CN_473963	1	61723	1	-0.869293	0.909996	nan	nan
 CN_473964	1	61796	1	-0.566018	0.91002	nan	nan
@@ -1066,13 +1069,92 @@ SNP_A-8497791	1	740857	2	-0.080971	1.978729	1	0.940559
 SNP_A-1909444	1	752566	2	-0.123229	1.978289	1	-1.062374
 CN_029239	1	757457	2	0.105314	1.977908	nan	nan
 CN_029289	1	761356	2	-0.059604	1.977642	nan	nan
+...
 ```
 
 à voir si je peux retrouver les mêmes colonnes dans un de mes fichiers.
 
 17h00; je pars.
 
+# <span style="color:#999900"> 28/02/2022
 
 
+je continue de lire la doc de rCGH.
+
+adjustSignal() permet de rescale le LRR dans le cas d'affymetrix.
+
+pour segmenter, on utilise l'algo CBS. voir notes_on_articles.md pour plus d'infos. 
+Cette fonctionnalité peut être utilisée avec segmentCGH(). it returns a segmentation table.
+
+LRR = Log2(relative ratios)
+la fonction EMnormalize() est utilisée pour centraliser les LRR et plotDensity() permet de visualiser cette étape et de voir quelle population a servi à centraliser les données.
+
+note: ce package permet la parallélisation des tâches de normalisation & de segmentation de par l'utilisation du package parallel.
+
+ce qu'on a après le workflow normal est une segmentation table.
+
+pour convertir ça en tableau par gène:
+>byGeneTable(data)
+
+additionnally, this package offers different genomic profile visualisation functions, static and interactive.
+
+ainsi que l' `input`:
+un custom array doit comporter ces colonnes:
+
+`ProbeName(probe id), ChrNum, ChrStart(The chromosomal probe locations), et Log2Ratio (amplification/deletion)` ---> ai-je ces colonnes dans un de mes documents?
+`present in cnchp files, present in filename.segments.txt, present in cnchp files, present in filename.segments.txt`
+
+j'ajoute l'`output` à l'excel comparatif:
+
+1. Segmentation table:
+```
+           ID chrom loc.start   loc.end num.mark seg.mean seg.med probes.Sd estimCopy
+1 CSc.Example     1    882803 249116709     1209   0.0087 -0.0504 0.9799602         2
+2 CSc.Example     2     15703 242497851     1317   0.8874  0.8791 0.9901649         4
+3 CSc.Example     3     62614 197683938     1100   0.8791  0.8791 0.9786349         4
+4 CSc.Example     4     46691 190921709     1042  -0.0075 -0.0504 0.9883702         2
+5 CSc.Example     5    113577 180579439      986   0.8502  0.8791 0.9907562         4
+6 CSc.Example     6    184719 170849100     1103  -0.0105 -0.0504 1.0052332         2
+```
+
+2. byGeneTable:
+```
+  entrezid   symbol                       fullName cytoband chr chrStart   chrEnd width strand Log2Ratio num.mark segNum segLength(kb) estimCopy relativeLog genomeStart
+1        1     A1BG         alpha-1-B_glycoprotein_19q13.43  19 58858172 58874214 16043      -   0.80185      231     21      58810.89         4           0  2718302494
+2   503538 A1BG-AS1           A1BG antisense_RNA_1_19q13.43  19 58859117 58866549  7433      +   0.80185      231     21      58810.89         4           0  2718303439
+3    29974     A1CF  APOBEC1_complementation_facto_10q11.23  10 52559169 52645435 86267      -   0.94135      751     10     135239.66         4           0  1732932312
+```
+
+pour rappel:
+un ratio est de la forme test/control, où control est la valeur de référence. si la valeur test est supérieure au control, le ratio va de 1 à +inf. mais si test est inférieur à control, le ratio va de 0 à 1. appliquer le log2 de ce ratio permet de rendre symétrique la répartition autour de 1.
+
+EaCon:
+
+le workflow typique est :
+```
+normalization -> segmentation +-> reporting
+                              |
+                              +-> copy-number estimation
+```
+en step-by-step:
+1. Raw data processing
+    
+    OS.process() will perform normalization. this step will write multiple files.
+
+2. L2R & BAF Segmentation
+
+    Segment.ff() will then perform segmentation using ASCAT, FACETS or SEQUENZA. this step will write multiple files.
+
+3. Copy-number estimation
+    
+    several parameters can be estimated in this step:
+    - total and allele-specific copy-number profiles
+    - global ploidy 
+    - sample cellularity 
+    The syntax is:
+    ASCN.ff()
+    you can also use SEQUENZA or FACETS.
+    for more details about the output, check ASCAT R package.
 
 
+arrivée à 10h55 -> 17h30, 30min pause
