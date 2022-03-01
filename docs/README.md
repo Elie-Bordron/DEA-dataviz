@@ -6,7 +6,7 @@ Affymetrix: Affymetrix/ Oncoscan CNV FFPE assay/ ChAs Software
 # context
 Dans l'identification de lésions cancéreuses, le diagnostic peut passer par l'étude de critères souvent macroscopiques, et parfois moléculaires pour plus de précision.
 
-Un intérêt croissant se développe autour de ces derniers dans le cadre du pronostic. En effet, dans le cadre de certains cancers, des analyses de routine existent déjà dans ce but et permettent une prise en charge adaptée. L'Index Génomique (GI), notamment, a prouvé son efficacité dans le diagnostic et le pronostic de différents sarcomes [voir l'article Mitotic_Checkpoints___XXXX.pdf]. Cette signature génomique est un puissant prédicteur de l’agressivité tumorale et de la rechute métastatique des tumeurs.
+Un intérêt croissant se développe autour de ces derniers dans le cadre du pronostic. En effet, pour certains cancers, des analyses de routine existent déjà dans ce but et permettent une prise en charge adaptée. L'Index Génomique (GI), notamment, a prouvé son efficacité dans le diagnostic et le pronostic de différents sarcomes [voir l'article Mitotic_Checkpoints___XXXX.pdf]. Cette signature génomique est un puissant prédicteur de l’agressivité tumorale et de la rechute métastatique des tumeurs.
 
 
 # objectives

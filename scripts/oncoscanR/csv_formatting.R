@@ -22,6 +22,8 @@ for (i in 1:nrow(microarrNomenclCol)) {
     vecstr = unlist(rowSliced)
     secondSplit = unlist(stringr::str_split(vecstr[2], '\\)'))
     full_location = secondSplit[1]
+    full_location = gsub(",", "", full_location)
+    print(c("full_location: ", full_location))
     chrm = chromosomeCol[i]
     rowOfNewCol=paste("chr", chrm, ':', full_location, sep='')
     newColAsVec = append(newColAsVec, rowOfNewCol)
@@ -36,9 +38,9 @@ print(c("path_out: ", path_out))
 colCN = which(colnames(sample2AD)=="CN.State")
 colnames(sample2AD)[colCN] = "CN State"
 sample2AD <- sample2AD[, c(
-"Full Location", "File", "Chromosome", "Microarray.Nomenclature..ISCN.2013.",
-"Cytoband.Start", "CN State", "Median.Log2Ratio",  
-"Type", "Size..kbp.", "Genes", 
+"Full Location", "CN State", "Type", "File", "Chromosome",
+"Cytoband.Start", "Median.Log2Ratio",  
+"Microarray.Nomenclature..ISCN.2013.", "Size..kbp.", "Genes", 
 "Marker.Count", "Gene.Count", "OMIM...Genes.Count",  
 "OMIM...Genes", "CytoRegions", "Call",  
 "Segment.Interpretation", "Curation.By", "Materially.Modified.Segment", 

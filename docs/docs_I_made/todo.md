@@ -16,3 +16,12 @@
 
 28/02/2022
 - faire un plan pour intro 
+
+03/01/2022
+- ~~changer le script csv_formatting.R pour qu'il enlève les virgules de la colonne Full Location~~
+- les différents indices pouvant êre calculés par oncoscan-R sont-ils intéressants? de quoi témoignent-ils?
+    -> voir surtout ceux qui sont cités dans un article.
+- dans notes_on_articles.md, voir la dernière ligne de l'article Nanocind. lire l'article en question.
+- dans cet article (qui est la thèse de Sabrina Croce), on conclut que la signature Nanocind est un meilleur indice de prédiction que le GI. voir si on ne pourrait pas l'appliquer à nos données? Sabrina m'en avait parlé mais je ne vois pas de mention de ça dans mes notes. 
+    edit: page 4, table 1, je vois que CINSARC et Nanocind sont peut-être la même chose.
+- ~~refaire un ticket? ... je ne sais pas~~ a priori non, sur l'ent le ticket a toujours l'air en cours de gestion. garder un oeil là-dessus.

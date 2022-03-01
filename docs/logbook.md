@@ -987,7 +987,7 @@ In file.copy(savedcopy, lib, recursive = TRUE) :
   problem copying C:\Users\e.bordron\Documents\R\R-4.1.2\library\00LOCK\cli\libs\x64\cli.dll to C:\Users\e.bordron\Documents\R\R-4.1.2\library\cli\libs\x64\cli.dll: Permission denied
 ```
 
-le mode d'emploi de rCGH est rCGH_manual.pdf dans docs. il va de paire avec rCGH.R dans scripts.
+le mode d'emploi de rCGH est rCGH_manual.pdf dans docs. il va de pair avec rCGH.R dans scripts.
 à propos de l'input attendu de ce package:
 ```
 Affymetrix SNP6.0 and cytoScanHD probeset.txt, cychp.txt, and cnchp.txt files exported from ChAS or Affymetrix Power Tools.
@@ -1034,7 +1034,8 @@ les fonctions readAffySNP6() et readAffyCytoScan() permettent respectivement de 
 D'autre part, la fonction ReadGeneric() permet de lire un custom array. il doit comporter les colonnes suivantes:
 ProbeName, ChrNum, ChrStart, et Log2Ratio. it creates then an _rCGH-generic_ object.
 --> je compare mes fichiers 2-ADREC.RC.OSCHP.chpcar avec les fichiers provenant du manuel.
-en fait les cnchp.txt du manuel son zippés avec l'extension .bz2, que je ne peux pas ouvrir car je n'ai pas 7-zip ou un logiciel qui permet d'ouvrir ces extensions, et je ne peux pas en télécharger un non plus. j'ai téléchargé sur le NCBI un cnchp quelconque, que j'ai mis dans working_data sous le nom de `example_CN5.CNCHP.txt`. Sa structure est la suivante:
+en fait les cnchp.txt du manuel son zippés avec l'extension .bz2, que je ne peux pas ouvrir car je n'ai pas 7-zip ou un logiciel qui permet d'ouvrir ces extensions, et je ne peux pas en télécharger un non plus.
+Pour résoudre ça, j'ai téléchargé sur le NCBI un cnchp quelconque, que j'ai mis dans working_data sous le nom de `example_CN5.CNCHP.txt`. Sa structure est la suivante:
 
 ```
 ligne 1017:
@@ -1078,13 +1079,13 @@ CN_029289	1	761356	2	-0.059604	1.977642	nan	nan
 
 # <span style="color:#999900"> 28/02/2022
 
-
-je continue de lire la doc de rCGH.
+## rCGH
+je continue de lire la doc
 
 adjustSignal() permet de rescale le LRR dans le cas d'affymetrix.
 
 pour segmenter, on utilise l'algo CBS. voir notes_on_articles.md pour plus d'infos. 
-Cette fonctionnalité peut être utilisée avec segmentCGH(). it returns a segmentation table.
+Cette fonctionnalité peut être utilisée avec segmentCGH(). cela retourne une segmentation table.
 
 LRR = Log2(relative ratios)
 la fonction EMnormalize() est utilisée pour centraliser les LRR et plotDensity() permet de visualiser cette étape et de voir quelle population a servi à centraliser les données.
@@ -1103,6 +1104,7 @@ un custom array doit comporter ces colonnes:
 
 `ProbeName(probe id), ChrNum, ChrStart(The chromosomal probe locations), et Log2Ratio (amplification/deletion)` ---> ai-je ces colonnes dans un de mes documents?
 `present in cnchp files, present in filename.segments.txt, present in cnchp files, present in filename.segments.txt`
+--> partiellement dans segments.txt, partiellement dans un fichier cnchp. voir si on peut avoir un tel fichier à partir d ChAS
 
 j'ajoute l'`output` à l'excel comparatif:
 
@@ -1128,7 +1130,7 @@ j'ajoute l'`output` à l'excel comparatif:
 pour rappel:
 un ratio est de la forme test/control, où control est la valeur de référence. si la valeur test est supérieure au control, le ratio va de 1 à +inf. mais si test est inférieur à control, le ratio va de 0 à 1. appliquer le log2 de ce ratio permet de rendre symétrique la répartition autour de 1.
 
-EaCon:
+## EaCon:
 
 le workflow typique est :
 ```
@@ -1139,11 +1141,17 @@ normalization -> segmentation +-> reporting
 en step-by-step:
 1. Raw data processing
     
-    OS.process() will perform normalization. this step will write multiple files.
+    OS.process() will perform normalization. this step will write multiple files:
+    - a png: graphical representation of the normalized L2R and BAF data
+    - metrics of the array
+    - statistics ...
 
 2. L2R & BAF Segmentation
 
     Segment.ff() will then perform segmentation using ASCAT, FACETS or SEQUENZA. this step will write multiple files.
+    - a png: graphical representation of the segmented, centered and called L2R and BAF data
+    - a png: graphical representation of BAF vs L2R of probes, by chromosome
+    - various segmentation results
 
 3. Copy-number estimation
     
@@ -1151,6 +1159,7 @@ en step-by-step:
     - total and allele-specific copy-number profiles
     - global ploidy 
     - sample cellularity 
+    - more png files
     The syntax is:
     ASCN.ff()
     you can also use SEQUENZA or FACETS.
@@ -1160,3 +1169,40 @@ en step-by-step:
 arrivée à 10h55 -> 17h30, 30min pause
 
 I move ``example_CN5.CNCHP.txt`` to `C:\Users\e.bordron\Desktop\CGH-scoring`.
+
+# <span style="color:#999900"> 01/03/2022
+
+réunion aujourd'hui
+edit: elle est repoussée à plus tard.
+
+je continue sur oncoscanR. J'implémente une fonction pour calculer le GI mais je me heurte (de nouveau) à ce problème:
+
+> res = oncoscanR::workflow_oncoscan.run("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/2-AD/2-ADREC.RC.OSCHP.segments_FULL_LOCATION.txt", "F")
+```
+Error in if (length(parm) == 0 || seg_start > end(parm)) { :                                                                                                                                                        
+  missing value where TRUE/FALSE needed
+In addition: Warning messages:
+1: In load_chas(chas.fn, oncoscan.cov) : NAs introduced by coercion
+2: In load_chas(chas.fn, oncoscan.cov) : NAs introduced by coercion
+```
+the cause of this problem is the values of the column Full Location containing commas.
+
+now I use the genomic index as defined in modpathol (a pdf):
+```
+genomic index= A^2/C , where A is the total number of alterations (segmental gains and losses) and C is the number of involved chromosomes.
+```
+I'm not sure whether I should count an arm alteration as an alteration itself. For now, let's use this: a loss or gain segment (longer than X bases) represents an alteration, where X should be changed according to data. in the case of OncoscanR results, there is no X because the length is: an arm.
+Anyway, I started this in OncoscanR.R
+
+arrivée à 11h25, départ à 17:25, pas de pause.
+
+
+# <span style="color:#999900"> 02/03/2022
+Nous sommes mercredi.
+# <span style="color:#999900"> 03/03/2022
+Nous sommes jeudi: ce matin, je dois aller voir Yannick pour savoir quand l'interprétation des données se fera.
+
+
+
+
+
