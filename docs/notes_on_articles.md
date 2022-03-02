@@ -46,6 +46,11 @@ segmentation_algo_for_CGH_data.pdf
 
 la technologie array-CGH recense le nombre de copies de milliers de sites d'un génome. l'algorithme CBS développé dans cet article permet de segmenter le génome en régions de même nombre de copies. Il peut être utilisé dans R à l'aide du package DNAcopy.
 
+# <span style="color:#ff9999"> Copy number aberrations from Affymetrix SNP 6.0 genotyping data—how accurate are commonly used prediction approaches ?
+
+Copy_number_aberrations_from_Affymetrix_SNP.pdf
+
+
 
 
 

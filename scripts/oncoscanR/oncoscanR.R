@@ -12,3 +12,4 @@ function calcGI() {
   
   return GI
 }
+

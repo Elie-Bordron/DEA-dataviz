@@ -637,12 +637,9 @@ Je commence un tableau récap des 3 packages R (oncoScanR, rCGH et EaCoN). voir 
 
 OncoscanR :
 Computation of arm-level alteration. Method can be  tweaked
-Score LST -> see Popova et al, Can. Res. 2012 (PMID: 22933060).
+Score LST -> see Popova et al, Can. Res. 2012 (PMID: 22933060) -> Ploidy and Large-Scale Genomic Instability Consistently Identify Basal-like Breast Carcinomas with BRCA1/2 Inactivation
 Score LOH -> see Abkevich et al., Br J Cancer 2012 (PMID: 23047548)
 Score Tdplus -> see Popova et al., Cancer Res 2016 (PMID: 26787835)
-
-EaCoN:
-
 
 j'installe  rCGH. l'output est long mais je le mets ici:
 
@@ -1198,7 +1195,44 @@ arrivée à 11h25, départ à 17:25, pas de pause.
 
 
 # <span style="color:#999900"> 02/03/2022
-Nous sommes mercredi.
+Elodie me demande de lire le document ``Copy_number_aberrations_from_Affymetrix_SNP.pdf`` pour savoir plusieurs choses:
+- Y a-t-il une différence majeure entre ces puces là et les oncoScan?
+- Les méthodes sont elles interchangeables ?
+
+Avant ça, je lui réponds pour lui indiquer ce que sont les abréviations:
+LOH et LST sont 2 scores de HRD. Ils caractérisent en effet la déficience de ce pathway.
+LST = Large-scale State Transition. voir LST_popova.pdf
+un LST est un breakpoint (point de séparation entre 2 segments ayant des valeurs de CN différentes) dont les 2 segments font plus de 10 Mb. le score LST est un bon indicateur de l'état du gène BRCA1 (dont l'inactivation est souvent constatée dans le carcinome du sein). BRCA1 participe au pathway de recombination homologue (voir cahier, un procédé de réparation de l'ADN lors d'un double-strand break), et sa mutation accompagne souvent les cancers du sein ou des ovaires. Source: ``Powell, S., Kachnic, L. Roles of BRCA1 and BRCA2 in homologous recombination, DNA replication fidelity and the cellular response to ionizing radiation. Oncogene 22, 5784–5791 (2003). https://doi.org/10.1038/sj.onc.1206678``. Une Homologous Recombination Deficiency (HRD) peut être déterminée par la mutation de BRCA1.
+LOH = Loss of Heterozygosity. voir LOH_abkevich.pdf
+Ce score correspond au nombre de segments présentant une perte d'hétérozygotie sur plus de 15 Mb. La perte d'hétérozygotie est la disparition d'un allèle sur un des deux chromosomes, supprimant du génome l'une des 2 copies de ce gène. Un lien entre ce score et une déficience du gène BRCA a été mis en évidence par les auteurs de l'article, ce qui indique que ce score est un bon indicateur de HRD.
+TDplus = Tandem Duplication. voir TDplus_popova.pdf
+Ce score est défini par le nombre de régions exprimant un gain d'une ou 2 copies (tandem duplication) et dont la taille est comprise entre 1 et 10 Mb. Le score TDplus a été lié à l'occurrence de tumeurs CDK12-deficient. Le gène CDK12 est impliqué dans la régulation de l'ARN polymérase 2, dont le dysfonctionnement va souvent de pair avec l'apparition de cancers. Source: ``A ubiquitous disordered protein interaction module orchestrates transcription elongation ; 10.1126/science.abe2913``.
+LRR et BAF signifient respectivement Log R Ratio and B allele frequency. Sur le github d'Eacon, il est indiqué que ces valeurs sont obtenues à partir du package R rawcopy (`http://rawcopy.org/`).
+LRR: normalized intensity per probe relative to sample median and a reference data set
+BAF: estimated abundance of the B allele relative to total abundance, SNP probes only
+
+j'essaie de déterminer ce qu'est le BAF et le LRR. en parallèle j'essaie de savoir si oncoscan appartient à Cytoscan, dans quelle mesure sont-ils différents...
+-> je peux télécharger les données qu'ils produisent. les comparer!
+ -> edit: ce ne sont pas des données mais un pdf qui explique comment interpréter les données.
+-> j'ai trouvé cette information intéressante sur la résolution d'oncoscan (source: https://www.thermofisher.com/search/results?query=902695&persona=DocSupport&type=Product+FAQs):
+```
+OncoScan CNV & Oncoscan CNV Plus Assay Kit have a 50 kb-100 kb resolution in approximately 900 cancer genes.
+Outside of the cancer genes:
+88% of the genome has 300 kb resolution
+97% of the genome has at least 380 kb resolution
+```
+Je lis le document `oncoscan_sample_data_presentation.pdf` téléchargé depuis `https://www.thermofisher.com/order/catalog/product/902695?SID=srch-srp-902695` en cliquant sur `Sample Data: OncoScan&#174; FFPE Assay Kit Sample Data Presentation`.
+j'y retrouve le log ratio et le BAF. J'ai pris des notes à propos de ce pdf sur la feuille n°01 (écrit en violet). Je conclus de ça que le LRR et le BAF sont 2 indices très pratiques pour segmenter le génome selon le nombre de copies. ça explique qu'EaCoN fasse une segmentation à partir de ces scores.
+
+je complète l'excel avec ces nouvelles informations.
+Aussi, je télécharge un pdf à lire pour mieux compprendre (peut-être) les LRR et BAF: `LRR_and_BAF.pdf`
+
+Sur la partie qu'élodie m'a demandé de résoudre, j'ai quelques onglets d'ouverts. à re-regarder.
+à ce sujet, j'ai vu sur internet aujourd'hui que l'un des outputs d'oncoscan était "xxCHP.txt". peut-être que l'on peut exporter des cnchp à partir d'oncoscan, ce qui serait parfait pour l'utiliser avec R. chercher cela, si je ne trouve pas, demander à Laetitia. Chercher aussi la différence entre oncoscan et Affymetrix SNP 6.0 comme elle l'indique. je note tout ça dans todo.md.
+EXCEL: peut-il être envoyé?
+
+arrivée à 10h30, 25 min pause, départ 17:50
+
 # <span style="color:#999900"> 03/03/2022
 Nous sommes jeudi: ce matin, je dois aller voir Yannick pour savoir quand l'interprétation des données se fera.
 
