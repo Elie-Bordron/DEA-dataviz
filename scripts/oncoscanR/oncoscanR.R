@@ -8,8 +8,14 @@ armlevelCN = res$armlevel
 losses = armlevelCN$LOSS
 gains = armlevelCN$GAIN
 
-function calcGI() {
-  
-  return GI
+nb_alter = length(losses) + length(gains)
+nb_chr = 7 #calculated visually 
+
+calcGI = function(nb_alter, nb_chr) {
+  GI=(nb_alter^2)/nb_chr
+  print(c("GI: ", GI))
+  return(GI)
 }
+
+calcGI(nb_alter, nb_chr)
 

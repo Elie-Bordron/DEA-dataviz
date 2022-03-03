@@ -1236,7 +1236,77 @@ arrivée à 10h30, 25 min pause, départ 17:50
 # <span style="color:#999900"> 03/03/2022
 Nous sommes jeudi: ce matin, je dois aller voir Yannick pour savoir quand l'interprétation des données se fera.
 
+je cherche aussi la différence entre oncoscan et affymetrix SNP 6.0.
+sur internet, je trouve le site https://www.affymetrix.com/support/developer/powertools/changelog/oschp.html .Il m'apprend des choses sur le format OSCHP, regarder  ce qu'il contient sur le format CNCHP. entre autres:
+"The format of the OSCHP files is the HDF5 binary format." La doc d'HDF5 est ici: http://portal.hdfgroup.org/display/knowledge/HDF5+Documentation . HDFView sert à visualiser ces données. je le dl à partir de cete page: http://portal.hdfgroup.org/display/support/Download+HDFView et pas celle-ci (l'ancienne): https://support.hdfgroup.org/products/java/hdfview/index.html.
+OSCHP a une structure en nested tree, un peu comme du XML. aussi: "Note that the structure is an extension of the existing structure used in Affymetrix CYCHP and CNCHP file formats."
+J'apprends aussi qu'affymetrix encourage à utiliser Fusion SDK pour quiconque veut parser ses fichiers (la liste des fichiers affymetrix est ici: https://www.affymetrix.com/support/developer/powertools/changelog/gcos-agcc/index.html ou ici: https://www.affymetrix.com/support/developer/powertools/changelog/FILE-FORMATS.html). or cette recommandation date de 2011; et depuis certains packages R se basent sur SDK pour parser les fichiers d'affy.
+
+J'installe HDFView (à l'aide de cet installer: HDFView-3.1.3-win10_64-vs16.zip) à l'emplacement par défaut: ``C:\Users\e.bordron\AppData\Local\HDF_Group\HDFView\``. Ca fonctionne bien, je peux voir le contenu d'un fichier OSCHP. voir todo.md .
+
+Maintenant je lis ``Copy_number_aberrations_from_Affymetrix_SNP.pdf``, que m'a envoyé Elodie avec la question :
+```
+Bonjour Elie, pourrais tu jeter un oeil à cette revue sur des outils pour l'analyse de données Affymetrix SNP 6.0? https://academic.oup.com/bib/article/21/1/272/5139664?login=false
+je n'ai pas bien saisi si il y a une différence majeure entre ces puces là et les oncoScan. Les méthodes sont elles interchangeables ?
+```
+--> je regarde ce qu'est oncoSNP, c'est l'article 19 de la biblio soit ``oncoSNP.pdf``. -> je pensais qu'oncoSNP était dédié spécifiquement à oncoscan / Affymetrix SNP, mais il n'en est rien :/ c'est pour les SNP genotyping data en général.
+
+pour trouver une bonne fois pour toutes si SNP et oncoscan sont les mêmes puces (et si oui, je peux utiliser tous les outils de la revue  ``Copy_number_aberrations_from_Affymetrix_SNP.pdf`` sur nos données oncoscan), je cherche leurs pages sur le site d'affymerix.
+
+avant ça je vois dans la FAQ de rawcopy (http://rawcopy.org/FAQ) qu'oncoscan n'est pas pris en charge par ce package ("Oncoscan is a very different technology and is not supported in Rawcopy.") alors que rawcopy permet de traiter les données des microarrays CytoScan HD, CytoScan 750k et SNP 6.0 et prend des fichiers CEL en input.
+Pour info la dernière update de ce package date de 2019-10-13.
+_Cela indique qu'Oncoscan et affy SNP6.0 sont probablement différents et les méthodes sont donc non transposables._
+
+Je regarde les autres packages testés par l'article, voir si ils traitent les données oncoscan.
+- OncoSNP: OUI
+
+    at https://sites.google.com/site/oncosnp/frequently-asked-questions:
+    "If you are using new array design, e.g. OncoScan, be aware that OncoSNP pre-dates these array types and is not suitably calibrated for optimal performance."
+    -> oncosnp peut traiter oncoscan
+
+- ASCAT: OUI
+
+    at https://github.com/VanLoo-lab/ascat:
+    in "Supported arrays without matched germline": "[...] AffyOncoScan [...]"
+    Un article décrit en détail ASCAT: Allele-specific copy number analysis of tumors (ASCAT.pdf)
+
+- GenoCNA: SÛREMENT
+
+    at http://www.bios.unc.edu/~weisun/software/genoCN.htm and http://www.bios.unc.edu/~weisun/software/genoCN_release.htm
+
+- GISTIC: SÛREMENT
+
+    - input: voir GISTIC_example_seg_file.txt .
+    The input column headers are:
+    (1)  Sample           (sample name)
+    (2)  Chromosome  (chromosome number)
+    (3)  Start Position  (segment start position, in bases)
+    (4)  End Position   (segment end position, in bases)
+    (5)  Num markers      (number of markers in segment)
+    (6)  Seg.CN       (log2() -1 of copy number)
+    - Output: https://www.genepattern.org/doc/GISTIC_2.0/2.0.23/GISTICDocumentation_standalone.htm
+    lire l'article GISTIC2.0facilitates_xxx.pdf pour plus d'infos.
+
+- CGHcall:
+    article: CGHcall_article.pdf
+    reference manual: CGHcall_Reference_Manual__usemewiththescript.pdf
+    R script à utiliser avec le manuel: CGHcall.R
+
+J'ai aussi suivi un peu l'interprétation des résultats avec Yannick. il viendra dans mon bureau me prévenir quand il fera l'interprétation avec Sabrina.
 
 
+je réponds à élodie:
+```
+Bonsoir Elodie, j'ai regardé ce que tu m'as envoyé et certains packages sont utilisables pour nos données, bien que les 2 méthodes (oncoscan et SNP6.0) soient différentes.
+pour OncoSNP et ASCAT, c'est sûr que les outils sont compatibles. pour les autres ça va passer par la création de fichiers d'input, donc je devrai voir au cas par cas. Mais avant ça il faut savoir si ils sont pertinents, donc je vais les ajouter au tableau comparatif pour demain.
+Je ne sais pas si j'aurai le temps d'avoir tous les détails pour tous les outils mais je ferai en sorte d'avoir les inputs et outputs au minimum.
+```
 
+lire la page sur le formt de fichier CEL: https://www.affymetrix.com/support/developer/powertools/changelog/gcos-agcc/cel.html . c'est intéressant
+arrivée à 12h00; pas de pause; départ à 17h50
 
+# <span style="color:#999900"> 04/03/2022
+Nous sommes vendredi. réunion à 14h30-15h30:
+- ajouter les nouveaux packages au tableau
+- demander si ils veulent d'autres indices que l'index génomique 
+- si oui, lesquels (LOH, LST...)

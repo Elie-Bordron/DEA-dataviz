@@ -26,7 +26,12 @@
     edit: page 4, table 1, je vois que CINSARC et Nanocind sont peut-être la même chose.
 02/03/2022
 - ~~refaire un ticket? ... je ne sais pas a priori non, sur l'ent le ticket a toujours l'air en cours de gestion. garder un oeil là-dessus.~~ J'ai renvoyé un mail sans avoir de réponse aujourd'hui.
-- si pas de réponse demain midi au sujet du ticket, en refaire un.
+- ~~si pas de réponse demain midi au sujet du ticket, en refaire un.~~
+    je refais un ticket.
 - Lire `LRR_and_BAF.pdf` pour mieux comprendre ces 2 indices.
 - chercher si on peut exporter des cnchp à partir d'oncoscan.
 - Chercher aussi la différence entre oncoscan et Affymetrix SNP 6.0 comme elodie l'indique
+- voir si les infos requises par rCGH, qui proviennent d'un CNCHP, peuvent être trouvées dans mes OSCHP à l'aide de HDFView .
+- à https://www.affymetrix.com/support/developer/powertools/changelog/gcos-agcc/index.html, regarder les différents formats de fichier.
+- voir si je peux accéer à la base de données ennov. en ligne
+- lire l'article qui décrit ASCAT: ASCAT.pdf
