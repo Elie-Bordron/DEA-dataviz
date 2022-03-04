@@ -33,7 +33,7 @@ Remise en contexte: qu'est-ce que cette manip cherche à faire?
 15:50
 J'ai suivi la manip avec Laetitia. Il semble qu'on fasse du SNP genotyping, et pas du Loci Capture.
 Cette image illustre la manipulation dans son ensemble:
-![](./oncoscan__MIP_probe.png)
+![image here](./docs/docs_I_found/oncoscan__MIP_probe.png)
 D'où viennent les échantillons liquides d'ADN?
 Laetitia reçoit des lames colorées Hématoxyline Éosine Safran (HES) + un FFPE: bloc de cellules tumorales extrait chirurgicalement. à l'aide de la lame (issue du bloc), elle sait où récupérer les cellules les plus tumorales du bloc. l'ADN est ensuite extrait de ces cellules sous forme liquide.
 cet ADN est appelé l'ADNg dans le protocole. Après avoir ajouté des sondes MIP, on le chauffe à 95°C pour passer de double à simple brin, puis on descend à 58°C pendant 2h pour laisser les sondes MIP s'associer aux brins d'ADN. Cette association est appelée Annealing. La structure en anneau ainsi formée est centrée sur un nucléotide du brin d'ADN, le seul qui n'est pas couvert par la sonde.
@@ -1302,11 +1302,21 @@ pour OncoSNP et ASCAT, c'est sûr que les outils sont compatibles. pour les autr
 Je ne sais pas si j'aurai le temps d'avoir tous les détails pour tous les outils mais je ferai en sorte d'avoir les inputs et outputs au minimum.
 ```
 
-lire la page sur le formt de fichier CEL: https://www.affymetrix.com/support/developer/powertools/changelog/gcos-agcc/cel.html . c'est intéressant
+lire la page sur le formt de fichier CEL: https://www.affymetrix.com/support/developer/powertools/changelog/gcos-agcc/cel.html . c'est intéressant  
 arrivée à 12h00; pas de pause; départ à 17h50
 
 # <span style="color:#999900"> 04/03/2022
-Nous sommes vendredi. réunion à 14h30-15h30:
+arrivée à 10h30
+
+ réunion à 14h30-15h30:
 - ajouter les nouveaux packages au tableau
 - demander si ils veulent d'autres indices que l'index génomique 
 - si oui, lesquels (LOH, LST...)
+
+choses nouvelles sur les LST: on aplatit les segments de moins de 3Mb (voir ![fig 2](C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/docs/docs_I_found/LST_popova_fig2.png)), et
+
+![Alt]("./docs/docs_I_found/LST_popova_fig2.png" "a title")
+
+<img src="(C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/docs/docs_I_found/LST_popova_fig2.png" alt="Getting started" />
+
+image
