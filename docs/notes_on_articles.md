@@ -53,6 +53,8 @@ Copy_number_aberrations_from_Affymetrix_SNP.pdf
 Les aberrations du nombre de copies (CNA) jouent un rôle important dans la recherche sur le cancer. Un défi dans la quantification des CNA est l'effet de variables confondantes. pour traiter de ce problème, Les auteurs ont comparé les différents algorithmes d'identification de CNA sur les données d'Affymetrix SNP 6.0 genotyping.
 
 -> OncoSNP semble être un algorithme pour traiter ces données.
+Conclusion:
+
 
 # <span style="color:#ff9999"> A statistical approach for detecting genomic aberrations in heterogeneous tumor samples from single nucleotide polymorphism genotyping data
 
@@ -60,3 +62,5 @@ oncoSNP.pdf
 
 -> je pensais qu'oncoSNP était dédié spécifiquement à oncoscan / Afymetrix SNP, mais il n'en est rien :/
 
+
+# <span style="color:#ff9999"> 

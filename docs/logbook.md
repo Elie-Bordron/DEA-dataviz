@@ -1203,6 +1203,7 @@ Avant ça, je lui réponds pour lui indiquer ce que sont les abréviations:
 LOH et LST sont 2 scores de HRD. Ils caractérisent en effet la déficience de ce pathway.
 LST = Large-scale State Transition. voir LST_popova.pdf
 un LST est un breakpoint (point de séparation entre 2 segments ayant des valeurs de CN différentes) dont les 2 segments font plus de 10 Mb. le score LST est un bon indicateur de l'état du gène BRCA1 (dont l'inactivation est souvent constatée dans le carcinome du sein). BRCA1 participe au pathway de recombination homologue (voir cahier, un procédé de réparation de l'ADN lors d'un double-strand break), et sa mutation accompagne souvent les cancers du sein ou des ovaires. Source: ``Powell, S., Kachnic, L. Roles of BRCA1 and BRCA2 in homologous recombination, DNA replication fidelity and the cellular response to ionizing radiation. Oncogene 22, 5784–5791 (2003). https://doi.org/10.1038/sj.onc.1206678``. Une Homologous Recombination Deficiency (HRD) peut être déterminée par la mutation de BRCA1.
+choses nouvelles sur les LST: on aplatit les segments de moins de 3Mb (voir ![small segments are flattened](./docs/docs_I_found/LST_popova_fig2.png)), et le score LST est le nombre de LST sur tout le génome.
 LOH = Loss of Heterozygosity. voir LOH_abkevich.pdf
 Ce score correspond au nombre de segments présentant une perte d'hétérozygotie sur plus de 15 Mb. La perte d'hétérozygotie est la disparition d'un allèle sur un des deux chromosomes, supprimant du génome l'une des 2 copies de ce gène. Un lien entre ce score et une déficience du gène BRCA a été mis en évidence par les auteurs de l'article, ce qui indique que ce score est un bon indicateur de HRD.
 TDplus = Tandem Duplication. voir TDplus_popova.pdf
@@ -1272,7 +1273,9 @@ Je regarde les autres packages testés par l'article, voir si ils traitent les d
 
 - GenoCNA: SÛREMENT
 
-    at http://www.bios.unc.edu/~weisun/software/genoCN.htm and http://www.bios.unc.edu/~weisun/software/genoCN_release.htm
+    at http://www.bios.unc.edu/~weisun/software/genoCN.htm
+    and 
+    http://www.bios.unc.edu/~weisun/software/genoCN_release.htm
 
 - GISTIC: SÛREMENT
 
@@ -1306,17 +1309,36 @@ lire la page sur le formt de fichier CEL: https://www.affymetrix.com/support/dev
 arrivée à 12h00; pas de pause; départ à 17h50
 
 # <span style="color:#999900"> 04/03/2022
-arrivée à 10h30
 
  réunion à 14h30-15h30:
 - ajouter les nouveaux packages au tableau
 - demander si ils veulent d'autres indices que l'index génomique 
 - si oui, lesquels (LOH, LST...)
 
-choses nouvelles sur les LST: on aplatit les segments de moins de 3Mb (voir ![fig 2](C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/docs/docs_I_found/LST_popova_fig2.png)), et
+I had this problem when using git in cmd: 
+`'git' n’est pas reconnu en tant que commande interne ou externe, un programme exécutable ou un fichier de commandes.`
+j'utilise le git bash maintenant, ça marche. enfin, le git bash m'indiquait le problème du disque P: , donc j'ai dû créer une variable d'environnement HOME=c: avec setx.
 
-![Alt]("./docs/docs_I_found/LST_popova_fig2.png" "a title")
+prochaine réunion: mardi 12h15-13h15
 
-<img src="(C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/docs/docs_I_found/LST_popova_fig2.png" alt="Getting started" />
+voir le cahier pour un récap de la réunion.
+Nouveaux objectifs:
+**tester les packages EAcon (en attente de VM), rCGH, CGHcall, oncoSNP sur 3 cas 1 haut un bas un intermédiaire**.
+je commence par rCGH pour pouvoir le présenter mardi. je dois lui donner un fichier en input.
+---> !!!utiliser la version online pour vérifier que mes données marchent bien!!: https://fredcommo.shinyapps.io/aCGH_viewer/
 
-image
+J'ai vu avec Yannick comment voir quelles colonnes exporter avec ChAS.
+1. ouvrir ChAS
+2. charger un fichier OSCHP avec ctrl+o
+3. selectionner un chromosome
+4. en hait à droite, sélecitonner les colonnes à afficher
+5. en haut à gauche, exporter vers un fichier texte
+
+pour faire un input à rCGH: 
+on peut certainement utiliser la colonne "Start Marker" en tant qu'id des sondes.
+_on **peut** avoir la colonne ``Full Location`` !_
+
+Start Marker concerne le début d'un segment.
+Je peux consulter l'aide de ChAS pour savoir ce que contient chacune de ces colonnes. C'est très instructif etj ep eux sûrement en apprendre plus dans cette aided (500 pages env.)
+
+arrivée à 10h30; 10 min pause, départ à 17:40
