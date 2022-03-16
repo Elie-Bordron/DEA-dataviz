@@ -1,0 +1,2 @@
+Filename	Threshold Test	MAPD	MAPD LessThanOrEqual 0.3	ndSNPQC	ndSNPQC GreaterThanOrEqual 26	SNP QC Type	CelPairCheck Status	CelPairCheck Status Equals Pass	ndWavinessSD	Low Diploid Flag	% Aberr. Cells	TuScan Ploidy	Gender	NA Version	Genomic Version
+14-CJ.OSCHP	Within Bounds	0.240036	Pass	41.565425	Pass	ND	Pass	Pass	0.0694096	No	70	2	female	33	hg19

@@ -60,7 +60,78 @@ Conclusion:
 
 oncoSNP.pdf
 
--> je pensais qu'oncoSNP était dédié spécifiquement à oncoscan / Afymetrix SNP, mais il n'en est rien :/
+-> je pensais qu'oncoSNP était dédié spécifiquement à oncoscan / Affymetrix SNP, mais il n'en est rien :/
 
 
-# <span style="color:#ff9999"> 
+# <span style="color:#ff9999"> CGHcall: calling aberrations for array CGH tumor profiles
+
+CGHcall_article.pdf
+
+## Intro
+ définition de l'array-CGH; définition du calling (transformer les logs ratio en copy number, donc caractériser en gain/loss/amp(/loh)); les algos de segmentation classiques détectent les breakpoints et les levels mais ne font pas directement de calling: c'est problématique quand on a beaucoup de bp et de levels différents. 
+ De nouveaux algos sont basés sur des mesures de confidence (P-val, False Discovery Rate). Comme ils sont basés sur des statistiques, le niveau de CN "normal" a un statut différent des loss et gain, ce qui limite le nombre d'aberrations lors du calling.  Cependant, de l'expérience des auteurs, les biologistes préfèrent les approches plus "state-neutral" pour obtenir la meilleure classification entre 3 ou 4 états. _Utiliser un mixture model permet cela_ !
+ CGHcall combine les points forts des méthodes développées dans le passé:
+ 1. la segmentation de DNAcopy (CBS, donc) est utilisée. C'est l'un des meilleurs algos dans son domaine.
+ 2. les loss, gain et normal states ne peuvent être anticipés donc CGHcall utilise des effets aléatoires (VOIR L'ARTICLE CGHcall_random_effects.pdf)
+ 3. les résultats de segmentation sont combinés avec un Mixture model (VOIR CGHcall_mixturemodel_picard.pdf) afin d'obtenir la classification par segment la plus réaliste possible (plutôt que par individu(?)).
+De plus:
+- six états (double deletion, single deletion, normal, gain, double gain and amplification) au lieu des trois conventionels (loss, normal, gain (and amp)) sont utilisés; ce qui a une plus grande correspondance avec la réalité biologique.
+- Ils utilisent un mixture model combiné aux résultats de segmentation basé sur le travail de  `CGHcall_mixturemodel_picard.pdf`
+
+## Methods
+Je ne comprends pas le lien entre ces phrases:
+```
+Pb récurrent des données array-CGH: Les sondes d'un chromosome sont souvent très corrélées avec leurs voisines.
+CGHcall reconnait que les algos de segmentation sont efficaces pour cette tâche (trouver des breakpoints). 
+Les clones d'un même segment appartiennent tous forcément au même état.
+```
+Passons, voici la suite:
+Ils ont fitté un modèle (de mixture, donc) en utilisant les données LR normalisées. une courbe de gausse représente les données de chaque segment. Les sondes sont classées dans 
+
+## Results
+- "CGHcall outperformed the other methods for this setting (SEE SUPPLEMENTARY INFORMATION)." `<---voir ce que ça veut dire`
+- "Nous illustrons l'utilisation de notre modèle à 6 états à la place du modèle plus courant à 3 états." -> ils ont fait tourner les 2 modèles sur les mêmes données, et le modèle 6-states trouve des résultats corroborés par le travail visuel d'un expert et par une analyse FISH, résultats qui ne sont pas trouvés par le modèle à 3 copies. 
+- ils travaillent sur un mixture model dit (1), et un mixture model dit alternatif. 
+    - les mixture proportions de mm1 sont estimées à partir de toutes les données, ce qui peut entraîner un problème. Lequel? comme des chromosomes(ou bras) peuvent être non altérés de manière récurrente, ils tirent vers le bas la probabilité (calculée sur tous les chromosomes) d'un chromosome altéré d'être caractérisé comme tel. Pour résoudre cela, le modèle alternatif est construit en considérant le bras chromosomique comme niveau de résolution. Pourquoi? Parce que :
+        1. "Cela limite le nombre de paramètres à estimer"
+        2. On ne peut pas considérer les segments comme une entité commune, car leur longueur diffère entre plusieurs échantillons.
+        3. Beaucoup d'événements d'aberration surviennent au niveau des bras.
+    - mm1 fait du calling par segment, et mmalt fait du calling par bras. Au niveau du modèle de mixture, ça veut dire qu'il cherche à classifier les données en bras plutôt qu'en segments.
+
+## discussion
+- Le modèle de mélange hiérarchique permet la variabilité au sein des niveaux de gain ou de perte, ce qui permet de tenir compte des effets (inconnus) qui font que les aberrations se traduisent par des niveaux de log-ratio non constants.
+- CGHcall a une option permettant de corriger les données brutes pour différentes contaminations par des cellules saines
+
+
+
+Supplementary information: `CGHcallSupplement_vdWiel.pdf`
+"Summary Plot is a function which produced overview helps to determine the aberrated chromosomal regions that are recurrent."
+
+Supplementary information's article 7: ``CGHcall__rare_ampliconsxxx.pdf`` 
+
+
+# <span style="color:#ff9999"> A Segmentation-Clustering problem for the ana<span style="color:#ff9900">l<span style="color:#ff9999">ysis of array CGH data
+CGHcall_mixturemodel_picard.pdf      
+
+## Intro
+Les techniques d' array-CGH produisent des résultats pouvant être représentés par une succession de segments. Les techniques de segmentation sont tout naturellement utilisées pour les traiter, mais elles ne permettent pas de donner un statut biologique aux segments détectés. 
+Les auteurs proposent un nouveau model pour répondre à ça, qui combine un modèle de seg avec un mixture model. Ils présentent (aussi!) un algorithme hybride qui permet d'estimer les paramètres par maximum likelihood. Cet algo est basé sur le dynamic programming (voir wkp) et l'algorithme expectation–maximization.
+
+## Discussion
+Cette partie n'est pas claire. voir plutôt les méthodes pour comprendre pk ils utilisent un mm pour faire de la segmentation.
+
+
+
+
+
+
+
+
+
+# <span style="color:#ff9999"> DNAcopy: A Package for Analyzing DNA Copy Data
+DNAcopy_documentation.pdf
+
+Cet outil sert à identifier les régions où un gain / une perte de nombre de copies survient, et met à disposition une fonction pour faire différents plots.
+
+smoothing outliers: si une donnée individuelle est trop éloignée des autres, l'aplatir pour qu'elle rejoigne les autres sondes proches d'elle.
+puis, segmenter et plotter.

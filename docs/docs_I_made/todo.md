@@ -29,9 +29,17 @@
 - ~~si pas de réponse demain midi au sujet du ticket, en refaire un.~~
     je refais un ticket.
 - Lire `LRR_and_BAF.pdf` pour mieux comprendre ces 2 indices.
-- chercher si on peut exporter des cnchp à partir d'oncoscan.
+- ~~chercher si on peut exporter des cnchp à partir d'oncoscan.~~
+    -> non, selon le manuel de ChAS.
 - Chercher aussi la différence entre oncoscan et Affymetrix SNP 6.0 comme elodie l'indique
 - voir si les infos requises par rCGH, qui proviennent d'un CNCHP, peuvent être trouvées dans mes OSCHP à l'aide de HDFView .
 - à https://www.affymetrix.com/support/developer/powertools/changelog/gcos-agcc/index.html, regarder les différents formats de fichier.
-- voir si je peux accéer à la base de données ennov. en ligne
+- ~~voir si je peux accéer à la base de données ennov. en ligne~~
+    -> oui
 - lire l'article qui décrit ASCAT: ASCAT.pdf
+10/03/2022
+- lire les articles des packages. je commence par CGHcall. noter dans fonctionnement_des_outils.md et notes_on_articles.md ce que je trouve.
+- répondre à la question: ça fait quoi quand on lance CGHcall sur plusieurs échantillons en même temps? est-ce que ça change les résultats par rapport à lancer les analyses échantillon par échantillon? Si oui, quels calculs sont faits?
+pour répondre à ça, comprendre le fonctionnement du le sa segmentation couplée au mixture model serait un bon point de départ. je lis donc Picard, voir notes_on_articles.md.
+Réponse à ça: lancer CGHcall sur un groupe d'E ou sur les E un à un change bien les résultats. En effet, les sondes sont classées par segment (ou par bras si le mm alternatif est utilisé), et pour cela, la distribution de *toutes* les sondes est utilisée.
+

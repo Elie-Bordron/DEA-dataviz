@@ -33,7 +33,7 @@ Remise en contexte: qu'est-ce que cette manip cherche à faire?
 15:50
 J'ai suivi la manip avec Laetitia. Il semble qu'on fasse du SNP genotyping, et pas du Loci Capture.
 Cette image illustre la manipulation dans son ensemble:
-![image here](./docs/docs_I_found/oncoscan__MIP_probe.png)
+![image here](C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/docs/figures/oncoscan__MIP_probe.png)
 D'où viennent les échantillons liquides d'ADN?
 Laetitia reçoit des lames colorées Hématoxyline Éosine Safran (HES) + un FFPE: bloc de cellules tumorales extrait chirurgicalement. à l'aide de la lame (issue du bloc), elle sait où récupérer les cellules les plus tumorales du bloc. l'ADN est ensuite extrait de ces cellules sous forme liquide.
 cet ADN est appelé l'ADNg dans le protocole. Après avoir ajouté des sondes MIP, on le chauffe à 95°C pour passer de double à simple brin, puis on descend à 58°C pendant 2h pour laisser les sondes MIP s'associer aux brins d'ADN. Cette association est appelée Annealing. La structure en anneau ainsi formée est centrée sur un nucléotide du brin d'ADN, le seul qui n'est pas couvert par la sonde.
@@ -1008,10 +1008,10 @@ Il s'est bien installé. Je suis ce tutoriel: `https://www.minitool.com/partitio
 edit: il est très recommandé d'installer une VM sur une partition spécialement dédiée, et je ne peux pas créer de partition. J'enverrai donc un ticket. en attendant, j'ai désinstallé QEMU.
 aussi: penser à installer le windows subsystem for Linux, ça peut être très pratique. voir si c'est nécessaire.
 
-arrivée à 10h30 ; pause de 13h à 14h pour manger + trajet à l'inrae. fin à 16h40.
+arrivée à 10h30 ; pause de 13h à 14h pour manger (30 min) + trajet à l'inrae, compté dans les heures de travail. fin à 16h40.
 
 # <span style="color:#999900"> 25/02/2022
-télétravail + arrivée à 15h45
+
 
 rCGH manual (the pdf):
 la CGH sur array est largement utilisée en médecine, notamment pour détecter les altérations moléculaires précises. RCGH est un workflow d'analyses des données générées par cette technologie.
@@ -1072,7 +1072,7 @@ CN_029289	1	761356	2	-0.059604	1.977642	nan	nan
 
 à voir si je peux retrouver les mêmes colonnes dans un de mes fichiers.
 
-17h00; je pars.
+télétravail + arrivée à 15h45 ; pas de pause ; 17h00, je pars.
 
 # <span style="color:#999900"> 28/02/2022
 
@@ -1203,7 +1203,7 @@ Avant ça, je lui réponds pour lui indiquer ce que sont les abréviations:
 LOH et LST sont 2 scores de HRD. Ils caractérisent en effet la déficience de ce pathway.
 LST = Large-scale State Transition. voir LST_popova.pdf
 un LST est un breakpoint (point de séparation entre 2 segments ayant des valeurs de CN différentes) dont les 2 segments font plus de 10 Mb. le score LST est un bon indicateur de l'état du gène BRCA1 (dont l'inactivation est souvent constatée dans le carcinome du sein). BRCA1 participe au pathway de recombination homologue (voir cahier, un procédé de réparation de l'ADN lors d'un double-strand break), et sa mutation accompagne souvent les cancers du sein ou des ovaires. Source: ``Powell, S., Kachnic, L. Roles of BRCA1 and BRCA2 in homologous recombination, DNA replication fidelity and the cellular response to ionizing radiation. Oncogene 22, 5784–5791 (2003). https://doi.org/10.1038/sj.onc.1206678``. Une Homologous Recombination Deficiency (HRD) peut être déterminée par la mutation de BRCA1.
-choses nouvelles sur les LST: on aplatit les segments de moins de 3Mb (voir ![small segments are flattened](./docs/docs_I_found/LST_popova_fig2.png)), et le score LST est le nombre de LST sur tout le génome.
+choses nouvelles sur les LST: on aplatit les segments de moins de 3Mb (voir ![small segments are flattened](C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/docs/figures/LST_popova_fig2.png)), et le score LST est le nombre de LST sur tout le génome.
 LOH = Loss of Heterozygosity. voir LOH_abkevich.pdf
 Ce score correspond au nombre de segments présentant une perte d'hétérozygotie sur plus de 15 Mb. La perte d'hétérozygotie est la disparition d'un allèle sur un des deux chromosomes, supprimant du génome l'une des 2 copies de ce gène. Un lien entre ce score et une déficience du gène BRCA a été mis en évidence par les auteurs de l'article, ce qui indique que ce score est un bon indicateur de HRD.
 TDplus = Tandem Duplication. voir TDplus_popova.pdf
@@ -1292,6 +1292,7 @@ Je regarde les autres packages testés par l'article, voir si ils traitent les d
 
 - CGHcall:
     article: CGHcall_article.pdf
+    description des fonctions du package: CGHcall_functions.pdf
     reference manual: CGHcall_Reference_Manual__usemewiththescript.pdf
     R script à utiliser avec le manuel: CGHcall.R
 
@@ -1310,6 +1311,7 @@ arrivée à 12h00; pas de pause; départ à 17h50
 
 # <span style="color:#999900"> 04/03/2022
 
+
  réunion à 14h30-15h30:
 - ajouter les nouveaux packages au tableau
 - demander si ils veulent d'autres indices que l'index génomique 
@@ -1323,7 +1325,7 @@ prochaine réunion: mardi 12h15-13h15
 
 voir le cahier pour un récap de la réunion.
 Nouveaux objectifs:
-**tester les packages EAcon (en attente de VM), rCGH, CGHcall, oncoSNP sur 3 cas 1 haut un bas un intermédiaire**.
+**tester les packages EAcon (en attente de VM), rCGH, CGHcall, oncoSNP sur 3 cas: 1 haut, un bas, un intermédiaire.**.
 je commence par rCGH pour pouvoir le présenter mardi. je dois lui donner un fichier en input.
 ---> !!!utiliser la version online pour vérifier que mes données marchent bien!!: https://fredcommo.shinyapps.io/aCGH_viewer/
 
@@ -1339,6 +1341,282 @@ on peut certainement utiliser la colonne "Start Marker" en tant qu'id des sondes
 _on **peut** avoir la colonne ``Full Location`` !_
 
 Start Marker concerne le début d'un segment.
-Je peux consulter l'aide de ChAS pour savoir ce que contient chacune de ces colonnes. C'est très instructif etj ep eux sûrement en apprendre plus dans cette aided (500 pages env.)
+Je peux consulter l'aide de ChAS pour savoir ce que contient chacune de ces colonnes. C'est très instructif et je peux sûrement en apprendre plus dans cette aide (500 pages env.)
 
 arrivée à 10h30; 10 min pause, départ à 17:40
+
+
+# <span style="color:#999900"> 07/03/2022
+
+faire un fichier input pour rCGH et le tester sur l'interface en ligne.
+l'input de rCGH est constitué d'un tableau où chaque ligne est une sonde.
+Or, les lignes du fichier segments.txt représentent chacune un segment altéré (LOSS, GAIN...)
+J'ai regardé si je pouvais trouver les intensités par sonde dans le fichier CEL. Pour cela j'ai essayé de parser le header des fichiers CEL à l'aide d'Affyio. les fonctions qui lisent directement le header ne m'apprennent rien de spécial, mais la fonction read.celfile.probeintensity.matrices() permet certainement d'obtenir ce que je veux. Cependant, un des arguments de cette fonction est `cdfInfo a list with items giving PM and MM locations for desired probesets. In same structure as returned by make.cdf.package`. Cependant `This function reads an Affymetrix chip description file (CDF) and creates an R package that when loaded has the CDF environment available for use.` 
+
+donc: demander à Laetitia & co si je peux avoir les fichiers CDF OU un tableau par sonde.
+
+Dans rCGH_manual.pdf, on me dit de lire "Commo F, Guinney J, Ferte C, Bot B, Lefebvre C, Soria JC, and Andre F. rcgh : a comprehensive array-based genomic profile platform for precision medicine. Bioinformatics, 2015.", concernant les inputs en Custom array. Je l'enregistre sous le nom de rCGH_manual.pdf. Dans la section "3 Supported files", on m'envoie vers un lien "Supplementary Data"(un zip), qui contient Supplementary_methods.pdf. je le renomme rCGH_Supplementary_methods.pdf. Il ne m'apprend pas grand-chose de plus , mais détaille le sautres étapes et permet de mieux comprendre comment les choses se passent.
+
+voir https://media.affymetrix.com/support/developer/powertools/changelog/gcos-agcc/cdf.html pour plus d'infos sur les CDF.
+
+Laetitia ne sait pas comment produire un tableau avec une sonde par ligne (il serait sûrement énorme j'imagine) ni comment trouver un fichier CDF. je regarde où trouver le CDF sinon je demande à Tony Sierra.
+
+sur http://www.aroma-project.org/FAQ/, je lis:
+```
+FAQ. 2007-05-24: Where can I download CDF files
+
+A: The CDF file for a given chip type is available in so called "Library Files" at the corresponding "Support Materials" page on the Affymetrix website. You may find links to those Affymetrix pages via the Chip types pages: http://www.aroma-project.org/chipTypes/
+```
+-> je regarde ça sur le lien d'aroma, càd les chip types pages: ils n'indiquent pas oncoscan comme un type de puce... hum. 
+-> je regarde ça sur le site d'affymetrix. je télécharge les library files. ça met longtemps, entretemps j'ai trouvé dans la doc de rCGH ceci: https://rdrr.io/bioc/rCGH/man/readAffyOncoScan.html
+Sur cette page, j'apprends que rCGH peut charger un objet de classe rCGH à l'aide de la fonction readAffyOncoScan(), qui prend en argument un fichier de type ``Affymetrix.tsv``.
+Un des scripts d'Affymetrix Power Tools (apt-copynumber-onco-ssa) permet de produire 2 fichiers 'ProbeSets,CopyNumber.tsv' and 'ProbeSets,AllelicData.tsv' dont la fusion permet de créer un tel fichier.
+J'en ai un exemple: `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_found\oncoscan_affymetrix.tsv`. je l'ai construit à partir de ``C:\Users\e.bordron\Documents\R\R-4.1.2\library\rCGH\extdata\oncoscan.tsv.bz2`` que j'ai dézippé sur https://bz2.unzip.online/.
+un lien sur la page de ce script (https://www.affymetrix.com/support/developer/powertools/changelog/apt-copynumber-onco-ssa.html) indique les références qui ont permi de la construire.
+
+Nous avons donc plusieurs possibilités:
+- générer ce .tsv à l'aide du script APT
+    - utiliser readAffyOncoScan() à l'aide de ce .tsv
+    
+    ou
+    - utiliser readgeneric() avec un fichier input créé à partir de ce .tsv 
+- Si on trouve un .CDF dans les fichiers library, utiliser readGeneric() sur le fichier input créé à partir de la matrice de MM/PM donnée par la fonction read.celfile.probeintensity.matrices(.CDF).
+
+Laquelle est la plus pertinente?
+il semblerait qu'oncoscan n'aie pas de CDF. je regarde après manger. _**cela implique que la meilleure façon de faire est d'utiliser readAffyOncoScan().**_
+J'ai trouvé un article qui indique créer des fichiers CDF pour les technologies Affymetrix. un autre package l'a utilisé. c'est un package R appelé customCDF.
+j'essaie de l'installer (à partir de http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/CDF_download.asp, version 25, R Package CustomCDF, Source) à l'aide de la commande suivante:
+```
+> install.packages("~//Users/e.bordron/Downloads/CustomCDF_1.0.5.tar.gz", repos = NULL, type = "source")
+* installing *source* package 'CustomCDF' ...
+** using staged installation
+** libs
+
+*** arch - i386
+Avis dans system(cmd) : 'make' not found
+ERROR: compilation failed for package 'CustomCDF'
+* removing 'C:/Users/e.bordron/Documents/R/R-4.1.2/library/CustomCDF'
+Warning in install.packages :
+  installation of package ‘C://Users/e.bordron/Downloads/CustomCDF_1.0.5.tar.gz’ had non-zero exit status
+```
+ça ne marche pas, j'essaie avec les binaries:
+```
+> install.packages("~//Users/e.bordron/Downloads/CustomCDF_1.0.5.zip", repos = NULL, type = "win.binary")
+package ‘CustomCDF’ successfully unpacked and MD5 sums checked
+```
+Ce package sert en fait seulement à modifier des CDF, on dirait. j'essaie d'installer non pas "R Package CustomCDF" mais "Modified 'affy' Package" à partir du binary.
+```
+> install.packages("~//Users/e.bordron/Downloads/affy_1.68.0.zip", repos = NULL, type = "win.binary")
+package ‘affy’ successfully unpacked and MD5 sums checked
+```
+je laisse tomber la piste du CDF. je vais essayer d'utiliser APT pour générer le .tsv par sonde. à ce qujet, je vois que gustave roussy (eacon) a développé un package apt.oncoscan.2.4.0 pour "processing using apt-copynumber-onco-ssa". je le teste pour voir l'output. résultat, j'ai le même problème qu'avant. c'est dans scuttle.R:
+```
+apt.oncoscan.process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = "sample5-LD", out.dir = getwd(), force.OS = "windows", apt.build = "na33.r2")
+```
+j'essaie de lancer apt-copynumber-onco-ssa. les documents dont apt a besoin pour cette étape sont dans le tableau 7 dans review_packages.xlsx . Je sais ça grâce à cette page: https://www.affymetrix.com/support/developer/powertools/changelog/VIGNETTE-OncoScan-ssa.html#libraryfiles. Je les ai téléchargés grâce à cette page: https://www.affymetrix.com/support/technical/byproduct.affx?product=oncoscan_assay_kits.
+Je ne peux pas installer APT. j'ai utilisé ce lien: https://www.thermofisher.cn/cn/en/home/life-science/microarray-analysis/microarray-analysis-partners-programs/affymetrix-developers-network/affymetrix-power-tools.html?adobe_mc=MCMID%7C00326299451309961883732216901771516756%7CMCAID%3D3107E39F4245E90B-6000164143BD1666%7CMCORGID%3D5B135A0C5370E6B40A490D44%40AdobeOrg%7CTS=1614293705
+Je télécharge ainsi un installer qui se trouve ici: `C:\Users\e.bordron\Desktop\CGH-scoring\apt_2_11_4_windows_installer-win64\apt_2_11_4_windows_installer-win64`
+ 
+
+j'essaie CGHcall en attendant d'avoir la machine virtuelle qui me permettrait de lancer ça. regarder comment les auteurs de l'article qui a comparé les 6 outils pour les SNP ont utilisé ce package (ils disent à un moment: pour tel pkg, on a calculé tel truc, puis on a fait ça pour qu'il soit comparable aux autres.) 
+
+réunion starleaf pour demain, lien visio: https://meet.starleaf.com/4597475549/app
+
+arrivée à 9h25; 20 min pause; départ à 18:35 
+
+# <span style="color:#999900"> 08/03/2022
+
+les fichiers library d'oncoscan requis pour lancer apt-copynumber-onco-ssa font plus de 50MB. je les retire du dépot git, mais ils restent dans CGH-scoring.
+les auteurs de la comparaison de 6 outils disent avoir créé cghcall*, mais ne le rendent disponible nulle part. Un fichier Tex constitue leur "additional material", par contre.
+CGHcall est concu pour du aCGH. Il utilise les informations de breakpoint (par l'algo CBS, typiquement) et classifie le LRR entre ref et tumeur en 5 états.
+
+résumé de la réunion d'aujourd'hui: mon script pour calculer le GI à partir d'OncoscanR a montré que ça marche bien pour certains cas. je l'applique à tous mes résultats. donc je continue sur le script oncoscanR.R:
+- nombre de chromosomes automatique
+- process all files in one script
+
+je passe tous les echantillons dans ChAS pour obtenir les segments.txt avec la colonne Full Location. ces nouveaux fichiers sont de la forme ?-XX.OSCHP.segments.txt où ?=un nombre et XX=deux lettres. par exemple: 3-ES.OSCHP.segments.txt
+problème: quand je passe les données de 2-AD dans Chas ,je n'obtiens pas du tout ce que laetitia m'avait envoyé. il y a plus de lignes. je vais voir ça avec elle après avoir regardé pour un autre échantillon.
+j'enregistre 11-BG.OSCHP.segments_clean_fl.txt. clean-fl doit être ajouté pour les fichiers que je crée ainsi. je le compare avec l'original dans oncoscanR (je commit maintenant, j'inclus le terme "findme5186841132" dans le message de commit). Je vais voir laetitia pour lui en parler. comme support, je lui envoie un excel: "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\2-AD\generer_des_fichiers_segments.xlsx"
+Pb résolu, j'utilisais un OSCHP "nettoyé". Afin de travailler sur les données brutes, je vais utiliser les CEL que j'ai reçu pour créer les OSCHP bruts à l'aide de ChAS. Pour cela:
+1. ouvrir ChAS
+2. Analysis
+3. Perform Analysis Setup
+4. use a batch file to tell ChAS which CEL files to take and which ouptut name they should use
+5. specify "C:\Users\e.bordron\Desktop\CGH-scoring\interact_with_CHAS" for all paths
+6. click Submit.
+I wasn't able to provide the AT CEL file for sample 1. it was present but ChAS did not offer me the possibility to click it.
+
+ChAS a bien généré les OSCHP, j'ai vérifié, 0 erreurs et 0 warnings. ces fichiers sont dans "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\from_CEL". J'ai généré les fichiers segments.txt à partir des OSCHP, ils sont au même endroit.
+D'autre part, les fichiers segments ont parfois une ou deux lignes seulement. je pense que c'est normal, ça doit être dû au fait qu'ils ne sont pas recentrés, et par conséquent ils ne repèrent que peu d'altérations. le GI sera naturellement moins précis, par rapport aux données recentrées par laetitia.
+Les fonctions sont faites dans oncoscanR.R. j'obtiens ainsi un GI de 80 pour l'echantillon 2 par exemple. c'est élevé, je me demande si je fais bien de compter 14q et 14p comme deux altérations. j'implémente une deuxième méthode de calcul où si les 2 bras d'un chromosome sont altérés, une seule altération est comptée (j'implémente surtout la possibilité de choisir l'une ou l'autre en argument de la fonction principale).
+
+Je vais devoir continuer le script et le faire tourner sur tous les échantillons. aussi faire la même chose sur un autre package et envoyer un mail à jennifer pour la VM.
+
+arrivée à 9h55; 15 min pause;  départ à 18h45
+
+
+# <span style="color:#999900"> 09/03/2022
+
+obj: continuer le script. laetitia m'a envoyé "tableau rendu résultats ONCOSCAN.xlsx". je le mets dans "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs". le remplir avec les résultats d'oncoscanR.
+le script produit les computations d'oncoscanR automatiquement pour tous les échantillons. output: une liste de longueur n où chaque élément est un output d'oncoscanR (une liste R). la prochaine étape est de traiter ces résultats en routine avec la fonction calcGI.
+calcGI fonctionne et la liste de résultats aussi. prochain obj: traiter en routine tous les résultats, créer ainsi une colonne "GI_oncoscanR" dans un dataframe qui contient déjà une colonne "sample_id" et l'exporter en fichier texte.
+
+pour split un string en utilisant '.' comme séparateur , ne pas oublier d'échapper le point avec deux antislash, car le point seul est un regex qui dit "n'importe quel caractère".
+exemple d'application: str_split(filename, '\\.'). voir oncoscanR.R .
+
+oncoscanR.R est clean, a un main et tout ce qu'il faut.
+
+arrivée à 9h50; 20 min pause; départ à 18h10
+
+
+
+# <span style="color:#999900"> 10/03/2022
+laetitia m'a fait un retour sur les GI calculés par oncoscanR: retour_de_laetitia__calcul_GI_oncoscanR.xlsx
+j'ai relancé jennifer pour la VM.
+
+
+fatal: the remote end hung up unexpectedly
+github a de nouveau un pb. de PATH. je me rends compte que depuis le début, j'ajoutais git au path des variables user, pas le path système. je ne peux pas modifier ce dernier à la main. j'ai réinstallé git et coché l'option qui dit "git sera ajouté au PATH, mais les fonctions find et truc natives de windows seront override par celles de git. ne choisissez cette option que si vous comprenez les implications". git est installé dans `C:\Users\e.bordron\Documents\Git_custom_install` et il fonctionne avec la console cmd.
+
+je continue les recherches sur CGHCall. dans le script démo, un dataset "wilting" est utilisé. il vient de l'article `Increased gene copy numbers at chromosome 20q are frequent in both squamous cell carcinomas and adenocarcinomas of the cervix (CGHcall_wilting_dataset.pdf)`. je regarde à quoi correspondent les colonnes dans R. Dur à dire, j'ai l'impression que les colones SSC sont des échantillons... je lis l'article de CGHcall. je l'ai en pdf.
+
+
+
+
+voir todo.md
+
+voir la feuille sur mon bureau pour compléter les infos sur CGHcall.
+arrivée à 10:05; pas de pause; départ 17h55.
+
+
+
+
+# <span style="color:#999900"> 11/03/2022
+
+
+
+je remplis les infos sur CGHcall à l'aide de ma prise de notes papier.
+
+En ce qui concerne le dataset, la forme est la suivante:
+```
+    BAC.clone CHROMOSOME START_POS END_POS     AdCA10     SCC27      SCC32     SCC36     SCC39
+1   CTB-14E10          1    941583 1144379         NA        NA         NA        NA        NA
+2 RP11-465B22          1    986153 1117131 -0.1714960 0.5638540 -0.3082376 0.1353897 0.2322698
+3  RP4-785P20          1   3214521 3355092 -0.1227932 0.7255571 -0.3397409 0.1236178 0.2652958
+4   RP1-37J18          1   4476787 4608114  0.3007097 0.6012696 -0.2582796 0.1978820 0.2252346
+5   RP11-49J3          1   5866139 5966440         NA        NA         NA        NA        NA
+6   RP3-438L4          1   7059893 7146992  0.3032238 0.5992452 -0.2121089 0.2361994 0.3708779
+```
+BAC.clone correspond à une sonde, CHROMOSOME est explicite, START_POS et END_pos définissent les coordonnées de la sonde
+
+
+Important: on peut exporter un fichier probeset.txt, donc où une ligne correspond à une sonde, à l'aide de ChAS. Pour cela, suivre la procédure du manuel d'aide de ChAS (disponible à `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_found\ChASRUOHelp.pdf`) page 91, mais au lieu de cliquer sur "Export QC table" à l'étape 4, cliquer sur "generate report" puis sur "export probe level data".
+
+
+arrivée à 9h45; départ à 17:40 ; pas de pause.
+
+
+# <span style="color:#999900"> Lundi 14/03/2022
+
+
+Elodie a envoyé ça sur Slack: 
+
+L'objectif: développer une expertise en bioinformatique et acquérir les bonnes pratiques
+- Comprendre la question biologique
+- Faire un état de l'art
+    - sur la question biologique (bibliographique accompagné de discussions avec les biologistes si possible)
+    - Sur les méthodes publiées qui ont concerné des questions similaires (bibliographique, c'est vous les experts)
+        - Y en a-t-il des intéressantes ? Oui: Pourquoi ? Non: Pourquoi, que puis-je proposer ?
+- Comprendre les données
+    - Quelle technologie utilisée pour les produire?
+    - Quels sont les grandes étapes des expériences ?
+    - Quels biais inhérents à la technologie/expérience ?
+    - Quel design expérimental ?
+    - Que représentent les données
+        - Quel type de mesures ? Continues/discrètes/catégorielles
+        - Quels sont les paramètres à prendre en compte ?
+        - Quelle(s) normalisation(s) appliquer ?
+        - Comment les biais expérimentaux se reflètent dans les données ?
+- Dans le cadre de comparaison de méthodes pour un type de données
+    - Comprendre les méthodes
+        - Dans quel cadre la méthode a été développée, comment se compare-t-elle aux méthodes alternatives ?
+        - Comment sont processées les données ? (eg normalisation, transformation)
+        - Comment sont représentés les résultats ?
+    - Quelles méthodes semblent les plus appropriées pour répondre à la question
+        - Facilité de mise en oeuvre
+        - Output adéquat
+        - Spécificité en terme d'approche (processing, normalisation et transformation)
+        - Spécificité en terme d'extraction de résultats (quelles métriques, quels graphiques etc)
+- Dans le cadre d'utilisation de données publiques
+    - Les données sont brutes : appliquer les questions du paragraphe précédent
+    - Les données sont traitées :
+        - Quels traitements ont été appliqués ?
+        - Quels outils ?
+        - Pour répondre à quelle question ?
+        - Est ce que ça correspond à la question à la quelle on veut répondre ?
+        - Y a-t-il d'autres traitements à faire ?
+- Bien identifier le but de chaque analyse / chaque ligne de code
+- Penser au rendu des résultats
+    - Quelle illustration est la plus adaptée pour faire passer mon message (tableau, plot en tout genre) ?
+    - De quoi à besoin le lecteur pour comprendre ce que j'ai fait ?
+
+Garder ça en tête; essayer de répondre à tout.
+
+Finir de noter les infos sur CGHcall; noter les nouveautés de ce package sur le tableau comparatif
+
+Je me renseigne également sur le package DNAcopy. les documents sont téléchargés.
+un package Bioconductor appelé snapCGH utilise un modele de Markov pour la segmentation. à voir si c'est intéressant.
+
+utilisation de log_book.md: n'y mettre que des questions. pour répondre aux questions, ne mettre que des références vers les autres fichiers texte.
+
+pour modifier le syntax highlighting:
+"From the official Doc: To tune the editor's syntax highlighting colors, use editor.tokenColorCustomizations in your user settings settings.json file"
+ex: 
+```
+"editor.tokenColorCustomizations": {"textMateRules": [{
+        "scope": "keyword.control.ref.latex",
+        "settings": {
+            "foreground": "#FF0000"
+        }
+    }]}
+```
+Et pour trouver les scopes, faire ``ctrl+maj+P`` puis ``Developer: Inspect Editor Tokens and Scopes ``. Attention, il n'y a pas de retour à la ligne dans le nom des scopes, parfois il y a juste plusieurs scopes pour un même élément.
+
+J'ai ajouté DNAcopy dans notes_on_articles.
+
+
+arrivée à 9h20; départ à 19h00; 40 min pause
+
+# <span style="color:#999900"> Mardi 15/03/2022
+Aujourd'hui, réunion à 12h15 ici: https://meet.starleaf.com/4828136196/app
+
+faire des plots avec CGHcall pour la réunion, expliquer l'intérêt de la segmentation, faire tourner peut-être? non pas besoin, on a le sample data de CGHcall. 
+Parler aussi du fait que oncoscanR donne de mauvais résultats sans recentrage/normalisation, je dois regarder si c'est possible de lui en faire faire une. essayer de faire ça avant la réunion.
+mettre à jour le tableau comparatif.
+Plein d'infos ajoutées dans le compte-rendu de réunion + le cahier.
+je teste VMware. je crée une nouvelle VM, je sélectionne linux.iso, Ubuntu, je l'appelle Ubuntu_bergo, elle se trouve à `C:\Users\e.bordron\Documents\Virtual Machines\Ubuntu_bergo`.
+ça n'a pas marché, il fallait donner un .iso. j'ai dl l'iso ubuntu, je l'ai utilisé, elle a détecté que c'était Ubuntu. Elle fait donc une Easy install:
+Full name: elie bordron
+User name: ebor
+mdp: 7Cha
+
+J'appelle la machine `Ubuntu_64-bit_bergo`. elle est dans `C:\Users\e.bordron\Documents\Virtual Machines\Ubuntu_64-bit_bergo`.
+Je lui donne 21GB d'espace libre. je coche "split virtual disk into multiple files"
+
+J'ai installé R sur la VM ubuntu. J'ai aussi fait un script R pour afficher les courbes normales relatives aux segments called en -1, 0 et 1, afin de les superposer à la courbe générale. cela permet de mieux comprendre le fonctionnement du miscture model pour le présenter en slides. le script est CGHcall.R, à compléter et surtout à *valider*
+
+$all markdown rules$
+
+
+arrivée à 10h05;  départ à 19H45 ; 30 minutes de pause
+
+
+# <span style="color:#999900"> Mercredi 16/03/2022
+arrivée à 10h00
+
+continuer le script: valider ce qu'il fait.  
+
+
+
+# <span style="color:#999900"> Jeudi 17/03/2022
+Jeudi 10h: visio avec Slim Karkar
