@@ -1,0 +1,22 @@
+ATCHANNELCEL	GCCHANNELCEL	RESULT
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\10-CB_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\10-CB_GC_(OncoScan_CNV).CEL	10-CB
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\11-BG_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\11-BG_GC_(OncoScan_CNV).CEL	11-BG
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\12-BC_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\12-BC_GC_(OncoScan_CNV).CEL	12-BC
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\13-VT_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\13-VT_GC_(OncoScan_CNV).CEL	13-VT
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\14-CJ_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\14-CJ_GC_(OncoScan_CNV).CEL	14-CJ
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\15-GG_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\15-GG_GC_(OncoScan_CNV).CEL	15-GG
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\16-DD_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\16-DD_GC_(OncoScan_CNV).CEL	16-DD
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\17-VV_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\17-VV_GC_(OncoScan_CNV).CEL	17-VV
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\18-JA_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\18-JA_GC_(OncoScan_CNV).CEL	18-JA
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\19-BF_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\19-BF_GC_(OncoScan_CNV).CEL	19-BF
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\2-AD_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\2-AD_GC_(OncoScan_CNV).CEL	2-AD
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\20-CJ_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\20-CJ_GC_(OncoScan_CNV).CEL	20-CJ
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\21-DC_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\21-DC_GC_(OncoScan_CNV).CEL	21-DC
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\3-ES_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\3-ES_GC_(OncoScan_CNV).CEL	3-ES
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\4-GM_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\4-GM_GC_(OncoScan_CNV).CEL	4-GM
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\5-LD_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\5-LD_GC_(OncoScan_CNV).CEL	5-LD
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\6-VJ_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\6-VJ_GC_(OncoScan_CNV).CEL	6-VJ
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\7-DG_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\7-DG_GC_(OncoScan_CNV).CEL	7-DG
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\8-MM_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\8-MM_GC_(OncoScan_CNV).CEL	8-MM
+C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\9-LA_AT_(OncoScan_CNV).CEL	C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\9-LA_GC_(OncoScan_CNV).CEL	9-LA
+

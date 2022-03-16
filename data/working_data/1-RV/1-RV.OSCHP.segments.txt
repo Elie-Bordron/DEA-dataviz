@@ -1,2 +1,0 @@
-Erreur fatale : impossible d'ouvrir le fichier 'C:\Users\e.bordron\Documents\R\R-4.1.2\library\oncoscanR\bin\oncoscan-workflow.R' : No such file or directory
-
