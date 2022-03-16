@@ -114,7 +114,7 @@ Supplementary information's article 7: ``CGHcall__rare_ampliconsxxx.pdf``
 CGHcall_mixturemodel_picard.pdf      
 
 ## Intro
-Les techniques d' array-CGH produisent des résultats pouvant être représentés par une succession de segments. Les techniques de segmentation sont tout naturellement utilisées pour les traiter, mais elles ne permettent pas de donner un statut biologique aux segments détectés. 
+Les techniques d' array-CGH produisent des résultats pouvant être représentés par une succession de segments. Les techniques de segmentation sont tout naturellement utilisées pour les traiter, mais elles ne permettent pas de donner un statut biologique aux segments détectés.  
 Les auteurs proposent un nouveau model pour répondre à ça, qui combine un modèle de seg avec un mixture model. Ils présentent (aussi!) un algorithme hybride qui permet d'estimer les paramètres par maximum likelihood. Cet algo est basé sur le dynamic programming (voir wkp) et l'algorithme expectation–maximization.
 
 ## Discussion

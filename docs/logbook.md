@@ -1603,7 +1603,7 @@ mdp: 7Cha
 J'appelle la machine `Ubuntu_64-bit_bergo`. elle est dans `C:\Users\e.bordron\Documents\Virtual Machines\Ubuntu_64-bit_bergo`.
 Je lui donne 21GB d'espace libre. je coche "split virtual disk into multiple files"
 
-J'ai installé R sur la VM ubuntu. J'ai aussi fait un script R pour afficher les courbes normales relatives aux segments called en -1, 0 et 1, afin de les superposer à la courbe générale. cela permet de mieux comprendre le fonctionnement du miscture model pour le présenter en slides. le script est CGHcall.R, à compléter et surtout à *valider*
+J'ai installé R sur la VM ubuntu. J'ai aussi fait un script R pour afficher les courbes normales relatives aux segments called en -1, 0 et 1, afin de les superposer à la courbe générale. cela permet de mieux comprendre le fonctionnement du mixture model pour le présenter en slides. le script est CGHcall.R, à compléter et surtout à *valider*
 
 $all markdown rules$
 
@@ -1612,11 +1612,23 @@ arrivée à 10h05;  départ à 19H45 ; 30 minutes de pause
 
 
 # <span style="color:#999900"> Mercredi 16/03/2022
-arrivée à 10h00
+arrivée à 10h00; 30 min pause; 
 
-continuer le script: valider ce qu'il fait.  
+continuer le script: valider ce qu'il fait.
+Fait. le script fonctionne et génère 2 plots intéressants
+
+avant de partir:
+- ~~avoir un script lisible et facile à retrouver ce qu'il fait.~~
+- noter ce que j'ai compris sur CGHcall: comment fonctionnent les mixture models, et le fait que pour CGHcall, les points utilisés sont les segments générés par l'étape de segmentation.
+- ~~envoyer les 2 plots à élodie/les stocker qqpart.~~
+- parler à élodie aussi du fonctionnement du package, avec segmentation couplée au MM? Pas besoin, je le ferai en lui montrant les slides.
+- faire une slide basique par étape? et continuer le ppt demain
+
 
 
 
 # <span style="color:#999900"> Jeudi 17/03/2022
 Jeudi 10h: visio avec Slim Karkar
+
+
+C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir

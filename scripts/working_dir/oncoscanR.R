@@ -24,13 +24,10 @@ gendersTable = read.table("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_
 
 ######## functions for iterating over files
 
-computeOneFileWithOncoscanR = function(curr_file,dataDir,gendersTable) {
-    fileFullPath = file.path(dataDir, curr_file)
-    print(c("fileFullPath: ", fileFullPath))
-    gender_row = gendersTable %>% dplyr::filter(stringr::str_detect(curr_file, sample))
-    curr_gender = gender_row$gender
-    print(c("curr_gender: ", curr_gender))
-    curr_res = oncoscanR::workflow_oncoscan.run(fileFullPath, curr_gender)
+computeOneFileWithOncoscanR = function(filepath,gender) {
+    print(c("filepath: ", filepath))
+    print(c("gender: ", gender))
+    curr_res = oncoscanR::workflow_oncoscan.run(filepath, gender)
     return(curr_res)
 }
 
@@ -42,12 +39,17 @@ computeAllFilesWithOncoscanR = function(dataDir, gendersTable) {
         curr_file = files[i]
         isSegmentsFile = grepl("segments.txt", curr_file)
         if(isSegmentsFile) {
-            curr_res = computeOneFileWithOncoscanR(curr_file,dataDir,gendersTable)
+            filepath = file.path(dataDir, curr_file)
+            gender_row = gendersTable %>% dplyr::filter(stringr::str_detect(curr_file, sample))
+            curr_gender = gender_row$gender
+            curr_res = computeOneFileWithOncoscanR(filepath,curr_gender)
             resList = append(resList, list(curr_res)) # caution: using `append(resList, curr_res)` would concatenate instead of append
         }
     }
     return(resList)
 }
+
+
 
 
 
@@ -151,4 +153,5 @@ main = function(dataDir, gendersTable) {
 
 
 val = main(dataDir, gendersTable)
-plot()
+plot(val)
+
