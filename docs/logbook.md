@@ -1628,7 +1628,7 @@ avant de partir:
 arrivée à 10h00; départ à 18:15; 30 min pause
 
 # <span style="color:#999900"> Jeudi 17/03/2022
-arrivée à 9h35; 25 min pause; 
+arrivée à 9h35; départ à 18:20; 25 min pause;
 Jeudi 10h: visio avec Slim Karkar
 
 puis-je faire un jour de télétravail? 
@@ -1645,4 +1645,17 @@ J'installe aussi EaCoN sur la vm ubuntu:
 
 `devtools::install_github("Crick-CancerGenomics/ascat/ASCAT")`
 `devtools::install_github("mskcc/facets")`
+
+l'installation n'a pas marché pour FACETS; j'utilisais la version 3.6.3 de R. J'ai installé la version 4.1.3 de R à l'aide de cette page web: `https://askubuntu.com/questions/1341755/installing-r-4-0-2-on-ubuntu-20-04` qui cite cette dernière: `https://cran.rstudio.com/bin/linux/ubuntu/`
+
+j'installe les paquets nécessaires. en installant devtools, j'obtiens cette erreur:
+> install.packages("devtools", dependencies = TRUE)
+```
+Error: package ‘usethis’ was installed before R 4.0.0: please re-install it
+Execution halted
+```
+Bien que l'argument dependencies est censé installer les dépendances d'un package, il est coincé lorsqu'une dépendance est installée dans une mauvaise version. j'ai trouvé cette page web: `https://stackoverflow.com/questions/58892908/when-installing-an-r-package-automatically-reinstall-dependencies-when-needed` Qui indique que pak::pkg_install() serait une bonne alternative. ça a effectivement marché après avoir dû installer manuellement 2-3 packages.
+
+
+voir https://stackoverflow.com/questions/71404215/error-in-install-github-system-command-rcmd-exe-failed-exit-status-1-stdou ; une partie de l'installation ne se fait pas. demander à jennifer si elle arrive à télécharger ça sur son PC bergonié.
 
