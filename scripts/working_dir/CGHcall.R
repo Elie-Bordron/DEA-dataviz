@@ -20,7 +20,34 @@ Wilting <- make_cghRaw(Wilting_raw)
 ### code chunk number 2: CGHcall.Rnw:65-66
 ###################################################
 cghdata <- preprocess(Wilting, maxmiss=30, nchrom=22)
+## plot to compare copynumber before/after maxmiss is applied
+testMaxmissDf <- preprocess(Wilting, maxmiss=30)
+CNBeforeMaxmiss = copynumber(Wilting)
+CNAfterMaxmiss = copynumber(testMaxmissDf)
+s1CNBeforeMaxmiss = CNBeforeMaxmiss[,1]
+s1CNAfterMaxmiss = CNAfterMaxmiss[,1]
+lostVals_logicalVec = !(names(s1CNBeforeMaxmiss)%in%names(s1CNAfterMaxmiss))
+s1CNBeforeMaxmiss = as.data.frame(cbind(s1CNBeforeMaxmiss, lostVals_logicalVec))
+colnames(s1CNBeforeMaxmiss) = c("s1CNBeforeMaxmiss", "valsLost")
+s1LostVals = dplyr::filter(s1CNBeforeMaxmiss, valsLost==T)
+s1LostVals[2] = rep("lostval", length(s1LostVals[1]))
+colnames(s1LostVals) = c("value", "valType")
+s1CNBeforeMaxmiss[2] = rep("normal", length(s1CNBeforeMaxmiss[1]))
+colnames(s1CNBeforeMaxmiss) = c("value", "valType")
+# readyToPlot = rbind(s1CNBeforeMaxmiss, s1LostVals)
+s1CNBeforeMaxmiss = cbind(s1CNBeforeMaxmiss, lostVals_logicalVec)
+readyToPlot = s1CNBeforeMaxmiss %>% mutate(valType = replace(valType, lostVals_logicalVec==T, "lostVal"))
+rownames(readyToPlot)
+# Color selection
+colors <- c("#FDAE61", # Orange
+            # "#D9EF8B", # Light green
+            "#66BD63") # Darker green
+plot(1:length(readyToPlot$value), readyToPlot$value, pch=19, col=colors[factor(readyToPlot$valType)])
 
+
+
+plot(s1CNBeforeMaxmiss[,1])
+plot(s1CNAfterMaxmiss)
 
 ###################################################
 ### code chunk number 3: CGHcall.Rnw:75-77
@@ -32,7 +59,7 @@ norm.cghdata <- normalize(cghdata, method="median", smoothOutliers=TRUE)
 ###################################################
 ### code chunk number 4: CGHcall.Rnw:89-92
 ###################################################
-# norm.cghdata <- norm.cghdata[,2:3] # To save time we will limit our analysis to the first two samples from here on.
+norm.cghdata <- norm.cghdata[,1:4] # To save time we will limit our analysis to the first two samples from here on.
 seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy", undo.splits="sdundo",undo.SD=3, clen=10, relSDlong=5)
 
 
@@ -46,16 +73,28 @@ postseg.cghdata <- postsegnormalize(seg.cghdata)
 ###################################################
 ### code chunk number 6: CGHcall.Rnw:106-108
 ###################################################
-tumor.prop <- c(0.75, 0.9) # one value per sample. proportion of contamination by healthy cells
-result <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor.prop)
-
+# tumor.prop <- c(0.75, 0.9) # one value per sample. proportion of contamination by healthy cells
+tumor.prop <- c(0.75, 0.9, 0.6, 0.85) # one value per sample. proportion of contamination by healthy cells
+rawResult <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor.prop)
+posteriorfin2 = rawResult[1]
+nclone = rawResult[2]
+nsamples = rawResult[3]
+nclass = rawResult[4]
+regionsprof = rawResult[5]
+df_regions = as.data.frame(regionsprof[[1]])
+nb_segs = dim(df_regions)[1]
+plot(1:nb_segs, df_regions$wm)
+params = rawResult$params
+cellularity = rawResult$cellularity
 
 ###################################################
 ### code chunk number 7: CGHcall.Rnw:113-114
 ###################################################
-result <- ExpandCGHcall(result,postseg.cghdata)
-
-
+result <- ExpandCGHcall(rawResult,postseg.cghdata)
+segs = as.data.frame(segmented(result))
+head(segs)
+segsAsVec = c(t(segs))
+summaryAnyVec(segsAsVec)
 ###################################################
 ### code chunk number 8: CGHcall.Rnw:122-123
 ###################################################
@@ -80,7 +119,7 @@ summaryPlot(result)
 frequencyPlotCalls(result)
 
 
-## plots en vrac pour explorer les r�sultats
+## plots en vrac pour explorer les resultats
 if(FALSE) {
 df_logCN = copynumber(result)
 segs = segmented(result)
@@ -226,4 +265,8 @@ threeGroups = rbind(m1, p1, zer)
 plot(threeGroups$vals1, threeGroups$vals2, 
      pch = 19,
      col = factor(threeGroups$class))
+
+
+
+
 

@@ -36,27 +36,29 @@ Différents plots peuvent également être produits:
 
 ## Pipeline
 ``Wilting <- make_cghRaw(Wilting)``
-Convertit un dataframe/fichier texte en objet cghRaw.
+Convertit un dataframe/fichier texte en objet cghRaw.  
+*En faire une slide? non.*
 
 ``cghdata <- preprocess(Wilting, maxmiss=30, nchrom=22)``
-Applique différents procédés de préprocess nécessaires pour la suite. maxmiss supprime les lignes ayant des NA dans 30% de leurs échantillons. nchrom indique les chromosomes à garder, les autres sont supprimés.
+Applique différents procédés de préprocess nécessaires pour la suite. maxmiss supprime les lignes ayant des NA dans 30% de leurs échantillons. nchrom indique les chromosomes à garder, les autres sont supprimés.  
+*En faire une slide? oui. illustrer le maxmiss: plot avant/après. pareil pour les chromosomes? à voir.*
 
 ``norm.cghdata <- normalize(cghdata, method="median", smoothOutliers=TRUE)``
-Normalisation très basique selon la médiane ou le mode; smoothing des outliers ; possible correction si la proportion de cellules tumorales n'est pas 100%.
+Normalisation très basique selon la médiane ou le mode; smoothing des outliers ; possible correction si la proportion de cellules tumorales n'est pas 100% (cela se fait au niveau de la fonction CGHcall()).  
+*En faire une slide? oui. plot avant/après, encore et toujours*
 
-
-`norm.cghdata <- norm.cghdata[,1:2] # To save time we will limit our analysis to the first two samples from here on.`
-``seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy",undo.splits="sdundo",undo.SD=3, clen=10, relSDlong=5)``
-
-Apply DNAcopy algorithm that performs segmentation. Cette fonction est un wrapper autour de DNAcopy et permet de défaire les "splits" différemment selon si le segment est long ou court, en tre autres. voir cahier pour plus de précisions.
+``seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy",undo.splits="sdundo",undo.SD=3, clen=10, relSDlong=5)``  
+Apply DNAcopy algorithm that performs segmentation. Cette fonction est un wrapper autour de DNAcopy et permet de défaire les "splits" différemment selon si le segment est long ou court, entre autres. voir cahier pour plus de précisions.  
+*En faire une slide? oui. expliquer le principe décrit dans cahier; plot avant/après*
 
 `postseg.cghdata <- postsegnormalize(seg.cghdata)`
 faire une normalisation après la segmentation permet de mieux définir le zéro.
-
+*En faire une slide? oui. --> dans le script, produire le plot illustrant la distribution des segments avant et après la postsegnormalisation pour comparer et montrer l'effet de cette étape.*
 
 ``tumor.prop <- c(0.75, 0.9) # one value per sample. proportion of contamination by healthy cells``
 ``result <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor.prop)``
 L'étape de calling. Le mixture model est créé et utilisé ici. On indique la cellularité dans le vecteur tumor.prop pour qu'elle soit prise en compte (car oui, ça se fait dans cete étape). Le nombre de classes qu'on veut en sortie doit également être précisé.
+*En faire une slide? plot segments non callés -> segments callés. plot cellularité indiquée/non indiquée?*
 
 `result <- ExpandCGHcall(result,postseg.cghdata)`
 Pour convertir le résultat en un objet CGHcall. pour voir l'output, lancer le script CGHcall.R: on récupère des tableaux de la forme suivante:
@@ -70,6 +72,7 @@ probe5      1       1
 probe6      1       1
 ```
 Ici, la variable est le nombre de copies qui a été called. On a 2 échantillons parce qu'on peut lancer CGHcall sur plusieurs échantillons. On peut récupérer de la même façon le CN brut, ou un tableau de segmentation.
+
 
 ## après la réunion
 puis-je voir la distribution gaussienne de toutes les données? oui, voir logratios_for_hist dans CGHcall.R . ça plot une unique courbe de gauss; peut-être qu'avec de vraies données ce serait plus parlant.

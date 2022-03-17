@@ -1612,7 +1612,6 @@ arrivée à 10h05;  départ à 19H45 ; 30 minutes de pause
 
 
 # <span style="color:#999900"> Mercredi 16/03/2022
-arrivée à 10h00; 30 min pause; 
 
 continuer le script: valider ce qu'il fait.
 Fait. le script fonctionne et génère 2 plots intéressants
@@ -1626,9 +1625,24 @@ avant de partir:
 
 
 
+arrivée à 10h00; départ à 18:15; 30 min pause
 
 # <span style="color:#999900"> Jeudi 17/03/2022
+arrivée à 9h35; 25 min pause; 
 Jeudi 10h: visio avec Slim Karkar
 
+puis-je faire un jour de télétravail? 
+1. ~~lire ma convention~~
+2. ~~demander à caroline en précisant la date.~~
 
-C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir
+fonctionnement_des_articles.md dcrit le pipeline de CGHcall. je me sers du pipeline pour faire 1 slide par étape importante. Faire ceci pour les 4 outils.
+
+J'installe aussi EaCoN sur la vm ubuntu:
+
+# INSTALLATION  
+## CORE  
+`install.packages('devtools')`
+
+`devtools::install_github("Crick-CancerGenomics/ascat/ASCAT")`
+`devtools::install_github("mskcc/facets")`
+
