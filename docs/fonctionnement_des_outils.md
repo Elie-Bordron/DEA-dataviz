@@ -45,7 +45,7 @@ Applique différents procédés de préprocess nécessaires pour la suite. maxmi
 
 ``norm.cghdata <- normalize(cghdata, method="median", smoothOutliers=TRUE)``
 Normalisation très basique selon la médiane ou le mode; smoothing des outliers ; possible correction si la proportion de cellules tumorales n'est pas 100% (cela se fait au niveau de la fonction CGHcall()).  
-*En faire une slide? oui. plot avant/après, encore et toujours*
+*En faire une slide? oui. plot avant/après pour la normalisation, et un autre pour mettre en évidence les outliers smoothés->?*
 
 ``seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy",undo.splits="sdundo",undo.SD=3, clen=10, relSDlong=5)``  
 Apply DNAcopy algorithm that performs segmentation. Cette fonction est un wrapper autour de DNAcopy et permet de défaire les "splits" différemment selon si le segment est long ou court, entre autres. voir cahier pour plus de précisions.  
@@ -76,3 +76,41 @@ Ici, la variable est le nombre de copies qui a été called. On a 2 échantillon
 
 ## après la réunion
 puis-je voir la distribution gaussienne de toutes les données? oui, voir logratios_for_hist dans CGHcall.R . ça plot une unique courbe de gauss; peut-être qu'avec de vraies données ce serait plus parlant.
+
+
+
+
+# EaCoN
+
+# input
+Raw cel files
+# output
+- tables and plots
+- portable and interactive HTML report
+- Total Copy Number (TCN) and Allele-Specific Copy Number (ASCN)
+- estimation of ploidy and cellularity (using ASCAT, ...)
+
+
+# pipeline
+- Raw data processing  
+`OS.Process(ATChannelCel = "/home/project/CEL/S1_OncoScan_CNV_A.CEL", GCChannelCel = "/home/project/CEL/S1_OncoScan_CNV_C.CEL", samplename = "S1_OS")`  
+Etape de normalisation. Output: normalized data(filename.RDS), plots, metrics.
+
+- L2R & BAF Segmentation  
+    `Segment.ff(RDS.file = "/home/me/my_project/EaCoN_results/SAMPLE1/S1_OncoScan_CNV_hg19_processed.RDS", segmenter = "ASCAT")`  
+    Cette fonction effectue:
+    - la segmentation (L2R and BAF bivariate segmentation-> ASCAT, ...)
+    - la centralisation
+    - le calling
+    output: segmented data(filename.RDS), résultats de segmentation L2R *en format CBS*, plots, métriques.
+
+
+- Copy-number estimation  
+    `ASCN.ff(RDS.file = "/home/me/my_project/EaCoN_results/SAMPLE1/ASCAT/L2R/SAMPLE1.ASCAT.RDS")`
+    - TCN, ASCN  
+    - global ploidy
+    - cellularity
+
+- HTML reporting  
+    `Annotate.ff(RDS.file = "/home/project/EaCoN_results/S1/ASCAT/L2R/S1.EaCoN.ASPCF.RDS", author.name = "Me!")`
+

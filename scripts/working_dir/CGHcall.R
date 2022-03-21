@@ -52,8 +52,17 @@ plot(s1CNAfterMaxmiss)
 ###################################################
 ### code chunk number 3: CGHcall.Rnw:75-77
 ###################################################
-
 norm.cghdata <- normalize(cghdata, method="median", smoothOutliers=TRUE)
+## Let's do a plot before and after this normalization.
+## First, get log ratio of copy number of both states
+lrBeforeNorm = copynumber(cghdata)
+lrAfterNorm = copynumber(norm.cghdata)
+## then plot it for the first sample
+s1Before = lrBeforeNorm[,1]
+s1After = lrAfterNorm[,1]
+plot(1:length(s1Before), s1Before, ylim=c(-1, 1.1))
+plot(1:length(s1After), s1After, ylim=c(-1, 1.1))
+
 
 
 ###################################################

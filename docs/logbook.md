@@ -1600,7 +1600,7 @@ Full name: elie bordron
 User name: ebor
 mdp: 7Cha
 
-J'appelle la machine `Ubuntu_64-bit_bergo`. elle est dans `C:\Users\e.bordron\Documents\Virtual Machines\Ubuntu_64-bit_bergo`.
+J'appelle la machine `Ubuntu_64-bit_bergo_v2`. elle est dans `C:\Users\e.bordron\Documents\Virtual Machines\Ubuntu_64-bit_bergo_v2`.
 Je lui donne 21GB d'espace libre. je coche "split virtual disk into multiple files"
 
 J'ai installé R sur la VM ubuntu. J'ai aussi fait un script R pour afficher les courbes normales relatives aux segments called en -1, 0 et 1, afin de les superposer à la courbe générale. cela permet de mieux comprendre le fonctionnement du mixture model pour le présenter en slides. le script est CGHcall.R, à compléter et surtout à *valider*
@@ -1628,7 +1628,6 @@ avant de partir:
 arrivée à 10h00; départ à 18:15; 30 min pause
 
 # <span style="color:#999900"> Jeudi 17/03/2022
-arrivée à 9h35; départ à 18:20; 25 min pause;
 Jeudi 10h: visio avec Slim Karkar
 
 puis-je faire un jour de télétravail? 
@@ -1659,3 +1658,354 @@ Bien que l'argument dependencies est censé installer les dépendances d'un pack
 
 voir https://stackoverflow.com/questions/71404215/error-in-install-github-system-command-rcmd-exe-failed-exit-status-1-stdou ; une partie de l'installation ne se fait pas. demander à jennifer si elle arrive à télécharger ça sur son PC bergonié.
 
+arrivée à 9h35; départ à 18:20; 25 min pause;
+
+# <span style="color:#999900"> Vendredi 18/03/2022
+Ceux qui ont résolu le problème que j'ai pour devtools l'ont fait en réinstallant l'OS. je recrée la machine virtuelle de a à z.
+Fait. j'ai aussi changé le clavier (raccourci pour passer d'un keyboard layout à un autre: super + espace). J'installe R  version 4.1.3 directement; peut-être qu'avoir 2 versions installées causait mon problème.  
+J'ai vérifié la clé, elle fonctionne. c'était le cas aussi pour la première installation.
+J'installe aussi Rstudio avec le .deb que j'ai téléchargé.  
+R avec Rstudio s'ouvre.  
+des messages d'erreur m'indiquent d'installer des packages avec apt:  
+"--------------------------- [ANTICONF] --------------------------------"  
+-> je les installe. j'ai aussi plusieurs fois eu cette ligne: `/usr/lib/R/bin/config: 1: eval: make: not found`
+après avoir installé les anticonf, je relance la ligne de commande pour installer devtools.  il me les redemande; je ferme et rouvre R.   
+Toujours le même problème, mais en fait le message me dit quoi faire: 
+```
+--------------------------- [ANTICONF] --------------------------------
+Configuration failed to find the fontconfig freetype2 library. Try installing:
+ * deb: libfontconfig1-dev (Debian, Ubuntu, etc)
+ * rpm: fontconfig-devel (Fedora, EPEL)
+ * csw: fontconfig_dev (Solaris)
+ * brew: freetype (OSX)
+If fontconfig freetype2 is already installed, check that 'pkg-config' is in your
+PATH and PKG_CONFIG_PATH contains a fontconfig freetype2.pc file. If pkg-config
+is unavailable you can set INCLUDE_DIR and LIB_DIR manually via:
+R CMD INSTALL --configure-vars='INCLUDE_DIR=... LIB_DIR=...'
+```
+0. j'ai appris que PKG_CONFIG_PATH était l'endroit où pkg-config allait chercher les fichiers .pc (source: `https://askubuntu.com/questions/210210/pkg-config-path-environment-variable`)
+1. j'ai installé locate.
+2. j'ai cherché le .pc que R me demande d'ajouter au path de pkg-config à l'aide de la commande ``locate freetype2.pc``. output: `/usr/lib/x86_64-linux-gnu/pkgconfig/freetype2.pc`.
+3. j'ai ajouté le dossier qui contient ce .pc à PKG_CONFIG_PATH: `export  PKG_CONFIG_PATH="/usr/lib/x86_64-linux-gnu/pkgconfig"`.
+Je relance ensuite install.packages("devtools", dependencies = T). Même output. le message précise qu'il faut donner le path vers le *fichier* .pc, pas le dossier qui le contient. j'essaie ça. avant ça, je relance R et je relance la commande. même output. je relance après avoir changé le path pour .pc . même output. je lance install.packages('devtools'), pour voir. j'obtiens ceci:  
+```
+------------------------- ANTICONF ERROR ---------------------------
+Configuration failed because libcurl was not found. Try installing:
+ * deb: libcurl4-openssl-dev (Debian, Ubuntu, etc)
+ * rpm: libcurl-devel (Fedora, CentOS, RHEL)
+ * csw: libcurl_dev (Solaris)
+If libcurl is already installed, check that 'pkg-config' is in your
+PATH and PKG_CONFIG_PATH contains a libcurl.pc file. If pkg-config
+is unavailable you can set INCLUDE_DIR and LIB_DIR manually via:
+R CMD INSTALL --configure-vars='INCLUDE_DIR=... LIB_DIR=...'
+--------------------------------------------------------------------
+```
+
+Bien que PKG_CONFIG_PATH contienne les bons chemins:
+> echo $PKG_CONFIG_PATH
+```
+/usr/lib/x86_64-linux-gnu/pkgconfig/freetype2.pc:/usr/lib/x86_64-linux-gnu/pkgconfig/libcurl.pc:/usr/lib/x86_64-linux-gnu/pkgconfig
+```
+j'ai toujours ce message d'erreur: 
+
+j'installe pak (utiliser `install.packages("pak", type = "source")` !). je fais `pak::pkg_install("devtools")` -> `Error in load_private_package("glue") : Cannot load glue from the private library`
+je suis les informations de cette page : `https://stackoverflow.com/questions/71246072 error-in-load-private-packageglue-cannot-load-glue-from-the-private-librar`  et je le réinstalle avec `install.packages("pak", type = "source")`
+j'ai toujours la même erreur pour glue. je réinstalle R et je spécifie, dans la fonction install.packages(), l'argument lib qui indique où installer les librairies. -> je choisis un endroit où pkg-config ira chercher naturellement.  
+Je peux aussi lancer cette commande: `R -e '.libPaths()'` pour trouver les fichiers lib installés. ainsi je les supprime et les réinstalle.
+```
+les paths sont les suivants:
+/home/ebor/R
+/usr/local/lib/R
+/usr/lib/R
+```
+je désinstalle R de nouveau, puis je supprime manuellement ces trois dossiers.
+seulement ```/home/ebor/R``` était encore présent. je réinstalle (j'ai juste besoin de taper `apt install --no-install-recommends r-base`)
+maintenant:
+1. à l'aide de `pkg-config --variable pc_path pkg-config` je détermine dans quels dossiers pkg cherche les librairies installées:
+    ```
+    /usr/local/lib/x86_64-linux-gnu/pkgconfig
+    /usr/local/lib/pkgconfig
+    /usr/local/share/pkgconfig
+    /usr/lib/x86_64-linux-gnu/pkgconfig
+    /usr/lib/pkgconfig
+    /usr/share/pkgconfig
+    ```
+2. je spécifie `/usr/lib/pkgconfig` pour chaque install.packages():
+> install.packages("devtools", lib="/usr/lib/pkgconfig")
+```
+Warning in install.packages :
+  'lib = "/usr/lib/pkgconfig"' is not writable
+```
+je spécifie `/usr/share/pkgconfig` pour chaque install.packages():
+même erreur. je rends le dossier `/usr/lib/pkgconfig` accessible en écriture.
+la ocmmande se lance. je remarque que des messages d'erreur indiquaient que gcc et g++ n'étaient pas installés, c'est fait maintenant. cependant, libcurl a été installé dans l'ancien repo, le par défaut.
+>pak::pkg_install("devtools") 
+```
+✓ Loading metadata database ... done
+                                                                           
+→ Will install 71 packages.
+→ All 71 packages (22.99 MB) are cached.
++ askpass       1.1    [bld][cmp]
+[...]
++ xopen         1.0.0  [bld]
++ yaml          2.3.5  [bld][cmp]
++ zip           2.2.0  [bld][cmp]
+ℹ No downloads are needed, 71 pkgs (22.99 MB) are cached
+ℹ Building brew 1.0-7
+ℹ Building brio 1.1.3
+✓ Built brew 1.0-7 (2s)                                             
+[...]                              
+ℹ Building devtools 2.4.3                                             
+✓ Built devtools 2.4.3 (3.8s)                                       
+✓ Installed devtools 2.4.3  (40ms)                                    
+✓ 1 pkg + 70 deps: added 71 [4m 54.8s]  pak::pkg_install("devtools") 
+✓ Loading metadata database ... done
+                                                                           
+→ Will install 71 packages.
+→ All 71 packages (22.99 MB) are cached.
++ askpass       1.1    [bld][cmp]
+[...]
++ xfun          0.30   [bld][cmp]
++ xml2          1.3.3  [bld][cmp]
++ xopen         1.0.0  [bld]
++ yaml          2.3.5  [bld][cmp]
++ zip           2.2.0  [bld][cmp]
+ℹ No downloads are needed, 71 pkgs (22.99 MB) are cached
+ℹ Building brew 1.0-7
+ℹ Building brio 1.1.3
+✓ Built brew 1.0-7 (2s)                                             
+ℹ Building clipr 0.8.0                                              
+✓ Built brio 1.1.3 (2.8s)                                            
+[...]
+✓ Built testthat 3.1.2 (45s)                                        
+✓ Installed testthat 3.1.2  (145ms)                                   
+ℹ Building devtools 2.4.3                                             
+✓ Built devtools 2.4.3 (3.8s)                                       
+✓ Installed devtools 2.4.3  (40ms)                                    
+✓ 1 pkg + 70 deps: added 71 [4m 54.8s] 
+```
+> install.packages("BiocManager)
+> BiocManager::install("GenomicRanges")
+> BiocManager::install("GenomicRanges")
+> devtools::install_github("Crick-CancerGenomics/ascat/ASCAT")
+> devtools::install_github("mskcc/facets")
+-> sur cette commande, Rstudio plante. je la lance depuis une console R lancée depuis un terminal
+```
+Downloading GitHub repo mskcc/facets@HEAD
+Downloading GitHub repo veseshan/pctGCdata@HEAD
+   checking for file ‘/tmp/RtmpK79XIP/remotes6ee54bf2cff2/veseshan-pctGCdata-d2d✔  checking for file ‘/tmp/RtmpK79XIP/remotes6ee54bf2cff2/veseshan-pctGCdata-d2d4faf/DESCRIPTION’
+─  preparing ‘pctGCdata’:
+✔  checking DESCRIPTION meta-information ...
+─  installing the package to process help pages
+         -----------------------------------
+─  installing *source* package ‘pctGCdata’ ...
+   ** using staged installation
+   ** R
+   ** data
+   *** moving datasets to lazyload DB
+   Killed
+         -----------------------------------
+   ERROR: package installation failed
+Error: Failed to install 'facets' from GitHub:
+  Failed to install 'pctGCdata' from GitHub:
+  System command 'R' failed, exit status: 1, stdout & stderr were printed
+```
+j'essaie d'installer directement pctGCdata avec les 2 façons disponibles mais ça ne marche pas. 
+Demander à Jennifer si elle arrive à télécharger facets sur son ubuntu.
+
+Je recrée une VM, réinstalle R version 4.1.2 (la même que sur windows), et retente. la vm s'appelle v3, je la construis avec les mêmes paramètres que les 2 premières. je ne supprime pas la v2, au cas où.
+
+sur v3, je fais ceci:
+
+```
+# update indices
+apt update -qq
+# install two helper packages we need
+apt install --no-install-recommends software-properties-common dirmngr
+# add the signing key (by Michael Rutter) for these repos
+# To verify key, run gpg --show-keys /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc 
+# Fingerprint: 298A3A825C0D65DFD57CBB651716619E084DAB9
+wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc
+# add the R 4.0 repo from CRAN -- adjust 'focal' to 'groovy' or 'bionic' as needed
+add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
+```
+puis `sudo apt policy r-base`.  
+output:
+```
+r-base:
+  Installed: (none)
+  Candidate: 4.1.3-1.2004.0
+  Version table:
+     4.1.3-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.1.2-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.1.1-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.1.0-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.5-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.4-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.3-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.2-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.1-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.0-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     3.6.3-2 500
+        500 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 Packages
+        500 http://us.archive.ubuntu.com/ubuntu focal/universe i386 Packages
+```
+j'installe donc la 4.1.2 avec:  
+``sudo apt-get install r-base=4.1.2-1.2004.0``
+```
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ r-base : Depends: r-recommended (= 4.1.2-1.2004.0) but 4.1.3-1.2004.0 is to be installed
+          Recommends: r-base-html but it is not going to be installed
+          Recommends: r-doc-html but it is not going to be installed
+E: Unable to correct problems, you have held broken packages.
+```
+Voir les réponses à `https://askubuntu.com/questions/564282/apt-get-unmet-dependencies-but-it-is-not-going-to-be-installed`. Si je ne peux rien faire avec, demandr à jennifer.
+
+
+
+
+
+J'ai utilisé ffmpeg sur windows 10 pour faire un gif. la commande utilisée est   
+`%ffmpeg% -framerate 0.5 -i %03d.png output.gif` en étant dans le dossier qui contient les images. ces dernières doivent s'appeler 001.png, 002.png, etc. car `%03d` correspond au nombre de digits qui composent le nom de l'image (sans l'extension .png).
+
+
+arrivée à 10h05; départ à 17:20; 1h pause
+
+
+# <span style="color:#999900"> Luni 21/03/2022
+
+installer Rstudio sur ubuntu: télécharger le .deb sur le site de Rstudio, puis ``sudo apt-get install /home/Downloads/filename.deb``.
+j'ai utilisé aptitude pour sélectionner la version de R que je veux isntaller (4.1.2) et résoudre le conflit, mais aptitude a installé quand même 4.1.3. 
+j'essaie d'installer pak et de lancer les installs au cas où. glue problem. besoin de réinstall R.
+je désinstalle R et j'essaie l'option -f pour forcer l'install de 4.1.2. (avec la commande ``sudo apt-get install r-base=4.1.2-1.2004.0``).
+toujours le glue problem. je désinstalle vraiment R en cherchant les paths des libs de R, voir la commande `R -e '.libPaths()'`. elle doit être lancée avant que R ne soit désinstallé, bien sur.
+l'output:
+```
+"/home/ebor/R/x86_64-pc-linux-gnu-library/4.1"
+"/usr/local/lib/R/site-library"               
+"/usr/lib/R/site-library"                     
+"/usr/lib/R/library"   
+```
+Les trois derniers sont supprimés quand R est désinstallé.
+R est complètement désinstallé, je fais alors `sudo apt-get install r-base=4.1.2-1.2004.0 -f`.
+output: 
+```
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ r-base : Depends: r-recommended (= 4.1.2-1.2004.0) but 4.1.3-1.2004.0 is to be installed
+          Recommends: r-base-html but it is not going to be installed
+          Recommends: r-doc-html but it is not going to be installed
+E: Unable to correct problems, you have held broken packages.
+```
+R n'a pas été installé. J'essaie la version aptitude: `sudo aptitude install r-base=4.1.2-1.2004.0 -f`
+option2, "installer r-recommended 4.1.2" -> installe R 4.1.3
+j'installe pak avec `install.packages("pak", type = "source")` afin d'éviter le probleme glue 
+le problème glue survient quand même. peut-être que préciser l'argument lib="/usr/lib/pkgconfig" pourrait mieux marcher. je désinstalle pak et je réessaye avec cet argument. Fait, ça télécharge un tar.gz qu'il faut ouvrir pour installer le package. quand je le fais, j'ai l'erreur de glue.
+
+à essayer: installer d'abord r-recommended 4.1.2, puis r-base 4.1.2 .je désinstalle R et je fais ça. juste en installant recommended,  r 4.1.3 s'installe.
+
+Je cherche une autre façon d'installer la version 4.1.2 de R, comme ça j'aurai au moins la même version pour comparer entre windows et ubuntu pour EaCoN.
+
+je lis *https://askubuntu.com/questions/1373827/problems-installing-latest-version-of-r-in-ubuntu-20-04-lts*. 
+J'ouvre la vm v2.
+> apt-cache policy r-base
+```
+r-base:
+  Installed: (none)
+  Candidate: 3.6.3-2
+  Version table:
+     3.6.3-2 500
+        500 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 Packages
+        500 http://us.archive.ubuntu.com/ubuntu focal/universe i386 Packages
+```
+En suivant la première réponse de la page web, je fais non pas ça:
+`sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'`
+mais ça:
+`add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"`
+ensuite: 
+```
+apt-cache policy r-base
+r-base:
+  Installed: (none)
+  Candidate: 4.1.3-1.2004.0
+  Version table:
+     4.1.3-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.1.2-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.1.1-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.1.0-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.5-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.4-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.3-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.2-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.1-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     4.0.0-1.2004.0 500
+        500 https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ Packages
+     3.6.3-2 500
+        500 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 Packages
+        500 http://us.archive.ubuntu.com/ubuntu focal/universe i386 Packages
+```
+je suis l'installation du poseur de question:
+>sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+```
+Executing: /tmp/apt-key-gpghome.h9ej4r0hgd/gpg.1.sh --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+gpg: key 51716619E084DAB9: "Michael Rutter <marutter@gmail.com>" 1 new signature
+gpg: Total number processed: 1
+gpg:         new signatures: 1
+```
+puis:
+> sudo apt update && sudo apt upgrade
+puis:
+> sudo apt install r-base
+-> output: a lot of text.
+on dirait que pak était déjà installé puisqu'en ouvrant R j'ai pu faire `pak::pkg_install("devtools")` directement. 
+output: 
+```
+✓ Updated metadata database: 2.57 MB in 3 files.                          
+✓ Updating metadata database ... done                                     
+                                                                             
+ℹ No downloads are needed
+✓ 1 pkg + 69 deps: kept 70 [10.3s]
+```
+
+je viens d'envoyer un mail à julie, jennifer et elodie pour leur demander si l'installation de facets plante sur leurs linux, aussi.
+Elodie a répondu: facets n'est pas obligatoire. lire l'article eacon pour compléter le résumé que j'en ai fait à l'instant dans fonctionnement_des_outils.md. Edit: il n'y en a pas. mais lire l'article d'ASCAT par contre.
+aussi: regarder comment chaque fonction d'EaCoN fait ses opéations: quelles fonctions de quels packages appelle-t-elle? comment 
+fopnctionnent ces dernières?
+
+arrivée à 10h35; départ à 18:00; 30 min pause
