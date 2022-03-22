@@ -1,0 +1,67 @@
+# pour plus d'infos, voir https://moodle1.u-bordeaux.fr/course/view.php?id=4361 ou dans moodle, chercher le cours "STAGES M2"
+
+Les consignes pour le rapport à remettre avant le lundi  13 juin 2022, 17h pour la version électronique et  la version papier (une seule version papier): 
+
+Voici quelques infos sur les consignes à suivre pour la rédaction  de votre rapport:
+
+La taille du rapport doit être de 25 à 35 pages MAXIMUM  en comptant les images et sans compter les annexes ni la bibliographie.
+
+Mise en page:
+Il vous faut définir une mise en page normalisée, pour que chaque titre soit facilement repérable. 
+Il est fortemement conseillé d'utiliser : Police 11 ou 12 ; interligne 1,2 ou 1,5 ; marges qui tiennent compte de la reliure.Il est interdit d'utiliser une police inférieure à 11 et un interligne inférieur à 1,2.
+Votre rapport doit être paginé. 
+
+Conseils généraux: 
+Votre rapport ne doit pas contenir de code informatique, à la rigueur des insertions de pseudocode si vos développements le justifient. 
+Vous devez favoriser l'utilisation de schémas pour décrire vos développements informatiques.
+Vous devez numéroter l'ensemble des figures/tables dans le rapport, les légender et les citer dans le texte (et citer les sources si besoin). Il est préférable de les inclure dans la région où elles sont nécessaires, les regrouper en fin de rapport rend plus difficile la lecture du rapport.
+Pour information, le plagiat sera vérifié et tous les rapports seront soumis au logiciel compilatio.
+
+Page de garde
+
+Il est impératif de faire apparaitre sur votre page de garde :
+- L'établissement (université de Bordeaux et logo université)
+- logo lieu de stage (si possible)
+- Nom, Prénom, Intitulé du master et Parcours, Année promotion
+- Titre du stage 
+- les noms et les fonctions des responsables de stage
+
+Plan du rapport: 
+En général, les deux plans suivants sont conseillés:
+- si le stage porte sur le développement d'un logiciel ou site web :
+Analyse de l'existant, des besoins, conception ...
+- si le stage est davantage orienté Recherche, le plan classique suivant peut être utilisé:
+Introduction, Etat de l'art, Matériel et Méthodes, Discussions ...
+
+Annexes
+Cette rubrique (limitez le nombre d’annexes) doit contenir les  documents utiles à votre travail mais qui en étant insérés dans votre rapport risquer d’entrainer des problèmes de lisibilité (exemple: doc utilisateur, code jugé important...). Ces documents feront l'objet d'un renvoi en annexe au sein du texte, entre parenthèses. Vous devez numéroter vos annexes et si le nombre est important, vous pouvez les classer selon leur nature.
+
+Bibliographie
+Elle est à mettre en fin de rapport et doit contenir toutes les références utilisées dans le rapport. Les URLS ou références wikipedia sont à éviter. Si vous souhaitez citer un algorithme, il a très certainement fait l’objet d’une publication dans une revue ou présentation dans une conférences. La citation doit contenir le nom des auteurs, le titre de l’article, la revue ou livre ou conférence, le volume, les pages et l’année.
+Exemple:
+1. Bastian M, Heymann S, Jacomy M. Gephi: an open source software for exploring and manipulating networks. In: International AAAI Conference on Weblogs and Social Media, Paris, France, 2009.
+2. Klukas C, Schreiber FI. Integration of -omics data and networks for biomedical research with VANTED. J Int Biol 2010;7:112.
+Ou bien: 
+1- Altschul, S.F., Gish, W., Miller, W., Myers, E.W. & Lipman, D.J. (1990) "Basic local alignment search tool." J. Mol. Biol. 215:403-410.
+2- Gish, W. & States, D.J. (1993) "Identification of protein coding regions by database similarity search." Nature Genet. 3:266-272. 
+3- Madden, T.L., Tatusov, R.L. & Zhang, J. (1996) "Applications of network BLAST server" Meth. Enzymol. 266:131-141. 
+
+N'oubliez pas de citer les auteurs si jamais vous utilisez des images issues de leurs publications.
+
+Remise du rapport - Version papier et électronique
+
+- Une version papier à remettre avant le lundi 13 juin 2022 à 17h (cachet de la poste faisant foi),  
+
+- une version électronique sur MOODLE (sur cette page) à remettre avant le lundi 13 juin 2022 à 17h
+
+Vous aurez remis un exemplaire au responsable de stage de l'entreprise, qui aura donné son accord avant la diffusion du document.
+
+Conservez au moins un exemplaire.
+
+Pour information, les rapports seront tous analysés
+Remise de la version papier à l'accueil du  LaBRI  (ou dans la boite aux lettres à coté de l'acceuil) ou à l'adresse LaBRI:
+Patricia Thébault
+LaBRI, Bat A30
+ 351, cours de la Libération, 33405 Talence
+Université Bordeaux
+

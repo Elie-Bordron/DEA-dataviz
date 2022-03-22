@@ -123,11 +123,6 @@ Cette partie n'est pas claire. voir plutôt les méthodes pour comprendre pk ils
 
 
 
-
-
-
-
-
 # <span style="color:#ff9999"> DNAcopy: A Package for Analyzing DNA Copy Data
 DNAcopy_documentation.pdf
 
@@ -135,3 +130,44 @@ Cet outil sert à identifier les régions où un gain / une perte de nombre de c
 
 smoothing outliers: si une donnée individuelle est trop éloignée des autres, l'aplatir pour qu'elle rejoigne les autres sondes proches d'elle.
 puis, segmenter et plotter.
+
+
+j'ai créé une image quelques jours plus tot, je la [cite](#plot_image) pour tester la référence dans markdown.
+
+# <span style="color:#ff9999"> Allele-specific copy number analysis of tumors (ASCAT)
+ASCAT_article.pdf  
+## abstract
+Allele-specific Copy number pour tumeurs solides.; estimation de la ploidie et de la cellularité. L'agrégation des profils ASCAT obtenus rend compte de la distribution des fréquences génomiques de gains et pertes, et permet de visualiser sur le génome entier les événements de nombre de copies neutre et de LOH.  
+Les profils ASCAT permettent également de construire une carte d'asymétrie allélique (genome-wide map of allelic skewness), qui indique les loci où un allèle est perdu plus que l'autre.
+
+## Intro
+Les altérations génomiques sont facteurs clés de nombreux cancers. Les génomes tumoraux sont largement traités par CGH pour caractériser ces altérations, mais l'interprétation de telles données peut être difficile, majoritairement pour deux raisons:
+- beaucoup de tumeurs dérivent d'un état diploide
+- beaucoup de données contiennent des cellules de populations tumorales différentes et de cellules saines.
+Ainsi, bien des travaux ont été limités à l'étude des gains et pertes et ne peuvent pas attribuer un nombre de copies correct à chaque locus du génome de référence.
+Les auteurs présentent ainsi une analyse au niveau allélique du nombre de copies, qui prend en compte l'aneuploidie ainsi que l'infiltration de cellules saines.
+Des profils ASCAT (allele specific CN analysis of Tumor) sur le génome entier sont ainsi obtenus. L'analyse de ces profils a révélé des différences (de gain, loss, LOH...)entre les sous-types de cancer du sein que les auteurs ont identifié.
+
+## Discussion
+La CGH est un standard pour traiter les aberrations chromosomales dans les tumeurs. Cependant, il reste difficile de déterminer des profils précis de nombre de copies.  
+Certains facteurs compliquent également les choses: __les cellules tumorales sont souvent aneuploides (=nombre de copies altéré), et les échantillons contiennent souvent plusieurs populations de tumeurs + des cellules saines__ [^1]. De plus, la CGH n'indique pas quel allèle a été perdu/gagné, et elle ignore les aberrations de nombre de copies neutre. Soit dit en passant, les événements de nombre de copies neutre (copy number-neutral event (CNNE)) sont définis par un changement allélique (pour un SNP nativement hétérozygote) pour lequel le nombre de copies total ne diffère pas de la ploidie tumorale. Par exemple, imaginons une tumeur globalement quadriploide. à une position donnée, on a donc 2 copies de chaque allèle. un allèle perd une de ses copies tandis que le deuxième en gagne une de plus. on est alors à 1 et 3 copies pour les 2 allèles. Au total, on est bien en 4n, donc CN-neutral.
+Bref, les technologies SNP promettent de résoudre ce problème. Cependant, pour que l'ASCN soit calculé à partir de données SNP, ces deux effets doivent être modélisés simultanément.
+Les auteurs ont développé ASCAT, un outil pour inférer des profils ASCAT **à partir de données SNP** (L'estimation de la cellularité et l'estimation de quel allèle a été gagné/perdu par rapport à l'autre pourront-ils quand même être faits à partir de données Oncoscan?).
+![fig 3 article](docs_I_made/images/ASCAT_article_fig3.png "figure 1")
+La distribution de la ploidie et de la proportion de cellules montre que la variabilité de ces paramètres peut être grande (voir figure 1) . Cela indique que les analyses qui ne les prennent pas en compte interprètent incorrectement 50% des cas.
+Les profils ASCAT permettent de visualiser les événements LOH et copy number-neutral, événements non perceptibles par l'aCGH. Les auteurs ont observé que la distribution de LOH correspondait fortement avec la distribution des pertes, ce qui s'explique par le fait que de nombreuses pertes résultent également en LOH. D'autre part, des correspondances entre les pertes et les copy number-neutral events (CNNE) ont été observées. Cela indique que les fréquences de perte par allèle sont plus grandes qu'on ne l'imagine en travaillant avec des outils ne prenant pas en compte les CNNE. 
+Voici pourquoi:
+- ASCAT observe que loss & CNNE sont corrélés
+- Or ASCAT prend en compte les CNNE.
+- si il ne les prenait pas en compte, le nombre de CNNE trouvés passerait à 0. La corrélation indique que dès lors, le nombre de loss diminuerait.
+- les outils ne prenant pas en compte les CNNE sont dans ce cas. On peut donc dire que ces outils sous-estiment largement le nombre réel de loss.
+La correction pour la cellularité révèle que les tumeurs qui en ont le plus eu besoin ne présentent pas moins d'aberrations que les autres, seulement que ces aberrations étaient manquées par les approches qui ne tiennent pas compte de ce paramètre.
+
+
+
+
+[^1]: déjà dit dans l'intro
+## Figures  
+
+![alternatetext here](docs_I_made\CGHcall_voirslackpourlegende.png "title here")
+

@@ -12,6 +12,8 @@ rstudioapi::filesPaneNavigate(working_dir)
 library(dplyr)
 library(CGHcall)
 data(Wilting)
+# colnames(Wilting)= c("probeID",  "CHROMOSOME", "START_POS", "END_POS", "sample1", "sample2", "sample3", "sample4", "sample5")
+
 Wilting_raw = Wilting
 Wilting <- make_cghRaw(Wilting_raw)
 
@@ -39,9 +41,9 @@ s1CNBeforeMaxmiss = cbind(s1CNBeforeMaxmiss, lostVals_logicalVec)
 readyToPlot = s1CNBeforeMaxmiss %>% mutate(valType = replace(valType, lostVals_logicalVec==T, "lostVal"))
 rownames(readyToPlot)
 # Color selection
-colors <- c("#FDAE61", # Orange
+colors <- c("#66BD63", # Orange
             # "#D9EF8B", # Light green
-            "#66BD63") # Darker green
+            "#FDAE61") # Darker green
 plot(1:length(readyToPlot$value), readyToPlot$value, pch=19, col=colors[factor(readyToPlot$valType)])
 
 

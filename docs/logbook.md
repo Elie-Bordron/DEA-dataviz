@@ -2005,7 +2005,25 @@ output:
 
 je viens d'envoyer un mail à julie, jennifer et elodie pour leur demander si l'installation de facets plante sur leurs linux, aussi.
 Elodie a répondu: facets n'est pas obligatoire. lire l'article eacon pour compléter le résumé que j'en ai fait à l'instant dans fonctionnement_des_outils.md. Edit: il n'y en a pas. mais lire l'article d'ASCAT par contre.
-aussi: regarder comment chaque fonction d'EaCoN fait ses opéations: quelles fonctions de quels packages appelle-t-elle? comment 
-fopnctionnent ces dernières?
+aussi: regarder comment chaque fonction d'EaCoN fait ses opéations: quelles fonctions de quels packages appelle-t-elle? comment fonctionnent ces dernières?
 
 arrivée à 10h35; départ à 18:00; 30 min pause
+
+# <span style="color:#999900"> Mardi 22/03/2022
+réunion aujourd'hui. 
+- avoir le pipeline décrit pour les 4 packages. jusque-là, j'ai CGHcall et EaCoN.
+- noter ce que j'ai surligné dans ASCAT_article.pdf.
+    2 paramètres sont calculés par ASCAT à partir de données SNP: L'estimation de la cellularité et l'estimation de quel allèle a été gagné/perdu par rapport à l'autre. Pourront-ils être déterminés à partir de données Oncoscan?)
+- ~~regarder si j'ai pas les guidelines pour le rapport quelque part dans moodle. sinon demander à la team geneco, puis à Slim karkar~~  
+- ~~compléter le document partagé~~
+
+Définition d'un copy number-neutral event dans ASCAT_article.pdf :
+-> *We define here a copy number-neutral event as an allelic bias for an SNP heterozygous in the germline such that the total copy number does not differ from the tumor ploidy*
+
+l'objectif de la semaine pro est d'avoir les slides pour chaque package. ou à la rigueur 2 bien en profondeur et le s2 autres + tard.
+
+
+arrivée à 09h50; départ à 18h00; pas de pause
+# <span style="color:#999900"> Mercredi 23/03/2022
+todo: finir de noter pour ASCAT, il reste 2 phrases.
+faire slides CGHcall. 1 couleur par ppt! Eacon en bleu, OncoscanR en rouge...
