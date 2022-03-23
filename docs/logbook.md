@@ -2020,10 +2020,43 @@ réunion aujourd'hui.
 Définition d'un copy number-neutral event dans ASCAT_article.pdf :
 -> *We define here a copy number-neutral event as an allelic bias for an SNP heterozygous in the germline such that the total copy number does not differ from the tumor ploidy*
 
-l'objectif de la semaine pro est d'avoir les slides pour chaque package. ou à la rigueur 2 bien en profondeur et le s2 autres + tard.
 
 
 arrivée à 09h50; départ à 18h00; pas de pause
 # <span style="color:#999900"> Mercredi 23/03/2022
-todo: finir de noter pour ASCAT, il reste 2 phrases.
-faire slides CGHcall. 1 couleur par ppt! Eacon en bleu, OncoscanR en rouge...
+
+je regarde OncoscanR 5 minutes, avec quels documents puis-je en apprendre plus sur ce package? il n'a pas d'article propre, mais cite un article pour chaque score HRD qu'il calcule. voir l'api ou l'aide de R (les 2 contiennent les mêmes infos) pour en savoir plus sur chaque fonction.
+
+faire slides CGHcall. 1 couleur par ppt! Eacon en bleu, OncoscanR en rouge, CGHcall en vert...
+Objectif aujourd'hui: slides complètes pour CGHcall. 
+1 slide titre 
+~~1 slide pour présenter l'objet cghRaw? revoir de quel package il vient.~~ Ne pas en parler en détail, pas pertinent pour savoir ce que fait le package. juste savoir qu'on peut en extraire les données qu'on veut: valeur de segmentation/valeur de call/CN par sonde et par échantillon.
+1 slide description globale: ce que permet ce package; ses spécificités par rapport aux autres.
+1 slide pipeline: comment le fait-il. organigramme avec carrés et flèches
+1 slide par étape pertinente du pipeline
+slides pour voir comment utiliser le contenu d'un objet CGHcall. -> montrer les différents tableaux que l'on peut avoir, et les différents plots. plotter les tableaux si besoin. je pense que seulement les tableaux de call seront plottés.
+~~$connaître et expliquer le contenu d'un objet CGHcall. pas cghRaw ni cghSeg dans un premier temps$~~ Fait. Voir cahier
+
+changer couleurs du pipeline: les étapes colorées doivent être les étapes importantes.
+
+ajouter une case "object cghRaw" après conversion? non, pas la peine d'encombrer le diagramme
+
+exporter les images de R avec "copy to clipboard" peut laisser des traits en haut et à gauche de l'écran. faire "export as image" permet d'éviter ça.
+
+évidemment, indiquer à quoi sert chaque étape. par exemple, le préprocessing supprime les lignes où 30% des échantillons n'ont pas de valeur parce qu'utiliser les données pour *tous* les échantillons est précisément ce que CGHcall recherche.
+
+
+
+
+
+arrivée à 10h20; départ à 17:50; 20 min pause; 
+
+# <span style="color:#999900"> Jeudi 24/03/2022
+Objectif aujourd'hui: slides complètes pour EaCon. 
+
+# <span style="color:#999900"> Vendredi 25/03/2022
+
+
+# <span style="color:#999900"> Lundi 28/03/2022
+# <span style="color:#999900"> Mardi 29/03/2022
+Objectif: avoir les slides pour chaque package. ou à la rigueur 2 bien en profondeur et les 2 autres + tard.

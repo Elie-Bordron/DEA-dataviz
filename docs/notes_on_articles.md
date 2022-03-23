@@ -69,7 +69,7 @@ CGHcall_article.pdf
 
 ## Intro
  définition de l'array-CGH; définition du calling (transformer les logs ratio en copy number, donc caractériser en gain/loss/amp(/loh)); les algos de segmentation classiques détectent les breakpoints et les levels mais ne font pas directement de calling: c'est problématique quand on a beaucoup de bp et de levels différents. 
- De nouveaux algos sont basés sur des mesures de confidence (P-val, False Discovery Rate). Comme ils sont basés sur des statistiques, le niveau de CN "normal" a un statut différent des loss et gain, ce qui limite le nombre d'aberrations lors du calling.  Cependant, de l'expérience des auteurs, les biologistes préfèrent les approches plus "state-neutral" pour obtenir la meilleure classification entre 3 ou 4 états. _Utiliser un mixture model permet cela_ !
+ De nouveaux algos sont basés sur des mesures de confidence (P-val, False Discovery Rate). Comme ils sont basés sur des statistiques, le niveau de CN "normal" a un statut différent des loss et gain, ce qui limite le nombre d'aberrations lors du calling.  Cependant, de l'expérience des auteurs, les biologistes préfèrent les approches plus "state-neutral" pour obtenir la meilleure classification entre 3 ou 4 états. _Utiliser un mixture model permet cela_ !  
  CGHcall combine les points forts des méthodes développées dans le passé:
  1. la segmentation de DNAcopy (CBS, donc) est utilisée. C'est l'un des meilleurs algos dans son domaine.
  2. les loss, gain et normal states ne peuvent être anticipés donc CGHcall utilise des effets aléatoires (VOIR L'ARTICLE CGHcall_random_effects.pdf)
@@ -86,7 +86,7 @@ CGHcall reconnait que les algos de segmentation sont efficaces pour cette tâche
 Les clones d'un même segment appartiennent tous forcément au même état.
 ```
 Passons, voici la suite:
-Ils ont fitté un modèle (de mixture, donc) en utilisant les données LR normalisées. une courbe de gausse représente les données de chaque segment. Les sondes sont classées dans 
+Ils ont fitté un modèle (de mixture, donc) en utilisant les données LR normalisées. une courbe de gauss représente les données de chaque segment. Les sondes sont classées dans 
 
 ## Results
 - "CGHcall outperformed the other methods for this setting (SEE SUPPLEMENTARY INFORMATION)." `<---voir ce que ça veut dire`

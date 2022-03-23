@@ -42,4 +42,5 @@
 - répondre à la question: ça fait quoi quand on lance CGHcall sur plusieurs échantillons en même temps? est-ce que ça change les résultats par rapport à lancer les analyses échantillon par échantillon? Si oui, quels calculs sont faits?
 pour répondre à ça, comprendre le fonctionnement du le sa segmentation couplée au mixture model serait un bon point de départ. je lis donc Picard, voir notes_on_articles.md.
 Réponse à ça: lancer CGHcall sur un groupe d'E ou sur les E un à un change bien les résultats. En effet, les sondes sont classées par segment (ou par bras si le mm alternatif est utilisé), et pour cela, la distribution de *toutes* les sondes est utilisée.
-
+23/03
+todo: finir de noter pour ASCAT, il reste 2 phrases.

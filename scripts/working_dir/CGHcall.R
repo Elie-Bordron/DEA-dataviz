@@ -11,9 +11,10 @@ rstudioapi::filesPaneNavigate(working_dir)
 ###################################################
 library(dplyr)
 library(CGHcall)
-data(Wilting)
-# colnames(Wilting)= c("probeID",  "CHROMOSOME", "START_POS", "END_POS", "sample1", "sample2", "sample3", "sample4", "sample5")
 
+data(Wilting)
+# to set meaningful column names to this df
+# colnames(Wilting)= c("probeID",  "CHROMOSOME", "START_POS", "END_POS", "sample1", "sample2", "sample3", "sample4", "sample5")
 Wilting_raw = Wilting
 Wilting <- make_cghRaw(Wilting_raw)
 
@@ -23,14 +24,14 @@ Wilting <- make_cghRaw(Wilting_raw)
 ###################################################
 cghdata <- preprocess(Wilting, maxmiss=30, nchrom=22)
 ## plot to compare copynumber before/after maxmiss is applied
-testMaxmissDf <- preprocess(Wilting, maxmiss=30)
-CNBeforeMaxmiss = copynumber(Wilting)
-CNAfterMaxmiss = copynumber(testMaxmissDf)
-s1CNBeforeMaxmiss = CNBeforeMaxmiss[,1]
-s1CNAfterMaxmiss = CNAfterMaxmiss[,1]
+# get log ratio of CN for first sample before and after maxmiss was applied
+s1CNBeforeMaxmiss = copynumber(Wilting)[,1]
+s1CNAfterMaxmiss = copynumber(preprocess(Wilting, maxmiss=30))[,1]
 lostVals_logicalVec = !(names(s1CNBeforeMaxmiss)%in%names(s1CNAfterMaxmiss))
 s1CNBeforeMaxmiss = as.data.frame(cbind(s1CNBeforeMaxmiss, lostVals_logicalVec))
+# set colnames
 colnames(s1CNBeforeMaxmiss) = c("s1CNBeforeMaxmiss", "valsLost")
+# use colnames to find values lost after applying maxmiss
 s1LostVals = dplyr::filter(s1CNBeforeMaxmiss, valsLost==T)
 s1LostVals[2] = rep("lostval", length(s1LostVals[1]))
 colnames(s1LostVals) = c("value", "valType")
@@ -39,15 +40,10 @@ colnames(s1CNBeforeMaxmiss) = c("value", "valType")
 # readyToPlot = rbind(s1CNBeforeMaxmiss, s1LostVals)
 s1CNBeforeMaxmiss = cbind(s1CNBeforeMaxmiss, lostVals_logicalVec)
 readyToPlot = s1CNBeforeMaxmiss %>% mutate(valType = replace(valType, lostVals_logicalVec==T, "lostVal"))
-rownames(readyToPlot)
+# rownames(readyToPlot)
 # Color selection
-colors <- c("#66BD63", # Orange
-            # "#D9EF8B", # Light green
-            "#FDAE61") # Darker green
-plot(1:length(readyToPlot$value), readyToPlot$value, pch=19, col=colors[factor(readyToPlot$valType)])
-
-
-
+colors <- c("#a52637", "#37a526")
+plot(1:length(readyToPlot$value), readyToPlot$value, pch=20, col=colors[factor(readyToPlot$valType)], xlab="position sur le genome", ylab="log ratio par sonde")
 plot(s1CNBeforeMaxmiss[,1])
 plot(s1CNAfterMaxmiss)
 
@@ -62,8 +58,9 @@ lrAfterNorm = copynumber(norm.cghdata)
 ## then plot it for the first sample
 s1Before = lrBeforeNorm[,1]
 s1After = lrAfterNorm[,1]
-plot(1:length(s1Before), s1Before, ylim=c(-1, 1.1))
-plot(1:length(s1After), s1After, ylim=c(-1, 1.1))
+# I used these two plots to make a gif
+plot(1:length(s1Before), s1Before, ylim=c(-1, 1.1), col="#37a526")
+plot(1:length(s1After), s1After, ylim=c(-1, 1.1), col="#37a526")
 
 
 
@@ -129,34 +126,56 @@ summaryPlot(result)
 ###################################################
 frequencyPlotCalls(result)
 
+methods(plot)
+plot.cghCall(res_sample1)
 
 ## plots en vrac pour explorer les resultats
 if(FALSE) {
+# in assayData
 df_logCN = copynumber(result)
 segs = segmented(result)
 df_calls = calls(result)
+probaLoss = probloss(result)
+probaDoubleLoss = probdloss(result)
+probaGain = probgain(result)
+probaNorm = probnorm(result)
+# in featureData:
 chr = chromosomes(result)
 bpstart = bpstart(result)
 bpend = bpend(result)
-plot(df_logCN)
-hist(df_logCN[,1], breaks=1000)
+# plots
+called = result
+res_sample1 = called[,1]
+
+plot(called[,1],ampcol="#00ffff",dlcol="#00ff00")
+plot(res_sample1)
 plot(segs[,1])
 plot(df_calls[,1])
-
-plot(bpstart)
 plot(bpend)
 
-called = result
-plot(called[,1])
+plot(result)
 plot(called[chromosomes(called)==1,1])
-log2ratios <- copynumber(called[,1])
+log2ratios <- copynumber(res_sample1)
+
 sample_names = sampleNames(called)
 probe_ids = featureNames(called)
-
+# get/set colnames and rownames
+dimnames(called)
+# get/set nb rows and nb cols
+dim(called)
+# get/set cellularity
+pData(called)
+# blc
+varMetadata(called)
+varLabels(called)
+featureData(called)
+fvarMetadata(called)
+preproc(called)
+# df with rows id, chr, start and stop
+fData(called)
 # only the 22 first chromosomes are used here
 tail(chr)
 }
-
 
 
 
@@ -266,9 +285,9 @@ hist(c(-1, 1), add=T, breaks=1000)
 
 
 ## to generate random-based data to illustrate what a Gaussian Mixture Model does (it splits data into groups)
-m1 = data.frame(rnorm(200, -1), rnorm(200, -1), rep("minusOne", 200))
+m1 = data.frame(rnorm(200, -1), rnorm(200, -3), rep("minusOne", 200))
 colnames(m1) = c("vals1", "vals2", "class")
-p1 = data.frame(rnorm(200, 1), rnorm(200, 1),rep("plusOne", 200))
+p1 = data.frame(rnorm(200, 1), rnorm(200, 3),rep("plusOne", 200))
 colnames(p1) = c("vals1", "vals2", "class")
 zer = data.frame(rnorm(1000, 0), rnorm(1000, 0), rep("zero", 1000))
 colnames(zer) = c("vals1", "vals2", "class")

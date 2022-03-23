@@ -37,10 +37,12 @@ Différents plots peuvent également être produits:
 ## Pipeline
 ``Wilting <- make_cghRaw(Wilting)``
 Convertit un dataframe/fichier texte en objet cghRaw.  
+Output: objet $cghRaw$  
 *En faire une slide? non.*
 
 ``cghdata <- preprocess(Wilting, maxmiss=30, nchrom=22)``
 Applique différents procédés de préprocess nécessaires pour la suite. maxmiss supprime les lignes ayant des NA dans 30% de leurs échantillons. nchrom indique les chromosomes à garder, les autres sont supprimés.  
+Output: objet $cghRaw$  
 *En faire une slide? oui. illustrer le maxmiss: plot avant/après. pareil pour les chromosomes? à voir.*
 
 ``norm.cghdata <- normalize(cghdata, method="median", smoothOutliers=TRUE)``
@@ -72,6 +74,10 @@ probe5      1       2
 probe6      1       2
 ```
 Ici, la variable est le nombre de copies qui a été called. On a 2 échantillons parce qu'on peut lancer CGHcall sur plusieurs échantillons. On peut récupérer de la même façon le CN brut, ou un tableau de segmentation.
+
+## traitement des résultats & plots
+![plot créé par CGHcall. montre les segments à la valeur à laquelle ils ont été call et l'indice de confiance (barres rouges et vertes notées de 0 à 1) pour chaque valeur.](docs_I_made/images/CGHcall_plot1res.png "fig.1: CGHcall plot from result of 1 sample")
+fig.1
 
 
 ## après la réunion
