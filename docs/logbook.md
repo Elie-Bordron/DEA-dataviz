@@ -83,7 +83,7 @@ PCR: chercher "youtube PCR" donne une très bonne vidéo.
 1. on chauffe fort pour séparer les 2 brins d'ADN
 2. à une température plus basse, on laisse les primers s'hybrider sur les séquences d'intérêt
 3. on chauffe un peu pour que les Taq polymérases se fixent aux primers. Ces dernières répliquent les brins d'ADN aux régions concernées.
-les étapes 2 et 3 sont répétées pour plusieurs cycles, ce qui double le nombre de copies de à chaque étape, résultant en une augmentation exponentielle.
+les étapes 2 et 3 sont répétées pour plusieurs cycles, ce qui double le nombre de copies à chaque étape, résultant en une augmentation exponentielle.
 
 Utiliser la partie précédente dans l'écriture du rapport de stage.
 
@@ -2052,7 +2052,6 @@ je suis rendu à la segmentation. relire cahier pour plus d'infos sur cette éta
 arrivée à 10h20; départ à 17:50; 20 min pause; 
 
 # <span style="color:#999900"> Jeudi 24/03/2022
-arrivée à 10h30; 
 Objectif aujourd'hui: slides complètes pour EaCon. 
 1. je dessine le pipeline sur papier, puis je le fais sur draw.io .
 je réalise qu'il me manque des choses pour avoir une description pertinente du package: je ne sais pas si les plots sont intéressants. en tout cas je dois lire l'article d'ASCAT pour bien comprendre le fonctionnement d'EaCoN.
@@ -2060,9 +2059,22 @@ d'autre part, je dois lire l'article de DNAcopy car il est utilisé pour la segm
 
 encore d'autre part, j'ai réfléchi et une mise à jour du tableau comparatif est plus que nécessaire. Les spécificités de chaque outil doivent être claires pour moi, la colonne input doit être plus facile à lire, pareil pour l'output.
 en effet, pour faire les slides, je dois d'abord connaître le pipeline des 4 outils. j'ajoute des choses au todo.md.
+
+en ce qui concerne ASCAT, lire l'article m'a appris que cet outil prend en compte la ploidie et la cellularité, ce qui lui permet d'avoir une représentation des LOH et des CN-neutral events. Mais comment? Et est-ce que j'ai besoin de le savoir? je pense que oui, donc la lecture de la partie Mat Met va etre nécessaire.
+*pas sûr* -> (((Par contre, la carte d'allelic skewness ne m'intéresse pas : elle ne peut être créée qu'à partir de données SNP.))) -> *ça vaut le coup de mieux comprendre comment elle marche*.
+
+dans le tableau comparatif, noter le fait qu'oncoscanR se base sur les segments et d'autres packages se basent sur les sondes, donc raisonnablement on peut penser qu'il y aura une meilleure résolution sur ces derniers.
+
+voir todo.md et les autres tâches listées juste ci-dessus.
+
+je pense que l'objectif pour mardi va plutôt être de pouvoir comparer les outils du mieux qu'on peut *sans les faire tourner*, puis on verra si on les fait tous tourner ou non.
+
+arrivée à 10h30; départ à 18h05; 25 min pause 
+
 # <span style="color:#999900"> Vendredi 25/03/2022
 
 
 # <span style="color:#999900"> Lundi 28/03/2022
 # <span style="color:#999900"> Mardi 29/03/2022
 Objectif: avoir les slides pour chaque package. ou à la rigueur 2 bien en profondeur et les 2 autres + tard.
+je pense que l'objectif pour mardi va plutôt être de pouvoir comparer les outils du mieux qu'on peut *sans les faire tourner*, puis on verra si on les fait tous tourner ou non.

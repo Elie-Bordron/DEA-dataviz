@@ -39,10 +39,10 @@ Uterine leiomyosarcoma is an aggressive tumor responsible for a signiﬁcant pro
 Uterine leiomyosarcoma were analyzed with the Nanocind signature. The process split the group in two groups. This result was validated.
 In conclusion, the NanoCind signature is a powerful prognostic indicator that outperforms FIGO staging and the genomic index. Plus, GI is platform-dependent. 
 
-Il est plusieurs fois fait mention de l'article [17] de la biblio en parlant du GI. lire cet article.
+Il est plusieurs fois fait mention de l'article [17] (`Croce S, Ducoulombier A, Ribeiro A, Lesluyes T, Noel JC, Amant F, et al. Genome profiling is an efficient tool to avoid the STUMP classification of uterine smooth muscle lesions: a comprehensive array-genomic hybridization analysis of 77 tumors. Mod Pathol 2018;31:816–28.`)de la biblio en parlant du GI. lire cet article.
 
 # <span style="color:#ff9999"> A faster circular binary segmentation algorithm for the analysis of array CGH data
-segmentation_algo_for_CGH_data.pdf
+DNAcopy__segmentation_algo_for_CGH_data.pdf
 
 la technologie array-CGH recense le nombre de copies de milliers de sites d'un génome. l'algorithme CBS développé dans cet article permet de segmenter le génome en régions de même nombre de copies. Il peut être utilisé dans R à l'aide du package DNAcopy.
 
@@ -132,8 +132,6 @@ smoothing outliers: si une donnée individuelle est trop éloignée des autres, 
 puis, segmenter et plotter.
 
 
-j'ai créé une image quelques jours plus tot, je la [cite](#plot_image) pour tester la référence dans markdown.
-
 # <span style="color:#ff9999"> Allele-specific copy number analysis of tumors (ASCAT)
 ASCAT_article.pdf  
 ## abstract
@@ -163,11 +161,22 @@ Voici pourquoi:
 - les outils ne prenant pas en compte les CNNE sont dans ce cas. On peut donc dire que ces outils sous-estiment largement le nombre réel de loss.
 La correction pour la cellularité révèle que les tumeurs qui en ont le plus eu besoin ne présentent pas moins d'aberrations que les autres, seulement que ces aberrations étaient manquées par les approches qui ne tiennent pas compte de ce paramètre.
 
+## ma conclusion
+Les techniques conventionnelles de CGH sont censées analyser les aberrations chromosomales, mais ne prennent pas en compte deux choses importantes:
+- Les cellules tumorales sont rarement diploides
+- les échantillons sont souvent constitués de différentes populations tumorales + de cellules saines
+Ces deux facteurs rendent l'évaluation des aberrations chromosomales compliquée. ASCAT a été développé pour les prend en compte; les profils ASCAT que cet outil génère permettent de visualiser les événements de LOH et de nombre de copies neutre.
+
 
 
 
 [^1]: déjà dit dans l'intro
 ## Figures  
-
 ![alternatetext here](docs_I_made\CGHcall_voirslackpourlegende.png "title here")
+
+
+
+![input of CGHcall: a table with 8 columns][plotim]
+[plotim]: docs_I_made\images\input_CGHcall.png
+
 
