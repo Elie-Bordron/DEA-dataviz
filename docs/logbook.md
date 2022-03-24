@@ -2045,15 +2045,21 @@ exporter les images de R avec "copy to clipboard" peut laisser des traits en hau
 
 évidemment, indiquer à quoi sert chaque étape. par exemple, le préprocessing supprime les lignes où 30% des échantillons n'ont pas de valeur parce qu'utiliser les données pour *tous* les échantillons est précisément ce que CGHcall recherche.
 
-
+je suis rendu à la segmentation. relire cahier pour plus d'infos sur cette étape, voir à quel point il faut décrire le mixture model: parler surtout de ce qu'il fait? parler de comment il procède est important aussi.
 
 
 
 arrivée à 10h20; départ à 17:50; 20 min pause; 
 
 # <span style="color:#999900"> Jeudi 24/03/2022
+arrivée à 10h30; 
 Objectif aujourd'hui: slides complètes pour EaCon. 
+1. je dessine le pipeline sur papier, puis je le fais sur draw.io .
+je réalise qu'il me manque des choses pour avoir une description pertinente du package: je ne sais pas si les plots sont intéressants. en tout cas je dois lire l'article d'ASCAT pour bien comprendre le fonctionnement d'EaCoN.
+d'autre part, je dois lire l'article de DNAcopy car il est utilisé pour la segmentation dans CGHcall.
 
+encore d'autre part, j'ai réfléchi et une mise à jour du tableau comparatif est plus que nécessaire. Les spécificités de chaque outil doivent être claires pour moi, la colonne input doit être plus facile à lire, pareil pour l'output.
+en effet, pour faire les slides, je dois d'abord connaître le pipeline des 4 outils. j'ajoute des choses au todo.md.
 # <span style="color:#999900"> Vendredi 25/03/2022
 
 

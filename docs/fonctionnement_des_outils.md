@@ -98,7 +98,7 @@ Raw cel files
 
 
 ## pipeline
-- Raw data processing  
+- Normalization (=Raw data processing)  
 `OS.Process(ATChannelCel = "/home/project/CEL/S1_OncoScan_CNV_A.CEL", GCChannelCel = "/home/project/CEL/S1_OncoScan_CNV_C.CEL", samplename = "S1_OS")`  
 Etape de normalisation. Output: normalized data(filename.RDS), plots, metrics.
 
