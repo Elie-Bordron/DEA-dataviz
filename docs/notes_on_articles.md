@@ -44,7 +44,14 @@ Il est plusieurs fois fait mention de l'article [17] (`Croce S, Ducoulombier A, 
 # <span style="color:#ff9999"> A faster circular binary segmentation algorithm for the analysis of array CGH data
 DNAcopy__segmentation_algo_for_CGH_data.pdf
 
-la technologie array-CGH recense le nombre de copies de milliers de sites d'un génome. l'algorithme CBS développé dans cet article permet de segmenter le génome en régions de même nombre de copies. Il peut être utilisé dans R à l'aide du package DNAcopy.
+## abstract
+la technologie array-CGH recense le nombre de copies de milliers de sites d'un génome. l'algorithme CBS développé dans cet article permet de segmenter le génome en régions de même nombre de copies. Le nombre d'opérations est O(N²) avec N = nombre de sondes. L'approche 100% permutation atteint donc ses limites sur les arrays récents qui peuvent contenir des dizaines de milliers de sondes=marqueurs. Les auteurs ont développé uen approche hybride pour passer à un temps linéaire. Mais comment procède-t-il?
+
+## Methods
+l'algo prend un chromosome, et trouve récursivement des breakpoint dans chaque segment. il arrete quand aucun break point ne peut être trouvé. De manière générale, un test de permutation est utilisé.
+
+
+Il peut être utilisé dans R à l'aide du package DNAcopy.
 
 # <span style="color:#ff9999"> Copy number aberrations from Affymetrix SNP 6.0 genotyping data—how accurate are commonly used prediction approaches ?
 
@@ -52,7 +59,6 @@ Copy_number_aberrations_from_Affymetrix_SNP.pdf
 
 Les aberrations du nombre de copies (CNA) jouent un rôle important dans la recherche sur le cancer. Un défi dans la quantification des CNA est l'effet de variables confondantes. pour traiter de ce problème, Les auteurs ont comparé les différents algorithmes d'identification de CNA sur les données d'Affymetrix SNP 6.0 genotyping.
 
--> OncoSNP semble être un algorithme pour traiter ces données.
 Conclusion:
 
 
@@ -131,6 +137,8 @@ Cet outil sert à identifier les régions où un gain / une perte de nombre de c
 smoothing outliers: si une donnée individuelle est trop éloignée des autres, l'aplatir pour qu'elle rejoigne les autres sondes proches d'elle.
 puis, segmenter et plotter.
 
+# <span style="color:#ff9999"> Mitotic Checkpoints and Chromosome Instability Are Strong Predictors of Clinical Outcome in Gastrointestinal Stromal Tumors
+
 
 # <span style="color:#ff9999"> Allele-specific copy number analysis of tumors (ASCAT)
 ASCAT_article.pdf  
@@ -172,11 +180,11 @@ Ces deux facteurs rendent l'évaluation des aberrations chromosomales compliqué
 
 [^1]: déjà dit dans l'intro
 ## Figures  
-![alternatetext here](docs_I_made\CGHcall_voirslackpourlegende.png "title here")
+![alternatetext here](docs_I_made/images/CGHcall_voirslackpourlegende.png "title here")
 
 
-
-![input of CGHcall: a table with 8 columns][plotim]
+<!-- afficher une image sans -->
 [plotim]: docs_I_made\images\input_CGHcall.png
+![input of CGHcall: a table with 8 columns][plotim]
 
 

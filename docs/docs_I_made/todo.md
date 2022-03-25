@@ -47,16 +47,17 @@ todo: finir de noter pour ASCAT, il reste 2 phrases.
 24/03
 - ~~lire ASCAT article pour comprendre EaCoN~~
 ASCAT se concentre sur 
-- lire DNAcopy article pour comprendre segmentation CGHcall et format CBS (utilisé dans plusieurs outils)
+- lire DNAcopy article pour comprendre ~~segmentation CGHcall~~ et ~~format CBS~~ (utilisé dans plusieurs outils)
+le format CBS (output DNAcopy) est décrit dans fonctionnement_des_outils.md. 
+- écrire ce que j'ai compris de la segmentation par DNAcopy. C'est dans le cahier.
 - décrire le pipeline pour chaque outil dans fonctionnement_des_outils.md.
 - connaître précisément les spécificités de chaque outil: qu'apporte-t-il par rapport aux autres? quelles sont ses limites par rapport aux autres?
 - mettre à jour le tableau comparatif
 - indiquer à quoi sert quel score HRD donné par OncoscanR (cf cahier)
-- lire Mat Met ascat pour savoir comment il procède pour avoir les LOH et les CN-neutral events alors que la CGH ordinaire ne permet pas d'avoir ça. Faire cela entre dans le cadre de "connaître le sspécificités de chaque outil".
+- lire Mat Met ascat pour savoir comment ASCAT procède pour avoir les LOH et les CN-neutral events alors que la CGH ordinaire ne permet pas d'avoir ça. cela entre dans le cadre de "connaître les spécificités de chaque outil".
 - me remettre en mémoire rCGH, faire le pipeline.
-
-
-
+- EaCoN, lors de l'estimation du nombre de copies, utilise des paramètres "gamma", et recommande de lire les pages d'aide du package R ASCAT pour savoir de quoi il s'agit. regarder ça.
+- transférer les infos sur CGHcall du cahier vers fonctionnement_des_articles.md.
 
 
 

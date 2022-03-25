@@ -59,10 +59,11 @@ sdundo.CNA.object <- segment(smoothed.CNA.object,
                              undo.splits="sdundo", 
                              undo.SD=3,verbose=1)
 
-
 ###################################################
 ### code chunk number 10: DNAcopy.Rnw:177-178
 ###################################################
 plot(sdundo.CNA.object,plot.type="s")
+summary(sdundo.CNA.object)
 
-
+x = c(5, 10, 20, "hi")
+saveRDS(x, file = "my_data.rds")

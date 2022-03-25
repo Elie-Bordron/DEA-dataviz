@@ -18,7 +18,10 @@ data(Wilting)
 Wilting_raw = Wilting
 Wilting <- make_cghRaw(Wilting_raw)
 
+(1/20)+(1/80)
+(1/16)**0.5
 
+9**0.5
 ###################################################
 ### code chunk number 2: CGHcall.Rnw:65-66
 ###################################################

@@ -87,7 +87,8 @@ puis-je voir la distribution gaussienne de toutes les données? oui, voir lograt
 
 
 # EaCoN
-
+Ce package se démarque par sa facilité d'usage (multiples options pour lancer le pipeline, en pas à pas ou en batch) . Il n'apporte pas de technologie innovante mais utilise plusieurs outils (APT, ASCAT) pour faire l'analyse de Nombre de copies de A à Z.
+Sa spécificité est d'estimer la cellularité
 ## input
 Raw cel files
 ## output
@@ -98,27 +99,73 @@ Raw cel files
 
 
 ## pipeline
-- Normalization (=Raw data processing)  
+Normalization (=Raw data processing)  
 `OS.Process(ATChannelCel = "/home/project/CEL/S1_OncoScan_CNV_A.CEL", GCChannelCel = "/home/project/CEL/S1_OncoScan_CNV_C.CEL", samplename = "S1_OS")`  
-Etape de normalisation. Output: normalized data(filename.RDS), plots, metrics.
+Etape de normalisation. Utilise *Array Power Tools (APT)*
+Output: normalized data(filename.RDS), plots, metrics.
 
-- L2R & BAF Segmentation  
-    `Segment.ff(RDS.file = "/home/me/my_project/EaCoN_results/SAMPLE1/S1_OncoScan_CNV_hg19_processed.RDS", segmenter = "ASCAT")`  
-    Cette fonction effectue:
-    - la segmentation (L2R and BAF bivariate segmentation-> ASCAT, ...)
-    - la centralisation
-    - le calling  
-    output: segmented data(filename.RDS), résultats de segmentation L2R *en format CBS*, plots, métriques.
+L2R & BAF Segmentation  
+`Segment.ff(RDS.file = "/home/me/my_project/EaCoN_results/SAMPLE1/S1_OncoScan_CNV_hg19_processed.RDS", segmenter = "ASCAT")`  
+Cette fonction effectue:
+- la segmentation (L2R and BAF bivariate segmentation). Utilise *ASCAT*
+- la centralisation
+- le calling  
+output: segmented data(filename.RDS), résultats de segmentation L2R *en format CBS*, plots, métriques.
 
 
-- Copy-number estimation  
-    `ASCN.ff(RDS.file = "/home/me/my_project/EaCoN_results/SAMPLE1/ASCAT/L2R/SAMPLE1.ASCAT.RDS")`
-    - TCN, ASCN  
-    - global ploidy
-    - cellularity
+Copy-number estimation  
+`ASCN.ff(RDS.file = "/home/me/my_project/EaCoN_results/SAMPLE1/ASCAT/L2R/SAMPLE1.ASCAT.RDS")`
+- TCN, ASCN  
+- global ploidy
+- cellularity
 
-- HTML reporting  
-    `Annotate.ff(RDS.file = "/home/project/EaCoN_results/S1/ASCAT/L2R/S1.EaCoN.ASPCF.RDS", author.name = "Me!")`
+HTML reporting  
+`Annotate.ff(RDS.file = "/home/project/EaCoN_results/S1/ASCAT/L2R/S1.EaCoN.ASPCF.RDS", author.name = "Me!")`
 
 ## EaCoN utilise ASCAT
-Deux paramètres sont calculés par ASCAT à partir de données SNP: L'estimation de la cellularité et l'estimation de quel allèle a été gagné/perdu par rapport à l'autre. Pourront-ils être déterminés à partir de données Oncoscan?)
+Deux paramètres sont calculés par ASCAT à partir de données SNP: L'estimation de la cellularité et l'estimation de quel allèle a été gagné/perdu par rapport à l'autre (allelic skewness = asymétrie allélique). Pourront-ils être déterminés à partir de données Oncoscan?)
+
+
+
+
+# DNAcopy
+
+## output (segmentation):
+voir la doc de la fonction `segment()` de DNAcopy en ligne: https://rdrr.io/bioc/DNAcopy/man/segment.html ou sur R.
+```
+       ID chrom loc.start loc.end num.mark seg.mean
+1  c05296     1       468  240000      132   0.0212
+2  c05296     2         0  245000       64   0.0095
+3  c05296     3         0  218000       86   0.0025
+4  c05296     4         0  184000      165  -0.0007
+5  c05296     5         0  198500      108  -0.0107
+6  c05296     6         0  188000       85  -0.0048
+7  c05296     7         0  161500      172  -0.0042
+8  c05296     8         0  147000      151  -0.0026
+9  c05296     9         0  115000      111  -0.0236
+10 c05296    10         0   64187       53  -0.0165
+11 c05296    10     65000  110000       41   0.5002
+12 c05296    10    110412  142000       32  -0.0076
+13 c05296    11         0   34420       51   0.0121
+14 c05296    11     35416   39623       15  -0.6511
+15 c05296    11     43357  145000      119   0.0171
+16 c05296    12         0  142000       94   0.0204
+17 c05296    13      3426  100500       57  -0.0337
+18 c05296    14       770   97000       76   0.0191
+19 c05296    15         0   79000       66   0.0138
+20 c05296    16         0   84000       66   0.0270
+21 c05296    17         0   86000       91   0.0538
+22 c05296    18         0   86000       53   0.0018
+23 c05296    19         0   70000       37  -0.0274
+24 c05296    20         0   73000       87   0.0129
+25 c05296    21      3131   30000       33   0.0311
+26 c05296    22      1100   33000       16   0.0183
+27 c05296    23         0  155000       51   0.7184
+```
+Un segment = une ligne. Il s'agit ici de donneés test. à part les chromosomes 10 et 11, un seul segment par chromosome a été trouvé. ID = sample Id; num.mark = nombre de marqueurs dans le segment.
+
+
+
+
+
+

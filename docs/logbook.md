@@ -2072,9 +2072,15 @@ je pense que l'objectif pour mardi va plutôt être de pouvoir comparer les outi
 arrivée à 10h30; départ à 18h05; 25 min pause 
 
 # <span style="color:#999900"> Vendredi 25/03/2022
+je lis DNAcopy.
+J'ai avancé surtout en diagonale aujourd'hui, à lire ASCAT et DNAcopy.
 
+arrivée à 10h10; pause 40 minutes; départ 17h10
 
 # <span style="color:#999900"> Lundi 28/03/2022
 # <span style="color:#999900"> Mardi 29/03/2022
 Objectif: avoir les slides pour chaque package. ou à la rigueur 2 bien en profondeur et les 2 autres + tard.
 je pense que l'objectif pour mardi va plutôt être de pouvoir comparer les outils du mieux qu'on peut *sans les faire tourner*, puis on verra si on les fait tous tourner ou non.
+
+
+
