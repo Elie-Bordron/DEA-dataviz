@@ -2074,13 +2074,31 @@ arrivée à 10h30; départ à 18h05; 25 min pause
 # <span style="color:#999900"> Vendredi 25/03/2022
 je lis DNAcopy.
 J'ai avancé surtout en diagonale aujourd'hui, à lire ASCAT et DNAcopy.
+Je me suis confirmé en lisant ChasRUO.pdf à quoi servait le fait d'avoir AT *et* GC dans oncoscanR. ça aide à avoir "allele difference", le ratio qui indique à quel point un allèle parmi les deux est plus présent que l'autre.
 
 arrivée à 10h10; pause 40 minutes; départ 17h10
 
 # <span style="color:#999900"> Lundi 28/03/2022
+arrivée à 10h05; 30 min pause
+
+fini de noter les 2 dernières phrases d'ASCAT. la carte d'asymétrie allélique (skewness) peut être construite sur nos données, a priori, car oncoscan utilise 2 puces par échantillon (AT et GC) justement pour déterminer le statut allélique (le ratio qui indique la prévalence d'un allèle par rapport à l'autre.)
+Ce statut allélique est caractérisé pour 2 SNP différents, et pas les 4 qui existent pour une position donnée. Cela s'explique par le fait qu'une tumeur ne peut pas avoir (hors mutation) 3 allèles différents, car elle n'a que deux allèles à l'origine, étant diploide nativement. On ne considère donc que ces deux allèles.
+
+Aujourd'hui j'ai aussi compris en détail comment le profil BAF est obtenu. voir cahier au 28/03/22.
+j'ai aussi lu ASCAT et pris des notes dessus, en cahier et je les transpose en numérique.
+pour ouvrir le bandeau des commentaires  dans adobe acrobat reader, il faut chercher dans la barre d'outils verticale à droite, "commentaire".
+
+Je connais bien le fonctionnement d'ASCAT, donc EaCoN. je peux axer la réunion de demain sur ces 2 outils.
+parler aussi des plots d'EaCoN, essayer de comprendre ce qu'ils veulent dire à partir de leur description? peut-être pas si important au final. ne pas passer trop de temps dessus.
+
 # <span style="color:#999900"> Mardi 29/03/2022
+envoyer rappel réunion
+
 Objectif: avoir les slides pour chaque package. ou à la rigueur 2 bien en profondeur et les 2 autres + tard.
-je pense que l'objectif pour mardi va plutôt être de pouvoir comparer les outils du mieux qu'on peut *sans les faire tourner*, puis on verra si on les fait tous tourner ou non.
+Je pense que l'objectif pour mardi va plutôt être de pouvoir comparer les outils du mieux qu'on peut *sans les faire tourner*, puis on verra si on les fait tous tourner ou non.
+
+
+
 
 
 

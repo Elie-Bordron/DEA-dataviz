@@ -8,6 +8,7 @@
 - Score LST
     - voir cahier
 
+
 # CGHcall
 - fichiers qui parlent de ce package:  
     article: CGHcall_article.pdf  
@@ -32,7 +33,6 @@ Différents plots peuvent également être produits:
 - Les plots par échantillon présentent des barres vertes et rouges aux endroits où des aberrations sont détectées. Ces dernières correspondent à la probabilité d'avoir un réel gain/perte à cet endroit: si la barre dépasse les 50%, l'altération est considérée réelle.
 - Les Frequency plots montrent la fréquence de gains / loss sur tous les échantillons.
 - Les Summary plots sont des frequency plots un peu plus sophistiqués: ils pondèrent 
-
 
 ## Pipeline
 ``Wilting <- make_cghRaw(Wilting)``
@@ -97,33 +97,28 @@ Raw cel files
 - Total Copy Number (TCN) and Allele-Specific Copy Number (ASCN)
 - estimation of ploidy and cellularity (using ASCAT, ...)
 
-
 ## pipeline
-Normalization (=Raw data processing)  
 `OS.Process(ATChannelCel = "/home/project/CEL/S1_OncoScan_CNV_A.CEL", GCChannelCel = "/home/project/CEL/S1_OncoScan_CNV_C.CEL", samplename = "S1_OS")`  
-Etape de normalisation. Utilise *Array Power Tools (APT)*
+Normalization (=Raw data processing). Cette étape utilise *Array Power Tools (APT)*
 Output: normalized data(filename.RDS), plots, metrics.
 
-L2R & BAF Segmentation  
 `Segment.ff(RDS.file = "/home/me/my_project/EaCoN_results/SAMPLE1/S1_OncoScan_CNV_hg19_processed.RDS", segmenter = "ASCAT")`  
-Cette fonction effectue:
+L2R & BAF Segmentation. Cette fonction effectue:
 - la segmentation (L2R and BAF bivariate segmentation). Utilise *ASCAT*
 - la centralisation
 - le calling  
 output: segmented data(filename.RDS), résultats de segmentation L2R *en format CBS*, plots, métriques.
 
-
-Copy-number estimation  
 `ASCN.ff(RDS.file = "/home/me/my_project/EaCoN_results/SAMPLE1/ASCAT/L2R/SAMPLE1.ASCAT.RDS")`
-- TCN, ASCN  
-- global ploidy
-- cellularity
-
-HTML reporting  
+Estimation du copy number 
+output:
+- fichier .RDS: données de segmentation ASCN et TCN, et données de cellularité et ploidie.
+- fichier .txt: ploidie, cellularité et statistiques du modèle.
 `Annotate.ff(RDS.file = "/home/project/EaCoN_results/S1/ASCAT/L2R/S1.EaCoN.ASPCF.RDS", author.name = "Me!")`
+HTML reporting  
 
 ## EaCoN utilise ASCAT
-Deux paramètres sont calculés par ASCAT à partir de données SNP: L'estimation de la cellularité et l'estimation de quel allèle a été gagné/perdu par rapport à l'autre (allelic skewness = asymétrie allélique). Pourront-ils être déterminés à partir de données Oncoscan?)
+Deux paramètres sont calculés par ASCAT à partir de données SNP: L'estimation de la cellularité et l'estimation de quel allèle a été gagné/perdu par rapport à l'autre (allelic skewness = asymétrie allélique). L'asymétrie allélique peut être déterminée à partir de données Oncoscan.
 
 
 
@@ -165,6 +160,7 @@ voir la doc de la fonction `segment()` de DNAcopy en ligne: https://rdrr.io/bioc
 Un segment = une ligne. Il s'agit ici de donneés test. à part les chromosomes 10 et 11, un seul segment par chromosome a été trouvé. ID = sample Id; num.mark = nombre de marqueurs dans le segment.
 
 
+# ASCAT
 
 
 

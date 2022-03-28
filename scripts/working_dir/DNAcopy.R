@@ -65,5 +65,7 @@ sdundo.CNA.object <- segment(smoothed.CNA.object,
 plot(sdundo.CNA.object,plot.type="s")
 summary(sdundo.CNA.object)
 
-x = c(5, 10, 20, "hi")
-saveRDS(x, file = "my_data.rds")
+
+
+
+

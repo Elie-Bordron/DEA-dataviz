@@ -23,11 +23,12 @@
     -> voir surtout ceux qui sont cités dans un article.
 - dans notes_on_articles.md, voir la dernière ligne de l'article Nanocind. lire l'article en question.
 - dans cet article Nanocind (qui est la thèse de Sabrina Croce), on conclut que la signature Nanocind est un meilleur indice de prédiction que le GI. voir si on ne pourrait pas l'appliquer à nos données? Sabrina m'en avait parlé mais je ne vois pas de mention de ça dans mes notes. 
-    edit: page 4, table 1, je vois que CINSARC et Nanocind sont peut-être la même chose.
+    edit: page 4, table 1, je vois que CINSARC et Nanocind sont peut-être la même chose.  
+    
 02/03/2022
-- ~~refaire un ticket? ... je ne sais pas a priori non, sur l'ent le ticket a toujours l'air en cours de gestion. garder un oeil là-dessus.~~ J'ai renvoyé un mail sans avoir de réponse aujourd'hui.
+- ~~refaire un ticket? ... je ne sais pas a priori non, sur l'ent le ticket a toujours l'air en cours de gestion. garder un oeil là-dessus. J'ai renvoyé un mail sans avoir de réponse aujourd'hui.~~
 - ~~si pas de réponse demain midi au sujet du ticket, en refaire un.~~
-    je refais un ticket.
+    ~~je refais un ticket.~~
 - Lire `LRR_and_BAF.pdf` pour mieux comprendre ces 2 indices.
 - ~~chercher si on peut exporter des cnchp à partir d'oncoscan.~~
     -> non, selon le manuel de ChAS.
@@ -36,17 +37,19 @@
 - à https://www.affymetrix.com/support/developer/powertools/changelog/gcos-agcc/index.html, regarder les différents formats de fichier.
 - ~~voir si je peux accéer à la base de données ennov. en ligne~~
     -> oui
-- lire l'article qui décrit ASCAT: ASCAT.pdf
+- ~~lire l'article qui décrit ASCAT: ASCAT.pdf~~  
+
 10/03/2022
 - lire les articles des packages. je commence par CGHcall. noter dans fonctionnement_des_outils.md et notes_on_articles.md ce que je trouve.
 - ~~répondre à la question: ça fait quoi quand on lance CGHcall sur plusieurs échantillons en même temps? est-ce que ça change les résultats par rapport à lancer les analyses échantillon par échantillon? Si oui, quels calculs sont faits?~~
 pour répondre à ça, comprendre le fonctionnement du le sa segmentation couplée au mixture model serait un bon point de départ. je lis donc Picard, voir notes_on_articles.md.
-Réponse à ça: lancer CGHcall sur un groupe d'E ou sur les E un à un change bien les résultats. En effet, les sondes sont classées par segment (ou par bras si le mm alternatif est utilisé), et pour cela, la distribution de *toutes* les sondes est utilisée.
-23/03
-todo: finir de noter pour ASCAT, il reste 2 phrases.
-24/03
+Réponse à ça: lancer CGHcall sur un groupe d'E ou sur les E un à un change bien les résultats. En effet, les sondes sont classées par segment (ou par bras si le mm alternatif est utilisé), et pour cela, la distribution de *toutes* les sondes est utilisée.  
+
+23/03/2022
+- ~~finir de noter pour ASCAT, il reste 2 phrases.~~
+
+24/03/2022
 - ~~lire ASCAT article pour comprendre EaCoN~~
-ASCAT se concentre sur 
 - lire DNAcopy article pour comprendre ~~segmentation CGHcall~~ et ~~format CBS~~ (utilisé dans plusieurs outils)
 le format CBS (output DNAcopy) est décrit dans fonctionnement_des_outils.md. 
 - écrire ce que j'ai compris de la segmentation par DNAcopy. C'est dans le cahier.
@@ -58,8 +61,21 @@ le format CBS (output DNAcopy) est décrit dans fonctionnement_des_outils.md.
 - me remettre en mémoire rCGH, faire le pipeline.
 - EaCoN, lors de l'estimation du nombre de copies, utilise des paramètres "gamma", et recommande de lire les pages d'aide du package R ASCAT pour savoir de quoi il s'agit. regarder ça.
 - transférer les infos sur CGHcall du cahier vers fonctionnement_des_articles.md.
+- comment ASCAT estime la cellularité?
+- ~~comment ASCAT estime le copy number (ASCN)?~~
+En se basant sur les valeurs de log ratio et de BAF données par les puces Oncoscan.
+- Un algorithme dit "ASPCF" traite les données BAF et log ratio. voir ce que c'est et où il est utilisé.
+- ASCAT Mat et Met form cahier to md
 
+J'ai le choix:
+- pipeline pour les 4 packages (manque oncoscanR et rCGH) + comparaison tableau
+- slides pour 2 packages (CGHcall et EaCoN) mais EaCoN produit surtout des graphes -> parler de ces derniers, et de ce qu'ASCAT promet.
+- présenter tous les packages sans les faire tourner? -> que faire pour ça?
+- faire un tableau-pipeline pour montrer ce qu'ils font de *similaire*, ça permet de montrer aussi ce qu'ils font de *différent*. pour cela, les 4 pipelines sont nécessaires.  
+***je fais ça.*** d'abord, les 4 pipelines.
 
+28/02/2022
+- envoyer un rappel pour la réunion de demain.
 
 
 
