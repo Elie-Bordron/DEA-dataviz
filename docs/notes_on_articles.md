@@ -47,7 +47,7 @@ Il est plusieurs fois fait mention de l'article [17] (`Croce S, Ducoulombier A, 
 DNAcopy__segmentation_algo_for_CGH_data.pdf
 
 ## abstract
-la technologie array-CGH recense le nombre de copies de milliers de sites d'un génome. l'algorithme CBS développé dans cet article permet de segmenter le génome en régions de même nombre de copies. Le nombre d'opérations est O(N²) avec N = nombre de sondes. L'approche 100% permutation atteint donc ses limites sur les arrays récents qui peuvent contenir des dizaines de milliers de sondes=marqueurs. Les auteurs ont développé uen approche hybride pour passer à un temps linéaire. Mais comment procède-t-il?
+la technologie array-CGH recense le nombre de copies de milliers de sites d'un génome. l'algorithme CBS développé dans cet article permet de segmenter le génome en régions de même nombre de copies. Le nombre d'opérations est O(N²) avec N = nombre de sondes. L'approche 100% permutation atteint donc ses limites sur les arrays récents qui peuvent contenir des dizaines de milliers de sondes=marqueurs. Les auteurs ont développé une approche hybride pour passer à un temps linéaire. Mais comment procède-t-il?
 
 ## Methods
 l'algo prend un chromosome, et trouve récursivement des breakpoint dans chaque segment. il arrete quand aucun break point ne peut être trouvé. De manière générale, un test de permutation est utilisé.
@@ -60,7 +60,6 @@ Il peut être utilisé dans R à l'aide du package DNAcopy.
 Copy_number_aberrations_from_Affymetrix_SNP.pdf
 
 Les aberrations du nombre de copies (CNA) jouent un rôle important dans la recherche sur le cancer. Un défi dans la quantification des CNA est l'effet de variables confondantes. pour traiter de ce problème, Les auteurs ont comparé les différents algorithmes d'identification de CNA sur les données d'Affymetrix SNP 6.0 genotyping.
-
 Conclusion:
 
 
@@ -145,8 +144,9 @@ puis, segmenter et plotter.
 # <span style="color:#ff9999"> Allele-specific copy number analysis of tumors (ASCAT)
 ASCAT_article.pdf  
 ## abstract
-Allele-specific Copy number pour tumeurs solides.; estimation de la ploidie et de la cellularité. L'agrégation des profils ASCAT obtenus rend compte de la distribution des fréquences génomiques de gains et pertes, et permet de visualiser sur le génome entier les événements de nombre de copies neutre et de LOH.  
-Les profils ASCAT permettent également de construire une carte d'asymétrie allélique (genome-wide map of allelic skewness), qui indique les loci où un allèle est perdu plus que l'autre.
+Allele-specific Copy number pour tumeurs solides.; estimation de la`` ploidie et de la cellularité`` $voir fig 1 article$. L'agrégation des profils ASCAT obtenus rend compte de la ``distribution des fréquences génomiques de gains et pertes`` $voir fig S6 supplementary $, et permet de visualiser sur le génome entier les événements de`` nombre de copies neutre`` et de ``LOH``, $voir fig 4 article$.  
+Les profils ASCAT ($voir fig 1 article$)permettent également de construire une ``carte d'asymétrie allélique`` $voir fig 5 article$ (genome-wide map of allelic skewness), qui indique les loci où un allèle est perdu plus que l'autre.
+
 
 ## Intro
 Les altérations génomiques sont facteurs clés de nombreux cancers. Les génomes tumoraux sont largement traités par CGH pour caractériser ces altérations, mais l'interprétation de telles données peut être difficile, majoritairement pour deux raisons:
@@ -180,7 +180,7 @@ Pour rendre la méthode plus robuste au bruit des données en input, les donnée
 D'abord, les sondes homozygotes en germline $donc avec un BAF de 0 et 1 $ sont supprimées des données BAF, car elles n'apportent aucune information sur le CN total.
 Ensuite, ASPCF fitte des fonctions constantes (y=k, donc des traits horizontaux) pour log Ratio et BAF simultanément, et force les change points des deux paramètres à arriver aux même emplacements sur le génome. Cela produit une segmentation du génome. Pour logR, une valeur est obtenue par segment. pour BAF, deux valeurs par segment , symétriques autour de 0.5, sont retournées (si les valeurs sont de 0.5, une seule valeur est retournée.)  
 
-Ces valeurs sont ensuite envoyées à l'algorithme ASCAT, qui va estimer les paramètres de ploidie et cellularité, ainsi que les calls d'ASCN à partir de ces deux derniers. Mais coment ψ et ρ sont-ils estimés?  
+Ces valeurs sont ensuite envoyées à l'algorithme ASCAT, qui va estimer les paramètres de ploidie et cellularité, ainsi que les calls d'ASCN à partir de ces deux derniers. Mais comment ψ et ρ sont-ils estimés?  
 Le vrai nombre de copies est un nombre entier non négatif. Sachant cela, ASCAT teste plusieurs valeurs de ψ et ρ en calculant pour chaque combinaison de ces paramètres l'ASCN, dans le but de trouver le plus proche d'un nombre entier non négatif. Voici comment les auteurs procèdent:
 1. on fait ρ de (0.10, 0.11, . . ., 1.05) et ψ de (1.00, 1.05, . . ., 5.40).
 2. Pour chaque combinaison possible de ψ et ρ, on fait:
@@ -193,6 +193,7 @@ Le vrai nombre de copies est un nombre entier non négatif. Sachant cela, ASCAT 
     - le score g moyen est inférieur à 80%.
 4. Si une seule solution est restante, elle est retenue. Si plusieurs restent, celle qui a le meilleur score g est retenue. Pour la solution choisie, ASCAT retourne  la ``cellularité ρ`` et la ``ploidie ψ`` (cette dernière étant calculée (ne l'a-t-on pas estimée, déjà?) comme le nombre de copies moyen), le score g, le profil ASCAT, et un score de confiance pour chaque aberration trouvée.
 
+On peut également parler du paramètre ``gamma (γ)``, qui dépend de la technologie utilisée. il correspond à la diminution de log Ratio pour une déletion d'un échantillon à 100% de cellules tumorales. `ASCN.ff() teste les valeurs de gamma de  0.35 à 0.95, avec un pas de 0.05` et produit des résultats pour chacune.
 
 ## ma conclusion
 Les techniques conventionnelles de CGH sont censées analyser les aberrations chromosomales, mais ne prennent pas en compte deux choses importantes:
@@ -204,11 +205,10 @@ Ces deux facteurs rendent l'évaluation des aberrations chromosomales compliqué
 
 
 [^1]: déjà dit dans l'intro
-## Figures  
+# Comment insérer des figures
 ![alternatetext here](docs_I_made/images/CGHcall_voirslackpourlegende.png "title here")
 
 
-<!-- afficher une image sans -->
 [plotim]: docs_I_made\images\input_CGHcall.png
 ![input of CGHcall: a table with 8 columns][plotim]
 

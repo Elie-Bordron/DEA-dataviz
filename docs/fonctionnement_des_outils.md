@@ -32,7 +32,7 @@ voir fin du pipeline pour les résultats bruts.
 Différents plots peuvent également être produits:
 - Les plots par échantillon présentent des barres vertes et rouges aux endroits où des aberrations sont détectées. Ces dernières correspondent à la probabilité d'avoir un réel gain/perte à cet endroit: si la barre dépasse les 50%, l'altération est considérée réelle.
 - Les Frequency plots montrent la fréquence de gains / loss sur tous les échantillons.
-- Les Summary plots sont des frequency plots un peu plus sophistiqués: ils pondèrent 
+- Les Summary plots sont des frequency plots un peu plus sophistiqués: ils pondèrent cette fréquence par la probabilité postérieure.
 
 ## Pipeline
 ``Wilting <- make_cghRaw(Wilting)``
@@ -87,8 +87,13 @@ puis-je voir la distribution gaussienne de toutes les données? oui, voir lograt
 
 
 # EaCoN
-Ce package se démarque par sa facilité d'usage (multiples options pour lancer le pipeline, en pas à pas ou en batch) . Il n'apporte pas de technologie innovante mais utilise plusieurs outils (APT, ASCAT) pour faire l'analyse de Nombre de copies de A à Z.
-Sa spécificité est d'estimer la cellularité
+Ce package se démarque par sa facilité d'usage (multiples options pour lancer le pipeline, en pas à pas ou en batch) . Il n'apporte pas de technologie innovante mais utilise plusieurs outils (APT, ASCAT) pour faire l'analyse de Nombre de copies de A à Z
+On peut considérer EaCoN comme une interface pour utiliser ASCAT; l'intérêt de cette interface est de produire des métriques, des plots et de faciliter l'utilisation du package par un mode batch.
+La spécificité de cet outil est d'estimer la cellularité et la ploidie et de prendre en compte ces paramètres dans le calcul du nombre de copies au niveau allélique. Cela permet de produire des profils ASCAT, définis ainsi:
+un profil ASCAT est un profil de nombre de copies au niveau allélique sur le génome entier, et permet de voir, en plus des habituels gains et pertes, les événements neutres de nombre de copies et LOH.
+
+important: je parle d'ASCAT mais on peut aussi utiliser FACETS et Sequenza. Cela dit, je n'ai pas réussi à installer FACETS.
+
 ## input
 Raw cel files
 ## output
@@ -106,25 +111,28 @@ Output: normalized data(filename.RDS), plots, metrics.
 L2R & BAF Segmentation. Cette fonction effectue:
 - la segmentation (L2R and BAF bivariate segmentation). Utilise *ASCAT*
 - la centralisation
-- le calling  
-output: segmented data(filename.RDS), résultats de segmentation L2R *en format CBS*, plots, métriques.
+- le calling (par l'algo ASPCF, $voir fig S2 supplementary $)
+output: segmented data(filename.RDS), résultats de segmentation L2R *fichiers .CBS*, plots de segmentation par BAF et par L2R, métriques... voir github pour plus de détail.
 
 `ASCN.ff(RDS.file = "/home/me/my_project/EaCoN_results/SAMPLE1/ASCAT/L2R/SAMPLE1.ASCAT.RDS")`
-Estimation du copy number 
-output:
-- fichier .RDS: données de segmentation ASCN et TCN, et données de cellularité et ploidie.
-- fichier .txt: ploidie, cellularité et statistiques du modèle.
+Estimation du copy number -> $expliquer l'estimation des 2 paramètres avec la fig 1$
+output:  $voir fig 1 article$
+- fichier .RDS: données de segmentation ASCN et TCN,
+- fichier .txt: ploidie moyenne, cellularité et statistiques du modèle.
+
 `Annotate.ff(RDS.file = "/home/project/EaCoN_results/S1/ASCAT/L2R/S1.EaCoN.ASPCF.RDS", author.name = "Me!")`
 HTML reporting  
 
 ## EaCoN utilise ASCAT
-Deux paramètres sont calculés par ASCAT à partir de données SNP: L'estimation de la cellularité et l'estimation de quel allèle a été gagné/perdu par rapport à l'autre (allelic skewness = asymétrie allélique). L'asymétrie allélique peut être déterminée à partir de données Oncoscan.
+Deux paramètres sont calculés par ASCAT à partir de données SNP: L'estimation de la cellularité et l'estimation de la ploidie. A partir de ces deux paramètres, le copy number est estimé. L'algorithme TuScan fait ça aussi, selon l'aide de Chas, page 509.
+
+De plus,  on peut savoir quel allèle a été gagné/perdu par rapport à l'autre (allelic skewness = asymétrie allélique). L'asymétrie allélique peut être déterminée à partir de données Oncoscan.
 
 
 
 
 # DNAcopy
-
+voir cahier au 25/03
 ## output (segmentation):
 voir la doc de la fonction `segment()` de DNAcopy en ligne: https://rdrr.io/bioc/DNAcopy/man/segment.html ou sur R.
 ```
@@ -160,7 +168,6 @@ voir la doc de la fonction `segment()` de DNAcopy en ligne: https://rdrr.io/bioc
 Un segment = une ligne. Il s'agit ici de donneés test. à part les chromosomes 10 et 11, un seul segment par chromosome a été trouvé. ID = sample Id; num.mark = nombre de marqueurs dans le segment.
 
 
-# ASCAT
 
 
 

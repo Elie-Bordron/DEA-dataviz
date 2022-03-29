@@ -1129,6 +1129,8 @@ un ratio est de la forme test/control, où control est la valeur de référence.
 
 ## EaCon:
 
+
+
 le workflow typique est :
 ```
 normalization -> segmentation +-> reporting
@@ -2043,6 +2045,8 @@ ajouter une case "object cghRaw" après conversion? non, pas la peine d'encombre
 
 exporter les images de R avec "copy to clipboard" peut laisser des traits en haut et à gauche de l'écran. faire "export as image" permet d'éviter ça.
 
+Indiquer le nom de l'outil en petit sur chaque slide: si je présente les 4 outils à la suite, on peut ne plus savoir à quel outil on est rendu.
+
 évidemment, indiquer à quoi sert chaque étape. par exemple, le préprocessing supprime les lignes où 30% des échantillons n'ont pas de valeur parce qu'utiliser les données pour *tous* les échantillons est précisément ce que CGHcall recherche.
 
 je suis rendu à la segmentation. relire cahier pour plus d'infos sur cette étape, voir à quel point il faut décrire le mixture model: parler surtout de ce qu'il fait? parler de comment il procède est important aussi.
@@ -2079,7 +2083,7 @@ Je me suis confirmé en lisant ChasRUO.pdf à quoi servait le fait d'avoir AT *e
 arrivée à 10h10; pause 40 minutes; départ 17h10
 
 # <span style="color:#999900"> Lundi 28/03/2022
-arrivée à 10h05; 30 min pause
+arrivée à 10h05; 30 min pause; départ à 19h10
 
 fini de noter les 2 dernières phrases d'ASCAT. la carte d'asymétrie allélique (skewness) peut être construite sur nos données, a priori, car oncoscan utilise 2 puces par échantillon (AT et GC) justement pour déterminer le statut allélique (le ratio qui indique la prévalence d'un allèle par rapport à l'autre.)
 Ce statut allélique est caractérisé pour 2 SNP différents, et pas les 4 qui existent pour une position donnée. Cela s'explique par le fait qu'une tumeur ne peut pas avoir (hors mutation) 3 allèles différents, car elle n'a que deux allèles à l'origine, étant diploide nativement. On ne considère donc que ces deux allèles.
@@ -2088,17 +2092,18 @@ Aujourd'hui j'ai aussi compris en détail comment le profil BAF est obtenu. voir
 j'ai aussi lu ASCAT et pris des notes dessus, en cahier et je les transpose en numérique.
 pour ouvrir le bandeau des commentaires  dans adobe acrobat reader, il faut chercher dans la barre d'outils verticale à droite, "commentaire".
 
-Je connais bien le fonctionnement d'ASCAT, donc EaCoN. je peux axer la réunion de demain sur ces 2 outils.
+Je connais bien le fonctionnement d'ASCAT, donc EaCoN. je peux axer la réunion de demain sur cet outil et CGHcall.
 parler aussi des plots d'EaCoN, essayer de comprendre ce qu'ils veulent dire à partir de leur description? peut-être pas si important au final. ne pas passer trop de temps dessus.
 
 # <span style="color:#999900"> Mardi 29/03/2022
-envoyer rappel réunion
+arrivée à 10h25; 25 min pause; départ à 17:05
 
 Objectif: avoir les slides pour chaque package. ou à la rigueur 2 bien en profondeur et les 2 autres + tard.
 Je pense que l'objectif pour mardi va plutôt être de pouvoir comparer les outils du mieux qu'on peut *sans les faire tourner*, puis on verra si on les fait tous tourner ou non.
 
+mettre les pipelines d'EaCoN et CGHcall sous la forme d'un tableau pour pouvoir les comparer.
+J'ai pris des notes sur qu'est-ce que BAF, qu'est-ce qu'Allele difference, pour pouvoir en parler avec Laetitia.
+j'ai noté des choses à faire dans todo.md.
 
 
-
-
-
+# <span style="color:#999900"> Mercredi 30/03/2022

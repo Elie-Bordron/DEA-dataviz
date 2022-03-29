@@ -75,8 +75,13 @@ J'ai le choix:
 ***je fais ça.*** d'abord, les 4 pipelines.
 
 28/02/2022
-- envoyer un rappel pour la réunion de demain.
-
+- ~~envoyer un rappel pour la réunion de demain.~~  
+29/02/2022  
+* [X] ~~*remplir le CR de réunion*~~ [2022-03-29]  
+* [ ] se renseigner sur Sequenza  
+* [ ] parler à Laetita pour BAF. voir cahier, 29/03/22
+* [ ] partager les articles de CGHcall et EaCoN (donc ASCAT).
+* [ ] faire le tri des choses à faire qui sont notées dans le cahier à la date d'aujourd'hui, et les noter ici.
 
 
 

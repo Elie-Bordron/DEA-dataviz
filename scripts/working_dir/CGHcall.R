@@ -302,4 +302,3 @@ plot(threeGroups$vals1, threeGroups$vals2,
 
 
 
-
