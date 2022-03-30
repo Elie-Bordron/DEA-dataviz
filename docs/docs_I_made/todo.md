@@ -79,9 +79,16 @@ J'ai le choix:
 29/02/2022  
 * [X] ~~*remplir le CR de réunion*~~ [2022-03-29]  
 * [ ] se renseigner sur Sequenza  
-* [ ] parler à Laetita pour BAF. voir cahier, 29/03/22
+* [X] ~~*voir définition BAF et allele difference avec laetitia. voir cahier, 29/03/22*~~ [2022-03-30]
 * [ ] partager les articles de CGHcall et EaCoN (donc ASCAT).
-* [ ] faire le tri des choses à faire qui sont notées dans le cahier à la date d'aujourd'hui, et les noter ici.
+* [X] ~~*faire le tri des choses à faire qui sont notées dans le cahier à la date d'aujourd'hui, et les noter ici.*~~ [2022-03-30]
+* [ ] définir et pouvoir expliquer les Copy Number-Neutral Events (sera certainement une diapo pour EaCoN)
+* [ ] se renseigner sur normalisation d'EaCoN par APT
+* [ ] Centralisation et calling d'EaCoN: qu'est-ce?
+* [ ] normaliser les organigrammes pour qu'ils soient faciles à comparer
+* [ ] ajouter l'output de chaque étape dans les organigrammes
+* [ ] quand claire m'aura partagé le dossier GIRONDE , j'y ajouterai les infos sur chaque package. un dossier pour chaque.
+* [ ] pour la formation ChAS: demander à Tony si ChAS utilise un modèle de mixture gaussien
 
 
 

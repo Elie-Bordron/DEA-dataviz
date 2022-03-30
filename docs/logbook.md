@@ -2021,6 +2021,8 @@ réunion aujourd'hui.
 
 Définition d'un copy number-neutral event dans ASCAT_article.pdf :
 -> *We define here a copy number-neutral event as an allelic bias for an SNP heterozygous in the germline such that the total copy number does not differ from the tumor ploidy*
+voir notes_on_articles.md, ASCAT pour plus de détail.
+voir cahier, 22/03 pour plus de détail.
 
 
 
@@ -2100,10 +2102,17 @@ arrivée à 10h25; 25 min pause; départ à 17:05
 
 Objectif: avoir les slides pour chaque package. ou à la rigueur 2 bien en profondeur et les 2 autres + tard.
 Je pense que l'objectif pour mardi va plutôt être de pouvoir comparer les outils du mieux qu'on peut *sans les faire tourner*, puis on verra si on les fait tous tourner ou non.
-
 mettre les pipelines d'EaCoN et CGHcall sous la forme d'un tableau pour pouvoir les comparer.
+
 J'ai pris des notes sur qu'est-ce que BAF, qu'est-ce qu'Allele difference, pour pouvoir en parler avec Laetitia.
 j'ai noté des choses à faire dans todo.md.
 
 
 # <span style="color:#999900"> Mercredi 30/03/2022
+arrivée à 11h;  40 min pause; départ à 18h40
+Je peux expliquer l'allele difference.
+concernant la fig 1B d'ASCAT_article.pdf, je ne comprends pas pourquoi la ploidie est de 4 alors que le nombre de copies de chaque allèle est de 2. Une cellule saine qui compte 2 copies de chaque allèle est dite diploide, alors pourquoi la cellule cancéreuse est-elle dite tétraploide? Peut-être que ça vient de la définition de la ploidie employée par ASCAT.
+
+J'ai besoin de refaire un point sur le BAF aussi, comment l'interpréter et le relier à une réalité biologique. en lisant des articles, ça sera plus clair dans ma tête.
+
+
