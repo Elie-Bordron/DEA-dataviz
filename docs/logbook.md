@@ -2116,3 +2116,15 @@ concernant la fig 1B d'ASCAT_article.pdf, je ne comprends pas pourquoi la ploidi
 J'ai besoin de refaire un point sur le BAF aussi, comment l'interpréter et le relier à une réalité biologique. en lisant des articles, ça sera plus clair dans ma tête.
 
 
+# <span style="color:#999900"> Jeudi 31/03/2022
+arrivée à 9h50; 35 min pause; 
+Je relis CGHcall_mixturemodel_picard.pdf pour mieux comprendre le mixture model.
+je le comprends mieux; voir notes_on_articles.md .
+je refais un point sur rCGH. obj d'aujourd'hui: faire le pipeline.
+
+
+
+
+
+
+

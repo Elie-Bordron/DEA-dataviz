@@ -89,7 +89,8 @@ J'ai le choix:
 * [ ] ajouter l'output de chaque étape dans les organigrammes
 * [ ] quand claire m'aura partagé le dossier GIRONDE , j'y ajouterai les infos sur chaque package. un dossier pour chaque.
 * [ ] pour la formation ChAS: demander à Tony si ChAS utilise un modèle de mixture gaussien
-
-
+* [ ] puis-je voir la distribution gaussienne de toutes les données? oui, voir logratios_for_hist dans CGHcall.R . ça plot une unique courbe de gauss; peut-être qu'avec de vraies données ce serait plus parlant. voir sur slack, Elodie m'avait fait un retour.
+31/03/2022
+* [ ] lire l'article sur la normalisation de rCGH
 
 

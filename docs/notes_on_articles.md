@@ -117,12 +117,25 @@ Supplementary information: `CGHcallSupplement_vdWiel.pdf`
 Supplementary information's article 7: ``CGHcall__rare_ampliconsxxx.pdf`` 
 
 
-# <span style="color:#ff9999"> A Segmentation-Clustering problem for the ana<span style="color:#ff9900">l<span style="color:#ff9999">ysis of array CGH data
+# <span style="color:#ff9999"> A Segmentation-Clustering problem for the analysis of array CGH data
 CGHcall_mixturemodel_picard.pdf      
 
 ## Intro
 Les techniques d' array-CGH produisent des résultats pouvant être représentés par une succession de segments. Les techniques de segmentation sont tout naturellement utilisées pour les traiter, mais elles ne permettent pas de donner un statut biologique aux segments détectés.  
 Les auteurs proposent un nouveau model pour répondre à ça, qui combine un modèle de seg avec un mixture model. Ils présentent (aussi!) un algorithme hybride qui permet d'estimer les paramètres par maximum likelihood. Cet algo est basé sur le dynamic programming (voir wkp) et l'algorithme expectation–maximization.
+
+## 1 - A new model for the segmentation-clustering problem
+Les données de log ratio peuvent être séparées en segments. On considère qu'au sein d'un segment (donc entre deux break-points), la moyenne et l'écart-type sont constants.
+En plus de cette organisation spatiale, les données peuvent être réparties dans des clusters, et l'approche du modèle de mélange est choisie pour résoudre ce problème.
+On considère ainsi que les données sont réparties en un nombre P de clusters ayant chacun un poids, leur somme vaut 1. Tous ces poids constituent les "mixing proportions", qui représentent la probabilité *a priori* qu'un segment appartienne au cluster P. À l'inverse, la probabilité *a posteriori* du même événement sachant que yk (la valeur de log ratio) a été observée est [voir article, je ne peux pas l'expliquer. Ce qu'il faut retenir est qu'elle dépend de yk.]
+Contrairement aux modèles de mélange conventionnels, où on obtient des informations sur les données individuelles (les sondes dans notre cas), ce modèle se concentre sur l'appartenance des segments à un cluster.
+
+
+## 2 - An hybrid algorithm combining the EM algorithm and Dynamic Programming
+voir notes.
+
+voir aussi cahier à 17/03. ou https://medium.com/@chloebee/the-em-algorithm-explained-52182dbb19d9 pour compléter
+
 
 ## Discussion
 Cette partie n'est pas claire. voir plutôt les méthodes pour comprendre pk ils utilisent un mm pour faire de la segmentation.
@@ -173,7 +186,7 @@ La correction pour la cellularité révèle que les tumeurs qui en ont le plus e
 Une carte d'asymétrie allélique est également construite. Cette dernière indique les positions où un allèle est gagné préférentiellement à l'autre. on peut avoir cette carte avec les résultats d'oncoscanR.
 
 ## Matériel et Methodes
-La technique donne les valeurs de log ratio et de BAF pour chaque sonde. ASCAT estime le nombre de copies réel à partir de ces valeurs (et à partir d'autres paramètres comme la ``ploidie ψ`` et la ``cellularité ρ``). Ces deux paramètres compliquent l'analyse et sont souvent importants, donc exprimer logR et BAF en fonction de l'ASCN permet de prendre en compte ces deux paramètres. Cependant, ils doivent être estimés à partir des données pour chaque échantillon tumoral.  
+La technique donne les valeurs de log ratio et de BAF pour chaque sonde. ASCAT estime le nombre de copies réel à partir de ces valeurs (et à partir d'autres paramètres comme la ``ploidie ψ (psi)`` et la ``cellularité ρ (rho)``). Ces deux paramètres compliquent l'analyse et sont souvent importants, donc exprimer logR et BAF en fonction de l'ASCN permet de prendre en compte ces deux paramètres. Cependant, ils doivent être estimés à partir des données pour chaque échantillon tumoral.  
 *Ouvrons une parenthèse*  
 Pour rendre la méthode plus robuste au bruit des données en input, les données logR et BAF sont pré-processées par `Allele-Specific Piecewise Constant Fitting (ASPCF)`, un algorithme de segmentation et de filtrage.  
 *Fermons la parenthèse*
@@ -211,5 +224,22 @@ Ces deux facteurs rendent l'évaluation des aberrations chromosomales compliqué
 
 [plotim]: docs_I_made\images\input_CGHcall.png
 ![input of CGHcall: a table with 8 columns][plotim]
+
+
+# <span style="color:#ff9999"> rCGH: a comprehensive array-based genomic profile platform for precision medicine
+rCGH_article.pdf
+
+
+## Methods and implementation
+Une analyse aCGH se décompose en 4 étapes distinctes:
+- calcul des log ratios (sample VS reference; fait par ChAS entre autres)
+- centralisation
+- segmentation
+- calling
+
+La centralisation implémentée par rCGH a été décrite dans `Commo,F. et al. (2015) Impact of centralization on aCGH-based genomic profiles for precision medicine in oncology. Ann. Oncol., 26, 582–588`.
+Concrètement, le vecteur de log2 relative ratios est considéré comme un mélange de populations gaussiennes. Leurs proportions respectives et leurs paramètres sont estimés en utilisant l'algo EM. Par défaut, si une sous-population se révèle avoir un pic de densité supérieur à la moitié de la plus grande densité, elle est considérée comme représentant un nombre neutre de 2 copies. Sa moyenne est ensuite utilisée pour centraliser le profil. $voir figure S1 $
+
+
 
 
