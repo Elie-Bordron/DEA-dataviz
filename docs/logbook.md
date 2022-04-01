@@ -250,7 +250,7 @@ The following named parsers don't match the column names: CN State, Type, Full L
 Exécution arrêtée
 ```
 
-Prochaine chose à faire: modifier les colonnes du .txt pour qu'il y ait seulement le s3 dont le package a besoin.
+Prochaine chose à faire: modifier les colonnes du .txt pour qu'il y ait seulement les 3 dont le package a besoin.
 
 nouveau problème quand je lance cette ligne de commande:
 > "C:\Users\e.bordron\Documents\R\R-4.1.2\bin\Rscript.exe" "C:\Users\e.bordron\Documents\R\R-4.1.2\library\oncoscanR\bin\run_oncoscan_workflow.R"  "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\woring_data\2-AD\2-ADREC.RC.OSCHP.segments.txt" F
@@ -1512,8 +1512,18 @@ En ce qui concerne le dataset, la forme est la suivante:
 BAC.clone correspond à une sonde, CHROMOSOME est explicite, START_POS et END_pos définissent les coordonnées de la sonde
 
 
-Important: on peut exporter un fichier probeset.txt, donc où une ligne correspond à une sonde, à l'aide de ChAS. Pour cela, suivre la procédure du manuel d'aide de ChAS (disponible à `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_found\ChASRUOHelp.pdf`) page 91, mais au lieu de cliquer sur "Export QC table" à l'étape 4, cliquer sur "generate report" puis sur "export probe level data".
+Important: on peut exporter un fichier probeset.txt, donc où une ligne correspond à une sonde, à l'aide de ChAS. Pour cela, suivre la procédure du manuel d'aide de ChAS (disponible à `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_found\ChASRUOHelp.pdf`) page 91, mais au lieu de cliquer sur "Export QC table" à l'étape 4, cliquer sur "generate report" puis sur "export probe level data". 
+La procédure est:
+- ouvrir ChAS
+- Analysis -> Perform Analysis Setup  
+pour exporter des probeset.txt en batch:  
+- Analysis setup -> Import Batch file -> ``C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\interact_with_CHAS\OSC_CEL_batch.txt``  
 
+$pour exporter des segments.txt en batch:  
+- QC results -> Add files -> ctrl+a dans `C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/from_laetitia/all_OSCHP`$
+On ne peut pas exporter de segments.txt en batch de cette façon, ça produit un seul fichier.
+Cela dit, on peut peut-être récupérer les lignes appartenant à tel échantillon pour en extraire chaque segments.txt. ou alors utiliser apt. On dirait qu'apt ne permet pas de faire ça. 
+le résultat ne contient pas la colonne Full Location, mais les positions START et STOP du segment dans 2 colonnes différentes, ce qui revient à la même chose. D'autre part, le 
 
 arrivée à 9h45; départ à 17:40 ; pas de pause.
 
@@ -2117,12 +2127,39 @@ J'ai besoin de refaire un point sur le BAF aussi, comment l'interpréter et le r
 
 
 # <span style="color:#999900"> Jeudi 31/03/2022
-arrivée à 9h50; 35 min pause; 
+arrivée à 9h50; 35 min pause; départ à 17h30
+J'ai partagé les articles des 4 packages à l'équipe qui suit les réunions.
 Je relis CGHcall_mixturemodel_picard.pdf pour mieux comprendre le mixture model.
 je le comprends mieux; voir notes_on_articles.md .
 je refais un point sur rCGH. obj d'aujourd'hui: faire le pipeline.
+obj non atteint, je me suis mis tard à lire le papier de rCGH.
+
+# <span style="color:#999900"> Vendredi 01/04/2022
+arrivée à 9h50  ; 40 min pause; départ à 17:30
+Je me suis renseigné sur Docker & Snakemake
+pour pouvoir installer snakemake, j'installe anaconda à "C:\Users\e.bordron\Anaconda3"
+Dans un prompt anaconda, je tape `mamba create -c bioconda -c conda-forge -n snakemake snakemake-minimal`. J'ai suivi les infos de cette page: `https://snakemake.readthedocs.io/en/stable/getting_started/installation.html`.
+
+En relisant les messages que j'ai échangés avec élodie, je comprends ce qu'elle veut dire par densité. J'ouvre oncoscanR.R pour voir comment afficher les densités plutôt que les histogrammes (avec ggplot2).
+je me rends compte que le fichier "genders.tsv" a été supprimé. je le recrée. il est dans working_data.
+D'autre part, j'avais apparemment créé des fichiers segments.txt pour tous mes échantillons à partir de ChAS, mais je ne les retrouve pas. Je peux les générer de nouveau (pas besoin de les faire un par un: voir le mode batch de ChAS utilisable notamment pour créer les fichiers probeset.txt.)
+
+Important: on peut exporter un fichier probeset.txt, donc où une ligne correspond à une sonde, à l'aide de ChAS. Pour cela, suivre la procédure du manuel d'aide de ChAS (disponible à `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_found\ChASRUOHelp.pdf`) page 91, mais au lieu de cliquer sur "Export QC table" à l'étape 4, cliquer sur "generate report" puis sur "export probe level data". 
+La procédure est:
+- ouvrir ChAS
+- Analysis -> Perform Analysis Setup  
+pour exporter des probeset.txt en batch:  
+- Analysis setup -> Import Batch file -> ``C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\data\working_data\interact_with_CHAS\OSC_CEL_batch.txt``  
+
+$pour exporter des segments.txt en batch:  
+- QC results -> Add files -> ctrl+a dans `C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/from_laetitia/all_OSCHP`$
+On ne peut pas exporter de segments.txt en batch de cette façon, ça produit un seul fichier.
+Cela dit, on peut peut-être récupérer les lignes appartenant à tel échantillon pour en extraire chaque segments.txt. ou alors utiliser apt. On dirait qu'apt ne permet pas de faire ça. 
+le résultat ne contient pas la colonne Full Location, mais les positions START et STOP du segment dans 2 colonnes différentes, ce qui revient à la même chose. D'autre part, certains segments sont notés comme appartenant au chromosome 24 ou 25, mais jamais au 23. Je pense que le 25 est le Y et le 24, le X.
+Pour l'instant, je reste sur la solution de les exporter à la main, on verra plus tard si il y a besoin de l'automatiser.
 
 
+L'objectif principal du stage devrait être le benchmarking des outils. Faire des stats de performance, des courbes ROC, etc.
 
 
 

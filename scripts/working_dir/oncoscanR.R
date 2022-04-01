@@ -17,9 +17,9 @@ library(dplyr)
 
 ## defining constants
 setwd( "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results")
-dataDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/from_CEL"
+dataDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/from_laetitia/all_samples"
 resultsDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
-gendersTable = read.table("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/genders.txt", h=T)
+gendersTable = read.table("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/genders.tsv", h=T)
 
 
 ######## functions for iterating over files
@@ -38,6 +38,8 @@ computeAllFilesWithOncoscanR = function(dataDir, gendersTable) {
     for(i in 1:length(files))  {
         curr_file = files[i]
         isSegmentsFile = grepl("segments.txt", curr_file)
+        print(c("files: ", files))
+        print(c("isSegmentsFile: ", isSegmentsFile))
         if(isSegmentsFile) {
             filepath = file.path(dataDir, curr_file)
             gender_row = gendersTable %>% dplyr::filter(stringr::str_detect(curr_file, sample))
@@ -154,4 +156,4 @@ main = function(dataDir, gendersTable) {
 
 val = main(dataDir, gendersTable)
 plot(val)
-
+grepl("segments.txt", "this string contains segments.txt as a pattern")

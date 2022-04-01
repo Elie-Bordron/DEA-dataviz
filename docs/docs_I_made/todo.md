@@ -92,5 +92,13 @@ J'ai le choix:
 * [ ] puis-je voir la distribution gaussienne de toutes les données? oui, voir logratios_for_hist dans CGHcall.R . ça plot une unique courbe de gauss; peut-être qu'avec de vraies données ce serait plus parlant. voir sur slack, Elodie m'avait fait un retour.
 31/03/2022
 * [ ] lire l'article sur la normalisation de rCGH
+01/04/2022
+* [ ] se renseigner sur sequenza.
+* [ ] à demander à Tony Sierra: a-t-on un moyen d'exporter en batch des fichiers segments.txt ?
+* [ ] comparer la validation des techniques: les auteurs ont validé les résultats d'OncoscanR en les comparant avec l'annotation d'un expert sur 25 cas. quid de CGHcall, EaCoN et rCGH?
+* [ ] parmi les articles que m'a envoyé claire, en chercher un qui contient des infos sur le système AT/GC des puces oncoscan. voir cahier
+* [X] ~~*noter les infos sur l'export de segments.txt dans logbook*~~ [2022-04-01]
+* [ ] noter ce que j'ai surligné dans l'article de rCGH
+
 
 

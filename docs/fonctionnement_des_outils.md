@@ -194,14 +194,17 @@ pour convertir ça en tableau par gène:
 additionnally, this package offers different genomic profile visualisation functions, static and interactive.
 
 ## input
-La fonction ReadGeneric() permet de lire un custom array. il doit comporter les colonnes suivantes:
-`ProbeName(probe id)     ChrNum     ChrStart(The chromosomal probe locations)       Log2Ratio (amplification/deletion)`
-voir tableau 3 de l'excel comparatif.
-Cela crée un objet _rCGH-generic_. il contient:
-- les infos de l'echantillon
-- le dataset par sonde 
-- les paramètres du workflow
-- les données de segmentation
+2 choix: 
+- La fonction readAffySNP6() permet de lire des fichiers probeset.txt, ce qui nous convient. Pas forcément besoin de passer par un custom array.
+
+- La fonction ReadGeneric() permet de lire un custom array. il doit comporter les colonnes suivantes:  
+    `ProbeName(probe id)     ChrNum     ChrStart(The chromosomal probe locations)       Log2Ratio (amplification/deletion)`  
+    voir tableau 3 de l'excel comparatif.
+    Cela crée un objet _rCGH-generic_. il contient:
+    - les infos de l'echantillon
+    - le dataset par sonde 
+    - les paramètres du workflow
+    - les données de segmentation
 
 ## output
 

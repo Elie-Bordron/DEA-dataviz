@@ -1,0 +1,241 @@
+commit 819500f00ea783ee9b0b92109c42285d96063e72
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Thu Mar 31 17:31:54 2022 +0200
+
+    bergupdate: I have read mixture model article from picard & al; I also started reading rCGH article. they use a GMM too, but for normalization
+
+commit 7c2e4ad5d9e8cbb009e0ba9740105fc660b7bf8d
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Wed Mar 30 18:43:25 2022 +0200
+
+    bergupdate: ai fait des recherches sur la signification biologique de BAF et allele difference.
+
+commit fe928071053f3e71f521a1c02f48a69374d865a3
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Tue Mar 29 17:04:26 2022 +0200
+
+    bergupdate: noted down things to do.
+
+commit 61cedb14072fdec895b35a6359c0567a71ee0b11
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Mon Mar 28 19:09:22 2022 +0200
+
+    bergupdate: took notes on ASCAT, understood important concepts
+
+commit e0d257222731bdd044ca1e24e844832aa322524f
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Fri Mar 25 17:09:35 2022 +0100
+
+    bergupdate: I read DNAcopy and took notes, reorganized a bit todo.md
+
+commit 254f3562c20dce88f4e172bf69b7246de8860644
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Thu Mar 24 18:04:37 2022 +0100
+
+    bergupdate: learned more on EaCoN and thought about what to do next: Should I really do slides right away?
+
+commit ce3d71e6f8e7400b69f7258c5640cff09f83e4c1
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Thu Mar 24 14:37:53 2022 +0100
+
+    alarme incendie
+
+commit 974c37adda3d39e773d2047d3fca73c24be06db0
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Wed Mar 23 17:52:14 2022 +0100
+
+    bergo update: ai avancé sur slides CGHcall. prochaine étape: parler de la segmentation
+
+commit e563c1bdac99ecc7811fd1b678e9bb731d52f1f9
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Tue Mar 22 18:00:07 2022 +0100
+
+    bergupdate : added notes on ASCAT
+
+commit 5c97fbaabb88ca79513262a33189e18696963b93
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Mon Mar 21 18:00:20 2022 +0100
+
+    bergupdate: took notes on EaCoN, gotta dive more in it.
+
+commit bc70608af4cff1c6629169fa1ad90dde5a52f9e1
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Thu Mar 17 18:19:07 2022 +0100
+
+    bergupdate: didn't achieve installing eaconyet. pb with facet.
+
+commit 93ab07a8bd0ec7b43b11cb8f55668baf87e23896
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Thu Mar 17 16:16:08 2022 +0100
+
+    bergupdate: CGHcall now produces a graph that shows which probes MaxMiss removes from 1 sample.
+
+commit 156aca5088e2b336ea2d658e7b5b4e4e76dbd353
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Wed Mar 16 18:13:12 2022 +0100
+
+    CGHcall.R produces data to simulate the work of the GMM. it also produces more plots. empty ppt was created for slides on CGHcall
+
+commit 9e1ab61fbc8f9551c01c13dbbca318d489f42e9c
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Wed Mar 16 11:49:08 2022 +0100
+
+    bergo update: added data
+
+commit 10cd4ce5eeefdaf85fec60174f41533dd11b5a24
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Wed Mar 16 11:36:39 2022 +0100
+
+    bergo update: git seemed to be stuck on a previous commit which held >100MB files, I resetted just before that.now I add my files and I attempt to push
+
+commit 05ca575f747b407d30805a9242ce299fe67ecea5
+Author: BORDRON Elie <e.bordron@ib.local>
+Date:   Fri Mar 4 17:41:30 2022 +0100
+
+    starting to work on rCGH
+
+commit b0bdabbbf9ce55d3c0634e8a2f864cecb3efffea
+Author: BORDRON Elie <e.bordron@ib.local>
+Date:   Fri Mar 4 11:31:17 2022 +0100
+
+    adding images to markdown logbook file
+
+commit 00ce7f2a1adee24e89eb893072e0f62e30985aee
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Thu Mar 3 17:51:13 2022 +0100
+
+    bergo update: got 6 new tools to process SNP data. gotta see if some are useful for us
+
+commit dc600809ffd39d1a9cd62ba64952436b6cfa5019
+Author: BORDRON Elie <e.bordron@ib.local>
+Date:   Wed Mar 2 17:52:21 2022 +0100
+
+    bergo update: improved excel comparison, added pdf articles
+
+commit c05787eb6f63fa4ac813270e993fed4fcc254ece
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Tue Mar 1 17:25:48 2022 +0100
+
+    started a function GI for oncoscanR
+
+commit d2a08e01a5391610bd7b294202231aec165a7a80
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Mon Feb 28 17:33:37 2022 +0100
+
+    moved example_CN5.CNCHP.txt out of the repo since it is too big
+
+commit 06a4c1b63322a8591912a856eea8af74f7d85555
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Mon Feb 28 17:31:37 2022 +0100
+
+    I advanced on the comparative table.
+
+commit f10e606a69f42e05ace873ea6700b7a0facd4366
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Fri Feb 25 17:05:08 2022 +0100
+
+    cnchp was too big
+
+commit dc100dc842592ec81fc897736e0dfe13267a5f00
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Fri Feb 25 17:03:07 2022 +0100
+
+    I know the structure of the file rCGH needs as input. maybe I can use my data to create it.
+
+commit 5409faafaee8c7f459cde8666e174324e87b9e6c
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Wed Feb 23 18:12:31 2022 +0100
+
+    bergo update: started working on a comparison of our three R packages: (oncoScanR, rCGH et EaCoN). I made an excel.
+
+commit cd73f24772ff11409e2ee241050e19d46f9d63b3
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Tue Feb 22 17:55:18 2022 +0100
+
+    I can continue EaCoN install
+
+commit fbd7dde2ff925b80094e7a8d41a3d791283c6333
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Tue Feb 22 13:41:23 2022 +0100
+
+    OncoscanR works. Now working on EaCoN
+
+commit f829b2e75eab99c8699d7bcc020491d68298f878
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Mon Feb 21 19:26:43 2022 +0100
+
+    bergo update: a script to create Full Location column from the data is now functional.
+
+commit 2db8b5deb0c0b52163a4e648cda8e2260a7a0c2d
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Fri Feb 18 17:35:58 2022 +0100
+
+    cass update: changes on logbook
+
+commit 1d877eb8b351ba71c2faf91416329abd5e845be6
+Merge: 885738b 34b697a
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Fri Feb 18 11:24:37 2022 +0100
+
+    bergo: little cleanup
+
+commit 34b697ad808706f3a0c0206a13a6511eb1401b96
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Fri Feb 18 11:02:19 2022 +0100
+
+    cass update: minor changes to logbook
+
+commit 885738bbd3a3204ad117926315caebe1a2011e25
+Author: BORDRON Elie <e.bordron@ib.local>
+Date:   Fri Feb 18 10:35:48 2022 +0100
+
+    bergo: first commit
+
+commit 0a4b35b52ff3e280d282c086ee60be972d5bf179
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Thu Feb 17 16:26:55 2022 +0100
+
+    cass update: minor additions to notes_on_articles.md and logbook.md
+
+commit 6aa1e5b0a0330e13babd5ed0d0749fe74eb09b23
+Merge: 4f0ca60 7d2b424
+Author: BORDRON Elie <e.bordron@ib.local>
+Date:   Thu Feb 17 11:00:29 2022 +0100
+
+     I commit to pull
+
+commit 1994cd9b05a309994773f1753bec41fe99288e2f
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Thu Feb 17 10:58:19 2022 +0100
+
+    cass update: I moved everything I use to work in the repo in order to place it on bergo PC.
+
+commit 7d2b424806e377264c29361aef9e80813f081a50
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Wed Feb 16 17:16:13 2022 +0100
+
+    cass: update on logbook and repo's README.md
+
+commit 4f0ca60178f922e59ec9ca7e427a3d0ea0021d21
+Author: Elie_Brd <81439103+Elie-Bordron@users.noreply.github.com>
+Date:   Tue Feb 15 12:47:25 2022 +0100
+
+    Update README.md
+
+commit 39fe18c184fc9579cd7fb8356c187f36a8fe25f1
+Author: Elie-Bordron <elie.bordron1@gmail.com>
+Date:   Tue Feb 15 12:47:07 2022 +0100
+
+    initial commit
+
+commit 1736a560f8dd06a790a6e8570ace13cb40fb72bd
+Author: Elie_Brd <81439103+Elie-Bordron@users.noreply.github.com>
+Date:   Tue Feb 15 12:43:34 2022 +0100
+
+    Update README.md
+
+commit 88310bbc8f12c168eb5860f973aa5b19483100c7
+Author: Elie_Brd <81439103+Elie-Bordron@users.noreply.github.com>
+Date:   Mon Jan 17 15:23:17 2022 +0100
+
+    Initial commit

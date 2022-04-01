@@ -218,17 +218,15 @@ Ces deux facteurs rendent l'évaluation des aberrations chromosomales compliqué
 
 
 [^1]: déjà dit dans l'intro
-# Comment insérer des figures
+
+<!-- # Comment insérer des figures
 ![alternatetext here](docs_I_made/images/CGHcall_voirslackpourlegende.png "title here")
-
-
 [plotim]: docs_I_made\images\input_CGHcall.png
 ![input of CGHcall: a table with 8 columns][plotim]
-
+ -->
 
 # <span style="color:#ff9999"> rCGH: a comprehensive array-based genomic profile platform for precision medicine
 rCGH_article.pdf
-
 
 ## Methods and implementation
 Une analyse aCGH se décompose en 4 étapes distinctes:
@@ -237,8 +235,11 @@ Une analyse aCGH se décompose en 4 étapes distinctes:
 - segmentation
 - calling
 
-La centralisation implémentée par rCGH a été décrite dans `Commo,F. et al. (2015) Impact of centralization on aCGH-based genomic profiles for precision medicine in oncology. Ann. Oncol., 26, 582–588`.
+La _centralisation_ implémentée par rCGH a été décrite dans `Commo,F. et al. (2015) Impact of centralization on aCGH-based genomic profiles for precision medicine in oncology. Ann. Oncol., 26, 582–588`.
 Concrètement, le vecteur de log2 relative ratios est considéré comme un mélange de populations gaussiennes. Leurs proportions respectives et leurs paramètres sont estimés en utilisant l'algo EM. Par défaut, si une sous-population se révèle avoir un pic de densité supérieur à la moitié de la plus grande densité, elle est considérée comme représentant un nombre neutre de 2 copies. Sa moyenne est ensuite utilisée pour centraliser le profil. $voir figure S1 $
+
+La _segmentation_ se base sur l'algorithme CBS de DNAcopy. Cependant, 
+
 
 
 
