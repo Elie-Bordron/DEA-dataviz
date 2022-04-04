@@ -43,4 +43,17 @@ sample2_AD = read.table(sample2_AD_path, sep='\t', h=TRUE)
 tracemem(object1)==tracemem(object1)
 
 
+vals = c(4001, 4002, 4000)
+stdev = sd(vals) # sd
+meandev = sum(abs(vals-mean(vals)))/length(vals) # mean deviation
+print(c(vals, "\\-----//", stdev, meandev, stdev/meandev))
+
+
+
+
+
+
+
+
+
 

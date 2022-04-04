@@ -2162,6 +2162,14 @@ Pour l'instant, je reste sur la solution de les exporter à la main, on verra pl
 L'objectif principal du stage devrait être le benchmarking des outils. Faire des stats de performance, des courbes ROC, etc.
 
 
+# <span style="color:#999900"> Lundi 04/04/2022
+arrivée à 9h50; 25 min pause; départ à 18:20
+
+Je clarifie toutes mes notes en rayant du cahier ce que je transfère sur .md .
+J'ai lu `EaCoN_ASCAT_algo_PCF.pdf`. J'ai mieux compris ASPCF, je le note dans fonctionnement_des_outils.md . cf Cahier pour plus d'infos.
+J'ai compris en détail comment fonctionne la normalisation post-segmentation de CGHcall. cf cahier et CGHcall.R, j'ai commmenté cette fonction.
+Dans le dossier images, j'ai aussi créé une image "brouillon_CGHcall" pour le ppt de ce dernier.
+D'autre part, la fonction preprocess utilise impute.knn pour estimer les données manquantes, mais cela peut être désactivé.
 
 
 

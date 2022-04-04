@@ -186,7 +186,7 @@ La correction pour la cellularité révèle que les tumeurs qui en ont le plus e
 Une carte d'asymétrie allélique est également construite. Cette dernière indique les positions où un allèle est gagné préférentiellement à l'autre. on peut avoir cette carte avec les résultats d'oncoscanR.
 
 ## Matériel et Methodes
-La technique donne les valeurs de log ratio et de BAF pour chaque sonde. ASCAT estime le nombre de copies réel à partir de ces valeurs (et à partir d'autres paramètres comme la ``ploidie ψ (psi)`` et la ``cellularité ρ (rho)``). Ces deux paramètres compliquent l'analyse et sont souvent importants, donc exprimer logR et BAF en fonction de l'ASCN permet de prendre en compte ces deux paramètres. Cependant, ils doivent être estimés à partir des données pour chaque échantillon tumoral.  
+La technique donne les valeurs de log ratio et de BAF pour chaque sonde. ASCAT estime le nombre de copies réel à partir de ces valeurs (et à partir d'autres paramètres comme la ``ploidie ψ (psi)`` et la ``cellularité ρ (rho)``). Psi et Rho compliquent l'analyse et sont souvent importants, donc exprimer logR et BAF en fonction de l'ASCN permet de prendre en compte ces deux paramètres. Cependant, ils doivent être estimés à partir des données pour chaque échantillon tumoral.  
 *Ouvrons une parenthèse*  
 Pour rendre la méthode plus robuste au bruit des données en input, les données logR et BAF sont pré-processées par `Allele-Specific Piecewise Constant Fitting (ASPCF)`, un algorithme de segmentation et de filtrage.  
 *Fermons la parenthèse*
@@ -197,12 +197,12 @@ Ces valeurs sont ensuite envoyées à l'algorithme ASCAT, qui va estimer les par
 Le vrai nombre de copies est un nombre entier non négatif. Sachant cela, ASCAT teste plusieurs valeurs de ψ et ρ en calculant pour chaque combinaison de ces paramètres l'ASCN, dans le but de trouver le plus proche d'un nombre entier non négatif. Voici comment les auteurs procèdent:
 1. on fait ρ de (0.10, 0.11, . . ., 1.05) et ψ de (1.00, 1.05, . . ., 5.40).
 2. Pour chaque combinaison possible de ψ et ρ, on fait:
-    - Pour chaque SNP hétérozygote en germline (les SNP de copy number 2, donc), on calcule sa distance avec un entier non négatif. la somme de ces valeurs est appelée d pour cette combinaison.
+    - Pour chaque SNP hétérozygote en germline (~~les SNP de copy number 2, donc~~ non, juste les SNP AB et pas AA ni BB nativement), on calcule sa distance avec un entier non négatif. la somme de ces valeurs est appelée d pour cette combinaison.
     - On calcule un score g correspondant à la probabilité que cette interprétation soit la bonne. g=100% si d=0, et g=0% si d diffère de 0.25 de nombres entiers non négatifs (0.25 est arbitraire). C'est-à-dire si d est trop grand.
 3. chaque valeur de d est un minimum local. Pour filtrer les interprétations improbables, ASCAT exclut les minimums selon ces règles:
-    - la ploidie moyenne sort du cadre défini par l'utilisateur
+    - la ploidie moyenne sort du cadre défini par l'utilisateur par défaut, 1.2-4.8
     - le % de cellules tumorales est <20%
-    - les solutions qui ne présentent aucun SNP avec 0 de copy number, pour quelque allele que ce soit (ce qui implique que cette solution n'a pas subi de perte d'allèle, ou bien que cette dernière a été contrebalancée par un gain sur le même allèle). Cela évite d'utiliser des tumeurs tétraploides pour définir le niveau 2n.
+    - les solutions qui ne présentent aucun SNP avec 0 de copy number, pour quelque allele que ce soit (ce qui implique que cette solution n'a pas subi de perte d'allèle, ou bien que cette dernière a été contrebalancée par un gain sur le même allèle). Cela évite d'utiliser des tumeurs tétraploides pour définir le niveau diploide.
     - le score g moyen est inférieur à 80%.
 4. Si une seule solution est restante, elle est retenue. Si plusieurs restent, celle qui a le meilleur score g est retenue. Pour la solution choisie, ASCAT retourne  la ``cellularité ρ`` et la ``ploidie ψ`` (cette dernière étant calculée (ne l'a-t-on pas estimée, déjà?) comme le nombre de copies moyen), le score g, le profil ASCAT, et un score de confiance pour chaque aberration trouvée.
 

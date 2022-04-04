@@ -1,2 +1,0 @@
-Track ID	Probe Array Type	Genomic Version	Gender
-MH223.OSCHP	OncoScan_CNV	hg19	female

@@ -18,10 +18,6 @@ data(Wilting)
 Wilting_raw = Wilting
 Wilting <- make_cghRaw(Wilting_raw)
 
-(1/20)+(1/80)
-(1/16)**0.5
-
-9**0.5
 ###################################################
 ### code chunk number 2: CGHcall.Rnw:65-66
 ###################################################
@@ -84,17 +80,16 @@ postseg.cghdata <- postsegnormalize(seg.cghdata)
 ###################################################
 ### code chunk number 6: CGHcall.Rnw:106-108
 ###################################################
-# tumor.prop <- c(0.75, 0.9) # one value per sample. proportion of contamination by healthy cells
 tumor.prop <- c(0.75, 0.9, 0.6, 0.85) # one value per sample. proportion of contamination by healthy cells
+## To visualize the content of a CGHcall output: a list of *7* elements. see `?CGHcall` for more details
 rawResult <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor.prop)
 posteriorfin2 = rawResult[1]
 nclone = rawResult[2]
 nsamples = rawResult[3]
 nclass = rawResult[4]
-regionsprof = rawResult[5]
+regionsprof = rawResult[5] # 4 cols. profile = Sample the segment belongs to
 df_regions = as.data.frame(regionsprof[[1]])
 nb_segs = dim(df_regions)[1]
-plot(1:nb_segs, df_regions$wm)
 params = rawResult$params
 cellularity = rawResult$cellularity
 
@@ -116,7 +111,7 @@ plot(result[,1])
 ### code chunk number 9: CGHcall.Rnw:129-130
 ###################################################
 plot(result[,2])
-
+summary(xval)
 
 ###################################################
 ### code chunk number 10: CGHcall.Rnw:139-140
@@ -302,3 +297,94 @@ plot(threeGroups$vals1, threeGroups$vals2,
 
 
 
+
+
+
+
+
+
+customPostsegnormalize = function(segmentData, inter = c(-0.1, 0.1)) 
+{
+    seg <- segmented(segmentData)
+    values <- c()
+    for (i in 1:ncol(seg)) {
+        values <- c(values, median(seg[, i]))
+    }
+    matrixValues <- matrix(rep(values, nrow(seg)), ncol = ncol(seg), 
+                           byrow = TRUE)
+    seg <- seg - matrixValues
+    countlevall <- apply(seg, 2, function(x) {
+        as.data.frame(table(x))
+    })
+    print(c("countlevall aka segvec: ", countlevall))
+    intcount <- function(int, sv) {
+        print("OO======================intcount=======================OO")
+        # print(c("int: ", int))
+        # print(c("sv: ", sv))
+        sv1 <- as.numeric(as.vector(sv[, 1]))
+        wh <- which(sv1 <= int[2] & sv1 >= int[1])
+        # print(c("sv1: ", sv1))
+        # print(c("wh: ", wh))
+        # print(c("to_sum: ", (sv[wh, 2])))
+        # print(c("returned_sum: ", sum(sv[wh, 2])))
+        return(sum(sv[wh, 2]))
+    }
+    postsegnorm <- function(segvec, int = inter, intnr = 3) { #int = c(-0.5, 0.3)
+        print("OO=============================================postsegnorm================================================OO")
+        intlength <- (int[2] - int[1])/2
+        gri <- intlength/intnr
+        intst <- int[1] + (0:intnr) * gri # e.g. (-0.50000000 -0.23333333  0.03333333  0.30000000)
+        intend <- intst + intlength # e.g. (0.3000000 0.5666667 0.8333333 1.1000000)
+        ints <- cbind(intst, intend) # intervals
+        # print(c("intst: ", intst))
+        # print(c("intend: ", intend))
+        # print(c("intervals list 1/2: ", ints))
+        intct <- apply(ints, 1, intcount, sv = segvec) # for each interval, finds the probes contained in it then counts them. we often end up with around 3 logR values repeated each dozens/hundreds of times. The sum of all is then made for this interval.
+        # intct contains then one value per interval, which represents how much segmented the data is.
+        whmax <- which.max(intct) # finds highest value, representing the best interval.
+        # print(c("segvec: ", segvec))
+        # print(c("interval count: ", intct))# of all 
+        # print(c("whmax: ", whmax))
+        print(c("interval received: ", int))
+        # print(c("intervals list 2/2: ", ints))
+        print(c("ints[whmax, ]: ", ints[whmax, ]))
+        return(ints[whmax, ]) #returns said best interval.
+    }
+    postsegnorm_rec <- function(segvec, int, intnr = 3) {
+        print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO============== postsegnorm_rec =============OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+        newint <- postsegnorm(segvec, int, intnr)
+        newint <- postsegnorm(segvec, newint, intnr)
+        newint <- postsegnorm(segvec, newint, intnr)
+        newint <- postsegnorm(segvec, newint, intnr)
+        newint <- postsegnorm(segvec, newint, intnr)
+        return(newint[1] + (newint[2] - newint[1])/2) # we return the middle point of the interval.
+    }
+    listres <- lapply(countlevall, postsegnorm_rec, int = inter) # this runs postsegnorm_rec once for every sample in our seg dataset.
+    vecres <- c()
+    for (i in 1:length(listres)) {
+        vecres <- c(vecres, listres[[i]])
+    }
+    print(c("listres: ", listres))
+    print(c("vecres: ", vecres))
+    segmented(segmentData) <- t(t(seg) - vecres) # this substracts the interval value found of all seg data, hence normalizing.
+    copynumber(segmentData) <- t(t(copynumber(segmentData) - 
+                                       matrixValues) - vecres)
+    return(segmentData)
+}
+postseg.cghdata <- customPostsegnormalize(seg.cghdata)
+
+
+intnr=3
+int = c(-0.5, 0.3)
+intlength = 0.8
+gri= intlength/intnr
+intst = -0.5 + (0:intnr) * gri
+intend = intst + intlength
+print(intst)
+print(intend)
+
+
+x1 = -0.033333
+x2 = 0.666667
+
+x1 + (x2-x1)/2

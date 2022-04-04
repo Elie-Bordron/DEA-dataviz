@@ -50,28 +50,28 @@ Réponse à ça: lancer CGHcall sur un groupe d'E ou sur les E un à un change b
 
 24/03/2022
 - ~~lire ASCAT article pour comprendre EaCoN~~
-- lire DNAcopy article pour comprendre ~~segmentation CGHcall~~ et ~~format CBS~~ (utilisé dans plusieurs outils)
+* [ ] lire DNAcopy article pour comprendre ~~segmentation CGHcall~~ et ~~format CBS~~ (utilisé dans plusieurs outils)
 le format CBS (output DNAcopy) est décrit dans fonctionnement_des_outils.md. 
-- écrire ce que j'ai compris de la segmentation par DNAcopy. C'est dans le cahier.
-- décrire le pipeline pour chaque outil dans fonctionnement_des_outils.md.
-- connaître précisément les spécificités de chaque outil: qu'apporte-t-il par rapport aux autres? quelles sont ses limites par rapport aux autres?
-- mettre à jour le tableau comparatif
-- indiquer à quoi sert quel score HRD donné par OncoscanR (cf cahier)
-- lire Mat Met ascat pour savoir comment ASCAT procède pour avoir les LOH et les CN-neutral events alors que la CGH ordinaire ne permet pas d'avoir ça. cela entre dans le cadre de "connaître les spécificités de chaque outil".
-- me remettre en mémoire rCGH, faire le pipeline.
-- EaCoN, lors de l'estimation du nombre de copies, utilise des paramètres "gamma", et recommande de lire les pages d'aide du package R ASCAT pour savoir de quoi il s'agit. regarder ça.
-- transférer les infos sur CGHcall du cahier vers fonctionnement_des_articles.md.
-- comment ASCAT estime la cellularité?
-- ~~comment ASCAT estime le copy number (ASCN)?~~
+* [ ] écrire ce que j'ai compris de la segmentation par DNAcopy. C'est dans le cahier.
+* [ ] décrire le pipeline pour chaque outil dans fonctionnement_des_outils.md.
+* [ ] connaître précisément les spécificités de chaque outil: qu'apporte-t-il par rapport aux autres? quelles sont ses limites par rapport aux autres?
+* [ ] mettre à jour le tableau comparatif
+* [ ] indiquer à quoi sert quel score HRD donné par OncoscanR (cf cahier)
+* [ ] lire Mat Met ascat pour savoir comment ASCAT procède pour avoir les LOH et les CN-neutral events alors que la CGH ordinaire ne permet pas d'avoir ça. cela entre dans le cadre de "connaître les spécificités de chaque outil".
+* [ ] me remettre en mémoire rCGH, faire le pipeline.
+* [ ] EaCoN, lors de l'estimation du nombre de copies, utilise des paramètres "gamma", et recommande de lire les pages d'aide du package R ASCAT pour savoir de quoi il s'agit. regarder ça.
+* [ ] transférer les infos sur CGHcall du cahier vers fonctionnement_des_outils.md.
+* [ ] comment ASCAT estime la cellularité?
+~~comment ASCAT estime le copy number (ASCN)?~~
 En se basant sur les valeurs de log ratio et de BAF données par les puces Oncoscan.
-- Un algorithme dit "ASPCF" traite les données BAF et log ratio. voir ce que c'est et où il est utilisé.
-- ASCAT Mat et Met form cahier to md
+* [ ] Un algorithme dit "ASPCF" traite les données BAF et log ratio. voir ce que c'est et où il est utilisé.
+* [X] ~~*ASCAT Mat et Met from cahier to md*~~ [2022-04-04]
 
 J'ai le choix:
-- pipeline pour les 4 packages (manque oncoscanR et rCGH) + comparaison tableau
-- slides pour 2 packages (CGHcall et EaCoN) mais EaCoN produit surtout des graphes -> parler de ces derniers, et de ce qu'ASCAT promet.
-- présenter tous les packages sans les faire tourner? -> que faire pour ça?
-- faire un tableau-pipeline pour montrer ce qu'ils font de *similaire*, ça permet de montrer aussi ce qu'ils font de *différent*. pour cela, les 4 pipelines sont nécessaires.  
+* [ ] pipeline pour les 4 packages (manque oncoscanR et rCGH) + comparaison tableau
+* [ ] slides pour 2 packages (CGHcall et EaCoN) mais EaCoN produit surtout des graphes -> parler de ces derniers, et de ce qu'ASCAT promet.
+* [ ] présenter tous les packages sans les faire tourner? -> que faire pour ça?
+* [ ] faire un tableau-pipeline pour montrer ce qu'ils font de *similaire*, ça permet de montrer aussi ce qu'ils font de *différent*. pour cela, les 4 pipelines sont nécessaires.  
 ***je fais ça.*** d'abord, les 4 pipelines.
 
 28/02/2022
@@ -80,11 +80,11 @@ J'ai le choix:
 * [X] ~~*remplir le CR de réunion*~~ [2022-03-29]  
 * [ ] se renseigner sur Sequenza  
 * [X] ~~*voir définition BAF et allele difference avec laetitia. voir cahier, 29/03/22*~~ [2022-03-30]
-* [ ] partager les articles de CGHcall et EaCoN (donc ASCAT).
+* [X] ~~*partager les articles de CGHcall et EaCoN (donc ASCAT).*~~ [2022-04-04]
 * [X] ~~*faire le tri des choses à faire qui sont notées dans le cahier à la date d'aujourd'hui, et les noter ici.*~~ [2022-03-30]
 * [ ] définir et pouvoir expliquer les Copy Number-Neutral Events (sera certainement une diapo pour EaCoN)
 * [ ] se renseigner sur normalisation d'EaCoN par APT
-* [ ] Centralisation et calling d'EaCoN: qu'est-ce?
+* [ ] Centralisation et calling d'EaCoN dans la segmentation: qu'est-ce?
 * [ ] normaliser les organigrammes pour qu'ils soient faciles à comparer
 * [ ] ajouter l'output de chaque étape dans les organigrammes
 * [ ] quand claire m'aura partagé le dossier GIRONDE , j'y ajouterai les infos sur chaque package. un dossier pour chaque.
@@ -99,6 +99,7 @@ J'ai le choix:
 * [ ] parmi les articles que m'a envoyé claire, en chercher un qui contient des infos sur le système AT/GC des puces oncoscan. voir cahier
 * [X] ~~*noter les infos sur l'export de segments.txt dans logbook*~~ [2022-04-01]
 * [ ] noter ce que j'ai surligné dans l'article de rCGH
-
+04/04/2022
+* [ ] ASPCF: cahier to md
 
 

@@ -33,38 +33,53 @@ Différents plots peuvent également être produits:
 - Les plots par échantillon présentent des barres vertes et rouges aux endroits où des aberrations sont détectées. Ces dernières correspondent à la probabilité d'avoir un réel gain/perte à cet endroit: si la barre dépasse les 50%, l'altération est considérée réelle.
 - Les Frequency plots montrent la fréquence de gains / loss sur tous les échantillons.
 - Les Summary plots sont des frequency plots un peu plus sophistiqués: ils pondèrent cette fréquence par la probabilité "a posteriori". Cette dernière est définie par la probabilité remesurée ou recalculée qu'un événement se produise en prenant en compte une nouvelle information. En d'autres termes, c'est la probabilité qu'un événement A ait lieu, sachant qu'un événement B a eu lieu, on peut donc l'écrire P(A|B). Elle s'oppose à la probabilité "a priori" (P(A)) qui est définie par des données ou connaissances antérieures à un calcul ou une observation. voir les pages wikipedia en français pour plus de détails.
+En ce qui concerne les objets $cghRaw$, $cghSeg$ et $cghCall$:
+Les différences entre Raw et Seg sont minimes. La différence principale est que cghSeg possède un attribut de plus: un tableau contenant les données de Segmentation.
+cghCall est défini dans le cahier au 23/03.
 
 
 ## Pipeline
 ``Wilting <- make_cghRaw(Wilting)``
 Convertit un dataframe/fichier texte en objet cghRaw.  
 Output: objet $cghRaw$  
-*En faire une slide? non.*
+*montrer un visuel de l'objet*
+
 
 ``cghdata <- preprocess(Wilting, maxmiss=30, nchrom=22)``
 Applique différents procédés de préprocess nécessaires pour la suite. maxmiss supprime les lignes ayant des NA dans 30% de leurs échantillons. nchrom indique les chromosomes à garder, les autres sont supprimés.  
 Output: objet $cghRaw$  
-*En faire une slide? oui. illustrer le maxmiss: plot avant/après. pareil pour les chromosomes? à voir.*
+*oui. illustrer le maxmiss: plot avant/après. pareil pour les chromosomes? à voir.*
 
 ``norm.cghdata <- normalize(cghdata, method="median", smoothOutliers=TRUE)``
 Normalisation très basique selon la médiane ou le mode; smoothing des outliers par DNAcopy ; possible correction si la proportion de cellules tumorales n'est pas 100% (cela se fait au niveau de la fonction CGHcall()).  
-*En faire une slide? oui. plot avant/après pour la normalisation, et un autre pour mettre en évidence les outliers smoothés->?*
+Output: objet $cghRaw$  
+*oui. plot avant/après pour la normalisation, et un autre pour mettre en évidence les outliers smoothés->?*
 
 ``seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy",undo.splits="sdundo",undo.SD=3, clen=10, relSDlong=5)``  
 Apply DNAcopy algorithm that performs segmentation. Cette fonction est un wrapper autour de DNAcopy et permet de défaire les "splits" différemment selon si le segment est long ou court, entre autres. voir cahier pour plus de précisions.  
-*En faire une slide? oui. expliquer le principe décrit dans cahier; plot avant/après*
+Output: objet $cghSeg$  
+*oui. expliquer le principe décrit dans cahier; plot avant/après*
+- Segmentation par DNAcopy
 
 `postseg.cghdata <- postsegnormalize(seg.cghdata)`
-faire une normalisation après la segmentation permet de mieux définir le zéro.
-*En faire une slide? oui. --> dans le script, produire le plot illustrant la distribution des segments avant et après la postsegnormalisation pour comparer et montrer l'effet de cette étape.*
+faire une normalisation après la segmentation permet de mieux définir le zéro:
+```
+This function recursively searches for the interval containing the most segmented data, decreasing the interval length in each recursion. The recursive search makes the post-segmentation normalization robust against local maxima. This function is particularly useful for profiles for which, after segmentation, the 0-level does not coincide with many segments. It is more or less harmless to other profiles. We advise to keep the search interval (inter) small, in particular at the positive (gain) side to avoid that the 0-level is set to a common gain level.
+```
+Output: objet $cghSeg$  
+*oui. --> dans le script, produire le plot illustrant la distribution des segments avant et après la postsegnormalisation pour comparer et montrer l'effet de cette étape.*
+- 
 
 ``tumor.prop <- c(0.75, 0.9) # one value per sample. proportion of contamination by healthy cells``
 ``result <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor.prop)``
 L'étape de calling. Le mixture model est créé et utilisé ici. On indique la cellularité dans le vecteur tumor.prop pour qu'elle soit prise en compte (car oui, ça se fait dans cete étape). Le nombre de classes qu'on veut en sortie doit également être précisé.
-*En faire une slide? plot segments non callés -> segments callés. plot cellularité indiquée/non indiquée?*
+Output: objet $liste de 7 éléments$ -> voir CGHcall.R, "code chunk number 6"
+*plot segments non callés -> segments callés. plot cellularité indiquée/non indiquée?*
 
 `result <- ExpandCGHcall(result,postseg.cghdata)`
 Pour convertir le résultat en un objet CGHcall. pour voir l'output, lancer le script CGHcall.R: on récupère des tableaux de la forme suivante:
+Output: objet $cghCall$  
+*plot segments non callés -> segments callés. plot cellularité indiquée/non indiquée?*
 ```
             sample1 sample2
 probe1      1       1
@@ -128,7 +143,8 @@ Deux paramètres sont calculés par ASCAT à partir de données SNP: L'estimatio
 
 De plus,  on peut savoir quel allèle a été gagné/perdu par rapport à l'autre (allelic skewness = asymétrie allélique). L'asymétrie allélique peut être déterminée à partir de données Oncoscan.
 
-
+## ASPCF en détail
+ASPCF effectue le calling, dans l'étape de segmentation.
 
 
 # DNAcopy
