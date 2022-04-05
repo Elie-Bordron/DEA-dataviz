@@ -15,7 +15,7 @@
     description des fonctions du package: CGHcall_functions.pdf  
     reference manual: CGHcall_Reference_Manual__usemewiththescript.pdf  
     R script à utiliser avec le manuel: CGHcall.R  
-- les auteurs de la comparaison de 6 outils disent avoir créé cghcall*, mais ne le rendent disponible nulle part. Un fichier Tex constitue leur "additional material", par contre. CGHcall est concu pour du aCGH. Il utilise les informations de breakpoint (par l'algo CBS, typiquement), ainsi que "plusieurs concepts biologiques ignorés par les autres algorithmes" et classifie le LRR entre ref et tumeur en 5 états.
+- les auteurs de la comparaison de 6 outils annoncent avoir créé cghcall*, mais ne le rendent disponible nulle part. Un fichier Tex constitue leur "additional material", par contre. CGHcall est concu pour du aCGH. Il utilise les informations de breakpoint (par l'algo CBS, typiquement), ainsi que "plusieurs concepts biologiques ignorés par les autres algorithmes" et classifie le LRR entre ref et tumeur en 5 états.
 - *voir notes_on_articles.md pour les infos sur l'article.*\
 L'article ne décrit pas très bien comment le package fonctionne. il parle surtout du mixture model utilisé, il faudrait que je prenne un peu de temps pour comprendre mieux ce qu'est et comment fonctionne un mm. En attendant, je peux avoir une meilleure vue d'ensemble du package en regardant les fonctions utilisées dans le workflow (normalisation...).
 
@@ -148,7 +148,16 @@ ASPCF effectue le calling, dans l'étape de segmentation.
 
 
 # DNAcopy
-voir cahier au 25/03
+voir cahier au 25/03. et au 11/03
+1. crée une distribution de référence à l'aide d'un test de permutation.
+2. parcourt le génome et sépare récursivement chaque chromosome en 2 ou 3 sous-segments selon une statistique T et la distribution de référence.
+3. défait certaines séparations selon les règles suivantes:
+Si un segment court est suffisamment proche d'un autre segment, alors ils sont fusionnés.
+De même, si deux segments longs sont suffisamment proches, ils sont fusionnés.
+
+clen est la longueur qui définit un segment court.
+undo.SD est la distance, en nombre d'écart-types, qui définit "suffisamment proche" pour le premier cas: si undo.SD=3, la fusion est effectuée quand les segments sont séparés de trois écart-types.
+pour deux segments longs, cette distance correspond à undo.SD/relSDlong .
 ## output (segmentation):
 voir la doc de la fonction `segment()` de DNAcopy en ligne: https://rdrr.io/bioc/DNAcopy/man/segment.html ou sur R.
 ```

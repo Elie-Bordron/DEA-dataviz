@@ -6,6 +6,27 @@ setwd(working_dir)
 ## open working directory in Files tab
 rstudioapi::filesPaneNavigate(working_dir)
 
+## setting paths
+dataDir = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_probeset"
+resultsDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
+# paths to probeset.txt files
+s5_LD_path = file.path(dataDir, "5-LD.probeset.txt")
+s6_VJ_path = file.path(dataDir, "6-VJ.probeset.txt")
+s8_MM_path = file.path(dataDir, "8-MM.probeset.txt")
+# loading files as tables
+
+s5_LD = read.table(s5_LD_path, sep='\t', h=T)
+s6_VJ = read.table(s6_VJ_path, sep='\t', h=T)
+s8_MM = read.table(s8_MM_path, sep='\t', h=T)
+osData = s5_LD[,1:3]
+osData = cbind(osData, rep(NA, length(osData[,1])))
+osData = cbind(osData, s5_LD[,4])
+osData = cbind(osData, s6_VJ[,4])
+osData = cbind(osData, s8_MM[,4])
+colnames(osData)= c("probeID",  "CHROMOSOME", "START_POS", "END_POS", "sample1", "sample2", "sample3")
+
+
+
 ###################################################
 ### code chunk number 1: CGHcall.Rnw:50-53
 ###################################################
@@ -15,19 +36,23 @@ library(CGHcall)
 data(Wilting)
 # to set meaningful column names to this df
 # colnames(Wilting)= c("probeID",  "CHROMOSOME", "START_POS", "END_POS", "sample1", "sample2", "sample3", "sample4", "sample5")
-Wilting_raw = Wilting
-Wilting <- make_cghRaw(Wilting_raw)
+# Wilting_raw = Wilting
+# Wilting <- make_cghRaw(Wilting_raw)
+Wilting <- make_cghRaw(osData)
 
 ###################################################
 ### code chunk number 2: CGHcall.Rnw:65-66
 ###################################################
 cghdata <- preprocess(Wilting, maxmiss=30, nchrom=22)
+
+if (FALSE) {
 ## plot to compare copynumber before/after maxmiss is applied
 # get log ratio of CN for first sample before and after maxmiss was applied
 s1CNBeforeMaxmiss = copynumber(Wilting)[,1]
 s1CNAfterMaxmiss = copynumber(preprocess(Wilting, maxmiss=30))[,1]
 lostVals_logicalVec = !(names(s1CNBeforeMaxmiss)%in%names(s1CNAfterMaxmiss))
 s1CNBeforeMaxmiss = as.data.frame(cbind(s1CNBeforeMaxmiss, lostVals_logicalVec))
+View(as.data.frame(lostVals_logicalVec))
 # set colnames
 colnames(s1CNBeforeMaxmiss) = c("s1CNBeforeMaxmiss", "valsLost")
 # use colnames to find values lost after applying maxmiss
@@ -43,13 +68,25 @@ readyToPlot = s1CNBeforeMaxmiss %>% mutate(valType = replace(valType, lostVals_l
 # Color selection
 colors <- c("#a52637", "#37a526")
 plot(1:length(readyToPlot$value), readyToPlot$value, pch=20, col=colors[factor(readyToPlot$valType)], xlab="position sur le genome", ylab="log ratio par sonde")
-plot(s1CNBeforeMaxmiss[,1])
-plot(s1CNAfterMaxmiss)
-
+## saving plots
+head(s1CNAfterMaxmiss)
+head(s1CNBeforeMaxmiss[,1])
+jpeg('afterPreprocess.jpg')
+plot(s1CNBeforeMaxmiss[,1], xlab = "genomic position", ylab = "log ratio", main="sample 1 before preprocess was applied")
+dev.off()
+# 1. declare the file under which you want to save a plot
+jpeg('beforePreprocess.jpg')
+# 2. run the plot command
+plot(s1CNAfterMaxmiss, xlab = "genomic position", ylab = "log ratio", main="sample 1 after preprocess was applied")
+# 3. close the process to complete saving 
+dev.off()
+}
 ###################################################
 ### code chunk number 3: CGHcall.Rnw:75-77
 ###################################################
 norm.cghdata <- normalize(cghdata, method="median", smoothOutliers=TRUE)
+
+if (FALSE) {
 ## Let's do a plot before and after this normalization.
 ## First, get log ratio of copy number of both states
 lrBeforeNorm = copynumber(cghdata)
@@ -60,15 +97,27 @@ s1After = lrAfterNorm[,1]
 # I used these two plots to make a gif
 plot(1:length(s1Before), s1Before, ylim=c(-1, 1.1), col="#37a526")
 plot(1:length(s1After), s1After, ylim=c(-1, 1.1), col="#37a526")
-
+}
 
 
 ###################################################
 ### code chunk number 4: CGHcall.Rnw:89-92
 ###################################################
-norm.cghdata <- norm.cghdata[,1:4] # To save time we will limit our analysis to the first two samples from here on.
-seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy", undo.splits="sdundo",undo.SD=3, clen=10, relSDlong=5)
-
+norm.cghdata <- norm.cghdata[,1] # To save time we will limit our analysis to the first two samples from here on.
+# seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy", undo.splits="sdundo",undo.SD=3, clen=10, relSDlong=5)
+## testing different values to see the impact on segmentation
+for (i in 1:5) {
+    undo.SD_ranging = i
+    clen_ranging=10 #i*4
+    relSDlong_ranging=5 #i*2
+    seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy", undo.splits="sdundo",undo.SD=3, clen=clen_ranging, relSDlong=relSDlong_ranging)
+    # 1. declare the file under which you want to save a plot
+    png(paste('C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/plots/00',toString(i),'.png', sep="")) # output folder: "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\scripts\working_dir\plots"
+    # 2. run the plot command
+    plot( seg.cghdata, xlab = "genomic position", ylab = "log ratio", main=paste("sample *", i, "* after preprocess was applied"))
+    # 3. close the process to complete saving 
+    dev.off()
+}
 
 
 ###################################################
@@ -80,9 +129,11 @@ postseg.cghdata <- postsegnormalize(seg.cghdata)
 ###################################################
 ### code chunk number 6: CGHcall.Rnw:106-108
 ###################################################
-tumor.prop <- c(0.75, 0.9, 0.6, 0.85) # one value per sample. proportion of contamination by healthy cells
-## To visualize the content of a CGHcall output: a list of *7* elements. see `?CGHcall` for more details
+# tumor.prop <- c(0.75, 0.9, 0.6, 0.85, 0.65) # one value per sample. proportion of contamination by healthy cells
+tumor.prop <- c(0.75, 0.9, 0.6) # one value per sample. proportion of contamination by healthy cells
 rawResult <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor.prop)
+## To visualize the content of a CGHcall output: a list of *7* elements. see `?CGHcall` for more details
+if (FALSE) {
 posteriorfin2 = rawResult[1]
 nclone = rawResult[2]
 nsamples = rawResult[3]
@@ -92,26 +143,23 @@ df_regions = as.data.frame(regionsprof[[1]])
 nb_segs = dim(df_regions)[1]
 params = rawResult$params
 cellularity = rawResult$cellularity
-
+}
 ###################################################
 ### code chunk number 7: CGHcall.Rnw:113-114
 ###################################################
 result <- ExpandCGHcall(rawResult,postseg.cghdata)
-segs = as.data.frame(segmented(result))
-head(segs)
-segsAsVec = c(t(segs))
-summaryAnyVec(segsAsVec)
+
 ###################################################
 ### code chunk number 8: CGHcall.Rnw:122-123
 ###################################################
 plot(result[,1])
-
+df_calls = calls(result)
+plot(df_calls[,1], )
 
 ###################################################
 ### code chunk number 9: CGHcall.Rnw:129-130
 ###################################################
 plot(result[,2])
-summary(xval)
 
 ###################################################
 ### code chunk number 10: CGHcall.Rnw:139-140
@@ -124,15 +172,12 @@ summaryPlot(result)
 ###################################################
 frequencyPlotCalls(result)
 
-methods(plot)
-plot.cghCall(res_sample1)
 
-## plots en vrac pour explorer les resultats
+## divers plots pour explorer les resultats
 if(FALSE) {
 # in assayData
 df_logCN = copynumber(result)
 segs = segmented(result)
-df_calls = calls(result)
 probaLoss = probloss(result)
 probaDoubleLoss = probdloss(result)
 probaGain = probgain(result)
@@ -163,7 +208,7 @@ dimnames(called)
 dim(called)
 # get/set cellularity
 pData(called)
-# blc
+# not interesting here
 varMetadata(called)
 varLabels(called)
 featureData(called)
@@ -283,16 +328,76 @@ hist(c(-1, 1), add=T, breaks=1000)
 
 
 ## to generate random-based data to illustrate what a Gaussian Mixture Model does (it splits data into groups)
-m1 = data.frame(rnorm(200, -1), rnorm(200, -3), rep("minusOne", 200))
-colnames(m1) = c("vals1", "vals2", "class")
-p1 = data.frame(rnorm(200, 1), rnorm(200, 3),rep("plusOne", 200))
-colnames(p1) = c("vals1", "vals2", "class")
+library(ggplot2)
+library(dplyr)
+m1 = data.frame(rnorm(200, -3), rnorm(200, -1), rep("minusOne", 200))
+colnames(m1) = c("vals1", "vals2", "grp")
+p1 = data.frame(rnorm(200, 3), rnorm(200, 1),rep("plusOne", 200))
+colnames(p1) = c("vals1", "vals2", "grp")
 zer = data.frame(rnorm(1000, 0), rnorm(1000, 0), rep("zero", 1000))
-colnames(zer) = c("vals1", "vals2", "class")
+colnames(zer) = c("vals1", "vals2", "grp")
 threeGroups = rbind(m1, p1, zer)
+# plot without colors. the data seem homogeneously dispersed
+plot(threeGroups$vals1, threeGroups$vals2, xlab = "values")
+# plotting density of this data. The data appears to be organized in three groups of different means
+# ggplot(threeGroups, aes(x = vals1)) + geom_density(aes(color = grp)) + theme_bw()
+ggplot(threeGroups, aes(x = vals1, fill = grp)) + geom_density(alpha=0.5) + theme_bw()
+
+
+
+# plot with colors. the groups are revealed
 plot(threeGroups$vals1, threeGroups$vals2, 
      pch = 19,
-     col = factor(threeGroups$class))
+     col = factor(threeGroups$grp))
+
+
+# testing cluster circling
+library(tidyverse)
+library(ggforce)
+library(palmerpenguins)
+#removing NAs
+penguins <- penguins %>%
+    drop_na()
+#plotting ellipses
+threeGroups %>%
+    ggplot(aes(x = threeGroups$vals1,
+               y = threeGroups$vals2))+
+    geom_mark_ellipse(aes(color = threeGroups$grp,
+                          label=threeGroups$grp),
+                      expand = unit(0.5,"mm"),
+                      label.buffer = unit(-5, 'mm'))+
+    geom_point(aes(color=threeGroups$grp))+
+    theme(legend.position = "none")
+ggsave("annotate_groups_clusters_with_ellipse_ggplot2.png")
+
+
+
+
+
+#### plot of density
+a<-rnorm(1000,0,0.3) #component 1
+b<-rnorm(1000,-1,0.5) #component 2
+c<-rnorm(1000,1,0.8) #component 3
+d<-c(a,b,c) #overall data 
+df<-data.frame(d,id=rep(c(1,2,3),each=1000)) #add group id
+ggplot(df) +
+    stat_density(aes(x = d,  linetype = as.factor(id)), position = "stack", geom = "line", show.legend = F, color = "red") #+
+    # stat_density(aes(x = d,  linetype = as.factor(id)), position = "identity", geom = "line")
+
+sample1 = df_logCN[,1]
+# ggplot(df_logCN) + stat_density(aes(x = sample1, geom = "line", show.legend = F, color = "red")
+
+### simple density plots
+plot(density(df_logCN[,1]))
+plot(density(df_logCN[,2]))
+plot(density(df_logCN[,3]))
+
+hist(df_logCN[,1], breaks=200)
+
+### use mixtools to visualize histogram + the gaussians
+library(mixtools)
+wait1 <- normalmixEM(df_logCN[,1], lambda = .5, mu = c(-1,0), sigma = 0.5)
+plot(wait1, density=TRUE)
 
 
 
@@ -302,6 +407,51 @@ plot(threeGroups$vals1, threeGroups$vals2,
 
 
 
+
+
+####
+library(mclust)
+c(rnorm(200, -1),rnorm(200, 1),rnorm(1000, 0))
+
+data(diabetes)
+class <- diabetes$class
+table(class)
+X <- diabetes[,-1]
+head(X)
+clPairs(X, class)
+####
+# library(mixtools)
+# wait = faithful$waiting
+# mixmdl = normalmixEM(wait)
+# plot(mixmdl,which=2)
+# lines(density(wait), lty=2, lwd=2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## to understand postsegnormalize
 
 customPostsegnormalize = function(segmentData, inter = c(-0.1, 0.1)) 
 {
@@ -388,3 +538,5 @@ x1 = -0.033333
 x2 = 0.666667
 
 x1 + (x2-x1)/2
+
+

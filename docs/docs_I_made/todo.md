@@ -101,5 +101,7 @@ J'ai le choix:
 * [ ] noter ce que j'ai surligné dans l'article de rCGH
 04/04/2022
 * [ ] ASPCF: cahier to md
-
+05/04/2022
+* [X] ~~*faire une feuille de questions pour élodie, une pour laetitia/claire, et une pour tony -> questions.md*~~ [2022-04-05]
+* [X] ~~*noter dans doc partagé le résumé de la réunion*~~ [2022-04-05]
 

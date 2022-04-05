@@ -2169,7 +2169,38 @@ Je clarifie toutes mes notes en rayant du cahier ce que je transfère sur .md .
 J'ai lu `EaCoN_ASCAT_algo_PCF.pdf`. J'ai mieux compris ASPCF, je le note dans fonctionnement_des_outils.md . cf Cahier pour plus d'infos.
 J'ai compris en détail comment fonctionne la normalisation post-segmentation de CGHcall. cf cahier et CGHcall.R, j'ai commmenté cette fonction.
 Dans le dossier images, j'ai aussi créé une image "brouillon_CGHcall" pour le ppt de ce dernier.
-D'autre part, la fonction preprocess utilise impute.knn pour estimer les données manquantes, mais cela peut être désactivé.
+D'autre part, la fonction preprocess utilise impute.knn pour estimer les données manquantes, mais cela peut être désactivé.  
+J'ai compris en détail la normalisation post-seg de CGHcall.  
 
+
+# <span style="color:#999900"> Mardi 05/04/2022
+arrivée à 9h50; 30 minutes pause; départ à 19:30
+
+avancées de cette semaine: 
+- meilleure compréhension du modèle de mélange (picard et al)
+- meilleure compréhension de rCGH
+- meilleure compréhension d'ASPCF
+- meilleur pipeline pour CGHcall
+
+
+Obj d'aujourd'hui: lancer CGHcall sur un de nos échantillons, et utiliser les plots pour montrer à chaque étape ce qui change.
+les 3 échantillons intéressants indiqués par laetitia sont 5LD, 6VJ et 8MM. j'exporte leurs .txt à partir de ChAS. Ces fichiers n'ont pas la colonne END (position de fin des sondes), juste une colonne position. Je lance les données dessus quand même, en remplacant la colonne START par position, et END par des NA. -> cela fait qu'on ne peut pas afficher tous les plots, les valeurs END doivent être utilisées comme axe des abscisses.
+D'autre part, le dataset test avait 3500 lignes. pour nos données, on est à 200_000. tout est plus long.
+
+Voir plots discutés dans slack avec elodie.
+dans CGHcall.R, je teste différentes valeurs (1 à 5) d'undo.SD pour la segmentation. je produis les plots dans "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir".
+J'obtiens des plots, mais je dois faire un as.data.frame() avant le plot, sinon je ne peux pas choisir le titre de ce dernier. ou alors regarder la méthode plot de seg.cghdata. mais avoir les données brutes serait mieux.
+je varie aussi clen de 4 à 20, step=5.
+Faire varier plus ces valeurs. de 0 à 100 par exemple.
+
+CGHcall lancé; j'ai des résultats mais pas tous les plots.
+
+
+Cet après-midi, j'ai lancé CGHcall sur nos données. J'ai commencé à tester différentes valeurs pour les paramètres de segmentation afin de visualiser leur effet, comme tu l'as dit élodie.  J'ai aussi fait avec élodie des plots de densité pour présenter l'étape de calling du modèle de mélange.
+
+Un problème rencontré est que CGHcall a besoin des colonnes "start" et "end" (les positions des sondes), et le fichier texte exporté par ChAS ne donne qu'une colonne qui est "position". J'ai mis "position" à la place de "start" et une colonne de NA à la place de "end" et ça a tourné, mais ce n'est pas une solution à long terme. Demain, je demanderai à Laetitia si elle sait comment exporter "start" et "end".
+Pour l'instant ce n'est pas bloquant.
+
+Demain le but est de finir les slides, notamment avec ces plots pour pouvoir en reparler jeudi, avec élodie.
 
 
