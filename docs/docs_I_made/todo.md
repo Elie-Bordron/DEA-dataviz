@@ -104,4 +104,6 @@ J'ai le choix:
 05/04/2022
 * [X] ~~*faire une feuille de questions pour élodie, une pour laetitia/claire, et une pour tony -> questions.md*~~ [2022-04-05]
 * [X] ~~*noter dans doc partagé le résumé de la réunion*~~ [2022-04-05]
+07/04/2022
+* [ ] revoir comment DNAcopy supprime certaines des séparations. "3 SD apart" -> mais l'écart-type de quoi? des données en entier?
 

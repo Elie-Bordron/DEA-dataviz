@@ -1890,14 +1890,14 @@ The following packages have unmet dependencies:
           Recommends: r-doc-html but it is not going to be installed
 E: Unable to correct problems, you have held broken packages.
 ```
-Voir les réponses à `https://askubuntu.com/questions/564282/apt-get-unmet-dependencies-but-it-is-not-going-to-be-installed`. Si je ne peux rien faire avec, demandr à jennifer.
+Voir les réponses à `https://askubuntu.com/questions/564282/apt-get-unmet-dependencies-but-it-is-not-going-to-be-installed`. Si je ne peux rien faire avec, demander à jennifer.
 
 
 
 
 
 J'ai utilisé ffmpeg sur windows 10 pour faire un gif. la commande utilisée est   
-`%ffmpeg% -framerate 0.5 -i %03d.png output.gif` en étant dans le dossier qui contient les images. ces dernières doivent s'appeler 001.png, 002.png, etc. car `%03d` correspond au nombre de digits qui composent le nom de l'image (sans l'extension .png).
+`  %ffmpeg% -framerate 0.5 -i %03d.png output.gif  ` en étant dans le dossier qui contient les images. ces dernières doivent s'appeler 001.png, 002.png, etc. car `%03d` correspond au nombre de digits qui composent le nom de l'image (sans l'extension .png).
 
 
 arrivée à 10h05; départ à 17:20; 1h pause
@@ -2054,7 +2054,6 @@ slides pour voir comment utiliser le contenu d'un objet CGHcall. -> montrer les 
 changer couleurs du pipeline: les étapes colorées doivent être les étapes importantes.
 
 ajouter une case "object cghRaw" après conversion? non, pas la peine d'encombrer le diagramme
-
 exporter les images de R avec "copy to clipboard" peut laisser des traits en haut et à gauche de l'écran. faire "export as image" permet d'éviter ça.
 
 Indiquer le nom de l'outil en petit sur chaque slide: si je présente les 4 outils à la suite, on peut ne plus savoir à quel outil on est rendu.
@@ -2201,6 +2200,22 @@ Cet après-midi, j'ai lancé CGHcall sur nos données. J'ai commencé à tester 
 Un problème rencontré est que CGHcall a besoin des colonnes "start" et "end" (les positions des sondes), et le fichier texte exporté par ChAS ne donne qu'une colonne qui est "position". J'ai mis "position" à la place de "start" et une colonne de NA à la place de "end" et ça a tourné, mais ce n'est pas une solution à long terme. Demain, je demanderai à Laetitia si elle sait comment exporter "start" et "end".
 Pour l'instant ce n'est pas bloquant.
 
-Demain le but est de finir les slides, notamment avec ces plots pour pouvoir en reparler jeudi, avec élodie.
+Demain le but est de finir les slides CGHcall, notamment avec ces plots pour pouvoir en reparler jeudi, avec élodie.
 
 
+# <span style="color:#999900"> Mercredi 06/04/2022
+arrivée à 9h40; 40 min pause; départ à 18:45
+je pourrais chercher la couverture des sondes pour le pb de start et end. ne pas passer trop de temps dessus cependant.
+
+pour faire les plots de segmentation, j'ai cette erreur: `Error in if (probe < 1000) { : missing value where TRUE/FALSE needed`. -> une erreur survient mais le plot se construit quand même. si le plot est lancé dans une fonction, faire try(plot(...)) pour que l'erreur n'interrompe pas le reste de la fonction.
+Je fais 2 plots correspondant à la segmentation pour les valeurs par défaut. l'un est construit à partir de l'objet cghSeg, l'autre à partir de segmented(cghSeg) -> la méthode plot change entre les deux; le deuxième a l'affichage de base de R.
+j'ai fait varier les 3 paramètres de la segmentation indépendemment, et tous ensemble. l'impact dans les négatifs semble être qu'aucune séparation n'est annulée
+
+# <span style="color:#999900"> Jeudi 07/04/2022
+Arrivée à 9:50; 30 min pause
+
+Ce matin: presque fini les slides CGHcall. Les retours de Claire et Elodie m'ont donné des choses à modifier pour le finir.
+obj d'aujourd'hui: compléter au maximum le ppt cghcall. mardi pro, c'est EaCoN
+
+il reste des choses à ajouter au ppt CGHcall mais j'ai avancé dessus. cf cahier.
+il reste à remplir la diapo de fin, la diapo sur l'objet CGHcall/Raw/Seg, les paramètres undo.SD (cf cahier tj) .

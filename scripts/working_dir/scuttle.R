@@ -35,8 +35,6 @@ sample2_AD_path = file.path(dataDir, "2-AD.OSCHP.segments.txt")
 sample2_AD = read.table(sample2_AD_path, sep='\t', h=TRUE)
 
 
-
-
 ##### tips
 
 ## to check if two objects point to the same memory slot

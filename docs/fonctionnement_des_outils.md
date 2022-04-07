@@ -35,7 +35,7 @@ Différents plots peuvent également être produits:
 - Les Summary plots sont des frequency plots un peu plus sophistiqués: ils pondèrent cette fréquence par la probabilité "a posteriori". Cette dernière est définie par la probabilité remesurée ou recalculée qu'un événement se produise en prenant en compte une nouvelle information. En d'autres termes, c'est la probabilité qu'un événement A ait lieu, sachant qu'un événement B a eu lieu, on peut donc l'écrire P(A|B). Elle s'oppose à la probabilité "a priori" (P(A)) qui est définie par des données ou connaissances antérieures à un calcul ou une observation. voir les pages wikipedia en français pour plus de détails.
 En ce qui concerne les objets $cghRaw$, $cghSeg$ et $cghCall$:
 Les différences entre Raw et Seg sont minimes. La différence principale est que cghSeg possède un attribut de plus: un tableau contenant les données de Segmentation.
-cghCall est défini dans le cahier au 23/03.
+cghCall est défini dans le cahier au $23/03$.
 
 
 ## Pipeline
@@ -102,12 +102,12 @@ voir cahier 17/03. la vidéo dont je me suis basé explique également comment l
 
 
 # EaCoN
-Ce package se démarque par sa facilité d'usage (multiples options pour lancer le pipeline, en pas à pas ou en batch) . Il n'apporte pas de technologie innovante mais utilise plusieurs outils (APT, ASCAT) pour faire l'analyse de Nombre de copies de A à Z
+Ce package se démarque par sa facilité d'usage (multiples options pour lancer le pipeline, en pas à pas ou en batch) . Il n'apporte pas de technologie innovante mais utilise plusieurs outils (APT, ASCAT) pour faire l'analyse de Nombre de copies de A à Z.
 On peut considérer EaCoN comme une interface pour utiliser ASCAT; l'intérêt de cette interface est de produire des métriques, des plots et de faciliter l'utilisation du package par un mode batch.
 La spécificité de cet outil est d'estimer la cellularité et la ploidie et de prendre en compte ces paramètres dans le calcul du nombre de copies au niveau allélique. Cela permet de produire des profils ASCAT, définis ainsi:
 un profil ASCAT est un profil de nombre de copies au niveau allélique sur le génome entier, et permet de voir, en plus des habituels gains et pertes, les événements neutres de nombre de copies et LOH.
 
-important: je parle d'ASCAT mais on peut aussi utiliser FACETS et Sequenza. Cela dit, je n'ai pas réussi à installer FACETS.
+à noter: je parle d'ASCAT mais on peut aussi utiliser FACETS et Sequenza. Cela dit, je n'ai pas réussi à installer FACETS.
 
 ## input
 Raw cel files
@@ -144,11 +144,13 @@ Deux paramètres sont calculés par ASCAT à partir de données SNP: L'estimatio
 De plus,  on peut savoir quel allèle a été gagné/perdu par rapport à l'autre (allelic skewness = asymétrie allélique). L'asymétrie allélique peut être déterminée à partir de données Oncoscan.
 
 ## ASPCF en détail
-ASPCF effectue le calling, dans l'étape de segmentation.
+ASPCF effectue le calling, dans l'étape de segmentation.  
+
+$D= 0,1 – (-0,14)$
 
 
 # DNAcopy
-voir cahier au 25/03. et au 11/03
+voir cahier au 25/03: et au 11/03: undoing splits
 1. crée une distribution de référence à l'aide d'un test de permutation.
 2. parcourt le génome et sépare récursivement chaque chromosome en 2 ou 3 sous-segments selon une statistique T et la distribution de référence.
 3. défait certaines séparations selon les règles suivantes:
