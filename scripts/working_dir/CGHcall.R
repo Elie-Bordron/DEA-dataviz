@@ -24,7 +24,7 @@ osData = cbind(osData, s5_LD[,3]+20)
 osData = cbind(osData, s5_LD[,4])
 osData = cbind(osData, s6_VJ[,4])
 osData = cbind(osData, s8_MM[,4])
-colnames(osData)= c("probeID",  "CHROMOSOME", "START_POS", "END_POS", "sample1", "sample2", "sample3")
+colnames(osData)= c("probeID",  "CHROMOSOME", "START_POS", "END_POS", "5-LD", "6-VJ", "8-MM")
 
 
 
@@ -38,20 +38,19 @@ library(ggplot2)
 # data(Wilting)
 # to set meaningful column names to this df
 # colnames(Wilting)= c("probeID",  "CHROMOSOME", "START_POS", "END_POS", "sample1", "sample2", "sample3", "sample4", "sample5")
-# Wilting_raw = Wilting
-# Wilting <- make_cghRaw(Wilting_raw)
-Wilting <- make_cghRaw(osData)
+# ACGH_data <- make_cghRaw(Wilting)
+ACGH_data <- make_cghRaw(osData)
 
 ###################################################
 ### code chunk number 2: CGHcall.Rnw:65-66
 ###################################################
-cghdata <- preprocess(Wilting, maxmiss=5, nchrom=22)
+cghdata <- preprocess(ACGH_data, maxmiss=5, nchrom=22)
 
 if (FALSE) {
 ## plot to compare copynumber before/after maxmiss is applied
 # get log ratio of CN for first sample before and after maxmiss was applied
-s1CNBeforeMaxmiss = copynumber(Wilting)[,1]
-s1CNAfterMaxmiss = copynumber(preprocess(Wilting, maxmiss=30))[,1]
+s1CNBeforeMaxmiss = copynumber(ACGH_data)[,1]
+s1CNAfterMaxmiss = copynumber(preprocess(ACGH_data, maxmiss=30))[,1]
 lostVals_logicalVec = !(names(s1CNBeforeMaxmiss)%in%names(s1CNAfterMaxmiss))
 s1CNBeforeMaxmiss = as.data.frame(cbind(s1CNBeforeMaxmiss, lostVals_logicalVec))
 View(as.data.frame(lostVals_logicalVec))
@@ -84,8 +83,7 @@ dev.off()
 ### code chunk number 3: CGHcall.Rnw:75-77
 ###################################################
 norm.cghdata <- normalize(cghdata, method="median", smoothOutliers=TRUE)
-# plotting log ratio of copy number
-# plot(norm.cghdata)
+# norm.cghdata <- norm.cghdata[,3] # To save time we will limit our analysis to the first two samples from here on.
 
 if (FALSE) {
 ## Let's do a plot before and after this normalization.
@@ -104,7 +102,6 @@ plot(1:length(s1After), s1After, ylim=c(-1, 1.1))
 ###################################################
 ### code chunk number 4: CGHcall.Rnw:89-92
 ###################################################
-norm.cghdata <- norm.cghdata[,1] # To save time we will limit our analysis to the first two samples from here on.
 seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy", undo.splits="sdundo",undo.SD=3, clen=10, relSDlong=5)
 
 ## before / after segmentation:
@@ -174,93 +171,84 @@ dev.off()
 ###################################################
 # tumor.prop <- c(0.75, 0.9, 0.6, 0.85, 0.65) # one value per sample. proportion of contamination by healthy cells
 tumor.prop <- c(0.75, 0.9, 0.6) # one value per sample. proportion of contamination by healthy cells
-rawResult <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor.prop)
+rawCghResult <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor.prop)
 ## To visualize the content of a CGHcall output: a list of *7* elements. see `?CGHcall` for more details
 if (FALSE) {
-posteriorfin2 = rawResult[1]
-nclone = rawResult[2]
-nsamples = rawResult[3]
-nclass = rawResult[4]
-regionsprof = rawResult[5] # 4 cols. profile = Sample the segment belongs to
+posteriorfin2 = rawCghResult[1]
+nclone = rawCghResult[2]
+nsamples = rawCghResult[3]
+nclass = rawCghResult[4]
+regionsprof = rawCghResult[5] # 4 cols. profile = Sample the segment belongs to
 df_regions = as.data.frame(regionsprof[[1]])
 nb_segs = dim(df_regions)[1]
-params = rawResult$params
-cellularity = rawResult$cellularity
+params = rawCghResult$params
+cellularity = rawCghResult$cellularity
 }
 ###################################################
 ### code chunk number 7: CGHcall.Rnw:113-114
 ###################################################
-result <- ExpandCGHcall(rawResult,postseg.cghdata,CellularityCorrectSeg=F) # use CellularityCorrectSeg=TRUE to correct using cellularity
+CghResult <- ExpandCGHcall(rawCghResult,postseg.cghdata,CellularityCorrectSeg=F) # use CellularityCorrectSeg=TRUE to correct using cellularity
 
 ###################################################
 ### code chunk number 8: CGHcall.Rnw:122-123
 ###################################################
 # plot call probability for sample 1
-plot(result[,1])
-plot(1)
-# plot raw call values
-df_calls = calls(result)
-plot(df_calls[,1], )
+plot(CghResult[,1])
+# plot(1)
 
 ###################################################
 ### code chunk number 9: CGHcall.Rnw:129-130
 ###################################################
 # plot call probability for sample 2
-plot(result[,2])
-
+plot(CghResult[,2])
+plot(CghResult[,3])
+# plot call data
+plot(calls(CghResult)[,1], ylab="log ratio", xlab = "genomic position", main="5-LD", ylim=c(-5,5))
 ###################################################
 ### code chunk number 10: CGHcall.Rnw:139-140
 ###################################################
-summaryPlot(result)
+summaryPlot(CghResult)
 
 
 ###################################################
 ### code chunk number 11: CGHcall.Rnw:149-150
 ###################################################
-frequencyPlotCalls(result)
+frequencyPlotCalls(CghResult)
 
 
 ## divers plots pour explorer les resultats
 if(FALSE) {
-# in assayData
-df_logCN = copynumber(result)
+### in assayData
+# log ratio plot
+df_logCN = copynumber(CghResult)
 plot(df_logCN)
-segs = segmented(result)
-
-plot(segs)
+# to save seg data plot
+segs = segmented(CghResult)
 png("segs.png")
-plot(segs, ylab="log ratio", xlab = "position genomique", main="données de segmentation")
+plot(segs, ylab="log ratio", xlab = "position genomique", main="donnï¿½es de segmentation")
 dev.off()
-
+# to save called data plot
 png("calls.png")
-plot(calls(result), ylab="log ratio", xlab = "position genomique", main="segments appelés à leurs niveaux estimés de log ratio")
+plot(calls(CghResult), ylab="log ratio", xlab = "position genomique", main="segments appeles a leurs niveau estime de log ratio")
 dev.off()
-probaLoss = probloss(result)
-probaDoubleLoss = probdloss(result)
-probaGain = probgain(result)
-probaNorm = probnorm(result)
-plot(probaNorm)
-plot(probaLoss)
-plot(probaDoubleLoss)
-plot(probaGain)
-# in featureData:
-chr = chromosomes(result)
-bpstart = bpstart(result)
-bpend = bpend(result)
-# plots
-called = result
-res_sample1 = called[,1]
-plot(called[,1],ampcol="#00ffff",dlcol="#00ff00")
-plot(res_sample1)
-plot(segs[,1])
-plot(df_calls[,1])
-plot(bpend)
-
-plot(result)
+# extracting all data from a cghCall object's AssayData component
+probaLoss = probloss(CghResult)
+probaDoubleLoss = probdloss(CghResult)
+probaGain = probgain(CghResult)
+probaNorm = probnorm(CghResult)
+plot(probaNorm) # probability of being called at level 0
+plot(probaLoss) # probability of being called at level -1
+plot(probaDoubleLoss) # probability of being called at level -2
+plot(probaGain) # probability of being called at level >0
+### in featureData:
+chr = chromosomes(CghResult)
+bpstart = bpstart(CghResult)
+bpend = bpend(CghResult)
+# to plot only one chromosome with probability
 plot(called[chromosomes(called)==1,1])
-log2ratios <- copynumber(res_sample1)
-
+# extract column names
 sample_names = sampleNames(called)
+# extract row names
 probe_ids = featureNames(called)
 # get/set colnames and rownames
 dimnames(called)
@@ -276,9 +264,18 @@ fvarMetadata(called)
 preproc(called)
 # df with rows id, chr, start and stop
 fData(called)
-# only the 22 first chromosomes are used here
+# to show that only the 22 first chromosomes are used here
 tail(chr)
 }
+
+
+
+x <- rnorm(20)^2 * 10000000
+plot(x / 10000000, axes = FALSE)
+axis(1)
+pts <- pretty(x / 10000000)
+axis(2, at = pts, labels = paste(pts, "MM", sep = ""))
+box()
 
 
 
@@ -333,17 +330,11 @@ getProbesOfCallLevel = function(lvl, df_calls) {
     return(allProbes_GivenLevel)
 }
 
-summaryAnyVec = function(vector) {
-    vector = as.numeric(vector)
-    vecCount = vctrs::vec_count(vector)
-    print(c("============ vec count: ============", vecCount))
-}
 
-
-
-df_calls = calls(result)
-df_logCN = copynumber(result)
-segs = segmented(result)
+###### plot histogram with lots of breaks to see gaussians
+df_calls = calls(CghResult)
+df_logCN = copynumber(CghResult)
+segs = segmented(CghResult)
 ## pour voir la distribution de toutes les donnees (la somme de toutes les courbes de gauss)
 logratios_for_hist = c(df_logCN[,1], df_logCN[,2], df_logCN[,3], df_logCN[,4], df_logCN[,5])
 hist(logratios_for_hist, breaks=1000)
@@ -399,36 +390,10 @@ plot(threeGroups$vals1, threeGroups$vals2, xlab = "values")
 # plotting density of this data. The data appears to be organized in three groups of different means
 # ggplot(threeGroups, aes(x = vals1)) + geom_density(aes(color = grp)) + theme_bw()
 ggplot(threeGroups, aes(x = vals1, fill = grp)) + geom_density(alpha=0.5) + theme_bw()
-
-
-
 # plot with colors. the groups are revealed
 plot(threeGroups$vals1, threeGroups$vals2, 
      pch = 19,
      col = factor(threeGroups$grp))
-
-
-# testing cluster circling
-library(tidyverse)
-library(ggforce)
-library(palmerpenguins)
-#removing NAs
-penguins <- penguins %>%
-    drop_na()
-#plotting ellipses
-threeGroups %>%
-    ggplot(aes(x = threeGroups$vals1,
-               y = threeGroups$vals2))+
-    geom_mark_ellipse(aes(color = threeGroups$grp,
-                          label=threeGroups$grp),
-                      expand = unit(0.5,"mm"),
-                      label.buffer = unit(-5, 'mm'))+
-    geom_point(aes(color=threeGroups$grp))+
-    theme(legend.position = "none")
-ggsave("annotate_groups_clusters_with_ellipse_ggplot2.png")
-
-
-
 
 
 #### plot of density
@@ -438,13 +403,13 @@ c<-rnorm(1000,1,0.8) #component 3
 d<-c(a,b,c) #overall data 
 df<-data.frame(d,id=rep(c(1,2,3),each=1000)) #add group id
 ggplot(df) +
+    # stat_density(aes(x = d), position = "stack", geom = "line", show.legend = F, color = "red") +
     stat_density(aes(x = d,  linetype = as.factor(id)), position = "stack", geom = "line", show.legend = F, color = "red") +
     stat_density(aes(x = d,  linetype = as.factor(id)), position = "identity", geom = "line", show.legend = F) +
-    labs(x = "value", y = "density")
-    # ggtitle("")
+    labs(x = "value", y = "density") +
+    ggtitle("Sï¿½paration des donnï¿½es en trois groupes")
 
 sample1 = df_logCN[,1]
-# ggplot(df_logCN) + stat_density(aes(x = sample1, geom = "line", show.legend = F, color = "red")
 
 ### simple density plots
 plot(density(df_logCN[,1]))
@@ -468,23 +433,6 @@ plot(wait1, density=TRUE)
 
 
 
-####
-library(mclust)
-c(rnorm(200, -1),rnorm(200, 1),rnorm(1000, 0))
-
-data(diabetes)
-class <- diabetes$class
-table(class)
-X <- diabetes[,-1]
-head(X)
-clPairs(X, class)
-####
-# library(mixtools)
-# wait = faithful$waiting
-# mixmdl = normalmixEM(wait)
-# plot(mixmdl,which=2)
-# lines(density(wait), lty=2, lwd=2)
-
 
 
 
@@ -496,19 +444,19 @@ getmode <- function(v) {
     uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
+vals = c(round(rnorm(40, 3, 1)), round(rnorm(40, 8, 1)))
 ### using ggplot
 library(ggplot2)
-data_fvec = as.data.frame(v)
+data_fvec = as.data.frame(vals)
 data_fvec %>% 
-    ggplot(aes(x=v)) +
+    ggplot(aes(x=vals)) +
     geom_density( fill="dodgerblue", alpha=0.5)+
     geom_vline(xintercept=2, size=1.5, color="red") +
     coord_cartesian(xlim = c(1, 6)) 
 ### using base R
-vals = c(round(rnorm(40, 3, 1)), round(rnorm(40, 8, 1)))
 mod = getmode(vals)
 med = median(vals)
-plot(density(vals), xlab="Nombre de chaises par pièce",ylab="Densité",main="La médiane (bleu) et le mode (rouge) d'une série de valeurs")
+plot(density(vals), xlab="Nombre de chaises par piece",ylab="Densite",main="La mediane (bleu) et le mode (rouge) d'une serie de valeurs")
 abline(v=mod, col="red")
 abline(v=med, col="blue")
 #### to see real values
@@ -546,19 +494,22 @@ customPostsegnormalize = function(segmentData, inter = c(-0.1, 0.1))
     })
     print(c("countlevall aka segvec: ", countlevall))
     intcount <- function(int, sv) {
-        # print("OO======================intcount=======================OO")
-        # print(c("int: ", int))
-        # print(c("sv: ", sv)) #table with two columns: the probe log ratio value, and the number of times it appears (== 1 segment)
+        print("OO======================intcount=======================OO")
+        print(c("int: ", int))
+        # print(c("sv: ", sv)) #table with two columns: the probe log ratio value, and the number of times it appears (== length of 1 segment)
         sv1 <- as.numeric(as.vector(sv[, 1])) #sv1: log ratio column
         wh <- which(sv1 <= int[2] & sv1 >= int[1]) # position of probes which value is within the interval
         # print(c("sv1: ", sv1))
-        # print(c("wh: ", wh)) 
-        # print(c("to_sum: ", (sv[wh, 2])))
-        # print(c("returned_sum: ", sum(sv[wh, 2])))
+        # print(c("class(sv1): ", class(sv1)))
+        sv1 = as.data.frame(sv1)
+        print(c("wh: ", wh)) 
+        print(c("count of probes within interval: ", (sv[wh, 2])))
+        print(c("values of probes within interval: ", (sv1[wh,])))
+        print(c("returned_sum: ", sum(sv[wh, 2])))
         return(sum(sv[wh, 2])) # the number of probes(not their value) within the interval is returned
     }
     postsegnorm <- function(segvec, int = inter, intnr = 3) { #int = c(-0.5, 0.3)
-        # print("OO=============================================postsegnorm================================================OO")
+        print("OO=============================================postsegnorm================================================OO")
         # print(c("interval received: ", int))
         intlength <- (int[2] - int[1])/2
         gri <- intlength/intnr
@@ -572,9 +523,9 @@ customPostsegnormalize = function(segmentData, inter = c(-0.1, 0.1))
         # intct contains then one value per interval, which represents how much segmented the data is.
         whmax <- which.max(intct) # finds highest value, representing the best interval.
         # print(c("segvec: ", segvec))
-        # print(c("interval count: ", intct))# of all 
-        # print(c("whmax: ", whmax))
-        # print(c("ints: ", ints))
+        print(c("interval count: ", intct))# of all
+        print(c("whmax: ", whmax))
+        print(c("ints: ", ints))
         print(c("best interval found (ints[whmax, ]): ", ints[whmax, ]))
         return(ints[whmax, ]) #returns said best interval.
     }
@@ -599,7 +550,7 @@ customPostsegnormalize = function(segmentData, inter = c(-0.1, 0.1))
                                        matrixValues) - vecres)
     return(segmentData)
 }
-
+)
 
 #function call
 postseg.cghdata <- customPostsegnormalize(seg.cghdata) # argument: objet cghSeg
@@ -615,11 +566,10 @@ dev.off()
 
 segTable = segmented(seg.cghdata)
 # function for plotting 
-# interval=65654654
 # plot(segTable, ylim=plot_ylim, main="recherche du meilleur intervalle", ylab="log ratio", xlab="position genomique")
 plotInterval = function(data, plot_ylim, interval) {
     png(paste("./plots/postsegnorm_recherche_intervalle_", toString(interval), ".png", sep = ""))
-    try(plot(data, ylim=plot_ylim, main="recherche du meilleur intervalle", ylab="log ratio", xlab="position genomique"))
+    try(plot(data, ylim=plot_ylim, main="recherche du meilleur intervalle", ylab="log ratio", xlab="position genomique")) #,pch=1, cex=0.2
     abline(h=interval[1], col="#3b2dbc"); abline(h=interval[2], col="#3b2dbc")
     abline(h=plot_ylim[1], col="#3b2dbc"); abline(h=plot_ylim[2], col="#3b2dbc") #59, 45, 188
     nb_points = length(data)
@@ -631,10 +581,11 @@ prevInter = c(-2.5,1) # c(-2.5,1) is default ylim for this data
 currInter = c(-0.1,0.1)
 plotInterval(segTable,prevInter,currInter) 
 prevInter = currInter
-currInter = c(-0.0333,0.0667) #check
+currInter = c(-0.0333,0.0667) 
 plotInterval(segTable,prevInter,currInter) 
 prevInter = currInter
-currInter = c(-0.0167,0.0333) #check
+# currInter = c(-0.0167,0.0333) # this is the actual interval but it does not appear to have more segments in it in the plot.
+currInter = c(0.0167,0.0667) # this is visually the best interval, I use it for visualisation purposes
 plotInterval(segTable,prevInter,currInter) 
 prevInter = currInter
 currInter = c(-0.0083,0.0167)

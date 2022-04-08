@@ -35,7 +35,7 @@ Différents plots peuvent également être produits:
 - Les Summary plots sont des frequency plots un peu plus sophistiqués: ils pondèrent cette fréquence par la probabilité "a posteriori". Cette dernière est définie par la probabilité remesurée ou recalculée qu'un événement se produise en prenant en compte une nouvelle information. En d'autres termes, c'est la probabilité qu'un événement A ait lieu, sachant qu'un événement B a eu lieu, on peut donc l'écrire P(A|B). Elle s'oppose à la probabilité "a priori" (P(A)) qui est définie par des données ou connaissances antérieures à un calcul ou une observation. voir les pages wikipedia en français pour plus de détails.
 En ce qui concerne les objets $cghRaw$, $cghSeg$ et $cghCall$:
 Les différences entre Raw et Seg sont minimes. La différence principale est que cghSeg possède un attribut de plus: un tableau contenant les données de Segmentation.
-cghCall est défini dans le cahier au $23/03$.
+l'objet cghCall est défini dans le cahier au $23/03$.
 
 
 ## Pipeline
@@ -138,15 +138,120 @@ output:  $voir fig 1 article$
 `Annotate.ff(RDS.file = "/home/project/EaCoN_results/S1/ASCAT/L2R/S1.EaCoN.ASPCF.RDS", author.name = "Me!")`
 HTML reporting  
 
-## EaCoN utilise ASCAT
+## ASCAT en détail ##
 Deux paramètres sont calculés par ASCAT à partir de données SNP: L'estimation de la cellularité et l'estimation de la ploidie. A partir de ces deux paramètres, le copy number est estimé. L'algorithme TuScan fait ça aussi, selon l'aide de Chas, page 509.
-
 De plus,  on peut savoir quel allèle a été gagné/perdu par rapport à l'autre (allelic skewness = asymétrie allélique). L'asymétrie allélique peut être déterminée à partir de données Oncoscan.
+
+les fonctions d'ASCAT:
+- ascat.asmultipcf                Allele-specific segmentation of multiple samples
+This segmentation function should only be used if part of the breakpoints are expected to be shared between samples, e.g. due to a common ancestry.
+- ascat.aspcf                     ascat.aspcf
+run ASPCF segmentation
+input: $ASCATobj$: an ASCAT object
+- ascat.correctLogR               ascat.correctLogR
+Corrects logR of the tumour sample(s) with genomic GC content (replication timing is optional)
+- ascat.GCcorrect                 ascat.GCcorrect
+Function kept for backward compatibility, please use ascat.correctLogR instead
+- ascat.getAlleleCounts           Obtain allele counts for a given set of loci through external program alleleCounter.
+Obtain allele counts for a given set of loci through external program alleleCounter.
+input: $BAM/CRAM$
+- ascat.getBAFsAndLogRs           Obtain BAF and LogR from the allele counts.
+Obtain BAF and LogR from the allele counts.
+input: $file tumor & file ref$
+- ascat.loadData                  ascat.loadData
+``first function``
+Function to read in SNP array data.
+input: $file tumor & file ref$
+- ascat.metrics                   Function to extract different metrics from ASCAT profiles.
+```
+Value
+A dataframe (one sample per line) with the following metrics (as columns):
+1. sex - Sex information as provided.
+2. tumour_mapd - Median Absolute Pairwise Difference (MAPD) in tumour logR track.
+3. normal_mapd - Median Absolute Pairwise Difference (MAPD) in normal logR track (should be NA without matched normals and 0 for sequencing data).
+4. GC_correction_before - logR/GC correlation before correction.
+5. GC_correction_after - logR/GC correlation after correction.
+6. RT_correction_before - logR/RT correlation before correction.
+7. RT_correction_after - logR/RT correlation after correction.
+8. n_het_SNP - Number of heterozygous SNPs.
+9. n_segs_logR - Number of segments in the logR track.
+10. n_segs_BAF - Number of segments in the BAF track.
+11. n_segs_logRBAF_diff - Difference between number of segments in the logR versus BAF track.
+12. frac_homo - Fraction of homozygous (<0.1 | >0.9) probes in tumour.
+13. purity - Purity estimate.
+14. ploidy - Ploidy estimate.
+15. goodness_of_fit - Goodness of fit.
+16. n_segs - Number of copy-number segments.
+17. segs_size - Total size of all segments.
+18. n_segs_1kSNP - Number of segments per 1k heterozygous SNPs.
+19. homdel_segs - Number of segments with homozygous deletion.
+20. homdel_largest - largest segment with homozygous deletion.
+21. homdel_size - Total size of segments with homozygous deletion.
+22. homdel_fraction - Fraction of the genome with homozygous deletion.
+23. LOH - Fraction of the genome with LOH (ignoring sex chromosomes).
+24. mode_minA - Mode of the minor allele (ignoring sex chromosomes).
+25. mode_majA - Mode of the major allele (ignoring sex chromosomes).
+26. WGD - Whole genome doubling event (ignoring sex chromosomes).
+27. GI - Genomic instability score (ignoring sex chromosomes)
+```
+## plots
+- ascat.plotAdjustedAscatProfile  ascat.plotAdjustedAscatProfile
+Function plotting the "adjusted" (with realistic chromosome sizes) rounded/unrounded ASCAT profiles over all chromosomes.
+input: $ASCAT_output_object$
+R object generated by the ascat.runAscat function.
+- ascat.plotAscatProfile          ascat.plotAscatProfile
+Function plotting the rounded ASCAT profiles over all chromosomes
+- ascat.plotGenotypes             ascat.plotGenotypes
+plot showing classified BAF per sample, with unused SNPs in green, germline homozygous SNPs in blue and all others in red
+- ascat.plotNonRounded            ascat.plotNonRounded
+Function plotting the unrounded ASCAT copy number over all chromosomes
+- ascat.plotRawData               ascat.plotRawData
+Plots SNP array data
+Produces png files showing the logR and BAF values for tumour and germline samples
+- ascat.plotSegmentedData         ascat.plotSegmentedData
+plots the SNP array data before and after segmentation
+- ascat.plotSunrise               ascat.plotSunrise
+plot visualising range of ploidy and tumour percentage values
+## other functions
+- ascat.predictGermlineGenotypes  ascat.predictGermlineGenotypes
+predicts the germline genotypes of samples for which no matched germline sample is available
+- ascat.prepareHTS                Extract both logR and BAF values from sequencing data
+Method derived from the Battenberg package: https://github.com/Wedge-lab/battenberg
+## main ASCAT fx
+- ascat.runAscat                  ascat.runAscat
+ASCAT main function, calculating the allele-specific copy numbers
+input: 
+$ASCATobj$	
+an ASCAT object from ascat.aspcf
+- ascat.synchroniseFiles          Synchronise SNPs across files
+```
+Usage
+ascat.synchroniseFiles(
+  samplename,
+  tumourLogR_file,
+  tumourBAF_file,
+  normalLogR_file,
+  normalBAF_file
+)
+Arguments
+samplename	
+String, name of the sample.
+
+tumourLogR_file	
+File where LogR from the tumour will be read and overwritten.
+tumourBAF_file	
+File where BAF from the tumour will be read and overwritten.
+normalLogR_file	
+File where LogR from the normal will be read and overwritten.
+normalBAF_file	
+File where BAF from the normal will be read and overwritten.
+
+
+```
 
 ## ASPCF en détail
 ASPCF effectue le calling, dans l'étape de segmentation.  
 
-$D= 0,1 – (-0,14)$
 
 
 # DNAcopy

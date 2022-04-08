@@ -2212,10 +2212,70 @@ Je fais 2 plots correspondant à la segmentation pour les valeurs par défaut. l
 j'ai fait varier les 3 paramètres de la segmentation indépendemment, et tous ensemble. l'impact dans les négatifs semble être qu'aucune séparation n'est annulée
 
 # <span style="color:#999900"> Jeudi 07/04/2022
-Arrivée à 9:50; 30 min pause
+Arrivée à 9:50; 30 min pause; départ à 18:55
 
 Ce matin: presque fini les slides CGHcall. Les retours de Claire et Elodie m'ont donné des choses à modifier pour le finir.
 obj d'aujourd'hui: compléter au maximum le ppt cghcall. mardi pro, c'est EaCoN
 
 il reste des choses à ajouter au ppt CGHcall mais j'ai avancé dessus. cf cahier.
 il reste à remplir la diapo de fin, la diapo sur l'objet CGHcall/Raw/Seg, les paramètres undo.SD (cf cahier tj) .
+
+
+# <span style="color:#999900"> Vendredi 07/04/2022
+Arrivée à 10:00; 45 min pause; départ à 
+
+J'ai avancé sur les slides CGHcall -> j'ai refait des plots et noté de nouvelles choses dans le cahier.
+Je lance EaCoN sur la VM version 2. d'abord, je réinstalle EaCoN dessus. comme la version 3 n'est pas plus avancée, je la supprime.
+JE rencontre ce message d'erreur:
+
+```
+The downloaded source packages are in
+	‘/tmp/RtmpLsbJgc/downloaded_packages’
+Installation paths not writeable, unable to update packages
+  path: /usr/lib/R/library
+  packages:
+    cluster, MASS, Matrix, mgcv, nlme, spatial, survival
+Old packages: 'crayon', 'fansi', 'formatR', 'gert', 'knitr', 'magrittr', 'processx', 'RColorBrewer', 'rprojroot', 'S4Vectors', 'testthat', 'tzdb',
+  'vctrs'
+  ```
+je fais `sudo chmod 777 /tmp/RtmpLsbJgc/downloaded_packages` et `sudo chmod 777  /usr/lib/R/library` et je n'ai plus l'erreur, mais BSgenome n'est pas installé.
+je fais:
+>install.packages("/tmp/RtmpLsbJgc/downloaded_packages/BSgenome_1.62.0.tar.gz", repos = NULL, type = "source")
+```
+Installing package into ‘/home/ebor/R/x86_64-pc-linux-gnu-library/4.1’
+(as ‘lib’ is unspecified)
+Warning: invalid package ‘/tmp/RtmpLsbJgc/downloaded_packages/BSgenome_1.62.0.tar.gz’
+Error: ERROR: no packages specified
+Warning in install.packages :
+  installation of package ‘/tmp/RtmpLsbJgc/downloaded_packages/BSgenome_1.62.0.tar.gz’ had non-zero exit status
+```
+en faisant:
+>  BiocManager::install("BSgenome")
+```
+Warning message:
+package(s) not installed when version(s) same as current; use `force = TRUE` to re-install: 'BSgenome' 
+```
+je me rends compte que BSgenome est installé.
+
+EaCoN ne peut être installé sans facets, je travaille sur ASCAT à la place. il n'y a pas de tutoriel/workflow type à ma connaissance, donc je cherche dans les fonctions d'ASCAT:
+- la segmentation (implique l'algo ASPCF)
+- la détermination de la ploidie et de la cellularité, en relation avec l'estimation du nombre de copies.
+
+EaCoN procède ainsi:
+- apt.oncoscan.process() lit les fichiers cel et produit un OSCHP (objet R)
+- oschp.load(le charge)
+- ...
+objectif:  comprendre la suite. comment donne-t-il les données d'oncoscan à ASCAT? sous quelle forme? ensuite, voir si on peut utiliser la fonction OS.process() d'EaCoN, ou du moins s'en inspirer.
+En tout cas, je vais plutot me concentrer sur rCGH et OncoscanR pour la semaine prochaine.
+
+
+
+# <span style="color:#999900"> lundi 11/04/2022
+
+***parler à claire et Elodie de la stratégie: on garde ASCAT cete semaine?***
+
+
+
+
+# <span style="color:#999900"> lundi 12/04/2022
+draw.io pour chaque package
