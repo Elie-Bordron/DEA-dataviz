@@ -1,0 +1,2 @@
+ATChannelCel	GCChannelCel
+C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_cel_files/5-LD_AT_(OncoScan_CNV).CEL	C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_cel_files/5-LD_GC_(OncoScan_CNV).CEL

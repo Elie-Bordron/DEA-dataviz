@@ -1,10 +1,42 @@
+source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/EaCoN_mini_functions.R")
+source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/EaCoN_renorm_functions.R")
+# from apt.oncoscan.2.4.0 package
+tmsg <- function(text = NULL) { message(paste0(" [", Sys.info()[['nodename']], ":", Sys.getpid(), "] ", text)) }
+
+# Handles GZ, BZ2 or ZIP -compressed CEL files
+custom_compressed_handler <- function(CELz = NULL) {
+  `%do%` <- foreach::"%do%"
+  CELz2 <- foreach(CEL = CELz, .combine = "c") %do% {
+    tmsg(paste0("Decompressing ", CEL, " ..."))
+    if (tolower(tools::file_ext(CEL)) == "bz2") {
+      uncomp_file <- tempfile(fileext = ".CEL")
+      R.utils::bunzip2(filename = CEL, destname = uncomp_file, FUN = bzfile, remove = FALSE)
+      CEL <- uncomp_file
+    } else if (tolower(tools::file_ext(CEL)) == "gz") {
+      uncomp_file <- tempfile(fileext = ".CEL")
+      R.utils::gunzip(filename = CEL, destname = uncomp_file, FUN = gzfile, remove = FALSE)
+      CEL <- uncomp_file
+    } else if (tolower(tools::file_ext(CEL)) == "zip") {
+      zlist <- utils::unzip(CEL, list = TRUE)
+      if (length(grep(zlist$Name, pattern = "\\.CEL", ignore.case = TRUE)) != 1) stop(tmsg(paste0(CEL, "archive file does not contain a single and unique CEL file !")), call. = FALSE)
+      zname <- zlist$Name[1]
+      utils::unzip(zipfile = CEL, files = zname, exdir = tempdir(), overwrite = TRUE)
+      CEL <- file.path(tempdir(), zname)
+    } else if (tolower(tools::file_ext(CEL)) != "cel") stop(tmsg(paste0("File ", CEL, " is not recognized as raw nor compressed (gz, bz2, zip) CEL file !")), call. = FALSE)
+    return(CEL)
+  }
+  return(CELz2)
+}
+
+
+
 
 custom_OS.Process= function (ATChannelCel = NULL, GCChannelCel = NULL, samplename = NULL, 
           dual.norm = TRUE, l2r.level = "weighted", gc.renorm = TRUE, 
           gc.rda = NULL, wave.renorm = TRUE, wave.rda = NULL, mingap = 1e+06, 
           out.dir = getwd(), oschp.keep = FALSE, force.OS = NULL, apt.version = "2.4.0", 
           apt.build = "na33.r2", genome.pkg = "BSgenome.Hsapiens.UCSC.hg19", 
-          return.data = FALSE, write.data = TRUE, plot = TRUE, force = FALSE) 
+          return.data = FALSE, write.data = TRUE, plot = TRUE, force = FALSE, oschp_file = NULL) 
 {
     if (is.null(ATChannelCel)) 
         stop(tmsg("An ATChannel CEL file is required !"), 
@@ -57,7 +89,7 @@ custom_OS.Process= function (ATChannelCel = NULL, GCChannelCel = NULL, samplenam
     if (!(l2r.level %in% names(l2r.lev.conv))) 
         stop(tmsg("Option 'l2r.level' should be 'normal' or 'weighted' !"), 
              call. = FALSE)
-    CEL.OS <- compressed_handler(c(ATChannelCel, GCChannelCel))
+    CEL.OS <- custom_compressed_handler(c(ATChannelCel, GCChannelCel))
     ATChannelCel <- CEL.OS[1]
     GCChannelCel <- CEL.OS[2]
     sup.array <- c("OncoScan", "OncoScan_CNV")
@@ -89,10 +121,12 @@ custom_OS.Process= function (ATChannelCel = NULL, GCChannelCel = NULL, samplenam
                                            character.only = TRUE))
     if (dir.exists(samplename) && force) 
         unlink(samplename, recursive = TRUE, force = FALSE)
-    oscf <- apt.oncoscan.process(ATChannelCel = ATChannelCel, 
-                                 GCChannelCel = GCChannelCel, samplename = samplename, 
-                                 dual.norm = dual.norm, out.dir = out.dir, temp.files.keep = FALSE, 
-                                 force.OS = force.OS, apt.build = apt.build)
+    ## process CEL files on linux since apt.oncoscan.process() is 16-bit on windows
+    # oscf <- apt.oncoscan.process(ATChannelCel = ATChannelCel, 
+    #                              GCChannelCel = GCChannelCel, samplename = samplename, 
+    #                              dual.norm = dual.norm, out.dir = out.dir, temp.files.keep = FALSE, 
+    #                              force.OS = force.OS, apt.build = apt.build)
+    oscf = oschp_file
     my.oschp <- oschp.load(file = oscf)
     if (length(names(my.oschp$Meta)) == 3) 
         names(my.oschp$Meta) <- c("ATChannelCel", "GCChannelCel", 
@@ -126,6 +160,23 @@ custom_OS.Process= function (ATChannelCel = NULL, GCChannelCel = NULL, samplenam
                    source.file = list(ATChannelCel = ATChannelCel, GCChannelCel = GCChannelCel), 
                    type = arraytype, manufacturer = manufacturer, species = species, 
                    genome = genome, genome.pkg = genome.pkg, predicted.gender = pgender)
+    # print(c("length(my.oschp$ProbeSets$CopyNumber$ProbeSetName): ", length(my.oschp$ProbeSets$CopyNumber$ProbeSetName)))
+    pbn_217251 = as.vector(my.oschp$Genotyping$Calls$ProbeSetName)
+    CNdf = my.oschp$ProbeSets$CopyNumber
+    pbn_217611 = as.vector(CNdf$ProbeSetName)
+    missingProbes = setdiff(pbn_217611, pbn_217251)
+    
+    # to avoid the dataframes from having different numbers of rows. some rows (grossly 300 of them) are removed because they have NULL values of log ratio.
+    my.oschp$AlgorithmData$MarkerABSignal = filter(my.oschp$AlgorithmData$MarkerABSignal, !(ProbeSetName %in% missingProbes))
+    my.oschp$ProbeSets$AllelicData = filter(my.oschp$ProbeSets$AllelicData, !(ProbeSetName %in% missingProbes))
+    my.oschp$ProbeSets$CopyNumber = filter(my.oschp$ProbeSets$CopyNumber, !(ProbeSetName %in% missingProbes))
+    ### to check that NA probes were removed
+    # print(c("my.oschp: ", my.oschp[1:length(my.oschp)-1]))
+    # print(c("dim(my.oschp$AlgorithmData$MarkerABSignal): ", dim(my.oschp$AlgorithmData$MarkerABSignal)))
+    # print(c("dim(my.oschp$Genotyping$Calls): ", dim(my.oschp$Genotyping$Calls)))
+    # print(c("dim(my.oschp$ProbeSets$AllelicData): ", dim(my.oschp$ProbeSets$AllelicData)))
+    # print(c("dim(my.oschp$ProbeSets$CopyNumber): ", dim(my.oschp$ProbeSets$CopyNumber)))
+    
     ao.df <- data.frame(ProbeSetName = my.oschp$ProbeSets$CopyNumber$ProbeSetName, 
                         chrs = as.vector(my.oschp$ProbeSets$CopyNumber$Chromosome), 
                         pos = as.vector(my.oschp$ProbeSets$CopyNumber$Position), 
@@ -282,9 +333,11 @@ custom_OS.Process= function (ATChannelCel = NULL, GCChannelCel = NULL, samplenam
     my.ascat.obj$CEL$GCChannelCel$intensities <- as.integer(my.ascat.obj$CEL$GCChannelCel$intensities)
     gc()
     if (write.data) 
-        saveRDS(my.ascat.obj, paste0(out.dir, "/", samplename, 
-                                     "/", samplename, "_", arraytype, "_", 
-                                     genome, "_processed.RDS"), compress = "bzip2")
+        print("attempting to save to RDS file...")
+        # print(" destination of .RDS: ")
+        # print(paste0(samplename, "_", arraytype, "_", genome, "_processed.RDS"))
+        # saveRDS(my.ascat.obj, paste0(out.dir, "/", samplename, "/", samplename, "_", arraytype, "_", genome, "_processed.RDS"), compress = "bzip2")
+        saveRDS(my.ascat.obj, paste0(samplename, "_", arraytype, "_", genome, "_processed.RDS"), compress = "bzip2")
     genopos <- ao.df$pos + cs$chromosomes$chr.length.toadd[ao.df$chrN]
     rm(ao.df)
     gc()
@@ -297,9 +350,11 @@ custom_OS.Process= function (ATChannelCel = NULL, GCChannelCel = NULL, samplenam
                          smo)
         l2r.ori.rm <- runmed(my.ascat.obj$data$Tumor_LogR.ori[, 
                                                               1][l2r.notna], smo)
-        png(paste0(out.dir, "/", samplename, "/", 
-                   samplename, "_", arraytype, "_", genome, 
-                   "_rawplot.png"), 1600, 1050)
+        ### to check plot path
+        folder_name = paste0(out.dir, "/", samplename)
+        if(!dir.exists(folder_name)) dir.create(folder_name)
+        print(paste0("plot path: ", out.dir, "/", samplename, "/", samplename, "_", arraytype, "_", genome, "_rawplot.png"))
+        png(paste0(out.dir, "/", samplename, "/", samplename, "_", arraytype, "_", genome, "_rawplot.png"), 1600, 1050)
         par(mfrow = c(3, 1))
         plot(genopos, my.ascat.obj$data$Tumor_LogR.ori[, 1], 
              pch = ".", cex = 3, col = "grey70", xaxs = "i", 
@@ -340,3 +395,22 @@ custom_OS.Process= function (ATChannelCel = NULL, GCChannelCel = NULL, samplenam
     if (return.data) 
         return(my.ascat.obj)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -252,6 +252,24 @@ File where BAF from the normal will be read and overwritten.
 ## ASPCF en détail
 ASPCF effectue le calling, dans l'étape de segmentation.  
 
+## comment EaCoN envoie-t-il les données des fichiers CEL d'oncoscan CNV à ASCAT?
+La fonction `OS.Process` est utilisée pour cela. Elle comporte les étapes suivantes:
+```
+CEL.OS <- custom_compressed_handler(c(ATChannelCel, GCChannelCel))
+ATChannelCel <- CEL.OS[1]
+GCChannelCel <- CEL.OS[2]
+
+oscf <- apt.oncoscan.process(ATChannelCel = ATChannelCel, 
+                            GCChannelCel = GCChannelCel, samplename = samplename, 
+                            dual.norm = dual.norm, out.dir = out.dir, temp.files.keep = FALSE, 
+                            force.OS = force.OS, apt.build = apt.build)
+my.oschp <- oschp.load(file = oscf)
+```
+la normalisation des données passe par ``apt-copynumber-onco-ssa``. or le package R qui permet cela est en 16-bits sous windows, la commande plante à ce moment-là. je regarde comment la fonction de ce package appelle la commande apt; on peut l'utiliser nous-mêmes. on peut aussi utiliser le package R sous linux. ou ne pas utiliser cette normalisation pour l'instant.
+
+
+
+
 
 
 # DNAcopy
