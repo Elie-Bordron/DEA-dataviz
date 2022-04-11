@@ -1,4 +1,5 @@
 library(EaCoN)
+library("ASCAT")
 packagesImportedByEaCoN = c("affxparser", "aroma.light", "ASCAT", "Biostrings", "BSgenome",
                             "changepoint", "data.table", "doParallel", "dplyr", "DT",
                             "foreach", "GenomeInfoDb", "GenomicRanges", "iotools", "IRanges", "limma",
@@ -28,10 +29,15 @@ ASCAT_obj = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pat
     #force=T is to discard results files before recreating them.
     #oschp.keep=T is to not discard oschp file after processing.
 
+### to check that readRDS() returns the ASCAT object. this means we can do the pipeline without saving to .RDS if needed.
+# x = data.frame(c(9,8,5,6,3),c("a","a","z","e","a"))
+# saveRDS(x, file.path(working_dir,"testDf.RDS"))
+# yvaldftest = readRDS(file.path(working_dir,"testDf.RDS"))
+# x!=yvaldftest
+RDSInitPath = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/5-LD_OncoScan_CNV_hg19_processed.RDS"
+Segment.ff(RDS.file = RDS_path, segmenter = "ASCAT", force=T)
+RDSSegPath = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/ASCAT/L2R/5-LD.SEG.ASCAT.RDS"
+ASCN.ff(RDS.file = RDSSegPath)
+RDSCallPath = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/ASCAT/ASCN/gamma0.60/5-LD.ASCN.ASCAT.RDS"
+Annotate.ff(RDS.file = RDSCallPath, author.name = "E.Bordron")
 
-loaded_OSCHP <- oschp.load(file = pathToOSCHP)
-class(loaded_OSCHP)
-
-### this works
-# x = data.frame(c(98,55,68,5,21),c("p", "a","p","p","a"))
-# saveRDS(x,"C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/5-LD/a.RDS", compress = "bzip2")

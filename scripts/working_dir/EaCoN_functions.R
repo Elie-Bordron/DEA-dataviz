@@ -29,7 +29,7 @@ custom_compressed_handler <- function(CELz = NULL) {
 }
 
 
-
+######################################### pipeline functions
 
 custom_OS.Process= function (ATChannelCel = NULL, GCChannelCel = NULL, samplename = NULL, 
           dual.norm = TRUE, l2r.level = "weighted", gc.renorm = TRUE, 
@@ -334,10 +334,11 @@ custom_OS.Process= function (ATChannelCel = NULL, GCChannelCel = NULL, samplenam
     gc()
     if (write.data) 
         print("attempting to save to RDS file...")
-        # print(" destination of .RDS: ")
-        # print(paste0(samplename, "_", arraytype, "_", genome, "_processed.RDS"))
-        # saveRDS(my.ascat.obj, paste0(out.dir, "/", samplename, "/", samplename, "_", arraytype, "_", genome, "_processed.RDS"), compress = "bzip2")
-        saveRDS(my.ascat.obj, paste0(samplename, "_", arraytype, "_", genome, "_processed.RDS"), compress = "bzip2")
+        # saveDir = paste0(out.dir, "/", samplename)
+        RDSfilename = paste0(samplename, "_", arraytype, "_", genome, "_processed.RDS")
+        
+        # print(c("saving path: ", file.path(saveDir,RDSfilename)))
+        saveRDS(my.ascat.obj, RDSfilename, compress = "bzip2")
     genopos <- ao.df$pos + cs$chromosomes$chr.length.toadd[ao.df$chrN]
     rm(ao.df)
     gc()
@@ -369,9 +370,7 @@ custom_OS.Process= function (ATChannelCel = NULL, GCChannelCel = NULL, samplenam
              cex = 3, col = "grey70", xaxs = "i", 
              yaxs = "i", ylim = c(-2, 2), main = paste0(samplename, 
                                                         " ", arraytype, " L2R profile (", 
-                                                        l2r.level, ", median-centered)) / ", round(sum(abs(diff(l2r.rm))), 
-                                                                                                   digits = 3)), xlab = "Genomic position", 
-             ylab = "L2R")
+                                                        l2r.level, ", median-centered)) / ", round(sum(abs(diff(l2r.rm))), digits = 3)), xlab = "Genomic position", ylab = "L2R")
         lines(genopos[l2r.notna], l2r.rm, col = 1)
         abline(v = kend, col = 4, lty = 3, lwd = 2)
         abline(h = 0, col = 2, lty = 2, lwd = 2)
@@ -399,7 +398,23 @@ custom_OS.Process= function (ATChannelCel = NULL, GCChannelCel = NULL, samplenam
 
 
 
-
+Segment.ff = function (RDS.file = NULL, segmenter = "ASCAT", ...) 
+{
+    if (is.null(RDS.file)) 
+        stop(tmsg("A RDS file is needed !"), call. = FALSE)
+    valid.segmenters <- c("ASCAT", "FACETS", "SEQUENZA")
+    if (!(toupper(segmenter) %in% valid.segmenters)) 
+        stop(tmsg(paste0("Segmenter should be one of : ", 
+            paste0(valid.segmenters, collapse = ", "))), 
+            call. = FALSE)
+    if (!file.exists(RDS.file)) 
+        stop(tmsg(paste0("Could not find RDS file ", RDS.file, 
+            " !")), call. = FALSE)
+    tmsg(paste0("Loading data from ", RDS.file, " ..."))
+    my.data <- readRDS(RDS.file)
+    do.call(paste0("Segment.", toupper(segmenter)), list(data = my.data, 
+        out.dir = dirname(RDS.file), ...))
+}
 
 
 

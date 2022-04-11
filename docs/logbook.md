@@ -2271,18 +2271,26 @@ En tout cas, je vais plutot me concentrer sur rCGH et OncoscanR pour la semaine 
 
 
 # <span style="color:#999900"> lundi 11/04/2022
-arrivée à 10h05; 
+arrivée à 10h05; 35 min pause; départ à 18h30
 **[X] ~~**parler à claire et Elodie de la stratégie: on garde ASCAT cete semaine?****~~ [2022-04-11]
 Je regarde comment eacon charge les données dans ASCAT. on voit demain si je continue dessus ou non. cf fonc...md
 la normalisation des données passe par ``apt-copynumber-onco-ssa``. or le package R qui permet cela est en 16-bits sous windows, la commande plante à ce moment-là. je regarde comment la fonction de ce package appelle la commande apt; on peut l'utiliser nous-mêmes. on peut aussi utiliser le package R sous linux. ou ne pas utiliser cette normalisation pour l'instant.
 Je me fixe comme objectif aujourd'hui de lancer ASCAT sans cette normalisation, en donnant directement l'OSCHP à ASCAT.
 j'ai la liste des sondes absentes du call. c'est peut-être par rapport à un nettoyage des données qu'elles ont été supprimées. je les retire du reste des données.
 sauver l'objet ASCAT en .RDS n'a pas marché jusqu'à ce que je change `saveRDS(my.ascat.obj, paste0(out.dir, "/", samplename, "/", samplename, "_", arraytype, "_", genome, "_processed.RDS"), compress = "bzip2")` en `saveRDS(my.ascat.obj, paste0(samplename, "_", arraytype, "_", genome, "_processed.RDS"), compress = "bzip2")`. Je ne suis pas sûr que ce soit ça, mais si c'est bloquant, ne pas utiliser cette fonctionnalité.
-J'ai
+
+eacon.R creates an ASCAT object. we can start using ASCAT functions to treat our data.
+
+Je regarde tout le processus qu'EaCoN utilise pour traiter les données. quelles fonctions d'ASCAT utilise-t-il?
+Au final j'ai lancé EaCoN, ça marche très bien.
+
 
 
 # <span style="color:#999900"> Mardi 12/04/2022
-draw.io pour chaque package
+draw.io pour chaque package?
 penser au plan du rapport de stage
+
+se remettre EaCoN en tête
+faire des slides rapides?
 
 

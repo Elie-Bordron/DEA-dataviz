@@ -1,0 +1,9 @@
+Sample	5-LD
+Gamma	0.95
+Goodness.of.Fit	99.3433914348761
+Psi	2
+Ploidy.ASCAT	1.80298105239762
+Ploidy.Median	2
+Ploidy.Most.Width	2
+Ploidy.Width.weighted	1.80630424064742
+Cellularity	0.74
