@@ -1,0 +1,6 @@
+CNA Status	# Segments	Total Width (nt)	Genome Fraction	Median Width (nt)	Median log2(ratio)
+Gain	11	   43,976,430	 1.4 %	 1,997,056	0.07
+Loss	52	  580,117,318	18.7 %	 5,015,112	-0.56
+Aberrant (Gain + Loss)	63	  624,093,748	20.2 %	 4,699,890	-0.55
+Normal	47	2,288,395,197	73.9 %	44,174,253	0
+TOTAL	110	2,912,488,945	94.1 %	 8,646,392	-0.03

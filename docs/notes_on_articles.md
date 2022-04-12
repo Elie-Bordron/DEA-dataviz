@@ -186,7 +186,7 @@ La correction pour la cellularité révèle que les tumeurs qui en ont le plus e
 Une carte d'asymétrie allélique est également construite. Cette dernière indique les positions où un allèle est gagné préférentiellement à l'autre. on peut avoir cette carte avec les résultats d'oncoscanR.
 
 ## Matériel et Methodes
-La technique donne les valeurs de log ratio et de BAF pour chaque sonde. ASCAT estime le nombre de copies réel à partir de ces valeurs (et à partir d'autres paramètres comme la ``ploidie ψ (psi)`` et la ``cellularité ρ (rho)``). Psi et Rho compliquent l'analyse et sont souvent importants, donc exprimer logR et BAF en fonction de l'ASCN permet de prendre en compte ces deux paramètres. Cependant, ils doivent être estimés à partir des données pour chaque échantillon tumoral.  
+Affymetrix Oncoscan donne les valeurs de log ratio et de BAF pour chaque sonde. ASCAT estime le nombre de copies réel à partir de ces valeurs (et à partir d'autres paramètres comme la ``ploidie ψ (psi)`` et la ``cellularité ρ (rho)``). Psi et Rho compliquent l'analyse et sont souvent importants, donc exprimer logR et BAF en fonction de l'ASCN permet de prendre en compte ces deux paramètres. Cependant, ils doivent être estimés à partir des données pour chaque échantillon tumoral.  
 *Ouvrons une parenthèse*  
 Pour rendre la méthode plus robuste au bruit des données en input, les données logR et BAF sont pré-processées par `Allele-Specific Piecewise Constant Fitting (ASPCF)`, un algorithme de segmentation et de filtrage.  
 *Fermons la parenthèse*

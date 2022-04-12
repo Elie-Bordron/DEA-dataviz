@@ -64,7 +64,7 @@ Output: objet $cghSeg$
 `postseg.cghdata <- postsegnormalize(seg.cghdata)`
 faire une normalisation après la segmentation permet de mieux définir le zéro:
 ```
-This function recursively searches for the interval containing the most segmented data, decreasing the interval length in each recursion. The recursive search makes the post-segmentation normalization robust against local maxima. This function is particularly useful for profiles for which, after segmentation, the 0-level does not coincide with many segments. It is more or less harmless to other profiles. We advise to keep the search interval (inter) small, in particular at the positive (gain) side to avoid that the 0-level is set to a common gain level.
+This function recursively searches for the interval containing the most segmented data, decreasing the interval length in e  recursion. The recursive search makes the post-segmentation normalization robust against local maxima. This function is particularly useful for profiles for which, after segmentation, the 0-level does not coincide with many segments. It is more or less harmless to other profiles. We advise to keep the search interval (inter) small, in particular at the positive (gain) side to avoid that the 0-level is set to a common gain level.
 ```
 Output: objet $cghSeg$  
 *oui. --> dans le script, produire le plot illustrant la distribution des segments avant et après la postsegnormalisation pour comparer et montrer l'effet de cette étape.*
@@ -119,8 +119,9 @@ Raw cel files
 
 ## pipeline
 `OS.Process(ATChannelCel = "/home/project/CEL/S1_OncoScan_CNV_A.CEL", GCChannelCel = "/home/project/CEL/S1_OncoScan_CNV_C.CEL", samplename = "S1_OS")`  
-Normalization (=Raw data processing). Cette étape utilise *Array Power Tools (APT)*
+Dual-channel Normalization (=Raw data processing). Cette étape est effectuée par *Array Power Tools (APT)*. 
 Output: normalized data(filename.RDS), plots, metrics.
+$slide: montrer plots et métriques$
 
 `Segment.ff(RDS.file = "/home/me/my_project/EaCoN_results/SAMPLE1/S1_OncoScan_CNV_hg19_processed.RDS", segmenter = "ASCAT")`  
 L2R & BAF Segmentation. Cette fonction effectue:
@@ -128,19 +129,23 @@ L2R & BAF Segmentation. Cette fonction effectue:
 - la centralisation
 - le calling (par l'algo ASPCF, $voir fig S2 supplementary $)
 output: segmented data(filename.RDS), résultats de segmentation L2R *fichiers .CBS*, plots de segmentation par BAF et par L2R, métriques... voir github pour plus de détail.
+$slide: montrer plots et métriques. expliquer comment la segmentation se fait? $
 
 `ASCN.ff(RDS.file = "/home/me/my_project/EaCoN_results/SAMPLE1/ASCAT/L2R/SAMPLE1.ASCAT.RDS")`
 Estimation du copy number -> $expliquer l'estimation des 2 paramètres avec la fig 1$
 output:  $voir fig 1 article$
 - fichier .RDS: données de segmentation ASCN et TCN,
 - fichier .txt: ploidie moyenne, cellularité et statistiques du modèle.
+$slide: montrer plots et métriques. expliquer comment la ploidie et de la cellularité sont déterminées, et une fois qu'elles le sont, on estime le nombre de copies réel de chaque segment. $
+
 
 `Annotate.ff(RDS.file = "/home/project/EaCoN_results/S1/ASCAT/L2R/S1.EaCoN.ASPCF.RDS", author.name = "Me!")`
 HTML reporting  
+$tester l'export de l'HTML en pdf/excel/txt: différences...-> c'est pour chaque section, en fait.$
 
 ## ASCAT en détail ##
 Deux paramètres sont calculés par ASCAT à partir de données SNP: L'estimation de la cellularité et l'estimation de la ploidie. A partir de ces deux paramètres, le copy number est estimé. L'algorithme TuScan fait ça aussi, selon l'aide de Chas, page 509.
-De plus,  on peut savoir quel allèle a été gagné/perdu par rapport à l'autre (allelic skewness = asymétrie allélique). L'asymétrie allélique peut être déterminée à partir de données Oncoscan.
+De plus, on peut savoir quel allèle a été gagné/perdu par rapport à l'autre (allelic skewness = asymétrie allélique). L'asymétrie allélique peut être déterminée à partir de données Oncoscan.
 
 les fonctions d'ASCAT:
 - ascat.asmultipcf                Allele-specific segmentation of multiple samples

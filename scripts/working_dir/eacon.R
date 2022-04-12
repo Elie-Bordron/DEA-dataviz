@@ -33,11 +33,9 @@ ASCAT_obj = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pat
 # x = data.frame(c(9,8,5,6,3),c("a","a","z","e","a"))
 # saveRDS(x, file.path(working_dir,"testDf.RDS"))
 # yvaldftest = readRDS(file.path(working_dir,"testDf.RDS"))
-# x!=yvaldftest
+# x!=yvaldftest 
 RDSInitPath = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/5-LD_OncoScan_CNV_hg19_processed.RDS"
-Segment.ff(RDS.file = RDS_path, segmenter = "ASCAT", force=T)
+Segment.ff(RDS.file = RDSInitPath, segmenter = "ASCAT", force=T)
 RDSSegPath = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/ASCAT/L2R/5-LD.SEG.ASCAT.RDS"
 ASCN.ff(RDS.file = RDSSegPath)
-RDSCallPath = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/ASCAT/ASCN/gamma0.60/5-LD.ASCN.ASCAT.RDS"
-Annotate.ff(RDS.file = RDSCallPath, author.name = "E.Bordron")
-
+Annotate.ff(RDS.file = RDSSegPath, author.name = "E.Bordron")

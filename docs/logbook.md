@@ -2287,10 +2287,15 @@ Au final j'ai lancé EaCoN, ça marche très bien.
 
 
 # <span style="color:#999900"> Mardi 12/04/2022
+arrivée à 10h05; 15 min pause
 draw.io pour chaque package?
 penser au plan du rapport de stage
 
-se remettre EaCoN en tête
-faire des slides rapides?
+Eacon:
+* [ ] schéma pipeline
+* [ ] squelette de slides
+* [ ] remplir slides
+conclusions de la réunion: ne pas travailler sur EaCoN mais sur ASCAT.
 
-
+# <span style="color:#999900"> jeudi 14/04/2022
+16h rdv elodie
