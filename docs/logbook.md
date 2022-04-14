@@ -2307,4 +2307,5 @@ j'ai fait marcher *vraiment* ASCAT sur nos données, fait tourner des plots. ASC
 
 
 # <span style="color:#999900"> jeudi 14/04/2022
+arrivée à 9h55
 16h rdv elodie
