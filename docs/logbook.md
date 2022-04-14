@@ -2307,5 +2307,9 @@ j'ai fait marcher *vraiment* ASCAT sur nos données, fait tourner des plots. ASC
 
 
 # <span style="color:#999900"> jeudi 14/04/2022
-arrivée à 9h55
-16h rdv elodie
+arrivée à 9h55; 45 min pause; départ à 17:45
+slides ASCAT
+
+
+# <span style="color:#999900"> jeudi 14/04/2022
+14h rdv elodie
