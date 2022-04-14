@@ -195,9 +195,9 @@ Ensuite, ASPCF fitte des fonctions constantes (y=k, donc des traits horizontaux)
 
 Ces valeurs sont ensuite envoyées à l'algorithme ASCAT, qui va estimer les paramètres de ploidie et cellularité, ainsi que les calls d'ASCN à partir de ces deux derniers. Mais comment ψ et ρ sont-ils estimés?  
 Le vrai nombre de copies est un nombre entier non négatif. Sachant cela, ASCAT teste plusieurs valeurs de ψ et ρ en calculant pour chaque combinaison de ces paramètres l'ASCN, dans le but de trouver le plus proche d'un nombre entier non négatif. Voici comment les auteurs procèdent:
-1. on fait ρ de (0.10, 0.11, . . ., 1.05) et ψ de (1.00, 1.05, . . ., 5.40).
+1. on fait varier ρ de (0.10, 0.11, . . ., 1.05) et ψ de (1.00, 1.05, . . ., 5.40).
 2. Pour chaque combinaison possible de ψ et ρ, on fait:
-    - Pour chaque SNP hétérozygote en germline (~~les SNP de copy number 2, donc~~ non, juste les SNP AB et pas AA ni BB nativement), on calcule sa distance avec un entier non négatif. la somme de ces valeurs est appelée d pour cette combinaison.
+    - Pour chaque SNP hétérozygote en germline (~~les SNP de copy number 2, donc~~ non, juste les SNP AB et pas AA ni BB nativement), on calcule la distance entre sa valeur de log ratio et un entier non négatif. la somme de ces valeurs est appelée d pour cette combinaison.
     - On calcule un score g correspondant à la probabilité que cette interprétation soit la bonne. g=100% si d=0, et g=0% si d diffère de 0.25 de nombres entiers non négatifs (0.25 est arbitraire). C'est-à-dire si d est trop grand.
 3. chaque valeur de d est un minimum local. Pour filtrer les interprétations improbables, ASCAT exclut les minimums selon ces règles:
     - la ploidie moyenne sort du cadre défini par l'utilisateur par défaut, 1.2-4.8

@@ -2287,7 +2287,7 @@ Au final j'ai lancé EaCoN, ça marche très bien.
 
 
 # <span style="color:#999900"> Mardi 12/04/2022
-arrivée à 10h05; 15 min pause
+arrivée à 10h05; 15 min pause; départ à 18h00
 draw.io pour chaque package?
 penser au plan du rapport de stage
 
@@ -2296,6 +2296,15 @@ Eacon:
 * [ ] squelette de slides
 * [ ] remplir slides
 conclusions de la réunion: ne pas travailler sur EaCoN mais sur ASCAT.
+1. lancer ASCAT en chargant l'OSCHP tel qu'on le fait dans EaCoN.
+2. retirer toutes les parties inutiles de la fonction qui charge l'OSCHP (tout ce qui concerne les fichiers CEL) et relancer l'analyse.  -> on pourra ainsi faire tourner ASCAT sans dépendre d'EaCoN.
+
+Laetitia m'a envoyé l'excel de cellularité.
+
+# <span style="color:#999900"> mercredi 13/04/2022
+arrivée à 10h15; 40 min pause; départ 19h30
+j'ai fait marcher *vraiment* ASCAT sur nos données, fait tourner des plots. ASCAT ne dépend d'EaCoN que pour l'import de données.
+
 
 # <span style="color:#999900"> jeudi 14/04/2022
 16h rdv elodie

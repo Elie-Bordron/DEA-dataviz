@@ -168,37 +168,38 @@ input: $file tumor & file ref$
 Function to read in SNP array data.
 input: $file tumor & file ref$
 - ascat.metrics                   Function to extract different metrics from ASCAT profiles.
-```
-Value
-A dataframe (one sample per line) with the following metrics (as columns):
-1. sex - Sex information as provided.
-2. tumour_mapd - Median Absolute Pairwise Difference (MAPD) in tumour logR track.
-3. normal_mapd - Median Absolute Pairwise Difference (MAPD) in normal logR track (should be NA without matched normals and 0 for sequencing data).
-4. GC_correction_before - logR/GC correlation before correction.
-5. GC_correction_after - logR/GC correlation after correction.
-6. RT_correction_before - logR/RT correlation before correction.
-7. RT_correction_after - logR/RT correlation after correction.
-8. n_het_SNP - Number of heterozygous SNPs.
-9. n_segs_logR - Number of segments in the logR track.
-10. n_segs_BAF - Number of segments in the BAF track.
-11. n_segs_logRBAF_diff - Difference between number of segments in the logR versus BAF track.
-12. frac_homo - Fraction of homozygous (<0.1 | >0.9) probes in tumour.
-13. purity - Purity estimate.
-14. ploidy - Ploidy estimate.
-15. goodness_of_fit - Goodness of fit.
-16. n_segs - Number of copy-number segments.
-17. segs_size - Total size of all segments.
-18. n_segs_1kSNP - Number of segments per 1k heterozygous SNPs.
-19. homdel_segs - Number of segments with homozygous deletion.
-20. homdel_largest - largest segment with homozygous deletion.
-21. homdel_size - Total size of segments with homozygous deletion.
-22. homdel_fraction - Fraction of the genome with homozygous deletion.
-23. LOH - Fraction of the genome with LOH (ignoring sex chromosomes).
-24. mode_minA - Mode of the minor allele (ignoring sex chromosomes).
-25. mode_majA - Mode of the major allele (ignoring sex chromosomes).
-26. WGD - Whole genome doubling event (ignoring sex chromosomes).
-27. GI - Genomic instability score (ignoring sex chromosomes)
-```
+    Value
+    A dataframe (one sample per line) with the following metrics (as columns):
+    1. sex - Sex information as provided.
+    2. tumour_mapd - Median Absolute Pairwise Difference (MAPD) in tumour logR track.
+    3. normal_mapd - Median Absolute Pairwise Difference (MAPD) in normal logR track (should be NA without matched normals and 0 for sequencing data).
+    4. GC_correction_before - logR/GC correlation before correction.
+    5. GC_correction_after - logR/GC correlation after correction.
+    6. RT_correction_before - logR/RT correlation before correction.
+    7. RT_correction_after - logR/RT correlation after correction.
+    8. n_het_SNP - Number of heterozygous SNPs.
+    9. n_segs_logR - Number of segments in the logR track.
+    10. n_segs_BAF - Number of segments in the BAF track.
+    11. n_segs_logRBAF_diff - Difference between number of segments in the logR versus BAF track.
+    12. frac_homo - Fraction of homozygous (<0.1 | >0.9) probes in tumour.
+    13. purity - Purity estimate.
+    14. ploidy - Ploidy estimate.
+    15. goodness_of_fit - Goodness of fit.
+    16. n_segs - Number of copy-number segments.
+    17. segs_size - Total size of all segments.
+    18. n_segs_1kSNP - Number of segments per 1k heterozygous SNPs.
+    19. homdel_segs - Number of segments with homozygous deletion.
+    20. homdel_largest - largest segment with homozygous deletion.
+    21. homdel_size - Total size of segments with homozygous deletion.
+    22. homdel_fraction - Fraction of the genome with homozygous deletion.
+    23. LOH - Fraction of the genome with LOH (ignoring sex chromosomes).
+    24. mode_minA - Mode of the minor allele (ignoring sex chromosomes).
+    25. mode_majA - Mode of the major allele (ignoring sex chromosomes).
+    26. WGD - Whole genome doubling event (ignoring sex chromosomes).
+    27. GI - Genomic instability score (ignoring sex chromosomes)
+Le GI, ici, mesure la proportion de sondes dont la valeur de call est différente de la ligne de base. cette dernière est déterminée à partir du WGD. Seules les sondes appartenant à des segments sont utilisées. cf page 1 du cahier.
+
+
 ## plots
 - ascat.plotAdjustedAscatProfile  ascat.plotAdjustedAscatProfile
 Function plotting the "adjusted" (with realistic chromosome sizes) rounded/unrounded ASCAT profiles over all chromosomes.
@@ -229,30 +230,7 @@ input:
 $ASCATobj$	
 an ASCAT object from ascat.aspcf
 - ascat.synchroniseFiles          Synchronise SNPs across files
-```
-Usage
-ascat.synchroniseFiles(
-  samplename,
-  tumourLogR_file,
-  tumourBAF_file,
-  normalLogR_file,
-  normalBAF_file
-)
-Arguments
-samplename	
-String, name of the sample.
 
-tumourLogR_file	
-File where LogR from the tumour will be read and overwritten.
-tumourBAF_file	
-File where BAF from the tumour will be read and overwritten.
-normalLogR_file	
-File where LogR from the normal will be read and overwritten.
-normalBAF_file	
-File where BAF from the normal will be read and overwritten.
-
-
-```
 
 ## ASPCF en détail
 ASPCF effectue le calling, dans l'étape de segmentation.  
