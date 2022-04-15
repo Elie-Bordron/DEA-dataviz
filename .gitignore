@@ -2,6 +2,12 @@
 .Rhistory
 .RData
 .Ruserdata
-# apparently if ".lnk" is not specified, ignoring data-raccourci won't work.
+# apparently if ".lnk" is not specified ignoring data-raccourci won't work.
 data-raccourci.lnk
 .lintr
+
+
+
+
+
+

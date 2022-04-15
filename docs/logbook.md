@@ -2308,8 +2308,16 @@ j'ai fait marcher *vraiment* ASCAT sur nos données, fait tourner des plots. ASC
 
 # <span style="color:#999900"> jeudi 14/04/2022
 arrivée à 9h55; 45 min pause; départ à 17:45
-slides ASCAT
+slides ASCAT avancées (partie segmentation)
 
 
-# <span style="color:#999900"> jeudi 14/04/2022
+# <span style="color:#999900"> vendredi 15/04/2022
+arrivée à 10h20; 40 min pause; départ à 18h35
 14h rdv elodie
+choses à faire pour slides ASCAT, voir cahier.
+Je relis un peu ASCAT call pour mieux comprendre comment on peut estimer la cellularité et la ploidie avec le LRR et le BAF. 
+
+
+
+
+
