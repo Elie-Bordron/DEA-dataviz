@@ -550,7 +550,7 @@ customPostsegnormalize = function(segmentData, inter = c(-0.1, 0.1))
                                        matrixValues) - vecres)
     return(segmentData)
 }
-)
+
 
 #function call
 postseg.cghdata <- customPostsegnormalize(seg.cghdata) # argument: objet cghSeg
@@ -566,7 +566,6 @@ dev.off()
 
 segTable = segmented(seg.cghdata)
 # function for plotting 
-# plot(segTable, ylim=plot_ylim, main="recherche du meilleur intervalle", ylab="log ratio", xlab="position genomique")
 plotInterval = function(data, plot_ylim, interval) {
     png(paste("./plots/postsegnorm_recherche_intervalle_", toString(interval), ".png", sep = ""))
     try(plot(data, ylim=plot_ylim, main="recherche du meilleur intervalle", ylab="log ratio", xlab="position genomique")) #,pch=1, cex=0.2

@@ -2221,7 +2221,7 @@ il reste des choses à ajouter au ppt CGHcall mais j'ai avancé dessus. cf cahie
 il reste à remplir la diapo de fin, la diapo sur l'objet CGHcall/Raw/Seg, les paramètres undo.SD (cf cahier tj) .
 
 
-# <span style="color:#999900"> Vendredi 07/04/2022
+# <span style="color:#999900"> Vendredi 08/04/2022
 Arrivée à 10:00; 45 min pause; départ à 18:00
 
 J'ai avancé sur les slides CGHcall -> j'ai refait des plots et noté de nouvelles choses dans le cahier.
@@ -2318,6 +2318,10 @@ choses à faire pour slides ASCAT, voir cahier.
 Je relis un peu ASCAT call pour mieux comprendre comment on peut estimer la cellularité et la ploidie avec le LRR et le BAF. 
 
 
+# <span style="color:#999900"> mardi 19/04/2022
+arrivée à 10h15; 1h pause; départ à 19h
+finir les slides ASCAT comme indiqué par Isabelle et Elodie
 
 
+# <span style="color:#999900"> mercredi 20/04/2022
 
