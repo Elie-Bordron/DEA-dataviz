@@ -106,4 +106,5 @@ J'ai le choix:
 * [X] ~~*noter dans doc partagé le résumé de la réunion*~~ [2022-04-05]
 07/04/2022
 * [ ] revoir comment DNAcopy supprime certaines des séparations. "3 SD apart" -> mais l'écart-type de quoi? des données en entier?
-
+20/04/2022
+* [ ] ajouter les outputs de chaque outils à la fin de son ppt respectif -> pour CGHcall, j'ai des notes là-dessus.

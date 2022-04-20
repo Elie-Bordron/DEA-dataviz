@@ -250,7 +250,14 @@ my.oschp <- oschp.load(file = oscf)
 ```
 la normalisation des données passe par ``apt-copynumber-onco-ssa``. or le package R qui permet cela est en 16-bits sous windows, la commande plante à ce moment-là. je regarde comment la fonction de ce package appelle la commande apt; on peut l'utiliser nous-mêmes. on peut aussi utiliser le package R sous linux. ou ne pas utiliser cette normalisation pour l'instant.
 
+## résultats de nos échantillons traités par ASCAT:
+sample  | Goodness of fit   | Gamma | rho (purity)  | psi (ploidy)
+--      |-                  |-      |-              |-
+7-DG    |98.76              |0.95   |1              |2.21
+6-VJ    |97.77              |0.55   |0.8            |1.74
+5-LD    |99.26              |0.45   |0.83           |1.75
 
+(Seuls les résultats de la meilleure goodness of fit sont montrés)
 
 
 
@@ -307,7 +314,7 @@ le mode d'emploi de rCGH est rCGH_manual.pdf dans docs. il va de pair avec rCGH.
 rCGH manual (the pdf):
 la CGH sur array est largement utilisée en médecine, notamment pour détecter les altérations moléculaires précises. RCGH est un workflow d'analyses des données générées par cette technologie.
 
-un workflow typique est présenté dans le document. il produit un objet rCGH qui contient:
+un workflow typique est présenté dans le document. il produit un objet rCGH.
 
 - adjustSignal() permet de rescale le LRR dans le cas d'affymetrix.
 
@@ -328,7 +335,7 @@ additionnally, this package offers different genomic profile visualisation funct
 
 ## input
 2 choix: 
-- La fonction readAffySNP6() permet de lire des fichiers probeset.txt, ce qui nous convient. Pas forcément besoin de passer par un custom array.
+<!-- - La fonction readAffySNP6() permet de lire des fichiers probeset.txt, ce qui nous convient. Pas forcément besoin de passer par un custom array.
 
 - La fonction ReadGeneric() permet de lire un custom array. il doit comporter les colonnes suivantes:  
     `ProbeName(probe id)     ChrNum     ChrStart(The chromosomal probe locations)       Log2Ratio (amplification/deletion)`  
@@ -337,7 +344,8 @@ additionnally, this package offers different genomic profile visualisation funct
     - les infos de l'echantillon
     - le dataset par sonde 
     - les paramètres du workflow
-    - les données de segmentation
+    - les données de segmentation -->
+On utilise readOncoscan(). D'ailleurs, la colonne "ChrStart" qu'attend rCGH et la colonne "position"  de notre probeset.txt sont la même chose.
 
 ## output
 
@@ -362,3 +370,6 @@ additionnally, this package offers different genomic profile visualisation funct
 
 pour rappel:
 un ratio est de la forme test/control, où control est la valeur de référence. si la valeur test est supérieure au control, le ratio va de 1 à +inf. mais si test est inférieur à control, le ratio va de 0 à 1. appliquer le log2 de ce ratio permet de rendre symétrique la répartition autour de 1. (autour de zéro?)
+
+## visualisation interactive des données
+Disponible en ligne : ` https://fredcommo.shinyapps.io/aCGH_viewer/ `et dans R?

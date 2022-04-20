@@ -2320,8 +2320,21 @@ Je relis un peu ASCAT call pour mieux comprendre comment on peut estimer la cell
 
 # <span style="color:#999900"> mardi 19/04/2022
 arrivée à 10h15; 1h pause; départ à 19h
-finir les slides ASCAT comme indiqué par Isabelle et Elodie
+Ai fini les slides ASCAT comme indiqué par Isabelle et Elodie
 
 
 # <span style="color:#999900"> mercredi 20/04/2022
+arrivée à 9h10; 1h pause; départ à 19h00
+Ajouter à ASCAT les plots qui indiquent quelle combination de psi et rho produit quels CN et pourquoi certaines solutions sont meilleures que d'autres .
+Voir fonctionnement_des_outils.md pour les résultats ASCAT
+ASCAT slides = fini, je fais tourner rCGH.
+Je commence slides rCGH
+J'ai testé l'interactive viewer de rCGH en ligne avec un de ses fichiers tests. le fichier est dans `C:\Users\e.bordron\Desktop\CGH-scoring\data\working_data\from_laetitia\all_probeset`.
+J'ai pris qqs notes sur cahier. faire diapo demain
+$ ajouter les outputs de chaque outils à la fin de son ppt respectif -> pour CGHcall, j'ai des notes là-dessus. $
 
+# <span style="color:#999900"> mercredi 27/04/2022
+*début Appsilon Shiny Conference*
+
+# <span style="color:#999900"> vendredi 29/04/2022
+*fin Appsilon Shiny Conference*
