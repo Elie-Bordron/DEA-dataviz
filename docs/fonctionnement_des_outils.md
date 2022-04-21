@@ -314,10 +314,29 @@ le mode d'emploi de rCGH est rCGH_manual.pdf dans docs. il va de pair avec rCGH.
 rCGH manual (the pdf):
 la CGH sur array est largement utilisée en médecine, notamment pour détecter les altérations moléculaires précises. RCGH est un workflow d'analyses des données générées par cette technologie.
 
+## pipeline
 un workflow typique est présenté dans le document. il produit un objet rCGH.
+`cgh = rCGH::readAffyOncoScan(customFilePath)`
+Charge les données du fichier probeset.txt
+On peut spécifier quel génome de référence utiliser parmi hg18, 19 et 38.
+On peut spécifier la ploidie a priori pour ajuster l'estimation du nombre de copies.
+*slide éventuellement sur ce que la ploidie change*
 
-- adjustSignal() permet de rescale le LRR dans le cas d'affymetrix.
+`cghAdj <- adjustSignal(cgh, nCores=1, suppOutliers=TRUE)`
+Normalise les log Ratios.
+Si spécifié, lisse les outliers en utilisant EM:
+```
+When suppOutliers is TRUE (default), the Log2Ratios are splitted with respect to chromosomes. The main regions within each chromosome are identified using EM. Within each region r_i, x[r_i] values are redifined according to the corresponding model parameters. as:
+x[r_i] ~ N(mu_i, sigma_i)
+```
+génère des scores de qualité:
+- derivative Log Ratio Spread (dLRs) -> estime le bruit. cf cahier 21/04/2022: c'est la moyenne de la dérivée des différences de log ratio entre 2 sondes consécutives. Très bon si <0.20 .
+- Median Absolute Deviation (MAD) -> estime la variabilité. cf cahier 21/04/2022: c'est la médiane des écarts à la moyenne.
+*slide: plot before/after adjusting*
 
+
+`cghSeg <- segmentCGH(cghAdj, nCores=1)`
+*slides: segtable par gène, parler des infos additionnelles sur chaque seg: moyenne, nb markers...*
 - pour segmenter, on utilise l'algo CBS.
 Cette fonctionnalité peut être utilisée avec segmentCGH(). cela retourne une segmentation table.
 

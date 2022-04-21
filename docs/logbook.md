@@ -2332,6 +2332,13 @@ Je commence slides rCGH
 J'ai testé l'interactive viewer de rCGH en ligne avec un de ses fichiers tests. le fichier est dans `C:\Users\e.bordron\Desktop\CGH-scoring\data\working_data\from_laetitia\all_probeset`.
 J'ai pris qqs notes sur cahier. faire diapo demain
 $ ajouter les outputs de chaque outils à la fin de son ppt respectif -> pour CGHcall, j'ai des notes là-dessus. $
+# <span style="color:#999900"> jeudi 21/04/2022
+arrivée à 10h25; 50 min pause; départ à 17h;
+Elodie m'a transmis le ppt de sa collègue qui illustre les proportions alléliques. Je le garde sous le coude pour m'en inspirer si besoin de compléter ASCAT ou un autre PPT.
+Pour accéder à une fonction cachée d'un package: ``rCGH::.estimateCopy``. Si ça ne marche pas: ``rCGH:::.estimateCopy``
+
+J'ai regardé les résultats de rCGH, fait des plots, et commencé à voir comment intégrer le pipeline dans les slides.
+
 
 # <span style="color:#999900"> mercredi 27/04/2022
 *début Appsilon Shiny Conference*
