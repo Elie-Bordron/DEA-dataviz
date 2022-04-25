@@ -336,12 +336,28 @@ génère des scores de qualité:
 
 
 `cghSeg <- segmentCGH(cghAdj, nCores=1)`
-*slides: segtable par gène, parler des infos additionnelles sur chaque seg: moyenne, nb markers...*
-- pour segmenter, on utilise l'algo CBS.
-Cette fonctionnalité peut être utilisée avec segmentCGH(). cela retourne une segmentation table.
+pour segmenter, on utilise l'algo CBS de DNAcopy. les arguments de DNAcopy (undo.SD, ...) peuvent être donnés ici.
+Le résultat contient la moyenne, la médiane et le nombre de sondes du segment ainsi que l'écart type de ses valeurs de log ratio, et une estimation du nombre de copies.
+On peut obtenir les sous forme de tableau par sonde, ou par segment. 
+    `geneTable <- byGeneTable(segTable)`
+    Cette  commande permet d'avoir un tableau par gène, où il se positionne sur le génome, sa valeur de log Ratio...
+    *slides: tableau par gène, montrer l'input et l'output, parler du fait que n'importe quelle segmentation table peut être donnée, donc c'est intéressant à utiliser même dans d'autre packages.*
+*slides: tableau de segmentation par sonde et par segment, parler des infos additionnelles sur chaque seg: moyenne, nb markers...*
+*slides: avant/après segmentation (par rapport au log ratio -> dessiner les segments par-dessus! et faire les points très petits, mais tous les garder.)*
+                       
 
-- LRR = Log2(relative ratios)
-la fonction EMnormalize() est utilisée pour centraliser les LRR et plotDensity() permet de visualiser cette étape et de voir quelle population a servi à centraliser les données.
+`cghNorm <- EMnormalize(cghSeg)`
+la fonction EMnormalize() est utilisée pour centraliser les LRR et plotDensity() permet de visualiser cette étape et de voir quel groupe de segments a servi à centraliser les données.
+*slides: log Ratio avant/après*
+*slides: explpiquer le plotDensity avec la fig 1 suppl. cf cahier*
+*slides: plotDensity avec le log ratio: réduire et pivoter le plotDensity et le mettre à gauche du graphe de log ratio pour faire correspondre les pics aux valeurs.*
+
+### data visualisation: 
+`multiplot(cghNorm, symbol = c("egfr", "erbb2"))`
+![fig 3 article](docs_I_made/images/rCGH_multiplot.png "figure 1")
+
+
+
 
 note: ce package permet la parallélisation des tâches de normalisation & de segmentation de par l'utilisation du package parallel.
 
@@ -364,7 +380,7 @@ additionnally, this package offers different genomic profile visualisation funct
     - le dataset par sonde 
     - les paramètres du workflow
     - les données de segmentation -->
-On utilise readOncoscan(). D'ailleurs, la colonne "ChrStart" qu'attend rCGH et la colonne "position"  de notre probeset.txt sont la même chose.
+On utilise readOncoscan(). D'ailleurs, la colonne "ChrStart" qu'attend rCGH et la colonne "position"  de notre probeset.txt contiennent les mêmes valeurs.
 
 ## output
 

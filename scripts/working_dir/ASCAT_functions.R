@@ -316,6 +316,7 @@ custom_ascat.runAscat = function (ASCATobj, gamma = 0.55, pdfPlot = F, y_limit =
         print(file.path(img.dir, 
                 paste(img.prefix, ASCATobj$samples[arraynr], ".ASCATprofile.", ending, sep = "")))
         print( file.path(img.dir, paste(img.prefix, ASCATobj$samples[arraynr], ".rawprofile.", ending, sep = "")))
+        print(c("lrr: ", lrr))
         res[[arraynr]] = runASCAT(lrr, baf, lrrsegm, bafsegm, 
             ASCATobj$gender[arraynr], ASCATobj$SNPpos, ASCATobj$ch, 
             ASCATobj$chrs, ASCATobj$sexchromosomes, failedqualitycheck, 

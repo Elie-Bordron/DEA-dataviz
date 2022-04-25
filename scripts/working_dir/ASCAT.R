@@ -32,15 +32,20 @@ gammaRange = seq(0.35, 0.95, 0.05)
 outputFolderGammaRange = file.path(outputFolder, "gammaRange")
 if(!dir.exists(outputFolderGammaRange)) dir.create(outputFolderGammaRange)
 for (gamma in gammaRange){
-    callData = ASCAT::ascat.runAscat(ASCATobj = segData, gamma = gamma, img.dir=outputFolderGammaRange, img.prefix=paste0("normal_run", "_gamma=", gamma, "_"))
+    callData = ASCAT::ascat.runAscat(ASCATobj = segData, gamma = gamma, img.dir=outputFolderGammaRange,
+                                     img.prefix=paste0("normal_run", "_gamma=", gamma, "_"))
 }
+# running ASCAT on custom function to retrieve values of a specific SNP for different rho and psi
+gamma = 0.45 
+callData = custom_ascat.runAscat(ASCATobj = segData, gamma = gamma, img.dir=outputFolder,
+                                 img.prefix=paste0("runSingleSNP", "_gamma=", gamma, "_"))
 
 
 
 # custom psi and rho
 gamma = 0.45 
-psi=1.75 # 1.75
-rho=0.3 # 0.83
+psi=2 # 1.75
+rho=0.2 # 0.83
 callData = ASCAT::ascat.runAscat(ASCATobj = segData, gamma = gamma, img.dir=outputFolder,
     img.prefix=paste0("custom_run","_gamma=", gamma, "_psi=",psi, "_rho=", rho), psi_manual=psi, rho_manual = rho)
 
@@ -83,36 +88,52 @@ ascat.plotNonRounded(callData)
 ## automatically generated already
 ascat.plotSunrise(callData$distance_matrix)
 }
-
-## plot raw values for segments of allele A and B
+    
+## functions to plot raw values for segments of allele A and B
 plotSeg = function(seg_df, allChrs, lengthOfChrs, drawPolygons=F){
-    # print(c("seg_df: ", seg_df))
-    # print(c("seg_df[2]: ", seg_df[2]))
-    #get current chromosome
-    currChr = which(allChrs==seg_df[2])
-    #get endpos of last segment of previous chromosome
-    if (currChr!=1){
-        pos0CurrChr = sum(lengthOfChrs[1:currChr-1])
-    } else {
-        pos0CurrChr=0
+    ## get nb cols
+    nbcols = length(seg_df)
+    ## get current chromosome
+    currChr = which(allChrs==seg_df["chr"])
+    # print(c("currChr: ", currChr))
+    # print(c("class(currChr): ", class(currChr)))
+    ## get endpos of last segment of previous chromosome
+    if((seg_df["chr"]=="X" ) || (seg_df["chr"]=="Y")){
+        pos0CurrChr = sum(lengthOfChrs[1:22])
     }
-    # drawing a segment on plot for each segment of the genome
+    else {
+        if (currChr!=1){
+            pos0CurrChr = sum(lengthOfChrs[1:currChr-1])
+        } else {
+            pos0CurrChr=0
+        }
+    }
+    ## drawing a segment on plot for each segment of the genome
     segStartPos = as.numeric(seg_df[3])
     segEndPos = as.numeric(seg_df[4])
-    logRAlleleA = as.numeric(seg_df[7])
-    logRAlleleB = as.numeric(seg_df[8])
-    segments(pos0CurrChr+segStartPos, logRAlleleB, pos0CurrChr+segEndPos, logRAlleleB, col="dark orange", lwd=2)
-    segments(pos0CurrChr+segStartPos, logRAlleleA, pos0CurrChr+segEndPos, logRAlleleA, col="dark green", lwd=2)
+    # CN values are on last 2 columns
+    A_allele_vals = nbcols-1
+    deviation = 0.01
+    logRAlleleA = as.numeric(seg_df[[nbcols-1]])
+    logRAlleleB = as.numeric(seg_df[[nbcols]])
+    logRAlleleA_dev = logRAlleleA + deviation
+    logRAlleleB_dev = logRAlleleB - deviation
+    # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
+    segments(pos0CurrChr+segStartPos, logRAlleleA_dev, pos0CurrChr+segEndPos, logRAlleleA_dev, col="dark blue", lwd=2)
+    segments(pos0CurrChr+segStartPos, logRAlleleB_dev, pos0CurrChr+segEndPos, logRAlleleB_dev, col="dark red", lwd=2)
     ## drawing polygone joining this segment to closest non-null integer
     if(drawPolygons){
-        polygon(x=c(pos0CurrChr+segStartPos, pos0CurrChr+segEndPos, pos0CurrChr+segEndPos, pos0CurrChr+segStartPos), y=c(logRAlleleA,logRAlleleA,round(logRAlleleA),round(logRAlleleA)), col = "dark green", density = 10)
-        polygon(x=c(pos0CurrChr+segStartPos, pos0CurrChr+segEndPos, pos0CurrChr+segEndPos, pos0CurrChr+segStartPos), y=c(logRAlleleB,logRAlleleB,round(logRAlleleB),round(logRAlleleB)), col = "dark orange", density = 20)
+        polygon(x=c(pos0CurrChr+segStartPos, pos0CurrChr+segEndPos, pos0CurrChr+segEndPos, pos0CurrChr+segStartPos), 
+                y=c(logRAlleleB_dev,logRAlleleB_dev,round(logRAlleleB),round(logRAlleleB)), col = "dark red", density = 10,angle=135)
+        polygon(x=c(pos0CurrChr+segStartPos, pos0CurrChr+segEndPos, pos0CurrChr+segEndPos, pos0CurrChr+segStartPos),
+                y=c(logRAlleleA_dev,logRAlleleA_dev,round(logRAlleleA),round(logRAlleleA)), col = "dark blue", density = 10, angle=45)
     }
 }
 
+
 generateGrid = function(graph_title) {
     #create empty plot to add things in
-    plot(1, ylim=c(0,2), xlim=c(0,3*10**9),col="white", xaxt="n", yaxt="n", xlab="nombre de bases", ylab="log ratio", main=graph_title)
+    plot(1, ylim=c(0,2), xlim=c(0,3*10**9),col="white", xaxt="n", yaxt="n", xlab="nombre de bases", ylab="nombre de copies", main=graph_title)
     #  add horizontal grid
     for (CN in c(-3:8)) {
     abline(h=CN, col="dark grey")
@@ -122,7 +143,7 @@ generateGrid = function(graph_title) {
     # Y-axis
     axis(2, at = c(-3:8))
 }
-
+### plotting raww values of both alleles of a profile
 if (TRUE) {
     # remove small segments that pollute visualization
     segDf = callDataToPlot$segments_raw
@@ -131,15 +152,17 @@ if (TRUE) {
     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
     # draw seg data
     graph_title = paste0(sampleName,"      ploidy:",psi,", cellularity:",rho)
-    path_plot_no_extension = paste0(outputFolder_plots,"/","customRun_gamma=",gamma,"_ploidy=",psi,"_cellularity=",rho)
+    dir_customRun = paste0(outputFolder_plots,"/","customRun_gamma=",gamma,"_ploidy=",psi,"_cellularity=",rho,"/")
+    if(!dir.exists(dir_customRun)) dir.create(dir_customRun)
     ### saving plots to png
-    path_plot_no_polygon = paste0(path_plot_no_extension, "_nopol.png")
+    path_plot_no_polygon = paste0(dir_customRun, "nopol.png")
     png(path_plot_no_polygon, width=700, height=484)
+    # png(path_plot_no_polygon)
     generateGrid(graph_title)
     apply(segDf_trimmed, 1, plotSeg, allChrs, lengthOfChrs)
     dev.off()
     
-    path_plot_polygon = paste0(path_plot_no_extension, "_polygon.png")
+    path_plot_polygon = paste0(dir_customRun, "polygon.png")
     # png(path_plot_polygon, width=900, height=623)
     png(path_plot_polygon, width=700, height=484)
     generateGrid(graph_title)
@@ -150,17 +173,77 @@ if (TRUE) {
 
 
 ### generating ASPCF segmentation visuals
-# 2 segments in 1 plot
-vals = c(rnorm(100,2,0.1),rnorm(100,0,0.1))
-# 1 segment in 1 plot
-vals = c(rnorm(200,1,0.1))
-mu = mean(vals)
-plot(vals,pch=20, ylim=c(0.5,1.5), ylab="log ratio", xlab="genomic position")
-abline(h=mu, col="red")
-sumvals=0
-for (i in 1:length(vals)) {
-    segments(i,vals[i], i,mu)
-    sumvals = sumvals + (vals[i] - mu)**2
+if (T){
+    # 2 segments in 1 plot
+    vals = c(rnorm(100,2,0.1),rnorm(100,0,0.1))
+    # 1 segment in 1 plot
+    vals = c(rnorm(200,1,0.1))
+    mu = mean(vals)
+    plot(vals,pch=20, ylim=c(0.5,1.5), ylab="log ratio", xlab="genomic position")
+    abline(h=mu, col="red")
+    sumvals=0
+    for (i in 1:length(vals)) {
+        segments(i,vals[i], i,mu)
+        sumvals = sumvals + (vals[i] - mu)**2
+    }
+    print(sumvals)
 }
-print(sumvals)
+    
 
+
+### before and after calling
+segDf = callDataToPlot$segments_raw
+callDf = callDataToPlot$segments
+# remove small segments that pollute visualization
+# segDf = callDataToPlot$segments_raw
+# segDf_trimmed = dplyr::filter(segDf, endpos-startpos>10**7)
+allChrs = unique(as.vector(segDf_trimmed[2]))
+lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+# draw seg data
+graph_title = paste0(sampleName,"      ploidy:",psi,", cellularity:",rho)
+dir_customRun = paste0(outputFolder_plots,"/","customRun_gamma=",gamma,"_ploidy=",psi,"_cellularity=",rho,"/")
+if(!dir.exists(dir_customRun)) dir.create(dir_customRun)
+
+### saving plots to png
+path_plot_no_polygon = paste0(dir_customRun, "nopol.png")
+## seg data
+
+nbcols = dim(segDf)[2]
+
+generateGrid(graph_title)
+apply(segDf, 1, plotSeg, allChrs, lengthOfChrs)
+## call data
+generateGrid(graph_title)
+apply(callDf, 1, plotSeg, allChrs, lengthOfChrs)
+
+
+
+
+
+### picking BAF and LRR values for one SNP
+bafLrr = rawData$data
+bafLrr = cbind(bafLrr$Tumor_LogR, bafLrr$Tumor_BAF)
+colnames(bafLrr) = c("logR", "BAF")
+## S-tag021556 was picked
+
+gamma = 0.45
+ri = -0.750
+bi = 0.817
+rho = 0.8
+psi = 4.5
+if (T){
+    print(paste0("--- ", rho, ", ", psi, "---"))
+    term1_A = rho - 1 + 2^(ri/gamma) * (1-bi) * (2*(1-rho) + rho*psi)
+    term1_B = rho - 1 + 2^(ri/gamma) * bi * (2*(1-rho) + rho*psi)
+    term2 = rho 
+    Ncopy_A = term1_A/term2
+    print(Ncopy_A)
+    Ncopy_B = term1_B/term2
+    print(Ncopy_B)
+}
+
+
+
+
+distMX = callData[["distance_matrix"]][["5-LD"]]
+ascat.plotSunrise(distMX)
