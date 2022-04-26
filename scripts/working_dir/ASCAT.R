@@ -1,3 +1,4 @@
+
 ## set working directory
 working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
 setwd(working_dir)
@@ -36,9 +37,9 @@ for (gamma in gammaRange){
                                      img.prefix=paste0("normal_run", "_gamma=", gamma, "_"))
 }
 # running ASCAT on custom function to retrieve values of a specific SNP for different rho and psi
-gamma = 0.45 
-callData = custom_ascat.runAscat(ASCATobj = segData, gamma = gamma, img.dir=outputFolder,
-                                 img.prefix=paste0("runSingleSNP", "_gamma=", gamma, "_"))
+# gamma = 0.45 
+# callData = custom_ascat.runAscat(ASCATobj = segData, gamma = gamma, img.dir=outputFolder,
+#                                  img.prefix=paste0("runSingleSNP", "_gamma=", gamma, "_"))
 
 
 

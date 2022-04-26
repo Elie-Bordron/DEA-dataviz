@@ -2183,7 +2183,7 @@ avancées de cette semaine:
 
 
 Obj d'aujourd'hui: lancer CGHcall sur un de nos échantillons, et utiliser les plots pour montrer à chaque étape ce qui change.
-les 3 échantillons intéressants indiqués par laetitia sont 5LD, 6VJ et 8MM. j'exporte leurs .txt à partir de ChAS. Ces fichiers n'ont pas la colonne END (position de fin des sondes), juste une colonne position. Je lance les données dessus quand même, en remplacant la colonne START par position, et END par des NA. -> cela fait qu'on ne peut pas afficher tous les plots, les valeurs END doivent être utilisées comme axe des abscisses.
+les 3 échantillons intéressants indiqués par laetitia sont 5-LD, 6-VJ et 8-MM. j'exporte leurs .txt à partir de ChAS. Ces fichiers n'ont pas la colonne END (position de fin des sondes), juste une colonne position. Je lance les données dessus quand même, en remplacant la colonne START par position, et END par des NA. -> cela fait qu'on ne peut pas afficher tous les plots, les valeurs END doivent être utilisées comme axe des abscisses.
 D'autre part, le dataset test avait 3500 lignes. pour nos données, on est à 200_000. tout est plus long.
 
 Voir plots discutés dans slack avec elodie.
@@ -2351,9 +2351,27 @@ arrivée à 11h; 30 min pause; départ à 19h40
 obj aujourd'hui: finir ascat, compléter rCGH.
 ASCAT est fini, je n'ai pas avancé sur rCGH.
 
+# <span style="color:#999900"> mardi 26/04/2022
+arrivée à 10h30;  40 min pause; 
+Beaucoup de choses à changer/ rechercher en ce qui concerne les slides. cf cahier   
+
+Je remarque que CGHcall supprime par défaut les données des chromosomes n'étant pas dans 1:23. Or, quand on exporte le fichier probeset.txt (l'input de CGHcall), ChAS remplace les chromosomes X et Y par 24 et 25 respectivement (confirmé: les sondes du chr Y dans ChAS correspondent aux sondes du chr 25 dans le probeset.txt). Il faut donc spécifier nchrom=25 dans la ligne `preprocess(ACGH_data, maxmiss=5, nchrom=25)` de CGHcall, sinon l'argument par défaut (23) est utilisé, ce qui supprime les données des chromosomes 24 et 25 (X et Y).
+
+D'autre part, les fichiers segments.txt que je produis dans ChAS à partir des .OSCHP ne contiennent parfois pas tous les segments. OncoscanR va forcément rater ces altérations; Il serait intéressant de donner à OncoscanR des données segmentées issues de DNAcopy/ ASPCF(la seg d'ASCAT).
+
+
+
+
 
 # <span style="color:#999900"> mercredi 27/04/2022
 *début Appsilon Shiny Conference*
 
 # <span style="color:#999900"> vendredi 29/04/2022
 *fin Appsilon Shiny Conference*
+* [ ] contacter Slim karkar pour plan rapport stage
+
+# <span style="color:#999900"> lundi 30/05/2022
+* [ ] contacter Slim karkar pour soutenance
+
+
+

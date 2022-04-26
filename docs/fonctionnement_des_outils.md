@@ -7,6 +7,9 @@
     - si 80% d'un bras présente la même altération, ce bras est indiqué comme altéré (GAIN/LOSS/AMP/LOH).
 - Score LST
     - voir cahier
+# input
+à partir des .OSCHP, je produis des segments.txt
+
 
 
 # CGHcall

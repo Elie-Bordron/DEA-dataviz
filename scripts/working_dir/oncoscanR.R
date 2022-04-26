@@ -6,9 +6,14 @@ OncoscanR.R
 This script loads OSCHP-derived segmentation text files, processes them individually through oncoscanR, calculates Genomic Index from these results, then writes the results as a text file.
 dataDir is the directory contaning all segments.txt files.
 resultsDir is the output directory.
-genders.txt is a table of two columns: sample(e.G. '2-AD') and gender ('M' or 'F')
+genders.txt is a table of two columns: sample(e.g. '2-AD') and gender ('M' or 'F')
 "
 
+## set working directory
+working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+setwd(working_dir)
+## open working directory in Files tab
+rstudioapi::filesPaneNavigate(working_dir)
 
 ## importing libraries
 library(oncoscanR)
@@ -16,10 +21,9 @@ library(dplyr)
 
 
 ## defining constants
-setwd( "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results")
 dataDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/from_laetitia/all_samples"
 resultsDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
-gendersTable = read.table("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/data/working_data/genders.tsv", h=T)
+gendersTable = read.table("C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/genders.tsv", h=T)
 
 
 ######## functions for iterating over files
@@ -121,7 +125,7 @@ getGIFromOncoscanR_result = function(currRes) {
 ######## functions for exporting results to text file
 getSampleNameFromOncoscanR_result = function(currRes) {
     filename = currRes$file
-    splittedFilename = stringr::str_split(filename, '\\.') # need to escape the period because this is a regex
+    splittedFilename = stringr::str_split(filename, '\\.') # need to escape the period (the dot) because this is a regex
     print(c("splittedFilename[1]: ", splittedFilename[[1]][1]))
     sampleName = splittedFilename[[1]][1]
     return(sampleName)
