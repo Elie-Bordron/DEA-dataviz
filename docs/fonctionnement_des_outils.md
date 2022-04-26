@@ -8,7 +8,7 @@
 - Score LST
     - voir cahier
 # input
-à partir des .OSCHP, je produis des segments.txt
+à partir des .OSCHP, je produis des segments.txt . Je ne recentre pas, ce qui pose des problèmes: pour l'échantillon 8-MM par exemple, 
 
 
 

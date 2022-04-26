@@ -1,0 +1,4 @@
+"sample"	"GI_oncoscanR"
+5-LD	5
+6-VJ	8.16666666666667
+8-MM	1

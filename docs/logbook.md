@@ -2365,6 +2365,7 @@ D'autre part, les fichiers segments.txt que je produis dans ChAS à partir des .
 
 # <span style="color:#999900"> mercredi 27/04/2022
 *début Appsilon Shiny Conference*
+demander à laetitia des cas compliqués, avec une ploïdie dure à caractériser... un gynéco ou un sarcome, certainement.
 
 # <span style="color:#999900"> vendredi 29/04/2022
 *fin Appsilon Shiny Conference*
