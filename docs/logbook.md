@@ -2352,10 +2352,10 @@ obj aujourd'hui: finir ascat, compléter rCGH.
 ASCAT est fini, je n'ai pas avancé sur rCGH.
 
 # <span style="color:#999900"> mardi 26/04/2022
-arrivée à 10h30;  40 min pause; 
+arrivée à 10h30;  40 min pause; départ à 18h30
 Beaucoup de choses à changer/ rechercher en ce qui concerne les slides. cf cahier   
 
-Je remarque que CGHcall supprime par défaut les données des chromosomes n'étant pas dans 1:23. Or, quand on exporte le fichier probeset.txt (l'input de CGHcall), ChAS remplace les chromosomes X et Y par 24 et 25 respectivement (confirmé: les sondes du chr Y dans ChAS correspondent aux sondes du chr 25 dans le probeset.txt). Il faut donc spécifier nchrom=25 dans la ligne `preprocess(ACGH_data, maxmiss=5, nchrom=25)` de CGHcall, sinon l'argument par défaut (23) est utilisé, ce qui supprime les données des chromosomes 24 et 25 (X et Y).
+Je remarque que CGHcall supprime par défaut les données des chromosomes n'étant pas dans 1:23. Or, quand on exporte le fichier probeset.txt (l'input de CGHcall) à partir du menu Analysis, ChAS remplace les chromosomes X et Y par 24 et 25 respectivement (confirmé: les sondes du chr Y dans ChAS correspondent aux sondes du chr 25 dans le probeset.txt). Il faut donc spécifier nchrom=25 dans la ligne `preprocess(ACGH_data, maxmiss=5, nchrom=25)` de CGHcall, sinon l'argument par défaut (23) est utilisé, ce qui supprime les données des chromosomes 24 et 25 (X et Y).
 
 D'autre part, les fichiers segments.txt que je produis dans ChAS à partir des .OSCHP ne contiennent parfois pas tous les segments. OncoscanR va forcément rater ces altérations; Il serait intéressant de donner à OncoscanR des données segmentées issues de DNAcopy/ ASPCF(la seg d'ASCAT).
 
@@ -2364,8 +2364,15 @@ D'autre part, les fichiers segments.txt que je produis dans ChAS à partir des .
 
 
 # <span style="color:#999900"> mercredi 27/04/2022
+arrivée à 11h30; 45 min pause; 
 *début Appsilon Shiny Conference*
-demander à laetitia des cas compliqués, avec une ploïdie dure à caractériser... un gynéco ou un sarcome, certainement.
+* [ ] demander à laetitia des cas compliqués, avec une ploïdie dure à caractériser... un gynéco ou un sarcome, certainement.
+
+
+
+# <span style="color:#999900"> jeudi 28/04/2022
+
+
 
 # <span style="color:#999900"> vendredi 29/04/2022
 *fin Appsilon Shiny Conference*

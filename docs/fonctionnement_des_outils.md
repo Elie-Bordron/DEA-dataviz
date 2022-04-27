@@ -10,6 +10,14 @@
 # input
 à partir des .OSCHP, je produis des segments.txt . Je ne recentre pas, ce qui pose des problèmes: pour l'échantillon 8-MM par exemple, 
 
+# détails 
+Amp: CNV>2
+Gain: CNV>0
+Loss: CNV<0
+
+# pipeline
+plus d'infos dans le cahier au 27/04
+
 
 
 # CGHcall

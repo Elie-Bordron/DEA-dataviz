@@ -8,23 +8,22 @@ rstudioapi::filesPaneNavigate(working_dir)
 
 ## setting paths
 dataDir = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_probeset"
-# resultsDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/CGHcall"
-resultsDir = file.path(working_dir, "CGHcall")
+resultsDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
 # paths to probeset.txt files
 s5_LD_path = file.path(dataDir, "5-LD.probeset.txt")
 s6_VJ_path = file.path(dataDir, "6-VJ.probeset.txt")
 s8_MM_path = file.path(dataDir, "8-MM.probeset.txt")
 # loading files as tables
 
-s5_LD_probeset = read.table(s5_LD_path, sep='\t', h=T)
-s6_VJ_probeset = read.table(s6_VJ_path, sep='\t', h=T)
-s8_MM_probeset = read.table(s8_MM_path, sep='\t', h=T)
-osData = s5_LD_probeset[,1:3]
+s5_LD = read.table(s5_LD_path, sep='\t', h=T)
+s6_VJ = read.table(s6_VJ_path, sep='\t', h=T)
+s8_MM = read.table(s8_MM_path, sep='\t', h=T)
+osData = s5_LD[,1:3]
 # osData = cbind(osData, rep(NA, length(osData[,1])))
-osData = cbind(osData, s5_LD_probeset[,3]+20)
-osData = cbind(osData, s5_LD_probeset[,4])
-osData = cbind(osData, s6_VJ_probeset[,4])
-osData = cbind(osData, s8_MM_probeset[,4])
+osData = cbind(osData, s5_LD[,3]+20)
+osData = cbind(osData, s5_LD[,4])
+osData = cbind(osData, s6_VJ[,4])
+osData = cbind(osData, s8_MM[,4])
 colnames(osData)= c("probeID",  "CHROMOSOME", "START_POS", "END_POS", "5-LD", "6-VJ", "8-MM")
 
 
@@ -45,7 +44,7 @@ ACGH_data <- make_cghRaw(osData)
 ###################################################
 ### code chunk number 2: CGHcall.Rnw:65-66
 ###################################################
-cghdata <- preprocess(ACGH_data, maxmiss=5, nchrom=25)
+cghdata <- preprocess(ACGH_data, maxmiss=5, nchrom=25) # because  X and Y chromosomes are noted as 24 and 25
 
 if (FALSE) {
 ## plot to compare copynumber before/after maxmiss is applied
@@ -170,7 +169,8 @@ dev.off()
 ###################################################
 ### code chunk number 6: CGHcall.Rnw:106-108
 ###################################################
-tumor.prop <- c(0.9, 0.8, 0.8) ### actual values for 5-LD, 6-VJ and 8-MM respectively
+# tumor.prop <- c(0.75, 0.9, 0.6, 0.85, 0.65) # one value per sample. proportion of contamination by healthy cells
+tumor.prop <- c(0.75, 0.9, 0.6) # one value per sample. proportion of contamination by healthy cells
 rawCghResult <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor.prop)
 ## To visualize the content of a CGHcall output: a list of *7* elements. see `?CGHcall` for more details
 if (FALSE) {
@@ -192,23 +192,16 @@ CghResult <- ExpandCGHcall(rawCghResult,postseg.cghdata,CellularityCorrectSeg=F)
 ###################################################
 ### code chunk number 8: CGHcall.Rnw:122-123
 ###################################################
-## extract individual results
-res_5LD = CghResult[,1]
-res_6VJ = CghResult[,2]
-res_8MM = CghResult[,3]
+# plot call probability for sample 1
+plot(CghResult[,1])
+# plot(1)
 
-savePlot_CGHcallObj = function(CGHcallRes){
-    savePath = paste0(resultsDir, "/", sampleNames(CGHcallRes), ".png")
-    print(savePath)
-    png(savePath)
-    plot(CGHcallRes)
-    dev.off()
-}
-# plot call probability for samples 1 to 3
-savePlot_CGHcallObj(res_5LD)
-savePlot_CGHcallObj(res_6VJ)
-savePlot_CGHcallObj(res_8MM)
-
+###################################################
+### code chunk number 9: CGHcall.Rnw:129-130
+###################################################
+# plot call probability for sample 2
+plot(CghResult[,2])
+plot(CghResult[,3])
 # plot call data
 plot(calls(CghResult)[,1], ylab="log ratio", xlab = "genomic position", main="5-LD", ylim=c(-5,5))
 ###################################################

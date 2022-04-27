@@ -32,14 +32,14 @@ resultsDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/resu
 gendersTable = read.table("C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/genders.tsv", h=T)
 
 ### viewing data ------------------------------------------#
-# paths to probeset.txt files
-s5_LD_path = file.path(dataDir, "5-LD.OSCHP.segments.txt")
-s6_VJ_path = file.path(dataDir, "6-VJ.OSCHP.segments.txt")
-s8_MM_path = file.path(dataDir, "8-MM.OSCHP.segments.txt")
+# paths to segments files
+s5_LD_segs_path = file.path(dataDir, "5-LD.OSCHP.segments.txt")
+s6_VJ_segs_path = file.path(dataDir, "6-VJ.OSCHP.segments.txt")
+s8_MM_segs_path = file.path(dataDir, "8-MM.OSCHP.segments.txt")
 # loading files as tables
-s5_LD_segments = read.table(s5_LD_path, sep='\t', h=T)
-s6_VJ_segments = read.table(s6_VJ_path, sep='\t', h=T)
-s8_MM_segments = read.table(s8_MM_path, sep='\t', h=T)
+s5_LD_segments = read.table(s5_LD_segs_path, sep='\t', h=T)[c("Type", "CN.State", "Full.Location")]
+s6_VJ_segments = read.table(s6_VJ_segs_path, sep='\t', h=T)[c("Type", "CN.State", "Full.Location")]
+s8_MM_segments = read.table(s8_MM_segs_path, sep='\t', h=T)[c("Type", "CN.State", "Full.Location")]
 ### -------------------------------------------------------#
 
 
@@ -208,7 +208,7 @@ segsDf = as.data.frame(segments)
 # Clean the segments: resctricted to Oncoscan coverage, LOH not overlapping with copy loss
 # segments, smooth&merge segments within 300kb and prune segments smaller than 300kb.
 segs.clean <- trim_to_coverage(segments, oncoscan.cov) %>% # All segments that are not entirely contained within the kit coverage will be trimmed to the coverage's limits.
-    adjust_loh() %>% # LOH segments completely contained within (or equal to) a copy loss segment are deleted. LOH segments partially overlapping (on one end only) with a copy loss segment are trimmed to remove the overlap. If a copy loss segment is completely contained within (but not equal to) a LOH segment, then nothing is done; the overlap remains.
+    adjust_loh() %>% # LOH segments completely contained within (or equal to) a copy loss segment are deleted.   LOH segments partially overlapping (on one end only) with a copy loss segment are trimmed to remove the overlap. If a copy loss segment is completely contained within (but not equal to) a LOH segment, then nothing is done; the overlap remains.
     merge_segments() %>% # merge segments that are at a distance smaller than the resolution (300Kb)  (only occurs if the segments have the same copy number).
     prune_by_size() # remove segments smaller than 300kb. this value = Oncoscan assay resolution outsode of cancer genes
 segsCleanDf = as.data.frame(segs.clean) # for 6VJ sample, in this step, the two 22q segs are fused together.
@@ -244,8 +244,10 @@ wgd <- score_estwgd(segs.clean, oncoscanR::oncoscan_na33.cov) # Get the avg CN, 
 # else, wgd=0.
 
 hrd <- score_nlst(segs.clean, wgd['WGD'], oncoscan.cov)
+## known. see  logbook.md or cahier. number of LST
 
 n.td <- score_td(segs.clean)
+## known. see  logbook.md or cahier. tdplus score .
 
 # Get the alterations into a single list and print it in a JSON format.
 armlevel_alt.list <- list(AMP=sort(names(armlevel.amp)),

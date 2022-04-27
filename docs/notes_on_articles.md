@@ -2,6 +2,8 @@
 # <span style="color:#ff9999">Automated Detection of Arm-Level Alterations for Individual Cancer Patients in the Clinical Setting
 2021_Christinat_HRD_Oncoscan.pdf
 
+`voir cahier au `
+
 Copy number alterations, a genetic event, promotes tumor development. these events are used as predictive biomarkers in clinical care. they are roughly classified as arm-level or focal. genome-wide techniques exist to classify arm-level ones, but challenges exist:
 - How to define an arm-level alteration? there is no consensus on it.
 - there is a lack of tools to compute them for individual patients.
@@ -17,7 +19,14 @@ Cette étude vise à définir précisément les arm-level alterations qui peuven
 
 En utilisant la technique Oncoscan sur des échantillons FFPE, des .CEL ont été produits, puis convertis en .OSCHP (OncoScan array data) qui ont été analysés à l'aide du logiciel Chromosome Analysis Suite (ChAS) avec le génome de référence: hg19. Les résultats ont été évalués manuellement. Précision: les segments de moins de 50 marqueurs ou moins de 50 Kbp ont été ignorés.
 
-## Discussion
+## 2eme lecture
+Deux techniques ont été suivies pour définir une ALA: SoS (sum of altered segments) et LS (Longest Segment). -> diviser la longueur par la longueur du bras , si la PAA (proportion of Arm Altered) est de + de 90%, le bras chromosomique est caractérisé comme altéré.
+Le seuil de 90% a été évalué par rapport à 80, 85 et 95; les auteurs ont conclu qu'il offrait le meilleur compromis.
+
+Un filtrage (seuls les segments de longueur supérieure à X sont gardés) et un smoothing (les segments de même CN distants de moins de X bp sont fusionnés) sont appliqués (X=300Kbp) aux données avant le calcul de la PAA.
+300kbp a été choisi car:
+1. c'est la résolution d'OncoScan
+2. c'est la valeur qui donne le plus de robustesse comparé à 0bp, 1Mbp et 3Mbp.
 
 
 
@@ -183,7 +192,7 @@ Voici pourquoi:
 - si il ne les prenait pas en compte, le nombre de CNNE trouvés passerait à 0. La corrélation indique que dès lors, le nombre de loss diminuerait.
 - les outils ne prenant pas en compte les CNNE sont dans ce cas. On peut donc dire que ces outils sous-estiment largement le nombre réel de loss.
 La correction pour la cellularité révèle que les tumeurs qui en ont le plus eu besoin ne présentent pas moins d'aberrations que les autres, seulement que ces aberrations étaient manquées par les approches qui ne tiennent pas compte de ce paramètre.
-Une carte d'asymétrie allélique est également construite. Cette dernière indique les positions où un allèle est gagné préférentiellement à l'autre. on peut avoir cette carte avec les résultats d'oncoscanR.
+Une carte d'asymétrie allélique est également construite. Cette dernière indique les positions où un allèle est gagné préférentiellement à l'autre. on peut avoir cette carte avec les résultats d'oncoscanR. (oncoscan plutot ?)
 
 ## Matériel et Methodes
 Affymetrix Oncoscan donne les valeurs de log ratio et de BAF pour chaque sonde. ASCAT estime le nombre de copies réel à partir de ces valeurs (et à partir d'autres paramètres comme la ``ploidie ψ (psi)`` et la ``cellularité ρ (rho)``). Psi et Rho compliquent l'analyse et sont souvent importants, donc exprimer logR et BAF en fonction de l'ASCN permet de prendre en compte ces deux paramètres. Cependant, ils doivent être estimés à partir des données pour chaque échantillon tumoral.  
