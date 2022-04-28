@@ -14,9 +14,9 @@ genders.txt is a table of two columns: sample(e.g. '2-AD') and gender ('M' or 'F
 # loading custom Oncoscan Run function 
 source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/OncoscanR_functions.R")
 
-
 ## set working directory
 working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+# working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/OncoscanR"
 setwd(working_dir)
 ## open working directory in Files tab
 rstudioapi::filesPaneNavigate(working_dir)
@@ -191,12 +191,66 @@ GItable
 
 
 ################################ oncoscanR::workflow_oncoscan.run(filepath, gender) :
-chas.fn = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_segmentFiles_from_ChAS/6-VJ.OSCHP.segments.txt"
+
+#### functions for plotting seg data
+plotSeg = function(seg_df, lengthOfChrs){
+    ## get nb cols
+    nbcols = length(seg_df)
+    ## get endpos of last segment of previous chromosome
+    if(grepl("X", seg_df["seqnames"]) || grepl("Y", seg_df["seqnames"]) || grepl("24", seg_df["seqnames"])){
+        pos0CurrChr = sum(lengthOfChrs[1:22])
+    }
+    else {
+        currChrArm = seg_df["seqnames"] 
+        currChr = substring(currChrArm, 1, nchar(currChrArm)-1) # removing "p" or "q" char at the end of arm name, because we want the chromosome number
+        if (currChr!=1){
+            pos0CurrChr = sum(lengthOfChrs[1:currChr-1])
+        } else {
+            pos0CurrChr=0
+        }
+    }
+    # print(c("pos0CurrChr: ", pos0CurrChr))
+    ## drawing a segment on plot for each segment of the genome, using estimated values
+    segStartPos = as.numeric(seg_df[["start"]])
+    segEndPos = as.numeric(seg_df[["end"]])
+    estimCN = as.numeric(seg_df[["cn"]])
+    # print(c("pos0CurrChr + segStartPos: ", pos0CurrChr+segStartPos))
+    segments(pos0CurrChr+segStartPos, estimCN, pos0CurrChr+segEndPos, estimCN, col="black", lwd=2)
+}
+
+generateGrid = function(graph_title, addAblines=F) {
+    #create empty plot to add things in
+    plot(1, ylim=c(0,3), xlim=c(0,3*10**9),col="white", xaxt="n", yaxt="n", xlab="nombre de bases", ylab="nombre de copies", main=graph_title)
+    if (addAblines) {
+        #  add horizontal grid
+        for (CN in c(-7:8)) {
+            abline(h=CN, col="dark grey")
+        }
+    }
+    # X-axis
+    axis(1, at = c(0, 5*10**8, 1*10**9, 1.5*10**9, 2*10**9, 2.5*10**9, 3*10**9))
+    # Y-axis
+    axis(2, at = c(-7:8))
+}
+
+
+
+
+
+
+
+
+
+
+# sampleName = "5-LD"
+sampleName = "6-VJ"
+# sampleName = "8-MM"
+chas.fn = paste0("C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_segmentFiles_from_ChAS/",sampleName,".OSCHP.segments.txt")
+# chas.fn = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_segmentFiles_from_ChAS/6-VJ_from_analysis_setup.segment.txt"
 gender = "M"
 
 # Remove the 21p arm from the Oncoscan coverage as it is only partly covered and we don't
 # want to return results on this arm.
-oncoscan.cov <- oncoscanR::oncoscan_na33.cov[seqnames(oncoscanR::oncoscan_na33.cov) != '21p']
 
 #### load ####
 # Load the ChAS file and assign subtypes.
@@ -207,27 +261,92 @@ segsDf = as.data.frame(segments)
 #### clean ####
 # Clean the segments: resctricted to Oncoscan coverage, LOH not overlapping with copy loss
 # segments, smooth&merge segments within 300kb and prune segments smaller than 300kb.
+
+if(F){
+### plotting before/after each filter/smooth step
+plotBeforeAfterCleanStep = function(segs_df, cleaned_df, action){
+    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+    generateGrid(paste0(sampleName," before ", action))
+    apply(segs_df, 1, plotSeg, lengthOfChrs)
+    generateGrid(paste0(sampleName," after ", action))
+    apply(cleaned_df, 1, plotSeg, lengthOfChrs)
+}
+## trimming
+trimmed = as.data.frame(trim_to_coverage(segments, oncoscan.cov))
+plotBeforeAfterCleanStep(segsDf, trimmed, "trimming segments to coverage")
+## adjusting LOH
+lohAdjusted = as.data.frame(adjust_loh(segments))
+plotBeforeAfterCleanStep(segsDf, lohAdjusted, "adjusting LOH")
+## merging segments
+merged = as.data.frame(merge_segments(segments))
+plotBeforeAfterCleanStep(segsDf, merged, "merging segments")
+## removing segments
+pruned = as.data.frame(prune_by_size(segments))
+plotBeforeAfterCleanStep(segsDf, pruned, "removing segments")
+    
+}
+
 segs.clean <- trim_to_coverage(segments, oncoscan.cov) %>% # All segments that are not entirely contained within the kit coverage will be trimmed to the coverage's limits.
     adjust_loh() %>% # LOH segments completely contained within (or equal to) a copy loss segment are deleted.   LOH segments partially overlapping (on one end only) with a copy loss segment are trimmed to remove the overlap. If a copy loss segment is completely contained within (but not equal to) a LOH segment, then nothing is done; the overlap remains.
     merge_segments() %>% # merge segments that are at a distance smaller than the resolution (300Kb)  (only occurs if the segments have the same copy number).
     prune_by_size() # remove segments smaller than 300kb. this value = Oncoscan assay resolution outsode of cancer genes
+## all steps
+if (F){
 segsCleanDf = as.data.frame(segs.clean) # for 6VJ sample, in this step, the two 22q segs are fused together.
-
+plotBeforeAfterCleanStep(segsDf, segsCleanDf, "4-steps cleaning")
+}
 
 
 #### get ALA ####
 ## split segs in 4 objects, one per type. ##
 # Split segments by type: Loss, LOH, gain or amplification and get the arm-level alterations.
 # Note that the segments with copy gains include all amplified segments.
+custom_threshold = 0.1
 armlevel.loss <- segs.clean[segs.clean$cn.type == cntype.loss] %>%
-    armlevel_alt(kit.coverage = oncoscan.cov)
+    armlevel_alt(kit.coverage = oncoscan.cov, custom_threshold)
 armlevel.loh <- segs.clean[segs.clean$cn.type == cntype.loh] %>%
-    armlevel_alt(kit.coverage = oncoscan.cov)
+    armlevel_alt(kit.coverage = oncoscan.cov, custom_threshold)
 armlevel.gain <- segs.clean[segs.clean$cn.type == cntype.gain] %>%
-    armlevel_alt(kit.coverage = oncoscan.cov)
+    armlevel_alt(kit.coverage = oncoscan.cov, custom_threshold)
 armlevel.amp <- segs.clean[segs.clean$cn.subtype %in% c(cntype.strongamp, cntype.weakamp)] %>%
-    armlevel_alt(kit.coverage = oncoscan.cov)
-## armlevel.loss contains all chromosome arms characterized with a loss, and the % of coverage of each chromosome arm by loss-altered segments.
+    armlevel_alt(kit.coverage = oncoscan.cov, custom_threshold)
+
+### plotting ALA
+oncoscan.cov <- oncoscanR::oncoscan_na33.cov[seqnames(oncoscanR::oncoscan_na33.cov) != '21p']
+OScovDf = as.data.frame(oncoscan.cov)
+getPAAs = function(oncoscan_cov,armlevelAlter){
+    currChrArm = oncoscan_cov["seqnames"]
+    if (currChrArm %in% names(armlevelAlter)) {
+        return(armlevelAlter[currChrArm])
+    }
+    return(0)
+}
+plotPAAWithThreshold = function(armLevelAlt_1type, plotTitle){
+    OScovDf$PAA_1type = apply(OScovDf, 1, getPAAs, armLevelAlt_1type)
+    OScovDf = mutate(OScovDf, isTrueAlter=ifelse(OScovDf$PAA_1type > 0.8, "#b75869", "#5869b7")) # red, blue
+    barplot(OScovDf$PAA_1type, names.arg = OScovDf$seqnames, ylim=c(0,1), main=plotTitle, col = "#5869b7")
+    barplot(OScovDf$PAA_1type, names.arg = OScovDf$seqnames, ylim=c(0,1), main=plotTitle, col = "#5869b7")
+    abline(h=0.8)
+    barplot(OScovDf$PAA_1type, names.arg = OScovDf$seqnames, ylim=c(0,1), main=plotTitle, col = OScovDf$isTrueAlter)
+    abline(h=0.8)
+}
+
+
+## displaying chromosomes arms in the normal order
+row.names(OScovDf) = OScovDf$seqnames
+rowsLayout = c("1p","1q", "2p","2q", "3p","3q","4p","4q","5p","5q","6p","6q","7p","7q","8p","8q","9p","9q","10p","10q","11p","11q","12p","12q","13q","14q","15q","16p","16q","17p","17q","18p","18q","19p","19q","20p","20q","21q","22q","Xp", "Xq","Yp", "Yq")
+OScovDf = OScovDf[rowsLayout,]
+# creating color group
+# save_plots_here = file.path(resultsDir, sampleName)
+# if(!dir.exists(save_plots_here)) dir.create(save_plots_here)
+# barplot(OScovDf$PAA_loss, names.arg = OScovDf$seqnames, ylim=c(0,1), main=paste0(sampleName, " loss"), col = "#5869b7")
+# abline(h=0.8)
+plotPAAWithThreshold(armlevel.loss, paste0(sampleName, " loss"))
+plotPAAWithThreshold(armlevel.loh, paste0(sampleName, " loh"))
+plotPAAWithThreshold(armlevel.gain, paste0(sampleName, " gain"))
+plotPAAWithThreshold(armlevel.amp, paste0(sampleName, " amp"))
+
+## armlevel.loss contains all chromosome arms characterized with a loss,and the % of coverage of each chromosome arm by loss-altered segments.
 ## same for the others respectively.
 
 

@@ -103,7 +103,7 @@ plot(1:length(s1After), s1After, ylim=c(-1, 1.1))
 ### code chunk number 4: CGHcall.Rnw:89-92
 ###################################################
 seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy", undo.splits="sdundo",undo.SD=3, clen=10, relSDlong=5)
-
+segTable = segmented(seg.cghdata)
 ## before / after segmentation:
 if (F) {
 ### base R plots

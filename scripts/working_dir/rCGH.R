@@ -11,8 +11,8 @@ library(rCGH)
 
 ## define paths
 # sampleName = "5-LD"
-# sampleName = "6-VJ"
-sampleName = "8-MM"
+sampleName = "6-VJ"
+# sampleName = "8-MM"
 pathToTxt = paste0("C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_probeset/",sampleName,".probeset.txt")
 outputFolder = paste0("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/rCGH/",sampleName)
 outputFolder_plots = file.path(outputFolder, "plots")
@@ -114,18 +114,20 @@ colnames(cgh@cnSet) = c("ProbeName","ChrNum","ChrStart","Log2Ratio_raw","Weighte
 ## ----adjustSignal-------------------------------------------------------------
 cghAdj <- adjustSignal(cgh, nCores=1, suppOutliers=TRUE)
 
+if (F) {
 ### see difference between and after adjusting data
 adj = removePointsForQuickPlotting(cghAdj@cnSet)
 raw = removePointsForQuickPlotting(cgh@cnSet)
 plot(y=raw$Log2Ratio_raw, x=raw$absPos, pch=20, main=paste0(sampleName, " Raw data"), cex=0.01, xlab="Genomic position (bp)", ylab="Log Ratio", ylim=c(-6,2))
 plot(y=adj$Log2Ratio, x=adj$absPos, pch=20, main=paste0(sampleName, " Adjusted data"), cex=0.01, xlab="Genomic position (bp)", ylab="Log Ratio", ylim=c(-6,2))
+}
 
 
 ## ----SegmentCGH---------------------------------------------------------------
 cghSeg <- segmentCGH(cghAdj, nCores=1)
 segDf_raw = cghSeg@cnSet
+segTable_rCGH6VJ <- getSegTable(cghSeg)
 segDf = removePointsForQuickPlotting(segDf_raw)
-segTable <- getSegTable(cghSeg)
 plot(y=segDf$Segm , x=segDf$absPos, pch=20, main=paste0(sampleName," Segmented data"), cex=0.01, xlab="Genomic position (bp)", ylab="Log Ratio", ylim=c(-6,2))
 ## -- plotting estimated CN
 generateGrid(paste0(sampleName," estimated copy number"))

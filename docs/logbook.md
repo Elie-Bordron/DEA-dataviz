@@ -2360,19 +2360,24 @@ Je remarque que CGHcall supprime par défaut les données des chromosomes n'éta
 D'autre part, les fichiers segments.txt que je produis dans ChAS à partir des .OSCHP ne contiennent parfois pas tous les segments. OncoscanR va forcément rater ces altérations; Il serait intéressant de donner à OncoscanR des données segmentées issues de DNAcopy/ ASPCF(la seg d'ASCAT).
 
 
-
-
-
 # <span style="color:#999900"> mercredi 27/04/2022
-arrivée à 11h30; 45 min pause; 
+arrivée à 11h30; 45 min pause; départ à 18h45
 *début Appsilon Shiny Conference*
 * [ ] demander à laetitia des cas compliqués, avec une ploïdie dure à caractériser... un gynéco ou un sarcome, certainement.
-
-
+Ai fait slides oncoscanR, regardé slides en détail
 
 # <span style="color:#999900"> jeudi 28/04/2022
+arrivée à 11h10; 30 min pause
+Je continue les slides oncoscanR. obj: faire des plots avant/après pour voir les effets des 4 fonctions de clean/smooth. -> pour l'échantillon 6-VJ, presque aucun changement n'est fait à ce niveau. Si un échantillon présente de grands changements, je l'utiliserai pour illustrer cete diapo.
+Obj: faire barplots pour montrer la proportion de chaque altération chaque bras > 1 plot par altération.
 
+- Dans rCGH, la fonction `getSegTable(cghSeg)`(où cghSeg est l'output de `segmentCGH()`) permet de convertir un tableau de segmentation par sonde en tableau par segment. une procédure intéressante peut être de faire un readGeneric() sur notre tableau par sondes, ce qui charge nos données dans un objet rCGH, ce qui nous permet de récupérer le tableau par segments une fois qu'on a lancé DNAcopy dessus (avec rCGH toujours). Je peux même tout simplement lancer rCGH jusqu'à la segmentation, puis on donne l'output à oncoscanR.
+Problème: dans oncoscanR, pour chaque segment, on a non pas le chromosome mais le *bras* sur lequel est le segment. oncoscanR utilise la colonne "Full Location" venant de ChAS et la croise avec la couverture d'OncoScan pour déterminer cela.
+Solution: recréer une colonne "Full Location" à partir du tableau de segmentation par *segment* de rCGH's DNAcopy. la donner à oncoscanR comme input venant de ChAS.
+Pour cela, vérifier que la position de chaque segment(en bases) est la même position que dans la colonne "Full Location".
+*** vérifié. *** on peut donc utiliser start et stop + le chromosome de DNAcopy pour recréer ``Full Location``. Pour recréer ``CN State``, on peut se fier à l'estimation du nombre de copies que fait rCGH, ou faire un arrondi à l'entier le plus proche des valeurs moyennes de chaque segment.Un segment à 0.378 sera donc classifié à 0. Pour recréer `type`(e.G. "Loss", "gain"...), on peut se baser sur CN.State: si ce dernier est >2, on a un gain, si il est < 1, on est en perte, etc.
 
+Ai avancé sur oncoscanR. J'ai remis en evidence ce que je savais déjà: certains E n'ont qu'un segment, tavailler sur des échantillons différents permettrait sans doute d'y voir plus clair. J'ai réfléchi à comment utiliser les résultats de segmentation d'autres packages, ce serait peut-être plus intéressant.
 
 # <span style="color:#999900"> vendredi 29/04/2022
 *fin Appsilon Shiny Conference*
