@@ -2367,7 +2367,7 @@ arrivée à 11h30; 45 min pause; départ à 18h45
 Ai fait slides oncoscanR, regardé slides en détail
 
 # <span style="color:#999900"> jeudi 28/04/2022
-arrivée à 11h10; 30 min pause
+arrivée à 11h10; 30 min pause; départ à 18h50
 Je continue les slides oncoscanR. obj: faire des plots avant/après pour voir les effets des 4 fonctions de clean/smooth. -> pour l'échantillon 6-VJ, presque aucun changement n'est fait à ce niveau. Si un échantillon présente de grands changements, je l'utiliserai pour illustrer cete diapo.
 Obj: faire barplots pour montrer la proportion de chaque altération chaque bras > 1 plot par altération.
 
@@ -2381,7 +2381,19 @@ Ai avancé sur oncoscanR. J'ai remis en evidence ce que je savais déjà: certai
 
 # <span style="color:#999900"> vendredi 29/04/2022
 *fin Appsilon Shiny Conference*
+arrivée à 11h05; 40 min pause; départ à 18h25
+* [X] ~~*regarder le programme pour appsilon!*~~ [2022-04-29] 
+* [X] ~~*regarder cahier bleu pour oncoscanR slides!!*~~ [2022-04-29]
+
+
+
+# <span style="color:#999900"> lundi 02/06/2022
 * [ ] contacter Slim karkar pour plan rapport stage
+
+
+
+
+
 
 # <span style="color:#999900"> lundi 30/05/2022
 * [ ] contacter Slim karkar pour soutenance

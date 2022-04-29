@@ -45,19 +45,35 @@ for (gamma in gammaRange){
 
 # custom psi and rho
 gamma = 0.45 
-psi=2 # 1.75
-rho=0.2 # 0.83
+psi=1.75 # 1.75
+rho=0.83 # 0.83
 callData = ASCAT::ascat.runAscat(ASCATobj = segData, gamma = gamma, img.dir=outputFolder,
     img.prefix=paste0("custom_run","_gamma=", gamma, "_psi=",psi, "_rho=", rho), psi_manual=psi, rho_manual = rho)
 
 print(c("goodness of fit ", ", gamma ", "ploidy ", "cellularity"))
 print(c(callData$goodnessOfFit, gamma, callData$ploidy, callData$purity))
 
-### getting metrics
-# run this line before running ascat.metrics() to avoid error "object 'ascat.bc' not found"
+
+################### calculate GI
+segTable_raw = callDataToPlot$segments_raw
+segTable = callDataToPlot$segments
+
+
+
+
+
+
+
+
+
+
+#################### extract plots and results
+
 if(F){
-ascat.bc=segData
-metrics = ascat.metrics(segData,callData)
+    ### getting metrics
+    # run this line before running ascat.metrics() to avoid error "object 'ascat.bc' not found"
+    ascat.bc=segData
+    metrics = ascat.metrics(segData,callData)
 }
 
 
@@ -83,7 +99,9 @@ ascat.plotRawData(segDataToPlot,img.dir=outputFolder_plots) #5-LD.tumour.png
 ## plot logR and BAF data before vs after segmentation
 ascat.plotSegmentedData(segDataToPlot,img.dir=outputFolder_plots) #5-LD.ASPCF.png
 ## later
-ascat.plotAscatProfile(callData)
+ascat.plotAscatProfile(segData)          # purity for 5-LD is 90%
+ascat.plotAscatProfile(callDataToPlot[["nA"]], callDataToPlot[["nB"]], ploidy=callDataToPlot[["ploidy"]], rho=0.9,          # purity for 5-LD is 90%
+                       goodnessOfFit=callDataToPlot[["goodnessOfFit"]], nonaberrant=F) 
 ascat.plotGenotypes(callData)
 ascat.plotNonRounded(callData)
 ## automatically generated already
@@ -145,7 +163,7 @@ generateGrid = function(graph_title) {
     axis(2, at = c(-3:8))
 }
 ### plotting raww values of both alleles of a profile
-if (TRUE) {
+if (F) {
     # remove small segments that pollute visualization
     segDf = callDataToPlot$segments_raw
     segDf_trimmed = dplyr::filter(segDf, endpos-startpos>10**7)
@@ -174,7 +192,7 @@ if (TRUE) {
 
 
 ### generating ASPCF segmentation visuals
-if (T){
+if (F){
     # 2 segments in 1 plot
     vals = c(rnorm(100,2,0.1),rnorm(100,0,0.1))
     # 1 segment in 1 plot

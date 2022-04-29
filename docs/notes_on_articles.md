@@ -247,9 +247,13 @@ Une analyse aCGH se décompose en 4 étapes distinctes:
 La _centralisation_ implémentée par rCGH a été décrite dans `Commo,F. et al. (2015) Impact of centralization on aCGH-based genomic profiles for precision medicine in oncology. Ann. Oncol., 26, 582–588`.
 Concrètement, le vecteur de log2 relative ratios est considéré comme un mélange de populations gaussiennes. Leurs proportions respectives et leurs paramètres sont estimés en utilisant l'algo EM. Par défaut, si une sous-population se révèle avoir un pic de densité supérieur à la moitié de la plus grande densité, elle est considérée comme représentant un nombre neutre de 2 copies. Sa moyenne est ensuite utilisée pour centraliser le profil. $voir figure S1 $
 
-La _segmentation_ se base sur l'algorithme CBS de DNAcopy. Cependant, 
+La _segmentation_ se base sur l'algorithme CBS de DNAcopy.
 
-
+# <span style="color:#ff9999"> Common exon duplication in animals and its role in alternative splicing
+Tandem_duplication_definition.pdf
+*Ou la définition des duplications en tandem*
+Une duplication en tandem concerne la présence en 2 exemplaires d'un exon au sein d'un gène. c'est-à-dire, l'allongement du chromosome. cf cahier 29/04
+Le phénotype TDplus d'un échantillon consiste en des centaines de TDs de 1 à 10 Mb, qui causent au total la duplication de plus de 10% du génome.
 
 
 

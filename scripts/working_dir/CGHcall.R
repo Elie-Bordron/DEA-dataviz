@@ -170,7 +170,7 @@ dev.off()
 ### code chunk number 6: CGHcall.Rnw:106-108
 ###################################################
 # tumor.prop <- c(0.75, 0.9, 0.6, 0.85, 0.65) # one value per sample. proportion of contamination by healthy cells
-tumor.prop <- c(0.75, 0.9, 0.6) # one value per sample. proportion of contamination by healthy cells
+tumor.prop <- c(0.9, 0.8, 0.8) # one value per sample. proportion of contamination by healthy cells
 rawCghResult <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor.prop)
 ## To visualize the content of a CGHcall output: a list of *7* elements. see `?CGHcall` for more details
 if (FALSE) {
@@ -220,30 +220,32 @@ frequencyPlotCalls(CghResult)
 if(FALSE) {
 ### in assayData
 # log ratio plot
-df_logCN = copynumber(CghResult)
-plot(df_logCN)
+cghRes_1sample = CghResult[,1]
+
+df_logCN = copynumber(cghRes_1sample)
+plot(df_logCN, pch=20, cex=0.00001, main="0.00001") # not smaller than 0.001
 # to save seg data plot
-segs = segmented(CghResult)
+segs = segmented(cghRes_1sample)
 png("segs.png")
-plot(segs, ylab="log ratio", xlab = "position genomique", main="donn�es de segmentation")
+plot(segs, ylab="log ratio", xlab = "position genomique", main="segmentation data")
 dev.off()
 # to save called data plot
 png("calls.png")
-plot(calls(CghResult), ylab="log ratio", xlab = "position genomique", main="segments appeles a leurs niveau estime de log ratio")
+plot(calls(cghRes_1sample), ylab="log ratio", xlab = "position genomique", main="segments appeles a leurs niveau estime de log ratio")
 dev.off()
 # extracting all data from a cghCall object's AssayData component
-probaLoss = probloss(CghResult)
-probaDoubleLoss = probdloss(CghResult)
-probaGain = probgain(CghResult)
-probaNorm = probnorm(CghResult)
-plot(probaNorm) # probability of being called at level 0
-plot(probaLoss) # probability of being called at level -1
-plot(probaDoubleLoss) # probability of being called at level -2
-plot(probaGain) # probability of being called at level >0
+probaLoss = probloss(cghRes_1sample)
+probaDoubleLoss = probdloss(cghRes_1sample)
+probaGain = probgain(cghRes_1sample)
+probaNorm = probnorm(cghRes_1sample)
+plot(probaNorm, main="probaNorm") # probability of being called at level 0
+plot(probaLoss, main="probaLoss") # probability of being called at level -1
+plot(probaDoubleLoss, main="probaDoubleLoss") # probability of being called at level -2
+plot(probaGain, main="probaGain") # probability of being called at level >0
 ### in featureData:
-chr = chromosomes(CghResult)
-bpstart = bpstart(CghResult)
-bpend = bpend(CghResult)
+chr = chromosomes(cghRes_1sample)
+bpstart = bpstart(cghRes_1sample)
+bpend = bpend(cghRes_1sample)
 # to plot only one chromosome with probability
 plot(called[chromosomes(called)==1,1])
 # extract column names
