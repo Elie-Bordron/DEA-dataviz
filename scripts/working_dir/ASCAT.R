@@ -64,6 +64,7 @@ print(dplyr::filter(GOF_all_gammas, GOF==max(GOF)))
     
 ## functions to plot values for segments of allele A and B
 plotSeg = function(seg_df, allChrs, lengthOfChrs, drawPolygons=F){
+    print(lengthOfChrs)
     ## get nb cols
     nbcols = length(seg_df)
     ## get current chromosome
@@ -92,7 +93,7 @@ plotSeg = function(seg_df, allChrs, lengthOfChrs, drawPolygons=F){
     logRAlleleA_dev = logRAlleleA + deviation
     logRAlleleB_dev = logRAlleleB - deviation
     # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
-    segments(pos0CurrChr+segStartPos, logRAlleleA_dev, pos0CurrChr+segEndPos, logRAlleleA_dev, col="dark blue", lwd=2)
+    # segments(pos0CurrChr+segStartPos, logRAlleleA_dev, pos0CurrChr+segEndPos, logRAlleleA_dev, col="dark blue", lwd=2)
     segments(pos0CurrChr+segStartPos, logRAlleleB_dev, pos0CurrChr+segEndPos, logRAlleleB_dev, col="dark red", lwd=2)
     ## drawing polygone joining this segment to closest non-null integer
     if(drawPolygons){
@@ -116,6 +117,97 @@ generateGrid = function(graph_title) {
     # Y-axis
     axis(2, at = c(-3:8))
 }
+
+
+
+################### calculate GI
+## load functions
+source(file.path(working_dir, "oncoscanR.R"))
+## constants 
+allChrs = unique(as.vector(segTable[2]))
+
+## get seg data from call result
+segTable_raw = callData$segments_raw
+segTable = callData$segments
+## check seg data
+graph_title = paste0(sampleName, " called data")
+generateGrid(graph_title)
+apply(segTable_raw, 1, plotSeg, allChrs, lengthOfChrs)
+## removing segments shorter than 300 Kbp
+segTable = dplyr::filter(segTable, endpos-startpos>300000)
+graph_title = paste0(sampleName, " after removing segments shorter than 300 Kbp")
+generateGrid(graph_title)
+apply(segTable, 1, plotSeg, allChrs, lengthOfChrs)
+## removing segments with CN=1 for each allele
+segTable = dplyr::filter(segTable, nMajor!=1 | nMinor!=1)
+graph_title = paste0(sampleName, " after removing segments of copy number=2")
+generateGrid(graph_title)
+apply(segTable, 1, plotSeg, allChrs, lengthOfChrs)
+
+
+
+getNbChrs = function(segmentsTable) {
+    chrs = as.vector(segmentsTable$chr)
+    nbChr = length(unique(chrs))
+    return(nbChr)
+}
+
+calcGI_ASCAT = function(segmentsTable) {
+    nbChr = getNbChrs(segmentsTable)
+    nbAlter = dim(segmentsTable)[1]
+    print(nbAlter)
+    GI = calcGI(nbChr, nbAlter)
+    return(GI)
+}
+GI = calcGI_ASCAT(segTable)
+
+####
+print(GI)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### plotting raww values of both alleles of a profile
 if (F) {
     # remove small segments that pollute visualization
@@ -141,73 +233,6 @@ if (F) {
     apply(segDf_trimmed, 1, plotSeg, allChrs, lengthOfChrs, drawPolygons=T)
     dev.off()
 }
-
-
-################### calculate GI
-## get seg data from call result
-segTable_raw = callData$segments_raw
-segTable = callData$segments
-
-## constants 
-allChrs = unique(as.vector(segTable[2]))
-
-## check seg data
-graph_title = "default"
-generateGrid(graph_title)
-apply(segTable_raw, 1, plotSeg, allChrs, lengthOfChrs)
-generateGrid(graph_title)
-apply(segTable, 1, plotSeg, allChrs, lengthOfChrs)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

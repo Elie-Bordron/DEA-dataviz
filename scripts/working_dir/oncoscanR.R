@@ -9,8 +9,6 @@ resultsDir is the output directory.
 genders.txt is a table of two columns: sample(e.g. '2-AD') and gender ('M' or 'F')
 "
 
-
-
 # loading custom Oncoscan Run function 
 source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/OncoscanR_functions.R")
 source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/oncoscanR_scores.R")
@@ -119,8 +117,7 @@ calcGI = function(nbAlter, nbChrs) {
     }else {
         GI=(nbAlter**2)/nbChrs
     }
-    return(GI)
-        
+    return(GI)   
 }
 
 getGIParams_oncoscanR = function(armLevelAlter) {
@@ -145,7 +142,6 @@ calcGI_oncoscanR = function(armLevelAlter) {
 getSampleNameFromOncoscanR_result = function(currRes) {
     filename = currRes$file
     splittedFilename = stringr::str_split(filename, '\\.') # need to escape the period (the dot) because this is a regex
-    # print(c("splittedFilename[1]: ", splittedFilename[[1]][1]))
     sampleName = splittedFilename[[1]][1]
     return(sampleName)
 }
@@ -264,7 +260,7 @@ segsDf = as.data.frame(segments)
 # Clean the segments: resctricted to Oncoscan coverage, LOH not overlapping with copy loss
 # segments, smooth&merge segments within 300kb and prune segments smaller than 300kb.
 
-if(F){
+if(T){
     ### plotting before/after each filter/smooth step
     plotBeforeAfterCleanStep = function(segs_df, cleaned_df, action){
         lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
@@ -341,12 +337,12 @@ OScovDf = OScovDf[rowsLayout,]
 # if(!dir.exists(save_plots_here)) dir.create(save_plots_here)
 # barplot(OScovDf$PAA_loss, names.arg = OScovDf$seqnames, ylim=c(0,1), main=paste0(sampleName, " loss"), col = "#5869b7")
 # abline(h=0.8)
-if (F) {
-    plotPAAWithThreshold(armlevel.loss, paste0(sampleName, " loss"))
-    plotPAAWithThreshold(armlevel.loh, paste0(sampleName, " loh"))
-    plotPAAWithThreshold(armlevel.gain, paste0(sampleName, " gain"))
-    plotPAAWithThreshold(armlevel.amp, paste0(sampleName, " amp"))
-}
+# if (F) {
+plotPAAWithThreshold(armlevel.loss, paste0(sampleName, " loss"))
+plotPAAWithThreshold(armlevel.loh, paste0(sampleName, " loh"))
+plotPAAWithThreshold(armlevel.gain, paste0(sampleName, " gain"))
+plotPAAWithThreshold(armlevel.amp, paste0(sampleName, " amp"))
+# }
 
 ## armlevel.loss contains all chromosome arms characterized with a loss,and the % of coverage of each chromosome arm by loss-altered segments.
 ## same for the others respectively.

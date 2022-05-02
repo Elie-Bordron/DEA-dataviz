@@ -2389,7 +2389,6 @@ arrivée à 11h05; 40 min pause; départ à 18h25
 
 # <span style="color:#999900"> lundi 02/06/2022
 arrivée à 11h; 50 min pause
-* [ ] contacter Slim karkar pour plan rapport stage
 
 ## programme de la formation ChAS: 
 Mercredi 11 : installation de la nouvelle version du logiciel sur les différents PCs
@@ -2405,6 +2404,5 @@ Jeudi 12 et Vendredi 13 :
 
 # <span style="color:#999900"> lundi 30/05/2022
 * [ ] contacter Slim karkar pour soutenance
-
 
 

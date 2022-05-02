@@ -6,7 +6,7 @@
     - [X] ~~*peut-on avoir START et STOP pour des probeset.txt?*~~ [2022-04-06] a priori non, il faudra demander à Tony
     - [X] ~~*pourquoi a-t-on plus de segments (100 exactement) si on exporte segments.txt à partir de Workflow analysis par rapport à la vue Segments de ChAS?*~~ [2022-04-06] beaucoup de ces segments sont à 0 de log ratio, donc négligés par ChAS.
     * [X] ~~*pourquoi, dans ChAS, a-t-on parfois 24 chromosomes? est-ce le chromosome Y?*~~ [2022-04-27] chr24 = chrX et chr25 = chrY
-    * [ ] pourquoi ChAS n'exporte-t-il pas les segments des chromosomes sexuels?
+    * [X] ~~*pourquoi ChAS n'exporte-t-il pas les segments des chromosomes sexuels?*~~ [2022-05-02] pour des raisons de confidentialité
 # questions sur OncoscanCNV/ChAS/... -> Tony
 * [ ] peut-on exporter start et end en colonnes de la vue graph de ChAS? sinon, a-t-on un fichier qui indique la couverture de chaque sonde? c'est-à-dire les positions de début et de fin. car CGHcall a besoin de ces 2 infos en input, et ChAS ne les exporte pas a priori.
 * [ ] peut-on visualiser la couverture des sondes par rapport au génome?

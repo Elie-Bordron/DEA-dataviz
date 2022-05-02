@@ -7,15 +7,15 @@
     - si 80% d'un bras présente la même altération, ce bras est indiqué comme altéré (GAIN/LOSS/AMP/LOH).
 - Score LST
     - voir cahier
-# input
+## input
 à partir des .OSCHP, je produis des segments.txt . Je ne recentre pas, ce qui pose des problèmes: pour l'échantillon 8-MM par exemple, 
 
-# détails 
+## détails 
 Amp: CNV>2
 Gain: CNV>0
 Loss: CNV<0
 
-# pipeline
+## pipeline
 plus d'infos dans le cahier au 27/04
 
 
@@ -46,7 +46,7 @@ Différents plots peuvent également être produits:
 - Les Summary plots sont des frequency plots un peu plus sophistiqués: ils pondèrent cette fréquence par la probabilité "a posteriori". Cette dernière est définie par la probabilité remesurée ou recalculée qu'un événement se produise en prenant en compte une nouvelle information. En d'autres termes, c'est la probabilité qu'un événement A ait lieu, sachant qu'un événement B a eu lieu, on peut donc l'écrire P(A|B). Elle s'oppose à la probabilité "a priori" (P(A)) qui est définie par des données ou connaissances antérieures à un calcul ou une observation. voir les pages wikipedia en français pour plus de détails.
 En ce qui concerne les objets $cghRaw$, $cghSeg$ et $cghCall$:
 Les différences entre Raw et Seg sont minimes. La différence principale est que cghSeg possède un attribut de plus: un tableau contenant les données de Segmentation.
-l'objet cghCall est défini dans le cahier au $23/03$.
+l'objet cghCall est défini dans le cahier au $ 23/03 $.
 
 
 ## Pipeline
@@ -343,18 +343,6 @@ la fonction EMnormalize() est utilisée pour centraliser les LRR et plotDensity(
 `multiplot(cghNorm, symbol = c("egfr", "erbb2"))`
 ![fig 3 article](docs_I_made/images/rCGH_multiplot.png "figure 1")
 
-
-
-
-note: ce package permet la parallélisation des tâches de normalisation & de segmentation de par l'utilisation du package parallel.
-
-ce qu'on a après le workflow normal est une segmentation table.
-
-pour convertir ça en tableau par gène:
->byGeneTable(data)
-
-additionnally, this package offers different genomic profile visualisation functions, static and interactive.
-
 ## input
 2 choix: 
 <!-- - La fonction readAffySNP6() permet de lire des fichiers probeset.txt, ce qui nous convient. Pas forcément besoin de passer par un custom array.
@@ -389,9 +377,13 @@ On utilise readOncoscan(). D'ailleurs, la colonne "ChrStart" qu'attend rCGH et l
 2   503538 A1BG-AS1           A1BG antisense_RNA_1_19q13.43  19 58859117 58866549  7433      +   0.80185      231     21      58810.89         4           0  2718303439
 3    29974     A1CF  APOBEC1_complementation_facto_10q11.23  10 52559169 52645435 86267      -   0.94135      751     10     135239.66         4           0  1732932312
 ```
-
-pour rappel:
-un ratio est de la forme test/control, où control est la valeur de référence. si la valeur test est supérieure au control, le ratio va de 1 à +inf. mais si test est inférieur à control, le ratio va de 0 à 1. appliquer le log2 de ce ratio permet de rendre symétrique la répartition autour de 1. (autour de zéro?)
+- on a la liste des gènes (hg19) et leur position au sein de chaque segment. on peut donc automatiser la suppression de segments sans gènes pour un nettoyage.
 
 ## visualisation interactive des données
-Disponible en ligne : ` https://fredcommo.shinyapps.io/aCGH_viewer/ `et dans R?
+Disponible en ligne : ` https://fredcommo.shinyapps.io/aCGH_viewer/ `et dans R.
+
+## notes
+- ce package permet la parallélisation des tâches de normalisation & de segmentation de par l'utilisation du package parallel.
+- pour rappel:
+    un ratio est de la forme test/control, où control est la valeur de référence. si la valeur test est supérieure au control, le ratio va de 1 à +inf. mais si test est inférieur à control, le ratio va de 0 à 1. appliquer le log2 de ce ratio permet de rendre symétrique la répartition autour de 1. (autour de zéro?)
+- additionnally, this package offers different genomic profile visualisation functions, static and interactive.
