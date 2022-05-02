@@ -140,11 +140,6 @@ calcGI_oncoscanR = function(armLevelAlter) {
     return(GI)    
 }
 
-getGIFromOncoscanR_result = function(currRes) {
-    armlevelCN = currRes$armlevel
-    GI = calcGI_oncoscanR(armlevelCN)
-    return(GI)
-}
 
 ######## functions for exporting results to text file
 getSampleNameFromOncoscanR_result = function(currRes) {
@@ -155,13 +150,14 @@ getSampleNameFromOncoscanR_result = function(currRes) {
     return(sampleName)
 }
 
-oncoscanR_results_to_dataframe = function(resultsOncoscanR) {
+oncoscanR_GIs_to_dataframe = function(resultsOncoscanR) {
     GIsList = list()
     samplesList = list()
     for (i in 1:length(resultsOncoscanR)) {
         currRes = resultsOncoscanR[[i]]
         ### get GI
-        curr_GI = getGIFromOncoscanR_result(currRes)
+        armlevelCN = currRes$armlevel
+        curr_GI = calcGI_oncoscanR(armlevelCN)
         GIsList = append(GIsList, curr_GI)
         ### get sample name
         currSampleName = getSampleNameFromOncoscanR_result(currRes)
@@ -174,7 +170,7 @@ oncoscanR_results_to_dataframe = function(resultsOncoscanR) {
 
 main = function(dataDir, gendersTable) {
     resList = computeAllFilesWithOncoscanR(dataDir, gendersTable)
-    GIResultsAllMethods = oncoscanR_results_to_dataframe(resList)
+    GIResultsAllMethods = oncoscanR_GIs_to_dataframe(resList)
     colnames(GIResultsAllMethods) = c("sample", "GI_oncoscanR")
     write.table(GIResultsAllMethods,file.path(resultsDir, "gi_results_all_methods.txt"),sep="\t",row.names=FALSE)
     return(GIResultsAllMethods)
@@ -369,6 +365,7 @@ wgd <- score_estwgd(segs.clean, oncoscanR::oncoscan_na33.cov) # Get the avg CN, 
 # else, wgd=0.
 
 hrd <- score_nlst(segs.clean, wgd['WGD'], oncoscan.cov)
+
 ## known. see  logbook.md or cahier. number of LST
 
 n.td <- score_td(segs.clean)
@@ -379,8 +376,10 @@ armlevel_alt.list <- list(AMP=sort(names(armlevel.amp)),
                           LOSS=sort(names(armlevel.loss)),
                           LOH=sort(names(armlevel.loh)),
                           GAIN=sort(names(armlevel.gain)))
+
 scores.list <- list(HRD=paste0(hrd['HRD'], ', nLST=', hrd['nLST']), TDplus=n.td$TDplus,
                     avgCN=substr(as.character(wgd['avgCN']), 1, 4))
+
 
 obj_to_return = list(armlevel=armlevel_alt.list,
             scores=scores.list,

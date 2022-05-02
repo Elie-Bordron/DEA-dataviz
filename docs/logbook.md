@@ -2388,11 +2388,19 @@ arrivée à 11h05; 40 min pause; départ à 18h25
 
 
 # <span style="color:#999900"> lundi 02/06/2022
+arrivée à 11h; 50 min pause
 * [ ] contacter Slim karkar pour plan rapport stage
 
+## programme de la formation ChAS: 
+Mercredi 11 : installation de la nouvelle version du logiciel sur les différents PCs
+Jeudi 12 et Vendredi 13 :
 
-
-
+1/ Point sur les puces à expression ARN : Jeudi 12 9H30_11h00
+2/ Partie appliquée aux  SA/CR des résultats , interprétations de certains de nos cas " difficiles" :  Jeudi 12 11h00_12h30
+*3/ Partie pratique concernant l'utilisation, nouvelles fonctions et possibilités du logiciel CHAS (dont point sur la validation de la base de ref Hg38)  : Jeudi 12 14h00-15h30*
+*4/Mise en réseau et organisation des accès aux Fichiers CEL /paramétrage DSI (en présence DSI) . Jeudi 12 15h30-16h30*
+*5/ Point BIOINFO/CGH, notamment application au projet GIRONDE Vendredi 13 9h30_11h00*
+*6/ Possibilité de détermination du score HRD : Jeudi 13 11h00_12H30*
 
 
 # <span style="color:#999900"> lundi 30/05/2022
