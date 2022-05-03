@@ -2371,11 +2371,11 @@ arrivée à 11h10; 30 min pause; départ à 18h50
 Je continue les slides oncoscanR. obj: faire des plots avant/après pour voir les effets des 4 fonctions de clean/smooth. -> pour l'échantillon 6-VJ, presque aucun changement n'est fait à ce niveau. Si un échantillon présente de grands changements, je l'utiliserai pour illustrer cete diapo.
 Obj: faire barplots pour montrer la proportion de chaque altération chaque bras > 1 plot par altération.
 
-- Dans rCGH, la fonction `getSegTable(cghSeg)`(où cghSeg est l'output de `segmentCGH()`) permet de convertir un tableau de segmentation par sonde en tableau par segment. une procédure intéressante peut être de faire un readGeneric() sur notre tableau par sondes, ce qui charge nos données dans un objet rCGH, ce qui nous permet de récupérer le tableau par segments une fois qu'on a lancé DNAcopy dessus (avec rCGH toujours). Je peux même tout simplement lancer rCGH jusqu'à la segmentation, puis on donne l'output à oncoscanR.
-Problème: dans oncoscanR, pour chaque segment, on a non pas le chromosome mais le *bras* sur lequel est le segment. oncoscanR utilise la colonne "Full Location" venant de ChAS et la croise avec la couverture d'OncoScan pour déterminer cela.
-Solution: recréer une colonne "Full Location" à partir du tableau de segmentation par *segment* de rCGH's DNAcopy. la donner à oncoscanR comme input venant de ChAS.
-Pour cela, vérifier que la position de chaque segment(en bases) est la même position que dans la colonne "Full Location".
-*** vérifié. *** on peut donc utiliser start et stop + le chromosome de DNAcopy pour recréer ``Full Location``. Pour recréer ``CN State``, on peut se fier à l'estimation du nombre de copies que fait rCGH, ou faire un arrondi à l'entier le plus proche des valeurs moyennes de chaque segment.Un segment à 0.378 sera donc classifié à 0. Pour recréer `type`(e.G. "Loss", "gain"...), on peut se baser sur CN.State: si ce dernier est >2, on a un gain, si il est < 1, on est en perte, etc.
+- Dans rCGH, la fonction `getSegTable(cghSeg)`(où cghSeg est l'output de `segmentCGH()`) permet de convertir un tableau de segmentation par sonde en tableau par segment. une procédure intéressante peut être de faire un readGeneric() sur notre tableau par sondes, ce qui charge nos données dans un objet rCGH, ce qui nous permet de récupérer le tableau par segments une fois qu'on a lancé DNAcopy dessus (avec rCGH toujours). Je peux même tout simplement lancer rCGH jusqu'à la segmentation, puis on donne l'output à oncoscanR.  
+Problème: dans oncoscanR, pour chaque segment, on a non pas le chromosome mais le *bras* sur lequel est le segment. oncoscanR utilise la colonne "Full Location" venant de ChAS et la croise avec la couverture d'OncoScan pour déterminer cela.  
+Solution: recréer une colonne "Full Location" à partir du tableau de segmentation par *segment* de rCGH's DNAcopy. la donner à oncoscanR comme input venant de ChAS.  
+Pour cela, vérifier que la position de chaque segment(en bases) est la même position que dans la colonne "Full Location".  
+*** vérifié. *** on peut donc utiliser start et stop + le chromosome de DNAcopy pour recréer ``Full Location``. Pour recréer ``CN State``, on peut se fier à l'estimation du nombre de copies que fait rCGH, ou faire un arrondi à l'entier le plus proche des valeurs moyennes de chaque segment.Un segment à 0.378 sera donc classifié à 0. Pour recréer `type`(e.G. "Loss", "gain"...), on peut se baser sur CN.State: si ce dernier est >2, on a un gain, si il est < 1, on est en perte, etc.  
 
 Ai avancé sur oncoscanR. J'ai remis en evidence ce que je savais déjà: certains E n'ont qu'un segment, tavailler sur des échantillons différents permettrait sans doute d'y voir plus clair. J'ai réfléchi à comment utiliser les résultats de segmentation d'autres packages, ce serait peut-être plus intéressant.
 
@@ -2388,7 +2388,7 @@ arrivée à 11h05; 40 min pause; départ à 18h25
 
 
 # <span style="color:#999900"> lundi 02/06/2022
-arrivée à 11h; 50 min pause
+arrivée à 11h; 50 min pause; départ à 19h
 
 ## programme de la formation ChAS: 
 Mercredi 11 : installation de la nouvelle version du logiciel sur les différents PCs
@@ -2401,8 +2401,23 @@ Jeudi 12 et Vendredi 13 :
 *5/ Point BIOINFO/CGH, notamment application au projet GIRONDE Vendredi 13 9h30_11h00*
 *6/ Possibilité de détermination du score HRD : Jeudi 13 11h00_12H30*
 
+# <span style="color:#999900"> mardi 03/06/2022
+arrivée à 10h30; 40 min pause;  départ à 18h30
+
+Je ne peux pas générer l'OSCHP de 1-RV à partir des fichiers CEL, il y a sûrement un problème avec le fichier AT .
+
+J'ai parlé du plan du rapport avec Slim Karkar, l'obj de vendredi est d'avoir un plan très détaillé. le matin, rédiger, l'après-midi, run les échantillons.
+
+
+# <span style="color:#999900"> mercredi 04/06/2022
+arrivée à 
+J'ai fait un document plan_rapport.md. le transposer sur overleaf (google chrome)
+`matin: ` rédaction rapport
+`aprèm: ` faire tourner les échantillons
+
 
 # <span style="color:#999900"> lundi 30/05/2022
 * [ ] contacter Slim karkar pour soutenance
 
 
+         

@@ -10,58 +10,7 @@ library(ASCAT)
 library(dplyr)
 
 
-sampleName = "5-LD"
-# sampleName = "6-VJ"
-# sampleName = "7-DG"
-pathToOSCHP = paste0("C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_OSCHP/",sampleName,".OSCHP")
-pathToCel = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_CEL"
-pathToATCelFile = file.path(pathToCel, paste0(sampleName,"_AT_(OncoScan_CNV).CEL"))
-pathToGCCelFile = file.path(pathToCel, paste0(sampleName,"_GC_(OncoScan_CNV).CEL"))
-outputFolder = paste0("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/ASCAT/",sampleName)
-outputFolder_plots = file.path(outputFolder, "plots")
-
-## set variables
-lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534,
-                 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
-
-
-# to load functions from EaCoN_functions.R
-source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/EaCoN_functions.R")
-source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/ASCAT_functions.R")
-# loading data
-rawData = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = sampleName, oschp_file=pathToOSCHP, force=T, oschp.keep=T, return.data=TRUE, plot=F, write.data=F)
-# segmenting data using ascat.aspcf(ASCAT_obj)
-segData =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50) # 50 is EaCoN default value
-# estimating copy number & ploidy & cellularity using ASCAT::ascat.runAscat. Also generates rawprofile, ascatprofile and sunrise plots
-if(!dir.exists(outputFolder)) dir.create(outputFolder)
-# Retaining most trustworthy results across different gamma values
-gammaRange = seq(0.35, 0.95, 0.05)
-outputFolderGammaRange = file.path(outputFolder, "gammaRange")
-if(!dir.exists(outputFolderGammaRange)) dir.create(outputFolderGammaRange)
-callData = NULL
-GOF_all_gammas = c()
-for (gamma in gammaRange){
-    currCallData = ASCAT::ascat.runAscat(ASCATobj = segData, gamma = gamma, img.dir=outputFolderGammaRange,
-                                     img.prefix=paste0("normal_run", "_gamma=", gamma, "_"))
-    GOF_all_gammas = c(GOF_all_gammas, currCallData$goodnessOfFit)
-    if(is.null(callData)) {
-        print("first loop")
-        callData = currCallData
-        callData = append(callData, gamma)
-    } else if(currCallData$goodnessOfFit > callData$goodnessOfFit) {
-        print("better solution found")
-        callData = currCallData
-        callData = append(callData, gamma)
-    }
-}
-## to view best solution: 
-GOF_all_gammas = as.data.frame(GOF_all_gammas)
-GOF_all_gammas$gamma = gammaRange; colnames(GOF_all_gammas)=c("GOF", "gamma")
-print(dplyr::filter(GOF_all_gammas, GOF==max(GOF)))
-
-
-
-    
+#### functions
 ## functions to plot values for segments of allele A and B
 plotSeg = function(seg_df, allChrs, lengthOfChrs, drawPolygons=F){
     print(lengthOfChrs)
@@ -93,7 +42,7 @@ plotSeg = function(seg_df, allChrs, lengthOfChrs, drawPolygons=F){
     logRAlleleA_dev = logRAlleleA + deviation
     logRAlleleB_dev = logRAlleleB - deviation
     # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
-    # segments(pos0CurrChr+segStartPos, logRAlleleA_dev, pos0CurrChr+segEndPos, logRAlleleA_dev, col="dark blue", lwd=2)
+    segments(pos0CurrChr+segStartPos, logRAlleleA_dev, pos0CurrChr+segEndPos, logRAlleleA_dev, col="dark blue", lwd=2)
     segments(pos0CurrChr+segStartPos, logRAlleleB_dev, pos0CurrChr+segEndPos, logRAlleleB_dev, col="dark red", lwd=2)
     ## drawing polygone joining this segment to closest non-null integer
     if(drawPolygons){
@@ -104,13 +53,12 @@ plotSeg = function(seg_df, allChrs, lengthOfChrs, drawPolygons=F){
     }
 }
 
-
 generateGrid = function(graph_title) {
     #create empty plot to add things in
     plot(1, ylim=c(0,2), xlim=c(0,3*10**9),col="white", xaxt="n", yaxt="n", xlab="nombre de bases", ylab="nombre de copies", main=graph_title)
     #  add horizontal grid
     for (CN in c(-3:8)) {
-    abline(h=CN, col="dark grey")
+        abline(h=CN, col="dark grey")
     }
     # X-axis
     axis(1, at = c(0, 5*10**8, 1*10**9, 1.5*10**9, 2*10**9, 2.5*10**9, 3*10**9))
@@ -118,34 +66,7 @@ generateGrid = function(graph_title) {
     axis(2, at = c(-3:8))
 }
 
-
-
-################### calculate GI
-## load functions
-source(file.path(working_dir, "oncoscanR.R"))
-## constants 
-allChrs = unique(as.vector(segTable[2]))
-
-## get seg data from call result
-segTable_raw = callData$segments_raw
-segTable = callData$segments
-## check seg data
-graph_title = paste0(sampleName, " called data")
-generateGrid(graph_title)
-apply(segTable_raw, 1, plotSeg, allChrs, lengthOfChrs)
-## removing segments shorter than 300 Kbp
-segTable = dplyr::filter(segTable, endpos-startpos>300000)
-graph_title = paste0(sampleName, " after removing segments shorter than 300 Kbp")
-generateGrid(graph_title)
-apply(segTable, 1, plotSeg, allChrs, lengthOfChrs)
-## removing segments with CN=1 for each allele
-segTable = dplyr::filter(segTable, nMajor!=1 | nMinor!=1)
-graph_title = paste0(sampleName, " after removing segments of copy number=2")
-generateGrid(graph_title)
-apply(segTable, 1, plotSeg, allChrs, lengthOfChrs)
-
-
-
+## functions for GI calculation
 getNbChrs = function(segmentsTable) {
     chrs = as.vector(segmentsTable$chr)
     nbChr = length(unique(chrs))
@@ -155,19 +76,143 @@ getNbChrs = function(segmentsTable) {
 calcGI_ASCAT = function(segmentsTable) {
     nbChr = getNbChrs(segmentsTable)
     nbAlter = dim(segmentsTable)[1]
-    print(nbAlter)
+    # print(c("nbAlter: ", nbAlter))
     GI = calcGI(nbChr, nbAlter)
     return(GI)
 }
-GI = calcGI_ASCAT(segTable)
-
-####
-print(GI)
 
 
 
 
 
+sampleName = "5-LD"
+# sampleName = "6-VJ"
+# sampleName = "7-DG"
+
+sampleNames = c("10-CB", "15-GG", "20-CJ", "5-LD",  "8-MM",  "11-BG", "16-DD", "21-DC", "9-LA",  "12-BC", "17-VV", "2-AD",  "6-VJ",  "13-VT", "18-JA", "3-ES",  "14-CJ", "19-BF", "4-GM",  "7-DG" )
+
+
+
+# to load functions from EaCoN_functions.R
+source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/EaCoN_functions.R")
+source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/ASCAT_functions.R")
+
+pipelineASCAT = function(sampleName) {
+    ## set paths
+    pathToOSCHP = paste0("C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_OSCHP/",sampleName,".OSCHP")
+    pathToCel = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/all_CEL"
+    pathToATCelFile = file.path(pathToCel, paste0(sampleName,"_AT_(OncoScan_CNV).CEL"))
+    pathToGCCelFile = file.path(pathToCel, paste0(sampleName,"_GC_(OncoScan_CNV).CEL"))
+    outputFolder = paste0("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/ASCAT/",sampleName)
+    outputFolder_plots = file.path(outputFolder, "plots")
+    
+    ## set variables
+    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534,
+                     114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+    # loading data
+    rawData = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = sampleName, oschp_file=pathToOSCHP, force=T, oschp.keep=T, return.data=TRUE, plot=F, write.data=F)
+    # segmenting data using ascat.aspcf(ASCAT_obj)
+    segData =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50) # 50 is EaCoN default value
+    # estimating copy number & ploidy & cellularity using ASCAT::ascat.runAscat. Also generates rawprofile, ascatprofile and sunrise plots
+    if(!dir.exists(outputFolder)) dir.create(outputFolder)
+    # Retaining most trustworthy results across different gamma values
+    gammaRange = seq(0.35, 0.95, 0.05)
+    outputFolderGammaRange = file.path(outputFolder, "gammaRange")
+    if(!dir.exists(outputFolderGammaRange)) dir.create(outputFolderGammaRange)
+    callData = NULL
+    GOF_all_gammas = c()
+    print("searching for best gamma...")
+    for (gamma in gammaRange){
+        currCallData = ASCAT::ascat.runAscat(ASCATobj = segData, gamma = gamma, img.dir=outputFolderGammaRange,
+                                         img.prefix=paste0("normal_run", "_gamma=", gamma, "_"))
+        GOF_all_gammas = c(GOF_all_gammas, currCallData$goodnessOfFit)
+        print(c("callData: ", callData))
+        if(is.null(callData)) {
+            # print("first loop")
+            callData = currCallData
+            callData = append(callData, gamma)
+        } else if(currCallData$goodnessOfFit > callData$goodnessOfFit) {
+            # print("better solution found")
+            callData = currCallData
+            callData = append(callData, gamma)
+        }
+    }
+    ## to view best solution: 
+    GOF_all_gammas = as.data.frame(GOF_all_gammas)
+    GOF_all_gammas$gamma = gammaRange; colnames(GOF_all_gammas)=c("goodness_of_fit", "gamma")
+    bestSolution = dplyr::filter(GOF_all_gammas, goodness_of_fit==max(goodness_of_fit))
+    print(c("best solution: ", bestSolution))
+    return(list(callData, GOF_all_gammas))
+}
+
+
+
+
+################### calculate GI
+
+## load functions
+source(file.path(working_dir, "oncoscanR.R"))
+cleanASCATSegData = function(callData, trimData = T) {
+    ## get seg data from call result
+    segTable_raw = callData$segments_raw
+    segTable = callData$segments
+    ## constants 
+    allChrs = unique(as.vector(segTable[2]))
+    
+    ## check seg data
+    # graph_title = paste0(sampleName, " called data")
+    # generateGrid(graph_title)
+    # apply(segTable, 1, plotSeg, allChrs, lengthOfChrs)
+    
+    if(trimData) {
+        ## removing segments shorter than 300 Kbp
+        segTable = dplyr::filter(segTable, endpos-startpos>300000)
+    }
+    # graph_title = paste0(sampleName, " after removing segments shorter than 300 Kbp")
+    # generateGrid(graph_title)
+    # apply(segTable, 1, plotSeg, allChrs, lengthOfChrs)
+    
+    ## removing segments with CN=1 for each allele
+    segTable = dplyr::filter(segTable, nMajor!=1 | nMinor!=1)
+    # graph_title = paste0(sampleName, " after removing segments of copy number=2")
+    # generateGrid(graph_title)
+    # apply(segTable, 1, plotSeg, allChrs, lengthOfChrs)
+    return(segTable)   
+}
+    
+
+#### main
+sampleNames = c("17-VV", "10-CB", "15-GG", "20-CJ", "5-LD",  "8-MM",  "11-BG", "16-DD", "21-DC", "9-LA",  "12-BC", "2-AD",  "6-VJ",  "13-VT", "18-JA", "3-ES",  "14-CJ", "19-BF", "4-GM",  "7-DG")
+# sampleNames = c("5-LD", "6-VJ", "8-MM")
+GI_df = data.frame(rep(NA, length(sampleNames)))
+colnames(GI_df) = "GI_ASCAT"
+rownames(GI_df) = sampleNames
+################# start of loop
+for (sampleName in sampleNames) {
+    outputFolder = paste0("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/ASCAT/",sampleName)
+    resPipeline = pipelineASCAT(sampleName)
+    callData = resPipeline[[1]]
+    GammasTested = resPipeline[[2]]
+    write.table(GammasTested, file.path(outputFolder, "gammas_tested.txt"))
+    segTable_clean = cleanASCATSegData(callData, trimData=F)
+    GI = calcGI_ASCAT(segTable_clean)
+    print(GI)
+    ## keep this GI in a df along with its sampleName
+    GI_df[sampleName, ] = GI
+}
+
+################# end of loop
+
+## write all GIs in a text file
+resFilePath =  "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/OncoscanR/gi_results_all_methods.txt"
+resFile = read.table(resFilePath, h=T)
+### 
+rowsLayout = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+GI_df = GI_df[rowsLayout,]
+
+
+##
+print("end")
 
 
 

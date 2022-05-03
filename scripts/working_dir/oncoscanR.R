@@ -50,7 +50,7 @@ computeOneFileWithOncoscanR = function(filepath,gender) {
     print(c("gender: ", gender))
     #### using custom run fx
     custom_workflow_oncoscan.run(filepath, gender)
-    # curr_res = oncoscanR::workflow_oncoscan.run(filepath, gender)
+    curr_res = oncoscanR::workflow_oncoscan.run(filepath, gender)
     return(curr_res)
 }
 
