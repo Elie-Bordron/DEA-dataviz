@@ -111,9 +111,9 @@ pipelineASCAT = function(sampleName) {
     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534,
                      114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
     # loading data
-    rawData_17 = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = sampleName, oschp_file=pathToOSCHP, force=T, oschp.keep=T, return.data=TRUE, plot=F, write.data=F)
+    rawData = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = sampleName, oschp_file=pathToOSCHP, force=T, oschp.keep=T, return.data=TRUE, plot=F, write.data=F)
     # segmenting data using ascat.aspcf(ASCAT_obj)
-    segData_17 =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50) # 50 is EaCoN default value
+    segData =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50) # 50 is EaCoN default value
     # estimating copy number & ploidy & cellularity using ASCAT::ascat.runAscat. Also generates rawprofile, ascatprofile and sunrise plots
     if(!dir.exists(outputFolder)) dir.create(outputFolder)
     # Retaining most trustworthy results across different gamma values
@@ -124,7 +124,7 @@ pipelineASCAT = function(sampleName) {
     GOF_all_gammas = c()
     print("searching for best gamma...")
     for (gamma in gammaRange){
-        currCallData = ASCAT::ascat.runAscat(ASCATobj=segData_17,gamma=gamma,img.dir=outputFolderGammaRange,img.prefix=paste0("normal_run", "_gamma=", gamma, "_"))
+        currCallData = ASCAT::ascat.runAscat(ASCATobj=segData,gamma=gamma,img.dir=outputFolderGammaRange,img.prefix=paste0("normal_run", "_gamma=", gamma, "_"))
         if(is.null(currCallData$goodnessOfFit)) {
             print("currCallData$goodnessOfFit is NULL, adding 0.0 as goodness value")
             GOF_all_gammas = c(GOF_all_gammas, 0.0)
@@ -212,11 +212,10 @@ for (sampleName in sampleNames) {
     write.table(GammasTested, file.path(outputFolder, "gammas_tested.txt"))
     segTable_clean = cleanASCATSegData(callData, trimData=F)
     GI = calcGI_ASCAT(segTable_clean)
-    print(GI)
     ## keep this GI in a df along with its sampleName
     GI_df[sampleName, ] = GI
 }
-
+GI_df_copy = GI_df
 ################# end of loop
 
 ## write all GIs in a text file
