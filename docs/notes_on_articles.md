@@ -2,7 +2,6 @@
 # <span style="color:#ff9999">Automated Detection of Arm-Level Alterations for Individual Cancer Patients in the Clinical Setting
 2021_Christinat_HRD_Oncoscan.pdf
 
-`voir cahier au `
 
 Copy number alterations, a genetic event, promotes tumor development. these events are used as predictive biomarkers in clinical care. they are roughly classified as arm-level or focal. genome-wide techniques exist to classify arm-level ones, but challenges exist:
 - How to define an arm-level alteration? there is no consensus on it.
@@ -35,11 +34,42 @@ les données de nombre de copies ont été utilisées pour  détecter des arm-le
 
 
 # <span style="color:#ff9999">Uterine smooth muscle tumor analysis by comparative genomic hybridization: a useful diagnostic tool in challenging lesions
-modpathol20153.pdf
+modpathol20153.pdf    (Thèse de Sabrina)
 
+## résumé rapide: 
 the diagnosis of STUMP tumors is often challenging. The authors proposed to test the hypothesis that GI could split those tumors in two groups: benign and malignant. A study was conducted, using a threshold of 10 to classify the STUMP.
-In conclusion, genomic index is a useful technique to classify these tumors. more specifically, genomic index divides
-problematic uterine smooth muscle lesions into leiomyomas and leiomyosarcomas.
+In conclusion, genomic index is a useful technique to classify these tumors. more specifically, genomic index divides problematic uterine smooth muscle lesions into leiomyomas and leiomyosarcomas.
+
+## discussion 
+La classification histologique basée sur les "three features" permet généralement de caractériser les TMLU (tumeurs du muscle lisse utérin) en bénignes ou malignes.  
+Cependant, dans certains cas, l'interprétation de ces critères est trop subjective , et le rôle de facteurs externes (traitement endocrinien...) peut compliquer le diagnostic.  
+Le terme STUMP désigne les TMLU dont le potentiel malignant est incertain. Il s'agit donc d'un terme fourre-tout qui ne désigne pas une entité biologique mais une catégorie arbitraire, c'est pourquoi l'utilisation de ce terme est à limiter quand c'est possible.
+Les auteurs font l'hypothèse suivante: Le comportement clinique de tumeurs du muscle lisse utérin est *fortement* lié avec des profils génomiques spécifiques (pouvant être caractérisés par le GI).
+Dans cete étude, une trentaine de tumeurs du muscle lisse utérin pour lesquelles la caractérisation ne fut pas concluante ont été analysées.  
+
+Pour tester la pertinence de l'analyse du profil génomique, les auteurs ont d'abord analysé des lésions bénignes (leiomyomes) et malignantes (leiomyosarcomes) qui ont été caractérisées de manière très concluante.
+La correspondance entre l'index génomique et le comportement clinique était parfaite; L'analyse du profil génomique pour caractériser ces tumeurs est donc pertinente.
+
+Le GI a ainsi été utilisé pour séparer les Smooth muscle uterine tumors *problématiques* en 2 groupes autour de 10.
+Le premier groupe, GI<10 , n'avait pas de métastase et se comportait comme un leiomyome (bénin, donc). Le second groupe, GI>10, consistait en tumeurs ayant une récurrence qui s'approche de celle des Leiomyosarcomes.
+Le GI est donc utile pour pronostiquer la survie sans métastases. Le GI n'est pas concluant pour pronostiquer la survie globale, peut-être parce que dans l'étude, plus d'évènements de récurrence métastatique que de décès sont survenus.
+[S'ensuit un paragraphe qui relativise ce qu'on vient de dire, et parle successivement des façons d'améliorer le pouvoir pronostic du GI, des biais de l'étude, des paramètres morpho utilisés pour caractériser les LeioMyoSarcomes et pourquoi certains sont à utiliser avec précaution (le mitotic count, effectué sur des cellules Ischémiques (donc ayant des noyaux tachetés pouvant passer pour des mitoses), peut être très différent selon l'observateur) et comment les auteurs ont coutourné ces problèmes (seules des régions avec des cellules en fuseau ont été utilisées)]
+Les auteurs indiquent ce qui a été fait auparavant: utiliser l'analyse du profil génomique comme outil de diagnostic n'a jamais été fait.
+
+Ils définissent donc ici le seuil de 10 du GI permettant de classifier les STUMPs en bénins et malins, respectivement proches de leiomyomes et leiomyosarcomes.
+
+Le terme de STUMP se mélange, dans la littérature, à d'autres termes pour définir des tumeurs parfois différentes. En ce sens, il peut être complexe de comparer plusieurs études sur l'évolution clinique des STUMPs. Une méta-analyse qui a pris en compte ces biais a conclu que le taux de récurrence pour ces tumeurs allait de 10.4 à 26.7%.
+
+Malgré le fait que le terme STUMP ne désigne pas un type de tumeurs en particulier, l'analyse du profil génomique (donc l'utilisation du GI) est un outil pertinent et puissant pour assister le diagnostic des lésions du muscle lisse utérin difficiles à caractériser.
+
+Contrairement aux LMS ("high-grade"), les STUMP sont généralement des tumeurs plus "low-grade", car la récurrence est souvent retardée et l'évolution clinique prolongée (selon la biblio). Cela corrobore ce que les auteurs ont trouvé.
+
+Le GI permet de classer les STUMPs en LM et LMS, mais cela ajoute des cas indolents au spectre des LMS, qui sont conventionnellement plus agressifs.
+
+***En conclusion, L'analyse de profils génomiques par array-CGH est un outil de diagnostic innovant (en 2015) complémentaire à l'approche morphologique, et est pertinent pour classifier les tumeurs du muscle lisse utérin difficiles à caractériser.***
+
+
+
 
 
 # <span style="color:#ff9999">The Nanocind Signature Is an Independent Prognosticator of Recurrence and Death in Uterine Leiomyosarcomas

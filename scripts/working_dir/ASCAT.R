@@ -88,8 +88,9 @@ calcGI_ASCAT = function(segmentsTable) {
 sampleName = "5-LD"
 # sampleName = "6-VJ"
 # sampleName = "7-DG"
+sampleName = "17-VV"
 
-sampleNames = c("10-CB", "15-GG", "20-CJ", "5-LD",  "8-MM",  "11-BG", "16-DD", "21-DC", "9-LA",  "12-BC", "17-VV", "2-AD",  "6-VJ",  "13-VT", "18-JA", "3-ES",  "14-CJ", "19-BF", "4-GM",  "7-DG" )
+sampleNames = c("10-CB", "15-GG", "20-CJ", "5-LD",  "8-MM",  "11-BG", "16-DD", "21-DC", "9-LA",  "12-BC", "2-AD",  "6-VJ",  "13-VT", "18-JA", "3-ES",  "14-CJ", "19-BF", "4-GM",  "7-DG", "17-VV")
 
 
 
@@ -110,9 +111,9 @@ pipelineASCAT = function(sampleName) {
     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534,
                      114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
     # loading data
-    rawData = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = sampleName, oschp_file=pathToOSCHP, force=T, oschp.keep=T, return.data=TRUE, plot=F, write.data=F)
+    rawData_17 = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = sampleName, oschp_file=pathToOSCHP, force=T, oschp.keep=T, return.data=TRUE, plot=F, write.data=F)
     # segmenting data using ascat.aspcf(ASCAT_obj)
-    segData =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50) # 50 is EaCoN default value
+    segData_17 =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50) # 50 is EaCoN default value
     # estimating copy number & ploidy & cellularity using ASCAT::ascat.runAscat. Also generates rawprofile, ascatprofile and sunrise plots
     if(!dir.exists(outputFolder)) dir.create(outputFolder)
     # Retaining most trustworthy results across different gamma values
@@ -123,18 +124,33 @@ pipelineASCAT = function(sampleName) {
     GOF_all_gammas = c()
     print("searching for best gamma...")
     for (gamma in gammaRange){
-        currCallData = ASCAT::ascat.runAscat(ASCATobj = segData, gamma = gamma, img.dir=outputFolderGammaRange,
-                                         img.prefix=paste0("normal_run", "_gamma=", gamma, "_"))
-        GOF_all_gammas = c(GOF_all_gammas, currCallData$goodnessOfFit)
-        print(c("callData: ", callData))
-        if(is.null(callData)) {
-            # print("first loop")
-            callData = currCallData
-            callData = append(callData, gamma)
-        } else if(currCallData$goodnessOfFit > callData$goodnessOfFit) {
-            # print("better solution found")
-            callData = currCallData
-            callData = append(callData, gamma)
+        currCallData = ASCAT::ascat.runAscat(ASCATobj=segData_17,gamma=gamma,img.dir=outputFolderGammaRange,img.prefix=paste0("normal_run", "_gamma=", gamma, "_"))
+        if(is.null(currCallData$goodnessOfFit)) {
+            print("currCallData$goodnessOfFit is NULL, adding 0.0 as goodness value")
+            GOF_all_gammas = c(GOF_all_gammas, 0.0)
+        } else {
+            GOF_all_gammas = c(GOF_all_gammas, currCallData$goodnessOfFit)
+        }
+        # print(c("currCallData's goodness of fit: ': ", currCallData$goodnessOfFit))
+        if(!is.null(callData)) {
+            # print("callData is NOT null")
+            if(!is.null(currCallData$goodnessOfFit)) {
+                # print("currCallData has a goodnessOfFit")
+                if(callData$goodnessOfFit<currCallData$goodnessOfFit) {
+                    # print("currCallData has a better goodnessOfFit than callData, we replace the latter by the former")
+                    callData = currCallData
+                    callData = append(callData, gamma)
+                }
+            }
+        } else {
+            # print("calldata is NULL")
+            if(!is.null(currCallData$goodnessOfFit)) {
+                # print("currCallData has a goodnessOfFit, it becomes the first callData")
+                    callData = currCallData
+                    callData = append(callData, gamma)
+                
+            } 
+
         }
     }
     ## to view best solution: 
@@ -151,7 +167,7 @@ pipelineASCAT = function(sampleName) {
 ################### calculate GI
 
 ## load functions
-source(file.path(working_dir, "oncoscanR.R"))
+source(file.path(working_dir, "oncoscanR_functions.R"))
 cleanASCATSegData = function(callData, trimData = T) {
     ## get seg data from call result
     segTable_raw = callData$segments_raw

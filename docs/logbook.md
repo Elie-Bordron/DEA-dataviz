@@ -2408,9 +2408,10 @@ Je ne peux pas générer l'OSCHP de 1-RV à partir des fichiers CEL, il y a sûr
 
 J'ai parlé du plan du rapport avec Slim Karkar, l'obj de vendredi est d'avoir un plan très détaillé. le matin, rédiger, l'après-midi, run les échantillons.
 
+J'ai aussi fait un code qui lance ASCAT sur tous nos chantillons (ASCAT.R). l'E 17 a des problèmes , peut-être de path? voir ça.
 
 # <span style="color:#999900"> mercredi 04/06/2022
-arrivée à 
+arrivée à 9h15; 50 min pause
 J'ai fait un document plan_rapport.md. le transposer sur overleaf (google chrome)
 `matin: ` rédaction rapport
 `aprèm: ` faire tourner les échantillons

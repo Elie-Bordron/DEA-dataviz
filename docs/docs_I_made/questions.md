@@ -1,6 +1,6 @@
 # questions de bioinfo -> Elodie, Jennifer, Julie
 * [ ] voir avec elodie la première formule de DNAcopy.
-* [ ] ASCAT : voir w/ elodie pour les équations du calling? pas forcément important pour nous. cf cahier 26/04
+* [X] ~~*ASCAT : voir w/ elodie pour les équations du calling? pas forcément important pour nous. cf cahier 26/04*~~ [2022-05-04]
 # questions de bio -> Laetitia, Claire
 - pour laetitia, cf cahier :
     - [X] ~~*peut-on avoir START et STOP pour des probeset.txt?*~~ [2022-04-06] a priori non, il faudra demander à Tony
@@ -8,6 +8,8 @@
     * [X] ~~*pourquoi, dans ChAS, a-t-on parfois 24 chromosomes? est-ce le chromosome Y?*~~ [2022-04-27] chr24 = chrX et chr25 = chrY
     * [X] ~~*pourquoi ChAS n'exporte-t-il pas les segments des chromosomes sexuels?*~~ [2022-05-02] pour des raisons de confidentialité.
     * [ ] Je ne peux pas générer l'OSCHP de 1-RV à partir des fichiers CEL, il y a sûrement un problème avec le fichier AT . Demander à laetitia si c'est possible de me le renvoyer
+    * [ ] le GI a été validé pour séparer les STUMP en léiomyomes et léiomyosarcomes. A-t-il été validé pour d'autres cancers?
+    * [ ] Ce qu'on appelle la récurrence, c'est l'apparition de métastases?
 # questions sur OncoscanCNV/ChAS/... -> Tony
 * [ ] peut-on exporter start et end en colonnes de la vue graph de ChAS? sinon, a-t-on un fichier qui indique la couverture de chaque sonde? c'est-à-dire les positions de début et de fin. car CGHcall a besoin de ces 2 infos en input, et ChAS ne les exporte pas a priori.
 * [ ] peut-on visualiser la couverture des sondes par rapport au génome?
