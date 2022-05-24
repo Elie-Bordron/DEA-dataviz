@@ -5,7 +5,7 @@
 # apparently if ".lnk" is not specified ignoring data-raccourci won't work.
 data-raccourci.lnk
 .lintr
-
+results/QC_table/allSamplesNiceFormat.probeset.txt
 
 
 

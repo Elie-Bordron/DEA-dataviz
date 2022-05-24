@@ -1,2 +1,0 @@
-"sample"	"GI_oncoscanR"
-12-BC	0
