@@ -2572,6 +2572,8 @@ CGHexplorer (cité dans ASCAT supplementary figures ): son code n'est pas dispon
 * [ ] pour tous les outils: Créer un fichier texte qui donne la date et l'heure pour lesquelles le package a tourné, les paramètres utilisés (si preprocess a été utilisé, si oui avec quelles options...) -> pas pour toutes les options mais les plus importantes: la penalty d'ASCAT, si CGHcall a travaillé sur tous les échantillons à la fois ou un à la fois, ou si CGHcall a call sur chaque bras chromosomique ou sur tout le génome... Surtout, oncoscanR et son filtrage des segments.
 J'ai ajouté les licences de chaque package à fonc...md . à part rCGH, qu'on ne peut pas modifier, tous sont open source et modifiables.
 
+Je veux supprimer la branche tmp.
+
 # <span style="color:#999900"> vendredi 27/05/2022
 * [ ] obj aujourd'hui: premier jet du rapport fini. 
 
