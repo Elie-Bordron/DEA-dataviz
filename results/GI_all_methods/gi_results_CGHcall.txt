@@ -1,0 +1,2 @@
+sample	GI_CGHcall	nbAlter_CGHcall	nbChr_CGHcall
+2-AD	18.7777777777778	13	9
