@@ -2560,19 +2560,26 @@ J'ai ajouté des notes et des choses à faire dans ``informations_a_garder.md``.
 * [ ] parler à Laetitia: interprétation des résultats agilent en fin de semaine
 
 # <span style="color:#999900"> mardi 24/05/2022
-arrivée à 9h15; 30 min pause; 
+arrivée à 9h15; 30 min pause; départ à 20:15
 CGHexplorer (cité dans ASCAT supplementary figures ): son code n'est pas disponible.
 * [X] ~~*noter le récap de la réunion dans le framapad*~~ [2022-05-24]
 * [X] ~~*vérifier la date soutenance*~~ [2022-05-24]
 * [X] ~~*transférer les notes prises sur cahier dans infos...md .*~~ [2022-05-24]
 * [ ] finir matmet w/ ASCAT
-* [ ] git push pour pouvoir travailler vendredi
+* [X] ~~*git push pour pouvoir travailler vendredi*~~ [2022-05-25]
 * [ ] Plot claire sur R
 * [ ] ASCAT: supprimer les données des chromosomes sexuels *après* l'importation des données càd après custom_OS.process().
 * [ ] pour tous les outils: Créer un fichier texte qui donne la date et l'heure pour lesquelles le package a tourné, les paramètres utilisés (si preprocess a été utilisé, si oui avec quelles options...) -> pas pour toutes les options mais les plus importantes: la penalty d'ASCAT, si CGHcall a travaillé sur tous les échantillons à la fois ou un à la fois, ou si CGHcall a call sur chaque bras chromosomique ou sur tout le génome... Surtout, oncoscanR et son filtrage des segments.
 J'ai ajouté les licences de chaque package à fonc...md . à part rCGH, qu'on ne peut pas modifier, tous sont open source et modifiables.
 
-Je veux supprimer la branche tmp.
+Je veux supprimer la branche tmp. J'arrive à push sur main, je peux donc le faire.
+J'ai supprimé la branche tmp, github est clean.
+
+# <span style="color:#999900"> mercredi 25/05/2022
+arrivée à 9h30; 40 min pause; départ à 17h40
+J'ai essayé de comprendre ce qui change entre deux segmentations testées par ASPCF en lisant le code, je n'ai pas compris, essayer de lire le papier sur potts filter pour comprendre ça.
+J'ai rédigé mat & met - ASCAT (presque fini) et commencé des figures pour les résultats
+
 
 # <span style="color:#999900"> vendredi 27/05/2022
 * [ ] obj aujourd'hui: premier jet du rapport fini. 

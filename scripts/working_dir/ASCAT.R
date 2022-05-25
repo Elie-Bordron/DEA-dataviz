@@ -107,7 +107,6 @@ sampleNames = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA
 
 # to load functions from EaCoN_functions.R
 source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/EaCoN_functions.R")
-source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/ASCAT_functions.R")
 
 pipelineASCAT = function(sampleName,outputFolder, ascatFolder) {
     ## set paths
@@ -125,7 +124,9 @@ pipelineASCAT = function(sampleName,outputFolder, ascatFolder) {
     rawData = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = sampleName, oschp_file=pathToOSCHP, force=T, oschp.keep=T, return.data=TRUE, plot=F, write.data=F) # To do as less data processing as possible, set: wave.renorm = F, gc.renorm=F, 
     # segmenting data using ascat.aspcf(ASCAT_obj). This step generates .txt segmentation files
     if(!dir.exists(outputFolder)) dir.create(outputFolder)
+    source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/ASCAT_functions.R")
     segData =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50, out.dir=outputFolder) # 50 is EaCoN default value
+    # segData =  custom_ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50, out.dir=outputFolder) # 50 is EaCoN default value
     # estimating copy number & ploidy & cellularity using ASCAT::ascat.runAscat. Also generates rawprofile, ascatprofile and sunrise plots
 
     ## if sample has not a best gamma value known in the reference file, process it with all gammas and update the file.
@@ -133,6 +134,7 @@ pipelineASCAT = function(sampleName,outputFolder, ascatFolder) {
     bestGammas = read.table(file.path(ascatFolder,"bestGammas.txt"), h=T, sep='\t')
     # Retaining most trustworthy results across different gamma values
     if(any(bestGammas$sample==sampleName)) {
+        print("using previously defined gamma value")
         bestGamma = dplyr::filter(bestGammas, sample==sampleName)$bestGamma
         callData = ASCAT::ascat.runAscat(ASCATobj=segData,gamma=bestGamma,img.dir=outputFolder,img.prefix=paste0("run_bestGamma=", bestGamma, "_"))
         GOF_all_gammas=NULL
@@ -220,6 +222,7 @@ cleanASCATSegData = function(callData, trimData = F) {
 
 
 #### main
+ascatFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/ASCAT"
 # sampleNames = c("17-VV", "10-CB", "15-GG", "20-CJ", "5-LD",  "8-MM",  "11-BG", "16-DD", "21-DC", "9-LA",  "12-BC", "2-AD",  "6-VJ",  "13-VT", "18-JA", "3-ES",  "14-CJ", "19-BF", "4-GM",  "7-DG")
 sampleNames = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
 sampleName = "12-BC"
@@ -236,7 +239,6 @@ s=1
 for (s in 1:length(sampleNames)) {
     sampleName = sampleNames[s]
     before=Sys.time()
-    ascatFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/ASCAT"
     outputFolder = file.path(ascatFolder,sampleName)
     resPipeline = pipelineASCAT(sampleName,outputFolder,ascatFolder)
     callData = resPipeline[[1]]

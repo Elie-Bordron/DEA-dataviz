@@ -276,7 +276,7 @@ Le vrai nombre de copies est un nombre entier non négatif. Sachant cela, ASCAT 
 
 On peut également parler du paramètre ``gamma (γ)``, qui dépend de la technologie utilisée. il correspond à la diminution de log Ratio pour une déletion d'un échantillon à 100% de cellules tumorales. `ASCN.ff() teste les valeurs de gamma de  0.35 à 0.95, avec un pas de 0.05` et produit des résultats pour chacune.
 
-## ma conclusion
+## mon récap de l'outil
 Les techniques conventionnelles de CGH sont censées analyser les aberrations chromosomales, mais ne prennent pas en compte deux choses importantes:
 - Les cellules tumorales sont rarement diploides
 - les échantillons sont souvent constitués de différentes populations tumorales + de cellules saines

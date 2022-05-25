@@ -1,3 +1,4 @@
+
 custom_ascat.aspcf = function (ASCATobj, selectsamples = 1:length(ASCATobj$samples), 
     ascat.gg = NULL, penalty = 70, out.dir = ".", out.prefix = "") 
 {
@@ -9,7 +10,7 @@ custom_ascat.aspcf = function (ASCATobj, selectsamples = 1:length(ASCATobj$sampl
         gg = ASCATobj$Germline_BAF < 0.3 | ASCATobj$Germline_BAF > 
             0.7
     }
-    ghs = predictGermlineHomozygousStretches(ASCATobj$chr, gg)
+    ghs = ASCAT:::predictGermlineHomozygousStretches(ASCATobj$chr, gg)
     segmentlengths = unique(c(penalty, 35, 50, 70, 100, 140))
     segmentlengths = segmentlengths[segmentlengths >= penalty]
     Tumor_LogR_segmented = matrix(nrow = dim(ASCATobj$Tumor_LogR)[1], 
@@ -40,21 +41,16 @@ custom_ascat.aspcf = function (ASCATobj, selectsamples = 1:length(ASCATobj$sampl
             if (length(nonPAR_index) > 5) {
                 gg[nonPAR_index, sample] = T
                 if (!is.null(ASCATobj$Germline_BAF)) {
-                  DIST = 1 - sapply(ASCATobj$Germline_BAF[nonPAR_index, 
-                    sample], function(x) {
-                    if (x > 0.5) 
-                      return(x)
-                    else return(1 - x)
-                  })
-                  gg[nonPAR_index[which(rank(DIST, ties.method = "random") <= 
-                    round(length(DIST) * (autosomes_info["FALSE"]/sum(autosomes_info))))], 
-                    sample] = F
-                  rm(DIST)
+                    DIST = 1 - sapply(ASCATobj$Germline_BAF[nonPAR_index, sample], function(x) {
+                        if (x > 0.5) 
+                            return(x)
+                        else return(1 - x)
+                        })
+                    gg[nonPAR_index[which(rank(DIST, ties.method = "random") <= round(length(DIST) * (autosomes_info["FALSE"]/sum(autosomes_info))))], sample] = F
+                    rm(DIST)
                 }
                 else {
-                  gg[sample(nonPAR_index, round(length(nonPAR_index) * 
-                    (autosomes_info["FALSE"]/sum(autosomes_info)))), 
-                    sample] = F
+                    gg[sample(nonPAR_index, round(length(nonPAR_index) * (autosomes_info["FALSE"]/sum(autosomes_info)))), sample] = F
                 }
             }
             rm(nonPAR_index, autosomes_info)
@@ -66,142 +62,125 @@ custom_ascat.aspcf = function (ASCATobj, selectsamples = 1:length(ASCATobj$sampl
             names(tbsam) = rownames(ASCATobj$Tumor_BAF)
             homosam = gg[, sample]
             for (chrke in 1:length(ASCATobj$chr)) {
-                lr = ASCATobj$Tumor_LogR[ASCATobj$chr[[chrke]], 
-                  sample]
+                lr = ASCATobj$Tumor_LogR[ASCATobj$chr[[chrke]], sample]
                 lrwins = vector(mode = "numeric", length = length(lr))
                 lrwins[is.na(lr)] = NA
-                lrwins[!is.na(lr)] = madWins(lr[!is.na(lr)], 
-                  2.5, 25)$ywin
+                lrwins[!is.na(lr)] = madWins(lr[!is.na(lr)], 2.5, 25)$ywin
                 baf = tbsam[ASCATobj$chr[[chrke]]]
                 homo = homosam[ASCATobj$chr[[chrke]]]
-                Select_het <- !homo & !is.na(homo) & !is.na(baf) & 
-                  !is.na(lr)
+                Select_het <- !homo & !is.na(homo) & !is.na(baf) & !is.na(lr)
                 bafsel = baf[Select_het]
-                bafselwinsmirrored = madWins(ifelse(bafsel > 
-                  0.5, bafsel, 1 - bafsel), 2.5, 25)$ywin
-                bafselwins = ifelse(bafsel > 0.5, bafselwinsmirrored, 
-                  1 - bafselwinsmirrored)
+                bafselwinsmirrored = madWins(ifelse(bafsel > 0.5, bafsel, 1 - bafsel), 2.5, 25)$ywin
+                bafselwins = ifelse(bafsel > 0.5, bafselwinsmirrored, 1 - bafselwinsmirrored)
                 indices = which(Select_het)
                 logRaveraged = NULL
                 if (length(indices) != 0) {
-                  averageIndices = c(1, (indices[1:(length(indices) - 
-                    1)] + indices[2:length(indices)])/2, length(lr) + 
-                    0.01)
-                  startindices = ceiling(averageIndices[1:(length(averageIndices) - 
-                    1)])
-                  endindices = floor(averageIndices[2:length(averageIndices)] - 
-                    0.01)
-                  if (length(indices) == 1) {
+                    averageIndices = c(1, (indices[1:(length(indices) - 1)] + indices[2:length(indices)])/2, length(lr) + 0.01)
+                    startindices = ceiling(averageIndices[1:(length(averageIndices) - 1)])
+                    endindices = floor(averageIndices[2:length(averageIndices)] - 0.01)
+                    if (length(indices) == 1) {
                     startindices = 1
                     endindices = length(lr)
-                  }
-                  nrIndices = endindices - startindices + 1
-                  logRaveraged = vector(mode = "numeric", 
-                    length = length(indices))
-                  for (i in 1:length(indices)) {
-                    if (is.na(endindices[i])) {
-                      endindices[i] = startindices[i]
                     }
-                    logRaveraged[i] = mean(lrwins[startindices[i]:endindices[i]], 
-                      na.rm = T)
-                  }
+                    nrIndices = endindices - startindices + 1
+                    logRaveraged = vector(mode = "numeric", length = length(indices))
+                    for (i in 1:length(indices)) {
+                    if (is.na(endindices[i])) {
+                        endindices[i] = startindices[i]
+                    }
+                    logRaveraged[i] = mean(lrwins[startindices[i]:endindices[i]], na.rm = T)
+                    }
                 }
                 if (length(logRaveraged) > 0) {
-                  logRASPCF = NULL
-                  bafASPCF = NULL
-                  if (length(logRaveraged) < 6) {
+                    logRASPCF = NULL
+                    bafASPCF = NULL
+                    if (length(logRaveraged) < 6) {
                     logRASPCF = rep(mean(logRaveraged), length(logRaveraged))
                     bafASPCF = rep(mean(bafselwins), length(logRaveraged))
-                  }
-                  else {
-                    PCFed = fastAspcf(logRaveraged, bafselwins, 
-                      6, segmentlength)
-                    logRASPCF = PCFed$yhat1
-                    bafASPCF = PCFed$yhat2
-                  }
-                  names(bafASPCF) = names(indices)
-                  logRc = numeric(0)
-                  for (probe in 1:length(logRASPCF)) {
-                    if (probe == 1) {
-                      logRc = rep(logRASPCF[probe], indices[probe])
-                    }
-                    if (probe == length(logRASPCF)) {
-                      logRc = c(logRc, rep(logRASPCF[probe], 
-                        length(lr) - indices[probe]))
-                    }
-                    else if (logRASPCF[probe] == logRASPCF[probe + 
-                      1]) {
-                      logRc = c(logRc, rep(logRASPCF[probe], 
-                        indices[probe + 1] - indices[probe]))
                     }
                     else {
-                      d = numeric(0)
-                      totall = indices[probe + 1] - indices[probe]
-                      for (bp in 0:(totall - 1)) {
-                        dis = sum(abs(lr[(1:bp) + indices[probe]] - 
-                          logRASPCF[probe]), na.rm = T)
-                        if (bp != totall) {
-                          dis = sum(dis, sum(abs(lr[((bp + 1):totall) + 
-                            indices[probe]] - logRASPCF[probe + 
-                            1]), na.rm = T), na.rm = T)
-                        }
-                        d = c(d, dis)
-                      }
-                      breakpoint = which.min(d) - 1
-                      logRc = c(logRc, rep(logRASPCF[probe], 
-                        breakpoint), rep(logRASPCF[probe + 1], 
-                        totall - breakpoint))
+                    PCFed = fastAspcf(logRaveraged, bafselwins, 6, segmentlength) #(logR, allB, kmin, gamma)
+                    logRASPCF = PCFed$yhat1
+                    bafASPCF = PCFed$yhat2
                     }
-                  }
-                  logRd = numeric(0)
-                  seg = rle(logRc)$lengths
-                  startprobe = 1
-                  endprobe = 0
-                  for (i in 1:length(seg)) {
-                    endprobe = endprobe + seg[i]
-                    level = mean(lr[startprobe:endprobe], na.rm = T)
-                    logRd = c(logRd, rep(level, seg[i]))
-                    startprobe = startprobe + seg[i]
-                  }
-                  logRPCFed = c(logRPCFed, logRd)
-                  bafPCFed = c(bafPCFed, bafASPCF)
+                    names(bafASPCF) = names(indices)
+                    logRc = numeric(0)
+                    for (probe in 1:length(logRASPCF)) {
+                        if (probe == 1) {
+                            logRc = rep(logRASPCF[probe], indices[probe])
+                        }
+                        if (probe == length(logRASPCF)) {
+                            logRc = c(logRc, rep(logRASPCF[probe], 
+                            length(lr) - indices[probe]))
+                        }
+                        else if (logRASPCF[probe] == logRASPCF[probe + 
+                            1]) {
+                            logRc = c(logRc, rep(logRASPCF[probe], 
+                            indices[probe + 1] - indices[probe]))
+                        }
+                        else {
+                            d = numeric(0)
+                            totall = indices[probe + 1] - indices[probe]
+                            for (bp in 0:(totall - 1)) {
+                            dis = sum(abs(lr[(1:bp) + indices[probe]] - 
+                                logRASPCF[probe]), na.rm = T)
+                            if (bp != totall) {
+                                dis = sum(dis, sum(abs(lr[((bp + 1):totall) + 
+                                indices[probe]] - logRASPCF[probe + 
+                                1]), na.rm = T), na.rm = T)
+                            }
+                            d = c(d, dis)
+                            }
+                            breakpoint = which.min(d) - 1
+                            logRc = c(logRc, rep(logRASPCF[probe], breakpoint), rep(logRASPCF[probe + 1], totall - breakpoint))
+                        }
+                    }
+                    logRd = numeric(0)
+                    seg = rle(logRc)$lengths
+                    startprobe = 1
+                    endprobe = 0
+                    for (i in 1:length(seg)) {
+                        endprobe = endprobe + seg[i]
+                        level = mean(lr[startprobe:endprobe], na.rm = T)
+                        logRd = c(logRd, rep(level, seg[i]))
+                        startprobe = startprobe + seg[i]
+                    }
+                    logRPCFed = c(logRPCFed, logRd)
+                    bafPCFed = c(bafPCFed, bafASPCF)
                 }
                 else {
-                  level = mean(lr, na.rm = T)
-                  reps = length(lr)
-                  logRPCFed = c(logRPCFed, rep(level, reps))
+                    level = mean(lr, na.rm = T)
+                    reps = length(lr)
+                    logRPCFed = c(logRPCFed, rep(level, reps))
                 }
-                homsegs = ghs[[sample]][ghs[[sample]][, 1] == 
-                  chrke, ]
+                homsegs = ghs[[sample]][ghs[[sample]][, 1] == chrke, ]
                 startchr = min(ASCATobj$chr[[chrke]])
                 endchr = max(ASCATobj$chr[[chrke]])
                 if (length(homsegs) == 3) {
-                  homsegs = t(as.matrix(homsegs))
+                    homsegs = t(as.matrix(homsegs))
                 }
-                if (!is.null(homsegs) && !is.na(homsegs) && dim(homsegs)[1] != 
-                  0) {
-                  for (i in 1:dim(homsegs)[1]) {
-                    startpos = max(homsegs[i, 2], startchr)
-                    endpos = min(homsegs[i, 3], endchr)
-                    startpos2 = max(homsegs[i, 2] - 100, startchr)
-                    endpos2 = min(homsegs[i, 3] + 100, endchr)
-                    startpos3 = max(homsegs[i, 2] - 5, startchr)
-                    endpos3 = min(homsegs[i, 3] + 5, endchr)
-                    towins = ASCATobj$Tumor_LogR[startpos2:endpos2, 
-                      sample]
-                    winsed = madWins(towins[!is.na(towins)], 
-                      2.5, 25)$ywin
-                    pcfed = vector(mode = "numeric", length = length(towins))
-                    pcfed[!is.na(towins)] = exactPcf(winsed, 
-                      6, floor(segmentlength/4))
-                    pcfed2 = pcfed[(startpos3 - startpos2 + 1):(endpos3 - 
-                      startpos2 + 1)]
-                    dif = abs(pcfed2 - logRPCFed[startpos3:endpos3])
-                    if (!is.na(dif) && sum(dif > 0.3) > 5) {
-                      logRPCFed[startpos3:endpos3] = ifelse(dif > 
-                        0.3, pcfed2, logRPCFed[startpos3:endpos3])
+                if (!is.null(homsegs) && !is.na(homsegs) && dim(homsegs)[1] != 0) {
+                    for (i in 1:dim(homsegs)[1]) {
+                        startpos = max(homsegs[i, 2], startchr)
+                        endpos = min(homsegs[i, 3], endchr)
+                        startpos2 = max(homsegs[i, 2] - 100, startchr)
+                        endpos2 = min(homsegs[i, 3] + 100, endchr)
+                        startpos3 = max(homsegs[i, 2] - 5, startchr)
+                        endpos3 = min(homsegs[i, 3] + 5, endchr)
+                        towins = ASCATobj$Tumor_LogR[startpos2:endpos2, 
+                        sample]
+                        winsed = madWins(towins[!is.na(towins)], 
+                        2.5, 25)$ywin
+                        pcfed = vector(mode = "numeric", length = length(towins))
+                        pcfed[!is.na(towins)] = exactPcf(winsed, 6, floor(segmentlength/4))
+                        pcfed2 = pcfed[(startpos3 - startpos2 + 1):(endpos3 - 
+                        startpos2 + 1)]
+                        dif = abs(pcfed2 - logRPCFed[startpos3:endpos3])
+                        if (!is.na(dif) && sum(dif > 0.3) > 5) {
+                        logRPCFed[startpos3:endpos3] = ifelse(dif > 
+                            0.3, pcfed2, logRPCFed[startpos3:endpos3])
+                        }
                     }
-                  }
                 }
             }
             logRPCFed = fillNA(logRPCFed, zeroIsNA = TRUE)
@@ -212,13 +191,12 @@ custom_ascat.aspcf = function (ASCATobj, selectsamples = 1:length(ASCATobj$sampl
             prevlevel = 0
             for (i in 1:length(seg)) {
                 endprobe = endprobe + seg[i]
-                level = mean(ASCATobj$Tumor_LogR[startprobe:endprobe, 
-                  sample], na.rm = T)
+                level = mean(ASCATobj$Tumor_LogR[startprobe:endprobe, sample], na.rm = T)
                 if (is.nan(level)) {
-                  level = prevlevel
+                    level = prevlevel
                 }
                 else {
-                  prevlevel = level
+                    prevlevel = level
                 }
                 logRPCFed = c(logRPCFed, rep(level, seg[i]))
                 startprobe = startprobe + seg[i]
@@ -246,14 +224,83 @@ custom_ascat.aspcf = function (ASCATobj, selectsamples = 1:length(ASCATobj$sampl
 
 
 
+## je veux voir logrfilename donc je lance ASCAT. Le but est de voir si plusieurs logRPCFed sont créés en fichier texte et je peux peut-être les comparer.
 
 
 
 
 
-
-
-
+fastAspcf = function (logR, allB, kmin, gamma) {
+    N <- length(logR)
+    w <- 1000
+    d <- 100
+    startw = -d
+    stopw = w - d
+    nseg = 0
+    var2 = 0
+    var3 = 0
+    breakpts = 0
+    larger = TRUE
+    repeat {
+        from <- max(c(1, startw))
+        to <- min(c(stopw, N))
+        logRpart <- logR[from:to]
+        allBpart <- allB[from:to]
+        allBflip <- allBpart
+        allBflip[allBpart > 0.5] <- 1 - allBpart[allBpart > 0.5]
+        sd1 <- getMad(logRpart)
+        sd2 <- getMad(allBflip)
+        sd3 <- getMad(allBpart)
+        sd.valid <- c(!is.na(sd1), !is.na(sd2), sd1 != 0, sd2 != 
+            0)
+        if (all(sd.valid)) {
+            part.res <- aspcfpart(logRpart = logRpart, allBflip = allBflip, 
+                a = startw, b = stopw, d = d, sd1 = sd1, sd2 = sd2, 
+                N = N, kmin = kmin, gamma = gamma)
+            breakptspart <- part.res$breakpts
+            larger = breakptspart > breakpts[length(breakpts)]
+            breakpts <- c(breakpts, breakptspart[larger])
+            var2 <- var2 + sd2^2
+            var3 <- var3 + sd3^2
+            nseg = nseg + 1
+        }
+        if (stopw < N + d) {
+            startw <- min(stopw - 2 * d + 1, N - 2 * d)
+            stopw <- startw + w
+        }
+        else {
+            break
+        }
+    }
+    breakpts <- unique(c(breakpts, N))
+    if (nseg == 0) {
+        nseg = 1
+    }
+    sd2 <- sqrt(var2/nseg)
+    sd3 <- sqrt(var3/nseg)
+    frst <- breakpts[1:length(breakpts) - 1] + 1
+    last <- breakpts[2:length(breakpts)]
+    nseg <- length(frst)
+    yhat1 <- rep(NA, N)
+    yhat2 <- rep(NA, N)
+    for (i in 1:nseg) {
+        yhat1[frst[i]:last[i]] <- rep(mean(logR[frst[i]:last[i]]), 
+            last[i] - frst[i] + 1)
+        yi2 <- allB[frst[i]:last[i]]
+        if (length(yi2) == 0) {
+            mu <- 0
+        }
+        else {
+            mu <- mean(abs(yi2 - 0.5))
+        }
+        if (sqrt(sd2^2 + mu^2) < 2 * sd2) {
+            mu <- 0
+        }
+        yhat2[frst[i]:last[i]] <- rep(mu + 0.5, last[i] - frst[i] + 
+            1)
+    }
+    return(list(yhat1 = yhat1, yhat2 = yhat2))
+}
 
 
 
@@ -767,3 +814,4 @@ custom_ascat.plotAdjustedAscatProfile = function (ASCAT_output_object, REF, y_li
     }
     rm(SAMPLE)
 }
+
