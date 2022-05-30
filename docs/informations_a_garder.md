@@ -32,18 +32,18 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [ ] Résultats / Discussion: cf cahier bleu au 19/05. plusieurs choses à tester.
 * [ ] rapport: questions à poser , choses à discuter: cf. cahier bleu au 19/05.
 * [X] ~~*rapport: oncoscanR ne fait pas de lissage, pourtant c'est ce que la figure pipeline dit. supprimer ça de la figure.*~~ [2022-05-23] SI, oncoscanR fait un lissage (smoothing) en fusionnant les segments distants de moins de 300kbp.
-* [ ] noter dans fonctionnement_des_outils.md la licence de chaque package: peut-on en faire ce qu'on veut? -> ASCAT & EaCoN
+* [X] ~~*noter dans fonctionnement_des_outils.md la licence de chaque package: peut-on en faire ce qu'on veut? -> ASCAT & EaCoN*~~ [2022-05-30] Oui, on ne peut juste pas modifier le code de rCGH.
 * [X] ~~*rCGH: changer le pipeline de rCGH*~~ [2022-05-23] Pourquoi? comment?
 * [ ] Etat de l'art, pipeline CGHcall: ajouter "CBS" à la segmentation pour être raccord avec le pipeline rCGH
 
 ## 23/05/2022
 * [ ] oncoscanR: faire un plot qui montre les segments d'altération sans les superposer -> on peut voir si un LOH est supérieur à un segment de perte, et surtout voir l'impact du filtrage sur les segments. cf. cahier
 * [ ] $vérifier que le calcul du GI d'oncoscanR est correct: $
-    1. on doit calculer si le bras est en gain: somme des segments gain et amp
-    2. on doit calculer si le bras est en perte: somme des segments loss et LOH
-    on a donc un vecteur de bras en gain, et un vecteur de bras en perte
-    3. on itère ces 2 vecteurs: pour chaque bras, si il subit une altération (qu'elle soit un gain ou une perte), on ajoute 1 dans le compte des altérations et on ajoute son chromosome dans la liste des chromosomes altérés.
-    enfin on calcule le GI à partir du compte des altérations et des chromosomes.
+    * [X] ~~*1. on doit calculer si le bras est en gain: somme des segments gain et amp*~~ [2022-05-30]
+    * [X] ~~*2. on doit calculer si le bras est en perte: somme des segments loss et LOH*~~ [2022-05-30]
+    * [X] ~~*on a donc un vecteur de bras en gain, et un vecteur de bras en perte*~~ [2022-05-30]
+    * [ ] 3. on itère ces 2 vecteurs: pour chaque bras, si il subit une altération (qu'elle soit un gain ou une perte), on ajoute 1 dans le compte des altérations et on ajoute son chromosome dans la liste des chromosomes altérés.
+    * [ ] enfin on calcule le GI à partir du compte des altérations et des chromosomes.
     bonus: faire un plot des segments de chaque altération: afficher |---| pour chaque segment
 * [ ] le score TDplus d'oncoscanR est implémenté dans oncoscanR comme le nombre de segments en *gain* dont la longueur est comprise entre 1 et 10 Mb. Mais on n'a pas de garantie que ces gains sont bien issus de duplications en tandem.
 * [ ] Exploiter le tableau comparatif pour dire ce que chaque outil ne fait *pas*. -> discussion?
@@ -52,7 +52,6 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [ ] sortir les profils WGV de chaque échantillon avec ChAS pour pouvoir comparer avec les plots de segtables des 4 outils
 * [ ] `résultats: ` utiliser le cahier bleu au 10/05
 * [ ] `résultats: ` pour tous les outils, montrer l'effet des nettoyages en faisant tourner les données avec et sans.
-* [ ] `résultats: `
 * [ ] oncoscanR: faire un plot qui montre le WGV d'un échantillon et indique les bras déclarés comme altérés et les bras non déclarés comme altérés. ça permet de visualiser l'effet du seuil et de *voir* ce qui est fait par cet outil. Voir powerpoint oncoscanR, diapo 13
 * [ ] rCGH: regarder comment le nombre de copies est estimé. voir rCGH_dev.R .
 * [ ] etat de l'art: rCGH: dans le texte, préciser que la normalisation et l'estimation du nombre de copies sont 2 étapes différentes et les séparer également dans la fig pipeline. et aussi regarder pourquoi l'estimation du nb copies se fait pdt la seg *et* pdt la normalisation.
@@ -65,9 +64,11 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 ## 24/05/2022
 * [ ] résultats ASCAT: le critère d'optimization O est O = sum(gof_baf)\*(1-w) + sum(gof_lrr)\*w + penalty\*Q où Q est le nombre de segments. Par défaut penalty=50 (dans EaCoN), mais c'est 70 dans ASCAT par défaut. tester la valeur de 70, voir si ça change des choses notamment pour l'échantillon 17 qui avait un GI de 400+.
 *Pendant la réunion d'aujourd'hui, j'ai pris ces notes:*
-* [ ] GI Agilent: l'ajouter aux plots de corrélation des GIs.
-* [ ] faire le plot comme indiqué par Claire. cf cahier bleu.
+* [X] ~~*GI Agilent: l'ajouter aux plots de corrélation des GIs.*~~ [2022-05-30]
+* [X] ~~*faire le plot comme indiqué par Claire. cf cahier bleu.*~~ [2022-05-30]
 * [ ] Dans le rapport, afficher tous les pipelines horizontalement, et éventuellement en annexe placer les images des pipelines à la verticale + les plots de données qui correspondent à chaque étape.
 * [ ] Rapport, Res & Discussion, perspectives: parler du fait qu'on peut changer le seuil de 300 kbp d'oncoscanR pour jouer sur le calcul du GI.
-
+## 30/05/2022
+* [X] ~~*ASCAT: renseigner la cellularité et voir si on obtient de meilleurs résultats*~~ [2022-05-30] Non. Mais comparer cette cellularité avec la cellularité estimée par lame HES.
+* [ ] ASCAT.R: pourquoi y a-t-il des problèmes dans la sauvegarde des segTables?
 

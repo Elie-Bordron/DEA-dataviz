@@ -1,3 +1,27 @@
+cleanProbeset = function(pathToMultiProbeset="allSamples_2_3_centeredProbeset.txt"){
+    ######################## to clean all-samples probeset.txt file (it comes from ChAS analysis workflow):
+    sampleNames_ChasOrder = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+    # sampleNames_ChasOrder = c("10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "2-AD", "20-CJ", "21-DC", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA")
+    warning("check samplenames order before processing this block of code.")
+    ## for loading data from a single probeset.txt file that contains all samples data
+    allSamplesPath = file.path(dataDir, pathToMultiProbeset)
+    ProbeData = read.table(allSamplesPath, sep='\t', h=T)
+    ## remove weightedlog2Ratio, BAF and allelicDifference columns
+    ProbeData_filtered = dplyr::select(ProbeData, -contains("Weighted"))
+    ProbeData_filtered = dplyr::select(ProbeData_filtered, -contains("Backup")) #removing 5-LD_backup.OSCHP
+    ProbeData_filtered = dplyr::select(ProbeData_filtered, 1:3, contains("Log2Ratio") )
+    # sampleNamesByChas = colnames(ProbeData_filtered[4:length(ProbeData_filtered)])
+    ## add END_POS column
+    ProbeData_filtered$END_POS = ProbeData_filtered$Position ## previously ProbeData_filtered$END_POS = ProbeData_filtered$Position+20; 20 being the length of a probe (not so meaningful because probes provide information about SNPs). Tony said it is actually around 100.
+    colnames(ProbeData_filtered)= c("probeID",  "CHROMOSOME", "START_POS", sampleNames_ChasOrder, "END_POS")
+    ## order columns
+    ProbeData_ordered = dplyr::select(ProbeData_filtered, c("probeID",  "CHROMOSOME", "START_POS", "END_POS", all_of(sampleNames)))
+    ## write table to file so we don't have to do this at every run
+    allSamplesClean_path = file.path(dataDir, "allSamplesCleanProbeset_2_3Rec.txt")
+    write.table(ProbeData_ordered, allSamplesClean_path, sep='\t', quote=F)
+}
+
+
 getSeg = function(currSample, currChr, s, rowsInfo){
     i=s
     # print(c("s: ", s))
@@ -70,6 +94,8 @@ plotSegTables = function(segTablesList, sampleNames, resultsDir) {
     }
     
 }
+
+
 
 
 

@@ -2565,10 +2565,10 @@ CGHexplorer (cité dans ASCAT supplementary figures ): son code n'est pas dispon
 * [X] ~~*noter le récap de la réunion dans le framapad*~~ [2022-05-24]
 * [X] ~~*vérifier la date soutenance*~~ [2022-05-24]
 * [X] ~~*transférer les notes prises sur cahier dans infos...md .*~~ [2022-05-24]
-* [ ] finir matmet w/ ASCAT
+* [X] ~~*finir matmet w/ ASCAT*~~ [2022-05-30]
 * [X] ~~*git push pour pouvoir travailler vendredi*~~ [2022-05-25]
-* [ ] Plot claire sur R
-* [ ] ASCAT: supprimer les données des chromosomes sexuels *après* l'importation des données càd après custom_OS.process().
+* [X] ~~*Plot claire sur R*~~ [2022-05-30]
+* [X] ~~*ASCAT: supprimer les données des chromosomes sexuels *après* l'importation des données càd après custom_OS.process().*~~ [2022-05-30]
 * [ ] pour tous les outils: Créer un fichier texte qui donne la date et l'heure pour lesquelles le package a tourné, les paramètres utilisés (si preprocess a été utilisé, si oui avec quelles options...) -> pas pour toutes les options mais les plus importantes: la penalty d'ASCAT, si CGHcall a travaillé sur tous les échantillons à la fois ou un à la fois, ou si CGHcall a call sur chaque bras chromosomique ou sur tout le génome... Surtout, oncoscanR et son filtrage des segments.
 J'ai ajouté les licences de chaque package à fonc...md . à part rCGH, qu'on ne peut pas modifier, tous sont open source et modifiables.
 
@@ -2582,10 +2582,32 @@ J'ai rédigé mat & met - ASCAT (presque fini) et commencé des figures pour les
 
 
 # <span style="color:#999900"> vendredi 27/05/2022
-* [ ] obj aujourd'hui: premier jet du rapport fini. 
+* [X] ~~*obj aujourd'hui: premier jet du rapport fini.*~~ [2022-05-30] 
 
 # <span style="color:#999900"> lundi 30/05/2022
+arrivée à 9h40; 25 min pause
+Obj aujourd'hui: Tester plusieurs options pertinentes des packages:
+* [ ]  cghcall par chr ou par génome
+* [ ] cghcall par E ou par cohorte
+* [ ] oncoscanR: avec et sans nettoyage
+* [ ] oncoscanR: faire varier le 300 kbp
+* [ ] ASCAT faire varier la penalty
+
+* [ ] ASCAT comparer la cellularité estimée avec HES. faire une fonction qui wrappe la fonction saveGI_ResToFile().
+Ce matin, j'ai fait en sorte qu'ASCAT supprime les données des chromosomes X et Y avant de traiter les données, sauvegarde les tableaux de segmentation dans des fichiers textes, charge et sauvegarde le fichier de tous les GI en y ajoutant le nombre d'altérations, de chromosomes et le temps de calcul.
+Dans CGHcall, les plots de segTables sont générés par le script. Je veux implémenter les mêmes fonctions que dans ASCAT.R.
+ROC: le taux de vrais positifs est aussi appelé précision et sensibilité (en anglais, recall et sensitivity). Le taux de faux positifs est aussi appelé probabilité de fausse alerte ou fall-out. Ces deux paramètres sont utilisés pour construire les courbes ROC. Voir https://en.wikipedia.org/wiki/Precision_and_recall#Definition_(classification_context) .
+Pour calculer ces taux avec plusieurs classes (GI haut, faible et intermédiaire), voir le cahier au 05/05/2022, ou slack à la même date qui indique ce lien: `https://medium.com/data-science-in-your-pocket/calculating-precision-recall-for-multi-class-classification-9055931ee229` et ce lien: `https://iq.opengenus.org/precision-recall-sensitivity-specificity/`
+
+
 * [ ] obj aujourd'hui: Pour chaque outil, les options pertinentes sont testées sur différentes valeurs.
 * [ ] contacter Slim karkar pour soutenance
+
+# <span style="color:#999900"> mardi 31/05/2022
+* [ ]  obj avant midi: refaire les plots du rapport avec les nouveaux GI.
+* [ ] et rédiger sur ces résultats.
+* [ ] si je peux aussi faire varier le 300 kbp d'oncoscanR ça peut être bien aussi: utiliser 0.01 etc. pour undo.SD .
+
+
 
 

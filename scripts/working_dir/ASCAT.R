@@ -2,6 +2,7 @@
 
 ## set working directory
 working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+ascatFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/ASCAT"
 setwd(working_dir)
 ## open working directory in Files tab
 rstudioapi::filesPaneNavigate(working_dir)
@@ -93,7 +94,50 @@ calcGI_ASCAT = function(segmentsTable) {
     return(list(GI,nbAlter,nbChr))
 }
 
+removeSexChrData = function(rawData) {
+    ## remove sex chromosomes data
+    ### from ch
+    rawData_ch = rawData[["data"]][["ch"]]
+    rawData[["data"]][["ch"]] = rawData_ch[names(rawData_ch) %in% c("chrX", "chrY") == FALSE] 
+    ### from chr
+    lastChrProbes = rawData[["data"]][["ch"]][[length(rawData[["data"]][["ch"]])]]
+    lastProbe = lastChrProbes[length(lastChrProbes)]
+    chr = rawData[["data"]][["chr"]]
+    for(i in length(chr):1) {
+        # print(c("i: ", i))
+        DNAregion = chr[i]
+        if(any(as.vector(DNAregion[[1]])<=lastProbe)) {
+            regionLen = length(DNAregion[[1]])
+            # print(c("regionLen: ", regionLen))
+            # print(c("last probe of this region: ", (DNAregion[[1]][regionLen])))
+            if(DNAregion[[1]][regionLen]==lastProbe){
+                # print("Last probe of this region is the last probe of chromosome 22")
+                chr = chr[1:i]
+            } else {
+                # print("last probe of chr 22 is not last probe of this region")
+                chr = chr[1:i-1]
+            }
+            break
+        }
+            
+    }
+    rawData[["data"]][["chr"]] = chr
+    ### from chrs
+    rawData_chrs = rawData[["data"]][["chrs"]]
+    rawData_chrs = rawData_chrs[rawData_chrs!="chrX"]; rawData_chrs = rawData_chrs[rawData_chrs!="chrY"]
+    rawData[["data"]][["chrs"]] = rawData_chrs
+    ### from Tumor_*
+    rawData[["data"]][["Tumor_LogR.ori"]] = rawData[["data"]][["Tumor_LogR.ori"]] %>% dplyr::slice(1:lastProbe)
+    rawData[["data"]][["Tumor_LogR"]] = rawData[["data"]][["Tumor_LogR"]] %>% dplyr::slice(1:lastProbe)
+    rawData[["data"]][["Tumor_BAF"]] = rawData[["data"]][["Tumor_BAF"]] %>% dplyr::slice(1:lastProbe)
+    rawData[["data"]][["Tumor_AD"]] = rawData[["data"]][["Tumor_AD"]] %>% dplyr::slice(1:lastProbe)
+    ### from SNPpos
+    rawData[["data"]][["SNPpos"]] = rawData[["data"]][["SNPpos"]] %>% dplyr::slice(1:lastProbe)
+    ### from additional data
+    rawData[["data"]][["additional"]] = rawData[["data"]][["additional"]] %>% dplyr::slice(1:lastProbe)
 
+    return(rawData)
+}
 
 
 
@@ -106,7 +150,7 @@ sampleNames = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA
 
 
 # to load functions from EaCoN_functions.R
-source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/EaCoN_functions.R")
+source(file.path(working_dir,"EaCoN_functions.R"))
 
 pipelineASCAT = function(sampleName,outputFolder, ascatFolder) {
     ## set paths
@@ -121,10 +165,11 @@ pipelineASCAT = function(sampleName,outputFolder, ascatFolder) {
     # outputFolder_plots = file.path(outputFolder, "plots")
     
     # loading data
-    rawData = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = sampleName, oschp_file=pathToOSCHP, force=T, oschp.keep=T, return.data=TRUE, plot=F, write.data=F) # To do as less data processing as possible, set: wave.renorm = F, gc.renorm=F, 
+    rawData = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = sampleName, oschp_file=pathToOSCHP, force=T, oschp.keep=T, return.data=TRUE, plot=F, write.data=F) # To do as less data processing as possible, set: wave.renorm = F, gc.renorm=F,     
+    rawData = removeSexChrData(rawData)
     # segmenting data using ascat.aspcf(ASCAT_obj). This step generates .txt segmentation files
     if(!dir.exists(outputFolder)) dir.create(outputFolder)
-    source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/ASCAT_functions.R")
+    source(file.path(working_dir,"ASCAT_functions.R"))
     segData =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50, out.dir=outputFolder) # 50 is EaCoN default value
     # segData =  custom_ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50, out.dir=outputFolder) # 50 is EaCoN default value
     # estimating copy number & ploidy & cellularity using ASCAT::ascat.runAscat. Also generates rawprofile, ascatprofile and sunrise plots
@@ -228,8 +273,8 @@ sampleNames = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA
 sampleName = "12-BC"
 # sampleNames = c("5-LD", "6-VJ", "8-MM")
 # GI_ASCAT_df = data.frame(rep(NA, length(sampleNames)))
-GI_ASCAT_df = data.frame(matrix(ncol = 4, nrow = length(sampleNames)))
-colnames(GI_ASCAT_df) = c("GI_ASCAT", "nbAlter", "nbChr", "runTime")
+GI_ASCAT_df = data.frame(matrix(ncol = 5, nrow = length(sampleNames)))
+colnames(GI_ASCAT_df) = c("GI", "nbAlter", "nbChr", "runTime", "estimPurity")
 rownames(GI_ASCAT_df) = sampleNames
 ## load GI functions
 source(file.path(working_dir, "oncoscanR_functions.R"))
@@ -238,7 +283,7 @@ segTables = list()
 s=1
 for (s in 1:length(sampleNames)) {
     sampleName = sampleNames[s]
-    before=Sys.time()
+    before = Sys.time()
     outputFolder = file.path(ascatFolder,sampleName)
     resPipeline = pipelineASCAT(sampleName,outputFolder,ascatFolder)
     callData = resPipeline[[1]]
@@ -252,7 +297,12 @@ for (s in 1:length(sampleNames)) {
     
     ## keep this GI in a df along with its sampleName
     after=Sys.time()
-    GI_ASCAT_df[sampleName, ] = append(GI_res,after-before)
+    print(c("GI_res: ", GI_res))
+    GI_res = append(GI_res,round(as.numeric(difftime(after, before, units = "secs")), 2)) ## add run time
+    print(c("GI_res with runTime: ", GI_res))
+    GI_res = append(GI_res,callData$purity) ## add purity estimate
+    print(c("GI_res with runTime and purity: ", GI_res))
+    GI_ASCAT_df[sampleName, ] = GI_res
     segTable = callData$segments
     segTables = append(segTables, list(segTable))
 }
@@ -262,41 +312,42 @@ GI_ASCAT_df_copy = GI_ASCAT_df
 # to use: 
 # segTables
 # GI_ASCAT_df
-GI_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods"
-write.table(GI_ASCAT_df_copy,file.path(GI_dir, "gi_results_ASCAT.txt"),sep="\t",row.names=FALSE, quote=F)
 
 
-library("GGally")
-data(iris)
-ggpairs(iris[, 1:4], lower=list(continuous="smooth", params=c(colour="blue")),
-        diag=list(continuous="bar", params=c(colour="blue")), 
-        upper=list(params=list(corSize=6)), axisLabels='show')
+############## save GI data to file
+source(file.path(working_dir, "crossPackagesFunctions.R"))
+saveGI_ResToFile(GI_ASCAT_df_copy, "ASCAT", "estimPurity")
 
-## load oncoscanR GI results file
-# GI_filePath =  "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/OncoscanR/gi_results_all_methods.txt"
-allGi = "C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\results\GI_all_methods"
-GI_OncoscanR = read.table(GI_filePath, h=T)
+if(F) {
+    ### Organizing rows in the same order as oncoscan GI results
+    rowsLayout = GI_OncoscanR$sample
+    GI_ASCAT_df_copy$sample = rownames(GI_ASCAT_df_copy)
+    GI_ASCAT_df_copy = GI_ASCAT_df_copy[rowsLayout,]
+    
+    ## fusing tables 
+    GI_oncosAndAscat = as.data.frame(cbind(GI_ASCAT_df_copy$sample, GI_ASCAT_df_copy$GI_ASCAT, GI_OncoscanR$GI_oncoscanR))
+    colnames(GI_oncosAndAscat) = c("sample", "GI_ASCAT", "GI_OncoscanR")
+    rownames(GI_oncosAndAscat) = GI_oncosAndAscat$sample
 
-### Organizing rows in the same order as oncoscan GI results
-rowsLayout = GI_OncoscanR$sample
-GI_ASCAT_df_copy$sample = rownames(GI_ASCAT_df_copy)
-GI_ASCAT_df_copy = GI_ASCAT_df_copy[rowsLayout,]
-
-## fusing tables 
-GI_oncosAndAscat = as.data.frame(cbind(GI_ASCAT_df_copy$sample, GI_ASCAT_df_copy$GI_ASCAT, GI_OncoscanR$GI_oncoscanR))
-colnames(GI_oncosAndAscat) = c("sample", "GI_ASCAT", "GI_OncoscanR")
-rownames(GI_oncosAndAscat) = GI_oncosAndAscat$sample
-
-
-## organizing rows in reading order
-rowsLayout = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
-GI_oncosAndAscat = GI_oncosAndAscat[rowsLayout,]
-barplot(as.numeric(GI_oncosAndAscat$GI_ASCAT), names.arg = GI_oncosAndAscat$sample)
-## writing all GIs in a text file
-resultsDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods"
-write.table(GI_oncosAndAscat,file.path(resultsDir, "gi_results_all_methods.txt"),sep="\t",row.names=FALSE)
-
-
+    ## organizing rows in reading order
+    rowsLayout = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+    GI_oncosAndAscat = GI_oncosAndAscat[rowsLayout,]
+    barplot(as.numeric(GI_oncosAndAscat$GI_ASCAT), names.arg = GI_oncosAndAscat$sample)
+    ## writing all GIs in a text file
+    resultsDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods"
+    write.table(GI_oncosAndAscat,file.path(resultsDir, "gi_results_all_methods.txt"),sep="\t",row.names=FALSE)
+}
+############## save segments table to file
+saveSegTables = function(segTables, outputDir, sampleNames=c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )) {
+    segTablesDir = file.path(outputDir, "segTables")
+    if(!dir.exists(segTablesDir))dir.create(segTablesDir)
+    for (i in 1:length(segTables)) {
+        currSegTable = segTables[i]
+        currFilePath = file.path(segTablesDir, paste0(sampleNames[i], ".tsv"))
+        write.table(currSegTable, currFilePath, sep="\t", row.names=FALSE, quote=F)
+    }
+}
+saveSegTables(segTables, ascatFolder)
 
 ##
 print("end")
