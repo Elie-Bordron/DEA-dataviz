@@ -145,14 +145,14 @@ sampleName = "5-LD"
 sampleName = "6-VJ"
 # sampleName = "7-DG"
 # sampleName = "17-VV"
-sampleNames = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
 
 
 
 # to load functions from EaCoN_functions.R
 source(file.path(working_dir,"EaCoN_functions.R"))
 
-pipelineASCAT = function(sampleName,outputFolder, ascatFolder) {
+pipelineASCAT = function(sampleName,outputFolder, ascatFolder, penalty) {
     ## set paths
     OSCHPFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_OSCHP"
     # pathToOSCHP = paste0(OSCHPFolder,sampleName,".OSCHP")
@@ -170,7 +170,7 @@ pipelineASCAT = function(sampleName,outputFolder, ascatFolder) {
     # segmenting data using ascat.aspcf(ASCAT_obj). This step generates .txt segmentation files
     if(!dir.exists(outputFolder)) dir.create(outputFolder)
     source(file.path(working_dir,"ASCAT_functions.R"))
-    segData =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50, out.dir=outputFolder) # 50 is EaCoN default value
+    segData =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = penalty, out.dir=outputFolder) # 50 is EaCoN default value
     # segData =  custom_ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50, out.dir=outputFolder) # 50 is EaCoN default value
     # estimating copy number & ploidy & cellularity using ASCAT::ascat.runAscat. Also generates rawprofile, ascatprofile and sunrise plots
 
@@ -183,7 +183,7 @@ pipelineASCAT = function(sampleName,outputFolder, ascatFolder) {
         bestGamma = dplyr::filter(bestGammas, sample==sampleName)$bestGamma
         callData = ASCAT::ascat.runAscat(ASCATobj=segData,gamma=bestGamma,img.dir=outputFolder,img.prefix=paste0("run_bestGamma=", bestGamma, "_"))
         GOF_all_gammas=NULL
-        } else {
+    } else {
         outputFolderGammaRange = file.path(outputFolder, "gammaRange")
         if(!dir.exists(outputFolderGammaRange)) dir.create(outputFolderGammaRange)
         callData = NULL
@@ -268,8 +268,7 @@ cleanASCATSegData = function(callData, trimData = F) {
 
 #### main
 ascatFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/ASCAT"
-# sampleNames = c("17-VV", "10-CB", "15-GG", "20-CJ", "5-LD",  "8-MM",  "11-BG", "16-DD", "21-DC", "9-LA",  "12-BC", "2-AD",  "6-VJ",  "13-VT", "18-JA", "3-ES",  "14-CJ", "19-BF", "4-GM",  "7-DG")
-sampleNames = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
 sampleName = "12-BC"
 # sampleNames = c("5-LD", "6-VJ", "8-MM")
 # GI_ASCAT_df = data.frame(rep(NA, length(sampleNames)))
@@ -281,11 +280,12 @@ source(file.path(working_dir, "oncoscanR_functions.R"))
 segTables = list()
 ################# start of loop
 s=1
+penalty = 50
 for (s in 1:length(sampleNames)) {
     sampleName = sampleNames[s]
     before = Sys.time()
     outputFolder = file.path(ascatFolder,sampleName)
-    resPipeline = pipelineASCAT(sampleName,outputFolder,ascatFolder)
+    resPipeline = pipelineASCAT(sampleName,outputFolder,ascatFolder, penalty)
     callData = resPipeline[[1]]
     GammasTested = resPipeline[[2]]
     if(!is.null(GammasTested)) {
@@ -297,9 +297,9 @@ for (s in 1:length(sampleNames)) {
     
     ## keep this GI in a df along with its sampleName
     after=Sys.time()
-    print(c("GI_res: ", GI_res))
+    # print(c("GI_res: ", GI_res))
     GI_res = append(GI_res,round(as.numeric(difftime(after, before, units = "secs")), 2)) ## add run time
-    print(c("GI_res with runTime: ", GI_res))
+    # print(c("GI_res with runTime: ", GI_res))
     GI_res = append(GI_res,callData$purity) ## add purity estimate
     print(c("GI_res with runTime and purity: ", GI_res))
     GI_ASCAT_df[sampleName, ] = GI_res
@@ -330,7 +330,7 @@ if(F) {
     rownames(GI_oncosAndAscat) = GI_oncosAndAscat$sample
 
     ## organizing rows in reading order
-    rowsLayout = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+    rowsLayout = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
     GI_oncosAndAscat = GI_oncosAndAscat[rowsLayout,]
     barplot(as.numeric(GI_oncosAndAscat$GI_ASCAT), names.arg = GI_oncosAndAscat$sample)
     ## writing all GIs in a text file
@@ -338,7 +338,7 @@ if(F) {
     write.table(GI_oncosAndAscat,file.path(resultsDir, "gi_results_all_methods.txt"),sep="\t",row.names=FALSE)
 }
 ############## save segments table to file
-saveSegTables = function(segTables, outputDir, sampleNames=c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )) {
+saveSegTables = function(segTables, outputDir, sampleNames=c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )) {
     segTablesDir = file.path(outputDir, "segTables")
     if(!dir.exists(segTablesDir))dir.create(segTablesDir)
     for (i in 1:length(segTables)) {

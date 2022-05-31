@@ -2568,7 +2568,7 @@ CGHexplorer (cité dans ASCAT supplementary figures ): son code n'est pas dispon
 * [X] ~~*finir matmet w/ ASCAT*~~ [2022-05-30]
 * [X] ~~*git push pour pouvoir travailler vendredi*~~ [2022-05-25]
 * [X] ~~*Plot claire sur R*~~ [2022-05-30]
-* [X] ~~*ASCAT: supprimer les données des chromosomes sexuels *après* l'importation des données càd après custom_OS.process().*~~ [2022-05-30]
+* [X] ~~*ASCAT: supprimer les données des chromosomes sexuels _après_ l'importation des données càd après custom_OS.process().*~~ [2022-05-30]
 * [ ] pour tous les outils: Créer un fichier texte qui donne la date et l'heure pour lesquelles le package a tourné, les paramètres utilisés (si preprocess a été utilisé, si oui avec quelles options...) -> pas pour toutes les options mais les plus importantes: la penalty d'ASCAT, si CGHcall a travaillé sur tous les échantillons à la fois ou un à la fois, ou si CGHcall a call sur chaque bras chromosomique ou sur tout le génome... Surtout, oncoscanR et son filtrage des segments.
 J'ai ajouté les licences de chaque package à fonc...md . à part rCGH, qu'on ne peut pas modifier, tous sont open source et modifiables.
 
@@ -2582,18 +2582,19 @@ J'ai rédigé mat & met - ASCAT (presque fini) et commencé des figures pour les
 
 
 # <span style="color:#999900"> vendredi 27/05/2022
+5h de travail
 * [X] ~~*obj aujourd'hui: premier jet du rapport fini.*~~ [2022-05-30] 
 
 # <span style="color:#999900"> lundi 30/05/2022
-arrivée à 9h40; 25 min pause
+arrivée à 9h40; 25 min pause; départ à 19h45
 Obj aujourd'hui: Tester plusieurs options pertinentes des packages:
-* [ ]  cghcall par chr ou par génome
+* [ ] cghcall par chr ou par génome
 * [ ] cghcall par E ou par cohorte
 * [ ] oncoscanR: avec et sans nettoyage
 * [ ] oncoscanR: faire varier le 300 kbp
 * [ ] ASCAT faire varier la penalty
 
-* [ ] ASCAT comparer la cellularité estimée avec HES. faire une fonction qui wrappe la fonction saveGI_ResToFile().
+* [X] ~~*Modifier la fonction saveGI_ResToFile() pour qu'elle permette l'export de la cellularité d'ASCAT.*~~ [2022-05-31]
 Ce matin, j'ai fait en sorte qu'ASCAT supprime les données des chromosomes X et Y avant de traiter les données, sauvegarde les tableaux de segmentation dans des fichiers textes, charge et sauvegarde le fichier de tous les GI en y ajoutant le nombre d'altérations, de chromosomes et le temps de calcul.
 Dans CGHcall, les plots de segTables sont générés par le script. Je veux implémenter les mêmes fonctions que dans ASCAT.R.
 ROC: le taux de vrais positifs est aussi appelé précision et sensibilité (en anglais, recall et sensitivity). Le taux de faux positifs est aussi appelé probabilité de fausse alerte ou fall-out. Ces deux paramètres sont utilisés pour construire les courbes ROC. Voir https://en.wikipedia.org/wiki/Precision_and_recall#Definition_(classification_context) .
@@ -2604,10 +2605,40 @@ Pour calculer ces taux avec plusieurs classes (GI haut, faible et intermédiaire
 * [ ] contacter Slim karkar pour soutenance
 
 # <span style="color:#999900"> mardi 31/05/2022
-* [ ]  obj avant midi: refaire les plots du rapport avec les nouveaux GI.
-* [ ] et rédiger sur ces résultats.
+arrivée à 9h; 40 min pause; 18h50
+* [X] ~~*obj avant midi: refaire les plots du rapport avec les nouveaux GI. C'est rapide.*~~ [2022-05-31]
+* [X] ~~*donc recalculer les GI pour tous les outils (fait pour ASCAT et CGHcall)*~~ [2022-05-31]
+* [X] ~~*donc utiliser les fonctions d'export de données qu'ASCAT utilise*~~ [2022-05-31]
+* [X] ~~*et éventuellement implémenter le temps de calcul pour tous les outils*~~ [2022-05-31]
 * [ ] si je peux aussi faire varier le 300 kbp d'oncoscanR ça peut être bien aussi: utiliser 0.01 etc. pour undo.SD .
+* [ ] faire un tri des options qui sont vraiment à tester ou non pour la réunion. ex: pas rCGH.
+* [X] ~~*comparer la cellularité d'ASCAT avec celle estimée par HES. faire un plot*~~ [2022-05-31]
+* [ ] ``ne pas oublier: ``Rédiger sur ces résultats. ou du moins, savoir ce que je vais dire dessus.
+
+
+* [X] ~~*poser des questions sur comment faire les courbes ROC: peut-on considérer que le groupe intermédiaire représente 2 classes? Si non, faire varier le seuil du groupe intermédiaire, est-ce correct?*~~ [2022-05-31] On considère qu'il y a deux groupes de part et d'autre de 10.
+
+Ce que j'ai fait: les plots qu'on a vu ce matin; après la réunion j'ai intégré l'E 1-RV dans les scripts (ce qui inclut générer des fichiers) et fini la partie matériel et méthodes.
+
+* [X] ~~*noter la suite de la semaine*~~ [2022-05-31]
+
+à faire aujourd'hui:
+* [X] ~~*Finir Mat & Met (l'état de l'art, lui, est fini) pour qu'élodie ait une vraie partie à lire. L'intro et la ccl de cette partie restent à faire mais globalement elle est faite.*~~ [2022-05-31] L'intro de mat met est légère mais ça suffit pour l'instant.
 
 
 
+polymorphisme : gain ou perte lié à l'ethnie. On n'en tient pas compte dans le calcul du GI.
+# <span style="color:#999900"> mercredi 01/06/2022 
+* [ ] Si Claire m'a envoyé ses commentaires, les lire et y réfléchir un peu mais ne rien écrire, on en parle demain
 
+
+# <span style="color:#999900"> jeudi 02/06/2022 
+* [ ] Parler des commentaires de l'intro avec Claire
+`aujourd'hui: audit du COFRAC. éviter de sortir du bureau, ne pas aller en FISH/CGH.`
+* [ ] Aujourd'hui, il est prévu que je voie avec Benjamin ou Isabelle comment on détermine la cellularité tumorale à partir d'une lame HES.
+
+# <span style="color:#999900"> vendredi 03/06/2022 
+* [ ] si Elodie m'a envoyé des commentaires sur le mat met, les lire
+* [ ] visio avec Elodie sur les commentaires du mat met
+
+# <span style="color:#999900"> lundi 06/06/2022  

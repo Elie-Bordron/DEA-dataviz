@@ -52,7 +52,6 @@ source(file.path(working_dir, "oncoscanR_functions.R"))
 ## setting paths
 dataDir = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
 resultsDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/CGHcall"
-sampleNames = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
 osData = NULL
 if(F) {
     sampleNames = c("5-LD", "6-VJ", "8-MM")
@@ -75,7 +74,7 @@ if(F) {
 
 
 main = function() {
-    sampleNames = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+    sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
     # sampleNames = c("4-GM", "9-LA", "16-DD")
     ######################## load all-samples probeset.txt file
     allSamplesClean_path = file.path(dataDir, "allSamplesCleanProbeset_2_3Rec.txt")
@@ -145,17 +144,12 @@ main = function() {
     # allGIs = read.table(GIsAllResults, h=T)
     # write.table(allGIs,file.path(GI_dir, "gi_results_all_methods_addedCGHcall.txt"),sep="\t",row.names=FALSE, quote=F)
 }
-
-
-
+if(interactive()) {
+    main()
+}
 # to use:
 # allSegTables
 # GI_CGHcall_df
-
-
-
-
-
 
 if (F) {
     #### Debug

@@ -50,7 +50,7 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [ ] mettre les 4 organigrammes dans une image? et faire des symboles pour chaque étape / montrer un plot des donneés obtenues à chaque étape
 * [ ] Si le temps le permet, regarder quel package est utilisé dans quel cancer -> regarder où l'article de tel outil est cité. pour faire une ouverture, à la fin du rapport.
 * [ ] sortir les profils WGV de chaque échantillon avec ChAS pour pouvoir comparer avec les plots de segtables des 4 outils
-* [ ] `résultats: ` utiliser le cahier bleu au 10/05
+* [X] ~~*`résultats: ` utiliser le cahier bleu au 10/05*~~ [2022-05-31]
 * [ ] `résultats: ` pour tous les outils, montrer l'effet des nettoyages en faisant tourner les données avec et sans.
 * [ ] oncoscanR: faire un plot qui montre le WGV d'un échantillon et indique les bras déclarés comme altérés et les bras non déclarés comme altérés. ça permet de visualiser l'effet du seuil et de *voir* ce qui est fait par cet outil. Voir powerpoint oncoscanR, diapo 13
 * [ ] rCGH: regarder comment le nombre de copies est estimé. voir rCGH_dev.R .
@@ -71,4 +71,21 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 ## 30/05/2022
 * [X] ~~*ASCAT: renseigner la cellularité et voir si on obtient de meilleurs résultats*~~ [2022-05-30] Non. Mais comparer cette cellularité avec la cellularité estimée par lame HES.
 * [ ] ASCAT.R: pourquoi y a-t-il des problèmes dans la sauvegarde des segTables?
-
+## 31/05/2022
+* [ ] Parler de ça dans la discussion: Laetitia m'indique que certaines altérations font parfois une dizaine de sondes. C'est à garder en tête pour discuter d'oncoscanR qui estime les altérations sur un bras entier, ou tous les outils qui lissent avant de déterminer les altérations.
+`dans les scripts: `
+* [ ] relancer tous calculs GI avec 1-RV.
+* [ ] 3 grp -> 2 grp. on enlève l'intermédiaire.
+* [ ] refaire plot distri avec 2 grp
+* [ ] refaire plot cellularité: mêmes échelles en X et Y; vérifier les valeurs.
+* [ ] illustrer le plot de cellularité par une photo de lame HES cerclée
+* [ ] vérifier qu'ASCAT donne bien le % de cellules tumorales
+* [ ] courbes ROC: regarder packages R, pROC
+* [ ] plot distri: relier tous les points. Ensuite, voir si c'est plus pertinent de le faire seulement avec certains points.
+* [ ] changer, dans le tableur excel, les GI agilent que j'utilise pour les E 3 et 18. cf cahier.
+* [X] ~~*Demander à Gaetan une photo de lame HES cerclée ou non mais scannée sur laquelle on voit facilement les cellules tumorales ou non tumorales.*~~ [2022-05-31] Claire a des photos de ce genre.
+* [ ] intégrer une photo de lame HES dans le rapport; voir avec Claire.
+* [ ] retirer E 17 des plots et résultats
+* [ ] Mat Met ASCAT: changer le plot de distance entre les segments et les entiers non nuls les plus proches. cf cahier au 23/05
+* [ ] Mat Met ASCAT: eventuellement ajouter un plot qui résume comment on peut déterminer la ploïdie (ou le CN) et la cellularité à partir de log RAtio et BAF. cf cahier au 23/05, ou slides ASCAT 45-47 (donc dans `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_made\images`) ou à partir de la vidéo `https://www.biodiscovery.com/videos/ascat-algorithm`
+* [ ] résultats: utiliser les bons GI d'Agilent pour les échantillons qui en ont 2. cf cahier.

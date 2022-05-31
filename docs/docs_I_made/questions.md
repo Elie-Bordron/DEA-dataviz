@@ -11,7 +11,7 @@
     * [ ] Ce qu'on appelle la récurrence, c'est l'apparition de métastases?
     * [X] ~~*L'estimation de la cellularité est-elle faite en utilisant une lame différente de celle utilisée pour l'analyse CGH?*~~ [2022-05-12] la lame est issue du bloc, donc les deux informations viennent du même endroit
     * [X] ~~*le logiciel propriétaire d'affymétrix est-il bien `OncoScan Console 1.3` ?*~~ [2022-05-23] Non, c'est ChAS.
-    * [ ] qu'est-ce qu'une perte hétérozygote/homozygote? C'est différent d'une LOH.
+    * [X] ~~*qu'est-ce qu'une perte hétérozygote/homozygote? C'est différent d'une LOH.*~~ [2022-05-31] 
 # questions sur OncoscanCNV/ChAS/... -> Tony
 * [X] ~~*peut-on exporter start et end en colonnes de la vue graph de ChAS? sinon, a-t-on un fichier qui indique la couverture de chaque sonde? c'est-à-dire les positions de début et de fin. car CGHcall a besoin de ces 2 infos en input, et ChAS ne les exporte pas a priori.*~~ [2022-05-13] a priori non mais cf cahier à la date d'aujourd'hui
 * [X] ~~*Ou alors, a-t-on un fichier qui indique la couverture de chaque sonde, ou la taille de chaque sonde?*~~ [2022-05-13] ce sont des positions de SNP. cf cahier aussi.

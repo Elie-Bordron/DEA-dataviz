@@ -1,4 +1,5 @@
 sample	bestGamma
+1-RV	0.95
 2-AD	0.9 
 3-ES	0.9
 4-GM	0.9

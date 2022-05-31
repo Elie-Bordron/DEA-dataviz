@@ -31,12 +31,10 @@ source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/wo
 source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/oncoscanR_scores.R")
 source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/onsoscanR_utils.R")
 
-sampleNames = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC")
+sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC")
 sampleNames = c("12-BC")
 ## running oncoscanR
-# main = function(dataDir, sampleNames, gendersTable) {
-    startTimer = Sys.time()
-
+main = function(dataDir, sampleNames, gendersTable) {
     source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/OncoscanR_functions.R")
     ######################################################################################
     resList = list()
@@ -48,18 +46,24 @@ sampleNames = c("12-BC")
         filepath = file.path(dataDir,nameSeg_txt)
         gender_row = gendersTable %>% dplyr::filter(sample==currSample)
         curr_gender = gender_row$gender
+        before = Sys.time()
         curr_res = computeOneFileWithOncoscanR(filepath,curr_gender)
+        after = Sys.time(); runTime = round(difftime(after, before, unit="secs"), 2)
+        curr_res$runTime = runTime
         resList = append(resList, list(curr_res)) # caution: using `append(resList, curr_res)` would concatenate instead of append
-        # }
     }
     ######################################################################################
-    endTimer = Sys.time(); computingTime = endTimer - startTimer; print(computingTime)
     source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/OncoscanR_functions.R")
     GIResultsAllMethods = oncoscanR_GIs_to_dataframe(resList, sampleNames)
-    GI_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods"
-    write.table(GIResultsAllMethods,file.path(GI_dir, "gi_oncoscanR.txt"),sep="\t",row.names=FALSE, quote=F)
-    # return(GIResultsAllMethods)
-# }
+    ############## save GI data to file
+    source(file.path(working_dir, "crossPackagesFunctions.R"))
+    saveGI_ResToFile(GIResultsAllMethods, "oncoscanR")
+    
+    # GI_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods"
+    # write.table(GIResultsAllMethods,file.path(GI_dir, "gi_oncoscanR.txt"),sep="\t",row.names=FALSE, quote=F)
+    
+   return(GIResultsAllMethods)
+}
 
    
 

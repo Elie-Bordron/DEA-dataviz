@@ -12,12 +12,13 @@ library(dplyr)
 
 pipeline_rCGH = function(sampleName) {
     # sampleName="3-ES"
-    sampleName="5-LD"
+    # sampleName="5-LD"
     # sampleName="9-LA" # has LOH
     ## ----readFiles----------------------------------
     probesetTxtFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
     pathToProbesetTxt = paste0(probesetTxtFolder,"/",sampleName,".probeset.txt")
     print(pathToProbesetTxt)
+    before = Sys.time()
     cgh = rCGH::readAffyOncoScan(pathToProbesetTxt, sampleName=sampleName)
     ## remove sex chromosomes data
     cgh@cnSet = dplyr::filter(cgh@cnSet, ChrNum<23)
@@ -65,7 +66,10 @@ pipeline_rCGH = function(sampleName) {
 
     ## ----EMnormalize--------------------------------------------------------------
     cghNorm <- rCGH::EMnormalize(cghSeg)
-
+    after = Sys.time()
+    setInfo(cghNorm, "runTime") = difftime(after, before, units="secs")
+    # Retrieve this using currCallRes@info[["runTime"]] or  getInfo(currCallRes, "runTime")
+    
     if(F) {
         ### plot to compare with seg before this 2nd normalisation
         segDfNorm = cghNorm@cnSet
@@ -135,18 +139,19 @@ main = function() {
     source(file.path(working_dir, "oncoscanR_functions.R"))
     source(file.path(working_dir, "rCGH_functions.R"))
     ## define paths
-    sampleNames = c("2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+    sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
     # sampleNames = c("2-AD", "3-ES")
     ## initialize list to contain all rCGH objects, and list of segTables
     rCGHResults = list()
     segTables = list()
     ## initialize df to contain all GIs
-    GIdf_rCGH = data.frame(matrix(ncol = 4, nrow = 0))
-    colnames(GIdf_rCGH) = c("sample", "GI_rCGH", "nbAlter_rCGH", "nbChr_rCGH")
+    GIdf_rCGH = data.frame(matrix(ncol=4, nrow=length(sampleNames)))
+    colnames(GIdf_rCGH) = c("GI", "nbAlter", "nbChr", "runTime")
+    rownames(GIdf_rCGH) = sampleNames
+    outputFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/rCGH/"
+    if(!dir.exists(outputFolder)) dir.create(outputFolder)
     for (s in 1:length(sampleNames)) {
         currSampleName = sampleNames[s]
-        outputFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/rCGH/"
-        if(!dir.exists(outputFolder)) dir.create(outputFolder)
         print(paste0("processing pipeline for sample ", currSampleName))
         currCallRes = pipeline_rCGH(currSampleName)
         rCGHResults = append(rCGHResults,list(currCallRes))
@@ -155,14 +160,8 @@ main = function() {
         segTables = append(segTables,list(segTable_rCGH))
         # extract GI result
         GI_res = calcGI_rCGH(segTable_rCGH)
-        GIdf_rCGH[s,] = c(currSampleName, GI_res)
-        
-        ## -- plotting and saving estimated CN
-        # png(paste0(outputFolder, "/segsUsedForGI.png"), width=1500, height=600)
-        # generateGrid(paste0(currSampleName," estimated copy number"), mode="CN")
-        # apply(segTable_rCGH, 1, plotSeg, "estimCopy")
-        # dev.off()
-                
+        cleanRunTime = round(as.numeric(getInfo(currCallRes, "runTime")), 2)
+        GIdf_rCGH[s,] = c(GI_res, cleanRunTime)
     }
     return(list(GIdf_rCGH, segTables, rCGHResults))
 }
@@ -175,8 +174,19 @@ if (!interactive()) {
     res_rCGH = main()
     GI_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods"
     GIdf_rCGH = res_rCGH[[1]]
-    write.table(GIdf_rCGH,file.path(GI_dir, "gi_results_rCGH.txt"),sep="\t",row.names=FALSE, quote=F)
+    ############## save GI data to file
+    source(file.path(working_dir, "crossPackagesFunctions.R"))
+    saveGI_ResToFile(GIdf_rCGH, "rCGH")
+    ## plot seg tables
+    ## -- plotting and saving estimated CN
+    # png(paste0(outputFolder, "/segsUsedForGI.png"), width=1500, height=600)
+    currSampleName = "14-CJ"
+    segTable_rCGH = segTables[[13]]
+    generateGrid(paste0(currSampleName," estimated copy number"), mode="CN")
+    apply(segTable_rCGH, 1, plotSeg_rCGH, "probes.Sd")
+    # dev.off()
     
+        
     segTables[10:13]
 }
 

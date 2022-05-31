@@ -29,7 +29,7 @@
 #' @examples
 #' segs.filename <- system.file("extdata", "chas_example.txt", package = "oncoscanR")
 #' workflow_oncoscan.run(segs.filename, "M")
-custom_workflow_oncoscan.run <- function(chas.fn, gender, cleanSegments=F){
+custom_workflow_oncoscan.run <- function(chas.fn, gender, cleanSegments=F, plotPAA=F){
     if(!(gender %in% c('M', 'F'))){
         stop("The gender has to be 'F' or 'M'.")
     }
@@ -73,7 +73,7 @@ custom_workflow_oncoscan.run <- function(chas.fn, gender, cleanSegments=F){
     lastElmt = fileName[[length(fileName)]]
     sampleName = stringr::str_split(lastElmt,'\\.')[[1]]
     sampleName = sampleName[[1]]
-    if(T) {
+    if(plotPAA) {
         message("plotting proportions of altered arms...")
         plotPAAWithThreshold(armlevel.loss, paste0(sampleName, " loss"),oncoscan.cov)
         plotPAAWithThreshold(armlevel.loh, paste0(sampleName, " loh"),oncoscan.cov)
@@ -133,11 +133,11 @@ custom_workflow_oncoscan.run <- function(chas.fn, gender, cleanSegments=F){
 
 ######## functions for iterating over files
 
-computeOneFileWithOncoscanR = function(filepath,gender) {
+computeOneFileWithOncoscanR = function(filepath,gender, plotPAA=F) {
     # print(c("filepath: ", filepath))
     # print(c("gender: ", gender))
     #### using custom run fx
-    curr_res = custom_workflow_oncoscan.run(filepath, gender)
+    curr_res = custom_workflow_oncoscan.run(filepath, gender,plotPAA)
     # curr_res = oncoscanR::workflow_oncoscan.run(filepath, gender)
     # print(c("computed result: ", curr_res))
     return(curr_res)
@@ -184,10 +184,10 @@ getNbChrs_oncoscanR = function(chrIds) {
 
 calcGI = function(nbAlter, nbChrs) {
     if(nbChrs > nbAlter) {
-        print("nbChrs > nbAlter. Did you invert them?")
+        warning("nbChrs > nbAlter. Did you invert them?")
         return(NULL)
     if(nbChrs>24) {
-        print("nbChrs > 24. Did you invert nbChrs and nbAlter?")
+        warning("nbChrs > 24. Did you invert nbChrs and nbAlter?")
         return(NULL)
     }
     if(nbChrs>22) {
@@ -253,7 +253,8 @@ getSampleNameFromOncoscanR_result = function(currRes) {
 
 oncoscanR_GIs_to_dataframe = function(resultsOncoscanR, sampleNames) {
     GI_oncoscanR_df = data.frame(matrix(ncol = 4, nrow = length(sampleNames)))
-    colnames(GI_oncoscanR_df) = c("sample","GI_oncoscanR", "nbAlter_oncoscanR", "nbChr_oncoscanR")
+    colnames(GI_oncoscanR_df) = c("GI", "nbAlter", "nbChr", "runTime")
+    rownames(GI_oncoscanR_df) = sampleNames
     for (i in 1:length(resultsOncoscanR)) {
         currRes = resultsOncoscanR[[i]]
         ### get GI
@@ -262,9 +263,9 @@ oncoscanR_GIs_to_dataframe = function(resultsOncoscanR, sampleNames) {
         armlevelAlters = currRes$armlevel
         # print(c("armlevelAlters: ", armlevelAlters))
         curr_GI_res = calcGI_oncoscanR(armlevelAlters)
-        # print(c("curr_GI_res: ", curr_GI_res))
+        print(c("curr_GI_res: ", curr_GI_res))
         # print( list(sampleNames[i],curr_GI_res))
-        GI_oncoscanR_df[i,] = append(list(sampleNames[i]), curr_GI_res)
+        GI_oncoscanR_df[i,] = append(curr_GI_res, currRes$runTime)
         # print(GI_oncoscanR_df)
     }
     return(GI_oncoscanR_df)
