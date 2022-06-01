@@ -103,6 +103,9 @@ main = function(runAsCohort=F) {
             callAllSamples = append(callAllSamples, currCallRes)
             print(c("callAllSamples: ", callAllSamples))
         }
+        if(length(callAllSamples)==1) {
+            callAllSamples = callAllSamples[[1]] ## if only one sample was treated, we don't want it to be in a list.
+        }
     }
     # layout(matrix(c(1,1)))
     
@@ -154,7 +157,6 @@ main = function(runAsCohort=F) {
     
     ssRun = getPrbLvSegments(callAllSamples)
     cohortRun = getPrbLvSegments(x) 
-    CGHcall_segments = getPrbLvSegmentsFromCallObj(x)
     
     
     
