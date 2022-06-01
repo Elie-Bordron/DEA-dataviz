@@ -89,3 +89,4 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [ ] Mat Met ASCAT: eventuellement ajouter un plot qui résume comment on peut déterminer la ploïdie (ou le CN) et la cellularité à partir de log RAtio et BAF. cf cahier au 23/05, ou slides ASCAT 45-47 (donc dans `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_made\images`) ou à partir de la vidéo `https://www.biodiscovery.com/videos/ascat-algorithm`
 * [ ] résultats: utiliser les bons GI d'Agilent pour les échantillons qui en ont 2. cf cahier.
 * [ ] ajouter un label à chaque point du plot distri.
+* [ ] CGHcall ## make it so a list containing only 1 cghCall result can't exist. do this at the end of pipelineCGHcall(). cf getPrbLvSegments()

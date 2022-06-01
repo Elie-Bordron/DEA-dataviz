@@ -118,11 +118,50 @@ main = function(runAsCohort=F) {
     ## retrieve probes information
     rowsInfo = fData(callAllSamples)
     ## retrieve call segments
-    CGHcall_segments = as.data.frame(calls(callAllSamples))
+    getPrbLvSegmentsFromCallObj = function(callRes) {
+        ### callRes must be a cghCall object containing results of one or more samples, but can't be a list of cghCall objects
+        sampleNames = colnames(callRes@assayData[["calls"]])
+        rowsInfo = fData(callRes)
+        CGHcall_segments = as.data.frame(calls(callRes))
+        CGHcall_segments = cbind(rowsInfo, CGHcall_segments)
+        colnames(CGHcall_segments) = c(colnames(rowsInfo), sampleNames)
+        return(CGHcall_segments)
+    }
+
+# getPrbLvlSegments
+
+    getPrbLvSegments = function(pipelineRes) {
+        if(is.list(pipelineRes)) {
+            print("result is a list of individual cghCall objects")
+            currRes = pipelineRes[[1]]
+            probeLevelSegments = getPrbLvSegmentsFromCallObj(currRes)
+            for(i in 2:length(pipelineRes)) { ## I must make it so a list containing only 1 cghCall result can't exist
+                currRes = pipelineRes[[i]]
+                curr_prbLevSegs = getPrbLvSegmentsFromCallObj(currRes)
+                probeLevelSegments = cbind(probeLevelSegments, curr_prbLevSegs[,length(curr_prbLevSegs)])
+                # print(c("colnames(curr_prbLevSegs)[length(colnames(curr_prbLevSegs))]: ", colnames(curr_prbLevSegs)[length(colnames(curr_prbLevSegs))]))
+                colnames(probeLevelSegments)[length(probeLevelSegments)] = colnames(curr_prbLevSegs)[length(colnames(curr_prbLevSegs))]
+                # print(c("probeLevelSegments: ", probeLevelSegments))
+            }
+        } else if(class(pipelineRes)=="cghCall") {
+                print("result is a single cghCall object.")
+                probeLevelSegments = getPrbLvSegmentsFromCallObj(pipelineRes)
+        } else {
+            print("invalid input")
+        }
+        return(probeLevelSegments)
+    }
+    
+    ssRun = getPrbLvSegments(callAllSamples)
+    cohortRun = getPrbLvSegments(x) 
+    CGHcall_segments = getPrbLvSegmentsFromCallObj(x)
+    
+    
+    
     # get segments tables
-    source(file.path(working_dir, "CGHcall_functions.R"))
     allSegTables = getSegTables(CGHcall_segments,sampleNames,rowsInfo)
     # plot called data on all profiles
+    source(file.path(working_dir, "CGHcall_functions.R"))
     source(file.path(working_dir, "rCGH_functions.R"))
     plotSegTables(allSegTables,sampleNames,resultsDir)
 
