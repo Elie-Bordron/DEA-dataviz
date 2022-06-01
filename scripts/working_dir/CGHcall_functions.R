@@ -36,7 +36,7 @@ getSeg = function(currSampleSegs, s){
     # print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
     # print(c("currSampleSegs$CN[i+1]: ", currSampleSegs$CN[i+1]))
     # print(c("chrVec[i+1]: ", chrVec[i+1]))
-    while((i<length(currSampleSegs[,1])) && (currSampleSegs$CN[i+1]==segToReturn$currSegVal) && (chrVec[i+1]==segToReturn$currSegChr)) {i=i+1}
+    while((i<length(currSampleSegs[,1])) && (currSampleSegs$CN[i+1]==segToReturn$currSegVal) && (currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr)) {i=i+1}
     # print(c("chrVec[i+1]: ", chrVec[i+1]))
     # print(c("chrVec[i]: ", chrVec[i]))
     # print(c("chrVec[i-1]: ", chrVec[i-1]))
@@ -47,7 +47,7 @@ getSeg = function(currSampleSegs, s){
     # print(c("class(currSegVal)", class(currSegVal)))
     # segToReturn = dplyr::select(segToReturn, c("currSegChr", "currSegStart", "currSegEnd", "currSegVal", "currSegNbProbes", "i"))
     segToReturn = segToReturn[c("currSegChr", "currSegStart", "currSegEnd", "currSegVal", "currSegNbProbes", "i")]
-    print(c("segToReturn: ", segToReturn))
+    # print(c("segToReturn: ", segToReturn))
     # print(c("one segment: ", currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
     # return(list(currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
     return(segToReturn)
@@ -61,7 +61,7 @@ getSegTable = function(currSampleSegs) {
     segId = 1
     s=1 # start of segment
     i=1 # end of segment
-    # print(c("currSampleSegs: ", currSampleSegs))
+    # print(c("currSampleSegs: ", currSampleSegs)) 
     # print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
     while (s < length(currSampleSegs[,1])) {
         print(paste0("------------- segId = ", segId," -------------"))
@@ -79,15 +79,15 @@ getSegTable = function(currSampleSegs) {
 
 
 
-getSegTables = function(segTableByProbe, sampleNames, rowsInfo) {
+getSegTables = function(segTableByProbe, sampleNames) {
     # get segTables for all samples; concatenate them in a list
     segTablesList = list()
     for(sample in sampleNames) {
         print(paste0("==================================== sample = ", sample," ===================================="))
-        # currSample_SegTableByProbe = cbind(rowsInfo, segTableByProbe[[sample]])
-        # colnames(currSample_SegTableByProbe) = c(colnames(rowsInfo), "CN")
+        currSample_SegTableByProbe = cbind(rowsInfo, segTableByProbe[[sample]])
+        colnames(currSample_SegTableByProbe) = c(colnames(rowsInfo), "CN")
         
-        # print(c("currSample_SegTableByProbe: ", currSample_SegTableByProbe))
+        print(c("currSample_SegTableByProbe: ", currSample_SegTableByProbe))
         currSegTable = getSegTable(currSample_SegTableByProbe)
         segTablesList = append(segTablesList, list(currSegTable))
     }
@@ -113,6 +113,39 @@ plotSegTables = function(segTablesList, sampleNames, resultsDir) {
     }    
 }
 
+
+getPrbLvSegmentsFromCallObj = function(callRes) {
+    ### callRes must be a cghCall object containing results of one or more samples, but can't be a list of cghCall objects
+    sampleNames = colnames(callRes@assayData[["calls"]])
+    rowsInfo = fData(callRes)
+    CGHcall_segments = as.data.frame(calls(callRes))
+    CGHcall_segments = cbind(rowsInfo, CGHcall_segments)
+    colnames(CGHcall_segments) = c(colnames(rowsInfo), sampleNames)
+    return(CGHcall_segments)
+}
+
+
+getPrbLvSegments = function(pipelineRes) {
+    ### this works whatever the input is, as long as the pipeline ran correctly.
+    if(is.list(pipelineRes)) {
+        print("result is a list of individual cghCall objects")
+        currRes = pipelineRes[[1]]
+        probeLevelSegments = getPrbLvSegmentsFromCallObj(currRes)
+        for(i in 2:length(pipelineRes)) { ## I must make it so a list containing only 1 cghCall result can't exist
+            currRes = pipelineRes[[i]]
+            curr_prbLevSegs = getPrbLvSegmentsFromCallObj(currRes)
+            probeLevelSegments = cbind(probeLevelSegments, curr_prbLevSegs[,length(curr_prbLevSegs)])
+            colnames(probeLevelSegments)[length(probeLevelSegments)] = colnames(curr_prbLevSegs)[length(colnames(curr_prbLevSegs))]
+            # print(c("probeLevelSegments: ", probeLevelSegments))
+        }
+    } else if(class(pipelineRes)=="cghCall") {
+            print("result is a single cghCall object.")
+            probeLevelSegments = getPrbLvSegmentsFromCallObj(pipelineRes)
+    } else {
+        print("invalid input")
+    }
+    return(probeLevelSegments)
+}
 
 
 

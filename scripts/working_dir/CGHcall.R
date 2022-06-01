@@ -1,13 +1,15 @@
+
 ## set working directory
 working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
 setwd(working_dir)
-outputFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/CGHcall/plots"
+CGHcallDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/results/CGHcall"
 ## open working directory in Files tab
 rstudioapi::filesPaneNavigate(working_dir)
 ## to use plotSeg()
 source(file.path(working_dir, "rCGH.R"))
 source(file.path(working_dir, "rCGH_functions.R"))
 source(file.path(working_dir, "CGHcall_functions.R"))
+source(file.path(working_dir, "crossPackagesFunctions.R"))
 
 
 ## import libraries
@@ -15,7 +17,7 @@ source(file.path(working_dir, "CGHcall_functions.R"))
 library(dplyr)
 library(CGHcall)
 
-pipelineCGHcall = function(osData, tumor_prop=NULL) {
+pipelineCGHcall = function(osData, tumor_prop=NULL, givenMaxmiss, givenNormMethod, givenSmoothOutliers, givenUndoSD, givenClen, givenRelSDlong, givenInter, givenPrior, givenRobustsig, givenmMinlsforfit, givenCellularityCorrectSeg) {
     # osData = rawProbesData
     before=Sys.time() 
     # osData = s2Probes # to run on one sample
@@ -24,15 +26,15 @@ pipelineCGHcall = function(osData, tumor_prop=NULL) {
     ACGH_data <- make_cghRaw(osData)
     # we want to apply fewest changes possible to data, so we want to do our own preprocess if we have time
     # cghdata = removedNaNProbes = dplyr::filter(ACGH_data, !is.na(ACGH_data[5]))
-    cghdata <- preprocess(ACGH_data, maxmiss=95, nchrom=22) # because we don't need sex chromosomes data for GI.
+    cghdata <- preprocess(ACGH_data, maxmiss=givenMaxmiss, nchrom=22) # because we don't need sex chromosomes data for GI.
     # plot(cghdata)
-    norm.cghdata <- normalize(cghdata, method="median", smoothOutliers=F)
-    seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy", undo.splits="sdundo",undo.SD=3, clen=10, relSDlong=5)
+    norm.cghdata <- normalize(cghdata, method=givenNormMethod, smoothOutliers=givenSmoothOutliers)
+    seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy", undo.splits="sdundo",undo.SD=givenUndoSD, clen=givenClen, relSDlong=givenRelSDlong)
     # segTable = segmented(seg.cghdata)
-    postseg.cghdata <- postsegnormalize(seg.cghdata)
+    postseg.cghdata <- postsegnormalize(seg.cghdata, inter=givenInter)
     # plot(postseg.cghdata, ylimit=c(-2,2))
-    rawCghResult <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor_prop)
-    CghResult <- ExpandCGHcall(rawCghResult,postseg.cghdata,CellularityCorrectSeg=F) # use CellularityCorrectSeg=TRUE to correct using cellularity
+    rawCghResult <- CGHcall(postseg.cghdata,nclass=5,cellularity=tumor_prop, prior=givenPrior, robustsig = givenRobustsig, minlsforfit = givenmMinlsforfit)
+    CghResult <- ExpandCGHcall(rawCghResult,postseg.cghdata,CellularityCorrectSeg=givenCellularityCorrectSeg) # use CellularityCorrectSeg=TRUE to correct using cellularity
     after = Sys.time()
     CghResult$processingTime = round(as.numeric(difftime(after, before, units = "secs"))/dim(CghResult)[2], 2) ## If more than 1 sample is processed for this run, the average value is given to each sample. This value is stored in CghResult@phenoData@data[["processingTime"]].
     return(CghResult)
@@ -74,32 +76,38 @@ if(F) {
 
 
 
-main = function(runAsCohort=F) {
+main = function() {
+    ######################## Define parameters
+    runAsCohort = F
     sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
-    # sampleNames = c("4-GM", "9-LA", "16-DD")
-    
+    inputFile = "allSamplesCleanProbeset_2_3Rec.txt"
+    allSamplesClean_path = file.path(dataDirProbesets, inputFile)
+    ## pipeline parameters
+    givenMaxmiss=0.95
+    givenNormMethod = "median"
+    givenSmoothOutliers = F
+    givenUndoSD=3
+    givenClen=10
+    givenRelSDlong=5
+    givenInter = c(-0.1,0.1)
+    givenPrior = "not all"
+    givenRobustsig = "no"
+    givenCellularityCorrectSeg = F
+
+    ######################## start analysis
     ## load all-samples probeset.txt file
-    allSamplesClean_path = file.path(dataDirProbesets, "allSamplesCleanProbeset_2_3Rec.txt")
     rawProbesData = read.table(allSamplesClean_path, h=T)
     colnames(rawProbesData) = c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleNames)
     
-    # to run pipeline on one sample only    
-    # sampleName = "2-AD"
-    # s2Probes = dplyr::select(rawProbesData, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleName))
-    # callAllSamples = pipelineCGHcall(s2Probes)
-    
     ### to run pipeline on all samples at the same time
-    # rawProbesData = dplyr::select(rawProbesData, c("probeID", "CHROMOSOME", "START_POS", "END_POS", all_of(sampleNames)))
     tumor_prop = c(0.9,0.9,0.9,0.9,0.9,0.8,0.9,0.8,0.9,0.8,0.8,0.9,0.8,0.8,0.8,0.9,0.8,1,0.95,0.8,0.8) # samples 1 to 21
-    ## Uncomment layout commands beneath to plot 3 samples within the same plot; also uncomment plot functions in pipelineCGHcall()
-    # layout(matrix(c(1,2,3),nrow=3))
     if(runAsCohort) {
-        callAllSamples = pipelineCGHcall(rawProbesData, tumor_prop)
+        callAllSamples = pipelineCGHcall(rawProbesData, tumor_prop, givenMaxmiss, givenNormMethod)
     } else {
         callAllSamples = list()
         for (s in 1:length(sampleNames)) {
             currProbesData = dplyr::select(rawProbesData, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleNames[s]))
-            currCallRes = pipelineCGHcall(currProbesData, tumor_prop[s])
+            currCallRes = pipelineCGHcall(currProbesData, tumor_prop[s], givenMaxmiss, givenNormMethod)
             callAllSamples = append(callAllSamples, currCallRes)
             print(c("callAllSamples: ", callAllSamples))
         }
@@ -107,96 +115,45 @@ main = function(runAsCohort=F) {
             callAllSamples = callAllSamples[[1]] ## if only one sample was treated, we don't want it to be in a list.
         }
     }
-    # layout(matrix(c(1,1)))
-    
-    if(F) {
-        #### to check that nothing went wrong
-        rowsInfo = fData(callAllSamples)
-        call1 = callAllSamples[,1]
-        CN1 = calls(call1)
-        complete1 = cbind(rowsInfo, CN1)
-        complete1
-    }
+
     ############### to convert probe table to segments table 
-    ## retrieve probes information
-    rowsInfo = fData(callAllSamples)
     ## retrieve call segments
-    getPrbLvSegmentsFromCallObj = function(callRes) {
-        ### callRes must be a cghCall object containing results of one or more samples, but can't be a list of cghCall objects
-        sampleNames = colnames(callRes@assayData[["calls"]])
-        rowsInfo = fData(callRes)
-        CGHcall_segments = as.data.frame(calls(callRes))
-        CGHcall_segments = cbind(rowsInfo, CGHcall_segments)
-        colnames(CGHcall_segments) = c(colnames(rowsInfo), sampleNames)
-        return(CGHcall_segments)
-    }
-
-# getPrbLvlSegments
-
-    getPrbLvSegments = function(pipelineRes) {
-        if(is.list(pipelineRes)) {
-            print("result is a list of individual cghCall objects")
-            currRes = pipelineRes[[1]]
-            probeLevelSegments = getPrbLvSegmentsFromCallObj(currRes)
-            for(i in 2:length(pipelineRes)) { ## I must make it so a list containing only 1 cghCall result can't exist
-                currRes = pipelineRes[[i]]
-                curr_prbLevSegs = getPrbLvSegmentsFromCallObj(currRes)
-                probeLevelSegments = cbind(probeLevelSegments, curr_prbLevSegs[,length(curr_prbLevSegs)])
-                # print(c("colnames(curr_prbLevSegs)[length(colnames(curr_prbLevSegs))]: ", colnames(curr_prbLevSegs)[length(colnames(curr_prbLevSegs))]))
-                colnames(probeLevelSegments)[length(probeLevelSegments)] = colnames(curr_prbLevSegs)[length(colnames(curr_prbLevSegs))]
-                # print(c("probeLevelSegments: ", probeLevelSegments))
-            }
-        } else if(class(pipelineRes)=="cghCall") {
-                print("result is a single cghCall object.")
-                probeLevelSegments = getPrbLvSegmentsFromCallObj(pipelineRes)
-        } else {
-            print("invalid input")
-        }
-        return(probeLevelSegments)
-    }
+    CGHcall_segments = getPrbLvSegments(callAllSamples)
     
-    ssRun = getPrbLvSegments(callAllSamples)
-    cohortRun = getPrbLvSegments(x) 
-    
-    
-    
-    # get segments tables
-    allSegTables = getSegTables(CGHcall_segments,sampleNames,rowsInfo)
-    # plot called data on all profiles
+    ## get segments tables
     source(file.path(working_dir, "CGHcall_functions.R"))
     source(file.path(working_dir, "rCGH_functions.R"))
+    allSegTables = getSegTables(CGHcall_segments,sampleNames)
+    ## plot called data on all profiles
     plotSegTables(allSegTables,sampleNames,resultsDir)
-
-    # ...or one profile
-    # allSegTables = getSegTables(CGHcall_segments,sampleName,rowsInfo)
-    # plotSegTables(allSegTables,sampleName,resultsDir)
     
     ## initialize GI df
-    
-    # GI_ASCAT_df = data.frame(matrix(ncol = 4, nrow = length(sampleNames)))
-    # colnames(GI_ASCAT_df) = c("GI", "nbAlter", "nbChr", "runTime")
-    # rownames(GI_ASCAT_df) = sampleNames
-    
-    
     GI_CGHcall_df = data.frame(matrix(ncol = 4, nrow = length(sampleNames)))
     colnames(GI_CGHcall_df) = c("GI", "nbAlter", "nbChr", "runTime")
     rownames(GI_CGHcall_df) = sampleNames
     for (s in 1:length(allSegTables)) {
         print(paste0("======= sample ", sampleNames[s], " ======="))
         GI_res = calcGI_CGHcall(allSegTables[[s]])
-        GI_CGHcall_df[sampleNames[s],] = append(GI_res, callAllSamples[,s]$processingTime)
-        # print(GI_res)
+        if(runAsCohort) {
+            GI_CGHcall_df[sampleNames[s],] = append(GI_res, callAllSamples[,s]$processingTime)
+        } else {
+            GI_CGHcall_df[sampleNames[s],] = append(GI_res, callAllSamples[[s]]$processingTime)
+        }
     }
-    ## saving GI table
-    # GI_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods"
-    # write.table(GI_CGHcall_df,file.path(GI_dir, "gi_results_CGHcall.txt"),sep="\t",row.names=FALSE, quote=F)
-    source(file.path(working_dir, "crossPackagesFunctions.R"))
-    saveGI_ResToFile(GI_CGHcall_df, "CGHcall")
+    
+    ############### saving GI table
+    ### along GIs of other packages
+    if(saveAsValidGI) {
+        source(file.path(working_dir, "crossPackagesFunctions.R"))
+        saveGI_ResToFile(GI_CGHcall_df, "CGHcall")
+    }
 
-    # GI_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods"
-    # GIsAllResults = file.path(GI_dir,"gi_results_all_methods.txt")
-    # allGIs = read.table(GIsAllResults, h=T)
-    # write.table(allGIs,file.path(GI_dir, "gi_results_all_methods_addedCGHcall.txt"),sep="\t",row.names=FALSE, quote=F)
+    ### or along other runs of the same package
+    if(saveSamePkg) {
+        CGHcallOutputFile = file.path(CGHcallDir, "GI_res.txt")
+        CGHcallOutputFile
+        saveGI_ResToFile(GI_CGHcall_df, runName, CGHcallOutputFile)
+    }
 }
 
 if (sys.nframe() == 0){
@@ -206,8 +163,9 @@ if (sys.nframe() == 0){
 # allSegTables
 # GI_CGHcall_df
 
+
+#### Debug
 if (F) {
-    #### Debug
     ## number of probes in total contained in segments
     for (currSample in 1:length(allSegTables)) {
         currData = allSegTables[[currSample]]

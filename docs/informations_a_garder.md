@@ -90,3 +90,4 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [ ] résultats: utiliser les bons GI d'Agilent pour les échantillons qui en ont 2. cf cahier.
 * [ ] ajouter un label à chaque point du plot distri.
 * [X] ~~*CGHcall ## make it so a list containing only 1 cghCall result can't exist. do this at the end of pipelineCGHcall(). cf getPrbLvSegments()*~~ [2022-06-01]
+* [ ] make generateGrid() generate chromosome separations

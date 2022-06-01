@@ -1,4 +1,4 @@
-saveGI_ResToFile = function(currPkgDfGI,pkgName,addColsToSave=NULL,GI_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods") {
+saveGI_ResToFile = function(currPkgDfGI,pkgName,GI_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods",addColsToSave=NULL) {
     ###### input dataframe currPkgDfGI's rows must exactly match allGiTable$sample column.
     ## load all GI results file
     GI_filePath =  file.path(GI_dir, "GI_all_methods.txt")

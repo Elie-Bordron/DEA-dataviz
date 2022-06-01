@@ -2632,11 +2632,12 @@ polymorphisme : gain ou perte lié à l'ethnie. On n'en tient pas compte dans le
 arrivée à 9h; 1h pause; 
 ~~* [ ] _finir_ mat et met: le début? il est complétable.~~
 * [X] ~~*noter le suivi de la réunion sur le framapad.*~~ [2022-06-01]
-* [ ] faire tourner rCGH et oncoscanR avec 1-RV pour compléter le tableau GI.
+* [X] ~~*faire tourner rCGH et oncoscanR avec 1-RV pour compléter le tableau GI.*~~ [2022-06-01]
 * [ ] Si Claire m'a envoyé ses commentaires, les lire et y réfléchir un peu mais ne rien écrire, on en parle demain
 *`faire tous les résultats aujourd'hui, après je ferai la prise en compte des commentaires`*
 Analysis workflow peut être lancé sans ouvrir ChAS.
 
+CGHcall: je choisis certaines options du pipeline pertinentes à faire varier. dans la fonction CGHcall(), nsegfit sert à réduire le temps de calcul, je ne l'utilise pas. maxnumseg sert à réduire l'impact de quelques profils sur tous les autres; je ne vais pas lancer CGHcall en cohorte, je ne l'utilise pas.
 
 # <span style="color:#999900"> jeudi 02/06/2022 
 * [ ] Parler des commentaires de l'intro avec Claire
