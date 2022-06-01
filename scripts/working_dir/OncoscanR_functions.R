@@ -263,7 +263,7 @@ oncoscanR_GIs_to_dataframe = function(resultsOncoscanR, sampleNames) {
         armlevelAlters = currRes$armlevel
         # print(c("armlevelAlters: ", armlevelAlters))
         curr_GI_res = calcGI_oncoscanR(armlevelAlters)
-        print(c("curr_GI_res: ", curr_GI_res))
+        # print(c("curr_GI_res: ", curr_GI_res))
         # print( list(sampleNames[i],curr_GI_res))
         GI_oncoscanR_df[i,] = append(curr_GI_res, currRes$runTime)
         # print(GI_oncoscanR_df)

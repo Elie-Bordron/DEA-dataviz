@@ -1,5 +1,3 @@
-
-
 ## ----Functions -----------------------------------------------------
 removePointsForQuickPlotting = function(cghDf, pointsToRemove=20) {
     # if pointsToRemove=5, we keep 1 value out of 5.
@@ -54,6 +52,21 @@ plotSeg_rCGH = function(seg_df, value_col){
     # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
     segments(pos0CurrChr+segStartPos, estimCN, pos0CurrChr+segEndPos, estimCN, col="black", lwd=2)
 }
+
+
+hush=function(code){ ## function to silence another function's prints while still returning its output
+    sink("NUL") # use /dev/null in UNIX
+    tmp = code
+    sink()
+    return(tmp)
+}
+
+# foo=function(){
+#     print("BAR!")
+#     return(42)
+# }
+
+# x = hush(foo())
 
 #################################### calculate GI
 

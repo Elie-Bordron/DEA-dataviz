@@ -11,8 +11,7 @@ library("GGally")
 
 
 
-
-if (!interactive()) { ## main
+if (sys.nframe() == 0){ ## main
     GI_table_path = file.path(resDir, "GI_all_methods/GI_all_methods.txt")
     GI_table = read.table(GI_table_path, h=T)
     pairs(~ GI_oncoscanR + GI_CGHcall + GI_rCGH + GI_ASCAT + GI_Agilent, data = GI_table)

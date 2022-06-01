@@ -12,7 +12,7 @@ library(dplyr)
 
 pipeline_rCGH = function(sampleName) {
     # sampleName="3-ES"
-    # sampleName="5-LD"
+    # sampleName="1-RV"
     # sampleName="9-LA" # has LOH
     ## ----readFiles----------------------------------
     probesetTxtFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
@@ -33,7 +33,7 @@ pipeline_rCGH = function(sampleName) {
     ## removing probes with Log2Ratio=NaN 
     LRRData = cgh@cnSet
     cgh@cnSet = dplyr::filter(LRRData, !is.na(LRRData["Log2Ratio"]))
-    cghAdj <- rCGH::adjustSignal(cgh, nCores=1, suppOutliers=F, verbose=F, Scale=T)
+    cghAdj <- hush(rCGH::adjustSignal(cgh, nCores=1, suppOutliers=F, verbose=F, Scale=T))
     # cghAdj@cnSet$adjMan = scale(cgh@cnSet$Log2Ratio, center=F)
     # x=cgh@cnSet$Log2Ratio; n=length(x); sd = sqrt(sum(x^2)/(n-1))
     # cghAdj@cnSet$adjManMan = x / sd
@@ -163,14 +163,14 @@ main = function() {
         cleanRunTime = round(as.numeric(getInfo(currCallRes, "runTime")), 2)
         GIdf_rCGH[s,] = c(GI_res, cleanRunTime)
     }
-    return(list(GIdf_rCGH, segTables, rCGHResults))
+    res_rCGH = list(GIdf_rCGH, segTables, rCGHResults)
+    return(res_rCGH)
 }
 
 
 
-
-
-if (!interactive()) {
+# runs only when script is run by itself
+if (sys.nframe() == 0){
     res_rCGH = main()
     GI_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods"
     GIdf_rCGH = res_rCGH[[1]]
@@ -186,28 +186,8 @@ if (!interactive()) {
     apply(segTable_rCGH, 1, plotSeg_rCGH, "probes.Sd")
     # dev.off()
     
-        
-    segTables[10:13]
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

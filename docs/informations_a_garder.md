@@ -78,14 +78,14 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [ ] 3 grp -> 2 grp. on enlève l'intermédiaire.
 * [ ] refaire plot distri avec 2 grp
 * [ ] refaire plot cellularité: mêmes échelles en X et Y; vérifier les valeurs.
-* [ ] illustrer le plot de cellularité par une photo de lame HES cerclée
 * [ ] vérifier qu'ASCAT donne bien le % de cellules tumorales
 * [ ] courbes ROC: regarder packages R, pROC
 * [ ] plot distri: relier tous les points. Ensuite, voir si c'est plus pertinent de le faire seulement avec certains points.
 * [ ] changer, dans le tableur excel, les GI agilent que j'utilise pour les E 3 et 18. cf cahier.
 * [X] ~~*Demander à Gaetan une photo de lame HES cerclée ou non mais scannée sur laquelle on voit facilement les cellules tumorales ou non tumorales.*~~ [2022-05-31] Claire a des photos de ce genre.
-* [ ] intégrer une photo de lame HES dans le rapport; voir avec Claire.
+* [ ] illustrer le plot de cellularité par une photo de lame HES cerclée; voir avec Claire.
 * [ ] retirer E 17 des plots et résultats
 * [ ] Mat Met ASCAT: changer le plot de distance entre les segments et les entiers non nuls les plus proches. cf cahier au 23/05
 * [ ] Mat Met ASCAT: eventuellement ajouter un plot qui résume comment on peut déterminer la ploïdie (ou le CN) et la cellularité à partir de log RAtio et BAF. cf cahier au 23/05, ou slides ASCAT 45-47 (donc dans `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_made\images`) ou à partir de la vidéo `https://www.biodiscovery.com/videos/ascat-algorithm`
 * [ ] résultats: utiliser les bons GI d'Agilent pour les échantillons qui en ont 2. cf cahier.
+* [ ] ajouter un label à chaque point du plot distri.

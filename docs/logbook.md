@@ -2605,7 +2605,7 @@ Pour calculer ces taux avec plusieurs classes (GI haut, faible et intermédiaire
 * [ ] contacter Slim karkar pour soutenance
 
 # <span style="color:#999900"> mardi 31/05/2022
-arrivée à 9h; 40 min pause; 18h50
+arrivée à 9h; 40 min pause; 19h10
 * [X] ~~*obj avant midi: refaire les plots du rapport avec les nouveaux GI. C'est rapide.*~~ [2022-05-31]
 * [X] ~~*donc recalculer les GI pour tous les outils (fait pour ASCAT et CGHcall)*~~ [2022-05-31]
 * [X] ~~*donc utiliser les fonctions d'export de données qu'ASCAT utilise*~~ [2022-05-31]
@@ -2618,7 +2618,7 @@ arrivée à 9h; 40 min pause; 18h50
 
 * [X] ~~*poser des questions sur comment faire les courbes ROC: peut-on considérer que le groupe intermédiaire représente 2 classes? Si non, faire varier le seuil du groupe intermédiaire, est-ce correct?*~~ [2022-05-31] On considère qu'il y a deux groupes de part et d'autre de 10.
 
-Ce que j'ai fait: les plots qu'on a vu ce matin; après la réunion j'ai intégré l'E 1-RV dans les scripts (ce qui inclut générer des fichiers) et fini la partie matériel et méthodes.
+Ce que j'ai fait: les plots qu'on a vu ce matin; après la réunion j'ai intégré l'E 1-RV dans les scripts (ce qui inclut générer des fichiers) et continué la partie matériel et méthodes.
 
 * [X] ~~*noter la suite de la semaine*~~ [2022-05-31]
 
@@ -2629,7 +2629,12 @@ Ce que j'ai fait: les plots qu'on a vu ce matin; après la réunion j'ai intégr
 
 polymorphisme : gain ou perte lié à l'ethnie. On n'en tient pas compte dans le calcul du GI.
 # <span style="color:#999900"> mercredi 01/06/2022 
+~~* [ ] _finir_ mat et met: le début? il est complétable.~~
+* [ ] noter le suivi de la réunion sur le framapad.
+* [ ] faire tourner rCGH et oncoscanR avec 1-RV pour compléter le tableau GI.
 * [ ] Si Claire m'a envoyé ses commentaires, les lire et y réfléchir un peu mais ne rien écrire, on en parle demain
+*`faire tous les résultats aujourd'hui, après je ferai la prise en compte des commentaires`*
+Analysis workflow peut être lancé sans ouvrir ChAS.
 
 
 # <span style="color:#999900"> jeudi 02/06/2022 

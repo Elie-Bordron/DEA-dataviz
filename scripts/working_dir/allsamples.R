@@ -10,9 +10,6 @@ library(dplyr)
 library("GGally")
 
 
-# uniquePath = "C:/Users/warew/Desktop/CGH_scoring"
-
-
 to2colDf = function(GI_table, agilentClass=NULL) {
         ## provide only columns with GI values + possibly column agilentClass, which must be the last.
         vecGI=NULL
@@ -70,7 +67,7 @@ plotOnePkg = function(GI_table, pkg) {
 }
 
 ############################### main
-if (interactive()) { 
+if (sys.nframe() == 0){
     GI_table_path = file.path(res_GI_dir, "GI_all_methods.txt")
     GI_table = read.table(GI_table_path, h=T)
     ## R base correlation plots for all comparisons

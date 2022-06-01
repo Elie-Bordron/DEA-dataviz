@@ -22,14 +22,14 @@ cleanProbeset = function(pathToMultiProbeset="allSamples_2_3_centeredProbeset.tx
 }
 
 
-getSeg = function(currSample, currChr, s, rowsInfo){
+getSeg = function(currSampleSegs, currChr, s, rowsInfo){
     i=s
     # print(c("s: ", s))
     # print(c("i: ", i))
-    currSegVal = currSample[s]
+    currSegVal = currSampleSegs[s]
     currSegChr = currChr[s]
     # print(c("currSegChr: ", currSegChr))
-    while((i<length(currSample)) && (currSample[i+1]==currSegVal) && (currChr[i+1]==currSegChr)) {i=i+1}
+    while((i<length(currSampleSegs)) && (currSampleSegs[i+1]==currSegVal) && (currChr[i+1]==currSegChr)) {i=i+1}
     # print(c("currChr[i+1]: ", currChr[i+1]))
     # print(c("currChr[i]: ", currChr[i]))
     # print(c("currChr[i-1]: ", currChr[i-1]))
@@ -44,10 +44,10 @@ getSeg = function(currSample, currChr, s, rowsInfo){
 
 getSegs = function(CGHcall_segments, rowsInfo, sample = "5-LD") {
     print(paste0("==================================== sample = ", sample," ===================================="))
-    ## initiate by-segments table
+    ## initiate by-segments table 
     segTableBySegment = data.frame(matrix(ncol = 5, nrow = 0))
     colnames(segTableBySegment) = c("Chromosome", "Start", "End", "Value", "nbProbes")
-    currSample = CGHcall_segments[[sample]]
+    currSampleSegs = CGHcall_segments[[sample]]
     # print(rowsInfo)
     currChr = rowsInfo$Chromosome
     # print(c("** currChr: ", currChr, " **"))
@@ -56,7 +56,7 @@ getSegs = function(CGHcall_segments, rowsInfo, sample = "5-LD") {
     i=1 # end of segment
     while (s < length(CGHcall_segments[,1])) {
         print(paste0("------------- segId = ", segId," -------------"))
-        resSeg = getSeg(currSample, currChr, s, rowsInfo)
+        resSeg = getSeg(currSampleSegs, currChr, s, rowsInfo)
         segTableBySegment[segId,] = resSeg[1:5]
         # print(c("resSeg: ", resSeg))
         s = resSeg[[length(resSeg)]]+1

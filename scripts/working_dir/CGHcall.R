@@ -50,14 +50,14 @@ pipelineCGHcall = function(osData, tumor_prop=NULL) {
 source(file.path(working_dir, "oncoscanR_functions.R"))
 
 ## setting paths
-dataDir = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
+dataDirProbesets = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
 resultsDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/CGHcall"
 osData = NULL
 if(F) {
     sampleNames = c("5-LD", "6-VJ", "8-MM")
     ## for loading data from individual probeset.txt files
     for (sampleName in sampleNames) {
-        currSamplePath = paste0(dataDir, "/", sampleName, ".probeset.txt")
+        currSamplePath = paste0(dataDirProbesets, "/", sampleName, ".probeset.txt")
         currSample = read.table(currSamplePath, sep='\t', h=T)
         if(is.null(osData)){
             ## for first sample, initialize osData with columns Probe_id, Chr, startpos and endpos
@@ -73,26 +73,36 @@ if(F) {
 
 
 
-main = function() {
+main = function(runAsCohort=F) {
     sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
     # sampleNames = c("4-GM", "9-LA", "16-DD")
-    ######################## load all-samples probeset.txt file
-    allSamplesClean_path = file.path(dataDir, "allSamplesCleanProbeset_2_3Rec.txt")
-    ## do this to use all samples
+    
+    ## load all-samples probeset.txt file
+    allSamplesClean_path = file.path(dataDirProbesets, "allSamplesCleanProbeset_2_3Rec.txt")
     rawProbesData = read.table(allSamplesClean_path, h=T)
     colnames(rawProbesData) = c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleNames)
-    rawProbesData = dplyr::select(rawProbesData, c("probeID", "CHROMOSOME", "START_POS", "END_POS", all_of(sampleNames)))
     
     # to run pipeline on one sample only    
     # sampleName = "2-AD"
     # s2Probes = dplyr::select(rawProbesData, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleName))
     # callAllSamples = pipelineCGHcall(s2Probes)
     
-    # to run pipeline on all samples at the same time
-    tumor_prop = c(0.9,0.9,0.9,0.9,0.8,0.9,0.8,0.9,0.8,0.8,0.9,0.8,0.8,0.8,0.9,0.8,1,0.95,0.8,0.8) # sample 2 to sample 21
+    ### to run pipeline on all samples at the same time
+    # rawProbesData = dplyr::select(rawProbesData, c("probeID", "CHROMOSOME", "START_POS", "END_POS", all_of(sampleNames)))
+    tumor_prop = c(0.9,0.9,0.9,0.9,0.9,0.8,0.9,0.8,0.9,0.8,0.8,0.9,0.8,0.8,0.8,0.9,0.8,1,0.95,0.8,0.8) # samples 1 to 21
     ## Uncomment layout commands beneath to plot 3 samples within the same plot; also uncomment plot functions in pipelineCGHcall()
     # layout(matrix(c(1,2,3),nrow=3))
-    callAllSamples = pipelineCGHcall(rawProbesData, tumor_prop)
+    if(runAsCohort) {
+        callAllSamples = pipelineCGHcall(rawProbesData, tumor_prop)
+    } else {
+        callAllSamples = list()
+        for (s in 1:length(sampleNames)) {
+            currProbesData = dplyr::select(rawProbesData, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleNames[s]))
+            currCallRes = pipelineCGHcall(currProbesData, tumor_prop[s])
+            callAllSamples = append(callAllSamples, currCallRes)
+            print(c("callAllSamples: ", callAllSamples))
+        }
+    }
     # layout(matrix(c(1,1)))
     
     if(F) {
@@ -144,7 +154,8 @@ main = function() {
     # allGIs = read.table(GIsAllResults, h=T)
     # write.table(allGIs,file.path(GI_dir, "gi_results_all_methods_addedCGHcall.txt"),sep="\t",row.names=FALSE, quote=F)
 }
-if(interactive()) {
+
+if (sys.nframe() == 0){
     main()
 }
 # to use:
