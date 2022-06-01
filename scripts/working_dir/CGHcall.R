@@ -119,6 +119,7 @@ main = function(runAsCohort=F) {
     ## retrieve call segments
     CGHcall_segments = as.data.frame(calls(callAllSamples))
     # get segments tables
+    source(file.path(working_dir, "CGHcall_functions.R"))
     allSegTables = getSegTables(CGHcall_segments,sampleNames,rowsInfo)
     # plot called data on all profiles
     plotSegTables(allSegTables,sampleNames,resultsDir)

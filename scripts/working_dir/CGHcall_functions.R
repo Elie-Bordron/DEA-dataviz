@@ -22,41 +22,51 @@ cleanProbeset = function(pathToMultiProbeset="allSamples_2_3_centeredProbeset.tx
 }
 
 
-getSeg = function(currSampleSegs, currChr, s, rowsInfo){
+
+getSeg = function(currSampleSegs, chrVec, s){
     i=s
     # print(c("s: ", s))
     # print(c("i: ", i))
-    currSegVal = currSampleSegs[s]
-    currSegChr = currChr[s]
+    segToReturn = list()
+    segToReturn$currSegVal = currSampleSegs$CN[s]
+    segToReturn$currSegChr = chrVec[s]
     # print(c("currSegChr: ", currSegChr))
-    while((i<length(currSampleSegs)) && (currSampleSegs[i+1]==currSegVal) && (currChr[i+1]==currSegChr)) {i=i+1}
-    # print(c("currChr[i+1]: ", currChr[i+1]))
-    # print(c("currChr[i]: ", currChr[i]))
-    # print(c("currChr[i-1]: ", currChr[i-1]))
-    currSegStart = rowsInfo[s,]$Start
-    currSegEnd = rowsInfo[i,]$End
-    currSegChr = rowsInfo[s,]$Chromosome
-    currSegNbProbes = i-(s-1)
+    print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
+    print(c("currSampleSegs$CN[i+1]: ", currSampleSegs$CN[i+1]))
+    print(c("chrVec[i+1]: ", chrVec[i+1]))
+    while((i<length(currSampleSegs[,1])) && (currSampleSegs$CN[i+1]==segToReturn$currSegVal) && (chrVec[i+1]==segToReturn$currSegChr)) {i=i+1}
+    # print(c("chrVec[i+1]: ", chrVec[i+1]))
+    # print(c("chrVec[i]: ", chrVec[i]))
+    # print(c("chrVec[i-1]: ", chrVec[i-1]))
+    segToReturn$currSegStart = currSampleSegs[s,]$Start
+    segToReturn$currSegEnd = currSampleSegs[i,]$End
+    segToReturn$currSegChr = currSampleSegs[s,]$Chromosome
+    segToReturn$currSegNbProbes = i-(s-1)
     # print(c("class(currSegVal)", class(currSegVal)))
-    print(c("one segment: ", currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
-    return(list(currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
+    print(c("segToReturn: ", segToReturn))
+    # print(c("one segment: ", currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
+    # return(list(currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
+    segToReturn$i = i
+    return(segToReturn)
 }
 
-getSegs = function(CGHcall_segments, rowsInfo, sample = "5-LD") {
-    print(paste0("==================================== sample = ", sample," ===================================="))
+getSegs = function(currSampleSegs, rowsInfo) {
     ## initiate by-segments table 
     segTableBySegment = data.frame(matrix(ncol = 5, nrow = 0))
     colnames(segTableBySegment) = c("Chromosome", "Start", "End", "Value", "nbProbes")
-    currSampleSegs = CGHcall_segments[[sample]]
     # print(rowsInfo)
-    currChr = rowsInfo$Chromosome
-    # print(c("** currChr: ", currChr, " **"))
+    chrVec = rowsInfo$Chromosome
+    # print(c("** chrVec: ", chrVec, " **"))
     segId = 1
     s=1 # start of segment
     i=1 # end of segment
-    while (s < length(CGHcall_segments[,1])) {
+    print(c("currSampleSegs: ", currSampleSegs))
+    # print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
+    while (s < length(currSampleSegs[,1])) {
         print(paste0("------------- segId = ", segId," -------------"))
-        resSeg = getSeg(currSampleSegs, currChr, s, rowsInfo)
+        resSeg = getSeg(currSampleSegs, chrVec, s)
+        print(c("resSeg[1:5]: ", resSeg[1:5]))
+        i = resSeg$i
         segTableBySegment[segId,] = resSeg[1:5]
         # print(c("resSeg: ", resSeg))
         s = resSeg[[length(resSeg)]]+1
@@ -72,7 +82,10 @@ getSegTables = function(segTableByProbe,sampleNames, rowsInfo) {
     # get segTables for all samples; concatenate them in a list
     segTablesList = list()
     for(sample in sampleNames) {
-        currSegTable = getSegs(segTableByProbe, rowsInfo, sample)
+        print(paste0("==================================== sample = ", sample," ===================================="))
+        currSample_SegTableByProbe = cbind(rowsInfo, segTableByProbe[[sample]]); colnames(currSample_SegTableByProbe) = c(colnames(rowsInfo), "CN")
+        print(c("currSample_SegTableByProbe: ", currSample_SegTableByProbe))
+        currSegTable = getSegs(currSample_SegTableByProbe, rowsInfo)
         segTablesList = append(segTablesList, list(currSegTable))
     }
     return(segTablesList)
@@ -86,13 +99,14 @@ plotSegTables = function(segTablesList, sampleNames, resultsDir) {
         currSampleName = sampleNames[[i]]
         # currResultsDir = file.path(resultsDir,currSampleName)
         if(!dir.exists(resultsDir)) dir.create(resultsDir)
-        png(paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png"))
+        currTitle = paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png")
+        # png(currTitle)
         generateGrid(paste0(currSampleName, " Copy number"), mode="CN")
         colnames(currSegTable) = c("chrom", "loc.start", "loc.end", "callVal", "nbProbes")
+        print(c("currSegTable: ", currSegTable))
         apply(currSegTable, 1, plotSeg_rCGH, "callVal")
-        dev.off()
-    }
-    
+        # dev.off()
+    }    
 }
 
 

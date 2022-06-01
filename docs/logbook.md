@@ -2625,12 +2625,13 @@ Ce que j'ai fait: les plots qu'on a vu ce matin; après la réunion j'ai intégr
 à faire aujourd'hui:
 * [X] ~~*Finir Mat & Met (l'état de l'art, lui, est fini) pour qu'élodie ait une vraie partie à lire. L'intro et la ccl de cette partie restent à faire mais globalement elle est faite.*~~ [2022-05-31] L'intro de mat met est légère mais ça suffit pour l'instant.
 
-
-
 polymorphisme : gain ou perte lié à l'ethnie. On n'en tient pas compte dans le calcul du GI.
+
+
 # <span style="color:#999900"> mercredi 01/06/2022 
+arrivée à 9h; 1h pause; 
 ~~* [ ] _finir_ mat et met: le début? il est complétable.~~
-* [ ] noter le suivi de la réunion sur le framapad.
+* [X] ~~*noter le suivi de la réunion sur le framapad.*~~ [2022-06-01]
 * [ ] faire tourner rCGH et oncoscanR avec 1-RV pour compléter le tableau GI.
 * [ ] Si Claire m'a envoyé ses commentaires, les lire et y réfléchir un peu mais ne rien écrire, on en parle demain
 *`faire tous les résultats aujourd'hui, après je ferai la prise en compte des commentaires`*
