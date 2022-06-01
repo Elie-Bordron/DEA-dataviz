@@ -9,6 +9,7 @@ source(file.path(working_dir, "rCGH.R"))
 source(file.path(working_dir, "rCGH_functions.R"))
 source(file.path(working_dir, "CGHcall_functions.R"))
 
+
 ## import libraries
 # library(ggplot2)
 library(dplyr)
@@ -123,7 +124,7 @@ main = function(runAsCohort=F) {
     allSegTables = getSegTables(CGHcall_segments,sampleNames,rowsInfo)
     # plot called data on all profiles
     plotSegTables(allSegTables,sampleNames,resultsDir)
-    
+
     # ...or one profile
     # allSegTables = getSegTables(CGHcall_segments,sampleName,rowsInfo)
     # plotSegTables(allSegTables,sampleName,resultsDir)

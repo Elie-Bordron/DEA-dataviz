@@ -28,25 +28,27 @@ getSeg = function(currSampleSegs, chrVec, s){
     # print(c("s: ", s))
     # print(c("i: ", i))
     segToReturn = list()
-    segToReturn$currSegVal = currSampleSegs$CN[s]
-    segToReturn$currSegChr = chrVec[s]
+    # segToReturn$currSegChr = chrVec[s]
     # print(c("currSegChr: ", currSegChr))
-    print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
-    print(c("currSampleSegs$CN[i+1]: ", currSampleSegs$CN[i+1]))
-    print(c("chrVec[i+1]: ", chrVec[i+1]))
+    segToReturn$currSegChr = currSampleSegs[s,]$Chromosome
+    segToReturn$currSegVal = currSampleSegs$CN[s]
+    # print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
+    # print(c("currSampleSegs$CN[i+1]: ", currSampleSegs$CN[i+1]))
+    # print(c("chrVec[i+1]: ", chrVec[i+1]))
     while((i<length(currSampleSegs[,1])) && (currSampleSegs$CN[i+1]==segToReturn$currSegVal) && (chrVec[i+1]==segToReturn$currSegChr)) {i=i+1}
     # print(c("chrVec[i+1]: ", chrVec[i+1]))
     # print(c("chrVec[i]: ", chrVec[i]))
     # print(c("chrVec[i-1]: ", chrVec[i-1]))
     segToReturn$currSegStart = currSampleSegs[s,]$Start
     segToReturn$currSegEnd = currSampleSegs[i,]$End
-    segToReturn$currSegChr = currSampleSegs[s,]$Chromosome
     segToReturn$currSegNbProbes = i-(s-1)
+    segToReturn$i = i
     # print(c("class(currSegVal)", class(currSegVal)))
+    # segToReturn = dplyr::select(segToReturn, c("currSegChr", "currSegStart", "currSegEnd", "currSegVal", "currSegNbProbes", "i"))
+    segToReturn = segToReturn[c("currSegChr", "currSegStart", "currSegEnd", "currSegVal", "currSegNbProbes", "i")]
     print(c("segToReturn: ", segToReturn))
     # print(c("one segment: ", currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
     # return(list(currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
-    segToReturn$i = i
     return(segToReturn)
 }
 
@@ -60,12 +62,12 @@ getSegs = function(currSampleSegs, rowsInfo) {
     segId = 1
     s=1 # start of segment
     i=1 # end of segment
-    print(c("currSampleSegs: ", currSampleSegs))
+    # print(c("currSampleSegs: ", currSampleSegs))
     # print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
     while (s < length(currSampleSegs[,1])) {
         print(paste0("------------- segId = ", segId," -------------"))
         resSeg = getSeg(currSampleSegs, chrVec, s)
-        print(c("resSeg[1:5]: ", resSeg[1:5]))
+        # print(c("resSeg[1:5]: ", resSeg[1:5]))
         i = resSeg$i
         segTableBySegment[segId,] = resSeg[1:5]
         # print(c("resSeg: ", resSeg))
@@ -84,7 +86,7 @@ getSegTables = function(segTableByProbe,sampleNames, rowsInfo) {
     for(sample in sampleNames) {
         print(paste0("==================================== sample = ", sample," ===================================="))
         currSample_SegTableByProbe = cbind(rowsInfo, segTableByProbe[[sample]]); colnames(currSample_SegTableByProbe) = c(colnames(rowsInfo), "CN")
-        print(c("currSample_SegTableByProbe: ", currSample_SegTableByProbe))
+        # print(c("currSample_SegTableByProbe: ", currSample_SegTableByProbe))
         currSegTable = getSegs(currSample_SegTableByProbe, rowsInfo)
         segTablesList = append(segTablesList, list(currSegTable))
     }
@@ -100,12 +102,11 @@ plotSegTables = function(segTablesList, sampleNames, resultsDir) {
         # currResultsDir = file.path(resultsDir,currSampleName)
         if(!dir.exists(resultsDir)) dir.create(resultsDir)
         currTitle = paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png")
-        # png(currTitle)
+        png(currTitle)
         generateGrid(paste0(currSampleName, " Copy number"), mode="CN")
         colnames(currSegTable) = c("chrom", "loc.start", "loc.end", "callVal", "nbProbes")
-        print(c("currSegTable: ", currSegTable))
-        apply(currSegTable, 1, plotSeg_rCGH, "callVal")
-        # dev.off()
+        apply(currSegTable, 1, plotSeg_rCGH, "callVal", indivSeg=TRUE)
+        dev.off()
     }    
 }
 

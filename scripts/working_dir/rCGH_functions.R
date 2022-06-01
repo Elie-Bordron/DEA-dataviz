@@ -23,7 +23,7 @@ getNewPos = function(cghDf) {
     return(cghDf)
 }
 
-plotSeg_rCGH = function(seg_df, value_col){
+plotSeg_rCGH = function(seg_df, value_col, indivSeg=FALSE){
     ########### Used by rCGH.R and CGHcall.R ########### 
     # print(c("value_col: ", value_col))    
     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
@@ -51,6 +51,10 @@ plotSeg_rCGH = function(seg_df, value_col){
     estimCN = as.numeric(seg_df[[value_col]])
     # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
     segments(pos0CurrChr+segStartPos, estimCN, pos0CurrChr+segEndPos, estimCN, col="black", lwd=2)
+    if(indivSeg) {
+        segments(pos0CurrChr+segStartPos, estimCN, pos0CurrChr+segEndPos, estimCN, col="black", lwd=2)
+
+    }
 }
 
 
