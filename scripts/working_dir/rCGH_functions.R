@@ -43,17 +43,18 @@ plotSeg_rCGH = function(seg_df, value_col, indivSeg=FALSE){
         }
     }
     ## drawing a segment on plot for each segment of the genome, using estimated values
-    segStartPos = as.numeric(seg_df[["loc.start"]])
-    segEndPos = as.numeric(seg_df[["loc.end"]])
+    segStartPos = pos0CurrChr + as.numeric(seg_df[["loc.start"]])
+    segEndPos = pos0CurrChr + as.numeric(seg_df[["loc.end"]])
     # estimCN = as.numeric(seg_df[["Log2Ratio"]])
     # estimCN = as.numeric(seg_df[["estimCopy"]])
     # print(c("seg_df[[value_col]]: ", seg_df[[value_col]]))
     estimCN = as.numeric(seg_df[[value_col]])
     # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
-    segments(pos0CurrChr+segStartPos, estimCN, pos0CurrChr+segEndPos, estimCN, col="black", lwd=2)
+    segments(segStartPos, estimCN, segEndPos, estimCN, col="black", lwd=2)
     if(indivSeg) {
-        segments(pos0CurrChr+segStartPos, estimCN, pos0CurrChr+segEndPos, estimCN, col="black", lwd=2)
-
+        height = 0.05
+        segments(segStartPos, estimCN+height, segStartPos, estimCN-height, col="black", lwd=0.5)
+        segments(segEndPos, estimCN+height, segEndPos, estimCN-height, col="black", lwd=0.5)
     }
 }
 

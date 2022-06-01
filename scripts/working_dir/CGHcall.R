@@ -123,6 +123,7 @@ main = function(runAsCohort=F) {
     source(file.path(working_dir, "CGHcall_functions.R"))
     allSegTables = getSegTables(CGHcall_segments,sampleNames,rowsInfo)
     # plot called data on all profiles
+    source(file.path(working_dir, "rCGH_functions.R"))
     plotSegTables(allSegTables,sampleNames,resultsDir)
 
     # ...or one profile

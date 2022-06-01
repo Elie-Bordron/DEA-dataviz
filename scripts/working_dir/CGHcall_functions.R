@@ -102,7 +102,7 @@ plotSegTables = function(segTablesList, sampleNames, resultsDir) {
         # currResultsDir = file.path(resultsDir,currSampleName)
         if(!dir.exists(resultsDir)) dir.create(resultsDir)
         currTitle = paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png")
-        png(currTitle)
+        png(currTitle, width=700, height=484)
         generateGrid(paste0(currSampleName, " Copy number"), mode="CN")
         colnames(currSegTable) = c("chrom", "loc.start", "loc.end", "callVal", "nbProbes")
         apply(currSegTable, 1, plotSeg_rCGH, "callVal", indivSeg=TRUE)
