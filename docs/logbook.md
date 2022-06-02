@@ -2629,7 +2629,7 @@ polymorphisme : gain ou perte lié à l'ethnie. On n'en tient pas compte dans le
 
 
 # <span style="color:#999900"> mercredi 01/06/2022 
-arrivée à 9h; 1h pause; 
+arrivée à 9h; 1h pause; départ à 18h20
 ~~* [ ] _finir_ mat et met: le début? il est complétable.~~
 * [X] ~~*noter le suivi de la réunion sur le framapad.*~~ [2022-06-01]
 * [X] ~~*faire tourner rCGH et oncoscanR avec 1-RV pour compléter le tableau GI.*~~ [2022-06-01]
@@ -2639,7 +2639,13 @@ Analysis workflow peut être lancé sans ouvrir ChAS.
 
 CGHcall: je choisis certaines options du pipeline pertinentes à faire varier. dans la fonction CGHcall(), nsegfit sert à réduire le temps de calcul, je ne l'utilise pas. maxnumseg sert à réduire l'impact de quelques profils sur tous les autres; je ne vais pas lancer CGHcall en cohorte, je ne l'utilise pas.
 
+bergupdate: CGHcall.R: I made all the pipeline parameters available and easy to read & edit. Also I implemented the choice to save the GI results in the current package folder or with all GI results."
+
+Pour la suite: sauvegarder les paramètres dans un fichier texte (un log donc) à chaque run.
+puis
+
 # <span style="color:#999900"> jeudi 02/06/2022 
+arr 9h45 ; 50 min pause; 
 * [ ] Parler des commentaires de l'intro avec Claire
 `aujourd'hui: audit du COFRAC. éviter de sortir du bureau, ne pas aller en FISH/CGH.`
 * [ ] Aujourd'hui, il est prévu que je voie avec Benjamin ou Isabelle comment on détermine la cellularité tumorale à partir d'une lame HES.

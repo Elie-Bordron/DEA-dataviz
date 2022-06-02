@@ -84,10 +84,13 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [ ] changer, dans le tableur excel, les GI agilent que j'utilise pour les E 3 et 18. cf cahier.
 * [X] ~~*Demander à Gaetan une photo de lame HES cerclée ou non mais scannée sur laquelle on voit facilement les cellules tumorales ou non tumorales.*~~ [2022-05-31] Claire a des photos de ce genre.
 * [ ] illustrer le plot de cellularité par une photo de lame HES cerclée; voir avec Claire.
+## 01/06/2022
 * [ ] retirer E 17 des plots et résultats
 * [ ] Mat Met ASCAT: changer le plot de distance entre les segments et les entiers non nuls les plus proches. cf cahier au 23/05
 * [ ] Mat Met ASCAT: eventuellement ajouter un plot qui résume comment on peut déterminer la ploïdie (ou le CN) et la cellularité à partir de log RAtio et BAF. cf cahier au 23/05, ou slides ASCAT 45-47 (donc dans `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_made\images`) ou à partir de la vidéo `https://www.biodiscovery.com/videos/ascat-algorithm`
-* [ ] résultats: utiliser les bons GI d'Agilent pour les échantillons qui en ont 2. cf cahier.
+* [X] ~~*résultats: utiliser les bons GI d'Agilent pour les échantillons qui en ont 2. cf cahier.*~~ [2022-06-02]
 * [ ] ajouter un label à chaque point du plot distri.
 * [X] ~~*CGHcall ## make it so a list containing only 1 cghCall result can't exist. do this at the end of pipelineCGHcall(). cf getPrbLvSegments()*~~ [2022-06-01]
 * [ ] make generateGrid() generate chromosome separations
+## 02/06/2022
+quand j'ajoute des objets à une liste, ne pas faire append(list, objet) mais list$nomObj = objet.

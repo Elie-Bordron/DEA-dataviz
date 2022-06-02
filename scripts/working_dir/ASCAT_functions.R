@@ -1,3 +1,203 @@
+## functions to plot values for segments of allele A and B
+plotSeg = function(seg_df, allChrs, drawPolygons=F, drawDistances=F){
+    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+    print(lengthOfChrs)
+    ## get nb cols
+    nbcols = length(seg_df)
+    ## get current chromosome
+    currChr = which(allChrs==seg_df["chr"])
+    # print(c("currChr: ", currChr))
+    # print(c("class(currChr): ", class(currChr)))
+    ## get endpos of last segment of previous chromosome
+    if((seg_df["chr"]=="X" ) || (seg_df["chr"]=="Y")){
+        pos0CurrChr = sum(lengthOfChrs[1:22])
+    }
+    else {
+        print(c("currChr in ASCAT.R: ", currChr))
+        if (currChr!=1){
+            pos0CurrChr = sum(lengthOfChrs[1:currChr-1])
+        } else {
+            pos0CurrChr=0
+        }
+    }
+    ## drawing a segment on plot for each segment of the genome
+    segStartPos = as.numeric(seg_df[3])
+    segStartPos = segStartPos + pos0CurrChr
+    segEndPos = as.numeric(seg_df[4])
+    # CN values are on last 2 columns
+    A_allele_vals = nbcols-1
+    deviation = 0.01
+    logRAlleleA = as.numeric(seg_df[[nbcols-1]])
+    logRAlleleB = as.numeric(seg_df[[nbcols]])
+    logRAlleleA_dev = logRAlleleA + deviation
+    logRAlleleB_dev = logRAlleleB - deviation
+    # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
+    segments(pos0CurrChr+segStartPos, logRAlleleA_dev, pos0CurrChr+segEndPos, logRAlleleA_dev, col="dark blue", lwd=2)
+    segments(pos0CurrChr+segStartPos, logRAlleleB_dev, pos0CurrChr+segEndPos, logRAlleleB_dev, col="dark red", lwd=2)
+    ## drawing polygone joining this segment to closest non-null integer
+    if(drawPolygons){
+        polygon(x=c(pos0CurrChr+segStartPos, pos0CurrChr+segEndPos, pos0CurrChr+segEndPos, pos0CurrChr+segStartPos), 
+                y=c(logRAlleleB_dev,logRAlleleB_dev,round(logRAlleleB),round(logRAlleleB)), col = "dark red", density = 10,angle=135)
+        polygon(x=c(pos0CurrChr+segStartPos, pos0CurrChr+segEndPos, pos0CurrChr+segEndPos, pos0CurrChr+segStartPos),
+                y=c(logRAlleleA_dev,logRAlleleA_dev,round(logRAlleleA),round(logRAlleleA)), col = "dark blue", density = 10, angle=45)
+    }
+    if(drawDistances) { ## distances between each segment and closest non-negative integer
+        pass
+    }
+}
+
+generateGrid = function(graph_title) {
+    #create empty plot to add things in
+    plot(1, ylim=c(0,2), xlim=c(0,3*10**9),col="white", xaxt="n", yaxt="n", xlab="nombre de bases", ylab="nombre de copies", main=graph_title)
+    #  add horizontal grid
+    for (CN in c(-3:8)) {
+        abline(h=CN, col="dark grey")
+    }
+    # X-axis
+    axis(1, at = c(0, 5*10**8, 1*10**9, 1.5*10**9, 2*10**9, 2.5*10**9, 3*10**9))
+    # Y-axis
+    axis(2, at = c(-3:8))
+}
+
+## functions for GI calculation
+getNbChrs = function(segmentsTable) {
+    # print(c("segmentsTable: ", segmentsTable))
+    chrs = as.vector(segmentsTable$chr)
+    # print(c("chrs: ", chrs))
+    nbChr = length(unique(chrs))
+    # print(c("nbChr: ", nbChr))
+    return(nbChr)
+}
+
+calcGI_ASCAT = function(segmentsTable) {
+    # print(c("segmentsTable: ", segmentsTable))
+    nbChr = getNbChrs(segmentsTable)
+    # print(c("nbChr: ", nbChr))
+    nbAlter = dim(segmentsTable)[1]
+    # print(c("nbAlter: ", nbAlter))
+    GI = calcGI(nbAlter, nbChr)
+    return(list(GI,nbAlter,nbChr))
+}
+
+removeSexChrData = function(rawData) {
+    ## remove sex chromosomes data
+    ### from ch
+    rawData_ch = rawData[["data"]][["ch"]]
+    rawData[["data"]][["ch"]] = rawData_ch[names(rawData_ch) %in% c("chrX", "chrY") == FALSE] 
+    ### from chr
+    lastChrProbes = rawData[["data"]][["ch"]][[length(rawData[["data"]][["ch"]])]]
+    lastProbe = lastChrProbes[length(lastChrProbes)]
+    chr = rawData[["data"]][["chr"]]
+    for(i in length(chr):1) {
+        # print(c("i: ", i))
+        DNAregion = chr[i]
+        if(any(as.vector(DNAregion[[1]])<=lastProbe)) {
+            regionLen = length(DNAregion[[1]])
+            # print(c("regionLen: ", regionLen))
+            # print(c("last probe of this region: ", (DNAregion[[1]][regionLen])))
+            if(DNAregion[[1]][regionLen]==lastProbe){
+                # print("Last probe of this region is the last probe of chromosome 22")
+                chr = chr[1:i]
+            } else {
+                # print("last probe of chr 22 is not last probe of this region")
+                chr = chr[1:i-1]
+            }
+            break
+        }
+            
+    }
+    rawData[["data"]][["chr"]] = chr
+    ### from chrs
+    rawData_chrs = rawData[["data"]][["chrs"]]
+    rawData_chrs = rawData_chrs[rawData_chrs!="chrX"]; rawData_chrs = rawData_chrs[rawData_chrs!="chrY"]
+    rawData[["data"]][["chrs"]] = rawData_chrs
+    ### from Tumor_*
+    rawData[["data"]][["Tumor_LogR.ori"]] = rawData[["data"]][["Tumor_LogR.ori"]] %>% dplyr::slice(1:lastProbe)
+    rawData[["data"]][["Tumor_LogR"]] = rawData[["data"]][["Tumor_LogR"]] %>% dplyr::slice(1:lastProbe)
+    rawData[["data"]][["Tumor_BAF"]] = rawData[["data"]][["Tumor_BAF"]] %>% dplyr::slice(1:lastProbe)
+    rawData[["data"]][["Tumor_AD"]] = rawData[["data"]][["Tumor_AD"]] %>% dplyr::slice(1:lastProbe)
+    ### from SNPpos
+    rawData[["data"]][["SNPpos"]] = rawData[["data"]][["SNPpos"]] %>% dplyr::slice(1:lastProbe)
+    ### from additional data
+    rawData[["data"]][["additional"]] = rawData[["data"]][["additional"]] %>% dplyr::slice(1:lastProbe)
+
+    return(rawData)
+}
+
+cleanASCATSegData = function(callData, trimData = F) {
+    ## get seg data from call result
+    segTable_raw = callData$segments_raw
+    segTable = callData$segments
+    
+    ## check seg data
+    # graph_title = paste0(sampleName, " called data")
+    # generateGrid(graph_title)
+    # allChrs = unique(as.vector(segTable[2]))
+    # apply(segTable, 1, plotSeg, allChrs, lengthOfChrs)
+    
+    if(trimData) {
+        ## removing segments shorter than 300 Kbp
+        segTable = dplyr::filter(segTable, endpos-startpos>300000)
+    }
+    # graph_title = paste0(sampleName, " after removing segments shorter than 300 Kbp")
+    # generateGrid(graph_title)
+    # apply(segTable, 1, plotSeg, allChrs, lengthOfChrs)
+    
+    ## removing segments with CN=1 for each allele
+    segTableClean = dplyr::filter(segTable, nMajor!=1 | nMinor!=1)
+    nbOrigin = dim(segTable)[1]
+    nbClean = dim(segTableClean)[1]
+    nbRemoved = nbOrigin-nbClean
+    print(paste0(nbRemoved, " segments removed out of ", nbOrigin))
+    # graph_title = paste0(sampleName, " after removing segments of copy number=2")
+    # generateGrid(graph_title)
+    # apply(segTable, 1, plotSeg, allChrs, lengthOfChrs)
+    return(segTableClean)   
+}
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
 
 custom_ascat.aspcf = function (ASCATobj, selectsamples = 1:length(ASCATobj$samples), 
     ascat.gg = NULL, penalty = 70, out.dir = ".", out.prefix = "") 

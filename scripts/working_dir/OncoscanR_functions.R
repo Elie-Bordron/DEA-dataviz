@@ -324,8 +324,8 @@ plotSeg = function(seg_df, lengthOfChrs){
 #     axis(2, at = c(-7:8))
 # }
 
-generateGrid = function(graph_title, mode="CN", addAblines=T) {
-    # print("in oncosanR's generateGrid()'")
+generateGrid = function(graph_title, mode="CN", addAblines=TRUE, addChrGrid=TRUE) {
+    print("in oncosanR's generateGrid()'")
     if (mode=="CN") {
         #create empty plot to add things in
         plot(1, ylim=c(-2,3), xlim=c(0,3*10**9),col="white", xaxt="n", yaxt="n", xlab="nombre de bases", ylab="nombre de copies", main=graph_title)
@@ -344,6 +344,14 @@ generateGrid = function(graph_title, mode="CN", addAblines=T) {
         if(mode=="LRR") {
             plot(1, ylim=c(-6,2), xlim=c(0,3*10**9),col="white", xlab="nombre de bases", ylab="Log Ratio", main=graph_title)
         }
+    }
+    if(addChrGrid) {
+        lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+        abline(v=0, col="black", lwd=0.5, lty=2)
+        for (chr in 1:length(lengthOfChrs)) {
+                chrStart = sum(lengthOfChrs[1:chr])
+                abline(v=chrStart, col="black", lwd=0.5, lty=2)
+            }
     }
 }
 
