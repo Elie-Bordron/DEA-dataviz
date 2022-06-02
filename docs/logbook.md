@@ -2646,6 +2646,10 @@ puis
 
 # <span style="color:#999900"> jeudi 02/06/2022 
 arr 9h45 ; 50 min pause; 
+CGHcall.R: 9-LA présente des NA dans le tableau de segmentation par sondes. trouver pourquoi
+* [ ] J'ai modifié getSegTables() pour que seul l'E 9-LA tourne. retirer ça.
+
+
 * [ ] Parler des commentaires de l'intro avec Claire
 `aujourd'hui: audit du COFRAC. éviter de sortir du bureau, ne pas aller en FISH/CGH.`
 * [ ] Aujourd'hui, il est prévu que je voie avec Benjamin ou Isabelle comment on détermine la cellularité tumorale à partir d'une lame HES.

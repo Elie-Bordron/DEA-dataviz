@@ -33,31 +33,55 @@ getSeg = function(currSampleSegs, s){
     # print(c("currSegChr: ", currSegChr))
     segToReturn$currSegChr = currSampleSegs[s,]$Chromosome
     segToReturn$currSegVal = currSampleSegs$CN[s]
+    # if(is.na(segToReturn$currSegVal)) {
+    #     segToReturn$currSegVal = "NA"
+    # }
 
-    print(c("i: ", i))
-    print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
-    print("==--==")
-    print(c("currSampleSegs$CN[i+1]: ", currSampleSegs$CN[i+1]))
-    print(c("segToReturn$currSegVal: ", segToReturn$currSegVal))
-    print("==--==")
-    print(c("currSampleSegs[i+1,]$Chromosome: ", currSampleSegs[i+1,]$Chromosome))
-    print(c("segToReturn$currSegChr: ", segToReturn$currSegChr))
 
-    i_is_not_last_pos = i<length(currSampleSegs[,1])
-    CN_nextPos_equals_CN_currPos = currSampleSegs$CN[i+1]==segToReturn$currSegVal
-    chr_nextPos_equals_chr_currPos = currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr
-    print(c("i_is_not_last_pos", i_is_not_last_pos))
-    print(c("CN_nextPos_equals_CN_currPos", CN_nextPos_equals_CN_currPos))
-    print(c("chr_nextPos_equals_chr_currPos", chr_nextPos_equals_chr_currPos))
-    # while((i<length(currSampleSegs[,1])) && (currSampleSegs$CN[i+1]==segToReturn$currSegVal) && (currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr)) {i=i+1}
-    addNextPosToSeg = ((i_is_not_last_pos) && (CN_nextPos_equals_CN_currPos) && (chr_nextPos_equals_chr_currPos))
-    while(addNextPosToSeg) {
+
+    # i_is_not_last_pos = i<length(currSampleSegs[,1])
+    # CN_nextPos_equals_CN_currPos = currSampleSegs$CN[i+1]==segToReturn$currSegVal
+    # chr_nextPos_equals_chr_currPos = currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr
+    segVal_equals_probeVal=TRUE
+    while((i<length(currSampleSegs[,1])) && (segVal_equals_probeVal) && (currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr)) {
         i=i+1
-        i_is_not_last_pos = i<length(currSampleSegs[,1])
-        CN_nextPos_equals_CN_currPos = currSampleSegs$CN[i+1]==segToReturn$currSegVal
-        chr_nextPos_equals_chr_currPos = currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr
-        addNextPosToSeg = ((i_is_not_last_pos) && (CN_nextPos_equals_CN_currPos) && (chr_nextPos_equals_chr_currPos))
+        probeVal = currSampleSegs$CN[i+1]
+        segVal = segToReturn$currSegVal
+        if(is.na(probeVal)) {
+            if(is.na(segVal)) {
+                segVal_equals_probeVal = TRUE
+            } else {
+                if(is.na(segVal)) {
+                    segVal_equals_probeVal = FALSE
+                }
+            }
+        } else {
+
+        }
+
+
+        if(i>9770) {
+            print("\n")
+            print(c("i: ", i))
+            print(c("segVal_equals_probeVal: ", segVal_equals_probeVal))
+            print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
+            print(c("currSampleSegs$CN[i+1]: ", currSampleSegs$CN[i+1]))
+            print(c("segToReturn$currSegVal: ", segToReturn$currSegVal))
+            print(c("currSampleSegs[i+1,]$Chromosome: ", currSampleSegs[i+1,]$Chromosome))
+            print(c("segToReturn$currSegChr: ", segToReturn$currSegChr))
+        }
     }
+    # addNextPosToSeg = TRUE
+    # while(addNextPosToSeg) {
+    #     i=i+1
+    #     i_is_not_last_pos = i<length(currSampleSegs[,1])
+    #     CN_nextPos_equals_CN_currPos = currSampleSegs$CN[i+1]==segToReturn$currSegVal
+    #     chr_nextPos_equals_chr_currPos = currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr
+    #     print(c("i_is_not_last_pos", i_is_not_last_pos))
+    #     print(c("CN_nextPos_equals_CN_currPos", CN_nextPos_equals_CN_currPos))
+    #     print(c("chr_nextPos_equals_chr_currPos", chr_nextPos_equals_chr_currPos))
+    #     addNextPosToSeg = ((i_is_not_last_pos) && (CN_nextPos_equals_CN_currPos) && (chr_nextPos_equals_chr_currPos))
+    # }
     # print(c("chrVec[i+1]: ", chrVec[i+1]))
     # print(c("chrVec[i]: ", chrVec[i]))
     # print(c("chrVec[i-1]: ", chrVec[i-1]))
@@ -105,14 +129,18 @@ getSegTables = function(segTableByProbe, sampleNames) {
     # get segTables for all samples; concatenate them in a list
     segTablesList = list()
     for(sample in sampleNames) {
-        print(paste0("==================================== sample = ", sample," ===================================="))
-        currSample_SegTableByProbe = dplyr::select(segTableByProbe, all_of(c( "Chromosome", "Start", "End", sample)))
-        colnames(currSample_SegTableByProbe) = c( "Chromosome", "Start", "End", "CN")
-        # print(head(segTableByProbe))
-        # print(c("currSample_SegTableByProbe: ", currSample_SegTableByProbe))
-        # currSample_SegTableByProbe = cbind(rowsInfo, segTableByProbe[[sample]])
-        currSegTable = getSegTable(currSample_SegTableByProbe)
-        segTablesList = append(segTablesList, list(currSegTable))
+        if(sample=="9-LA") {
+            print(paste0("==================================== sample = ", sample," ===================================="))
+            currSample_SegTableByProbe = dplyr::select(segTableByProbe, all_of(c( "Chromosome", "Start", "End", sample)))
+            colnames(currSample_SegTableByProbe) = c( "Chromosome", "Start", "End", "CN")
+            # print(head(segTableByProbe))
+            # print(c("currSample_SegTableByProbe: ", currSample_SegTableByProbe))
+            # currSample_SegTableByProbe = cbind(rowsInfo, segTableByProbe[[sample]])
+            currSegTable = getSegTable(currSample_SegTableByProbe)
+            segTablesList = append(segTablesList, list(currSegTable))
+        } else {
+            print("skipping current sample since it is different of sample 9-LA")
+        }
     }
     return(segTablesList)
 }
