@@ -2633,7 +2633,6 @@ arrivée à 9h; 1h pause; départ à 18h20
 ~~* [ ] _finir_ mat et met: le début? il est complétable.~~
 * [X] ~~*noter le suivi de la réunion sur le framapad.*~~ [2022-06-01]
 * [X] ~~*faire tourner rCGH et oncoscanR avec 1-RV pour compléter le tableau GI.*~~ [2022-06-01]
-* [ ] Si Claire m'a envoyé ses commentaires, les lire et y réfléchir un peu mais ne rien écrire, on en parle demain
 *`faire tous les résultats aujourd'hui, après je ferai la prise en compte des commentaires`*
 Analysis workflow peut être lancé sans ouvrir ChAS.
 
@@ -2645,17 +2644,24 @@ Pour la suite: sauvegarder les paramètres dans un fichier texte (un log donc) �
 puis
 
 # <span style="color:#999900"> jeudi 02/06/2022 
-arr 9h45 ; 50 min pause; 
-CGHcall.R: 9-LA présente des NA dans le tableau de segmentation par sondes. trouver pourquoi
+arr 9h45 ; 50 min pause; départ 19h30
+CGHcall.R: 9-LA présente des NA dans le tableau de segmentation par sondes. trouver pourquoi.
 * [ ] J'ai modifié getSegTables() pour que seul l'E 9-LA tourne. retirer ça.
+J'ai modifié getSegTables() pour qu'elle prenne en compte les NA comme valeur possible de segments. en plottant les segtables obtenues, je comprendrai peut-être pourquoi CGHcall produit des NA.
 
 
-* [ ] Parler des commentaires de l'intro avec Claire
+
+* [X] ~~*Si Claire m'a envoyé ses commentaires, les lire et y réfléchir un peu mais ne rien écrire, on en parle demain*~~ [2022-06-02]
+* [X] ~~*Parler des commentaires de l'intro avec Claire*~~ [2022-06-02]
 `aujourd'hui: audit du COFRAC. éviter de sortir du bureau, ne pas aller en FISH/CGH.`
 * [ ] Aujourd'hui, il est prévu que je voie avec Benjamin ou Isabelle comment on détermine la cellularité tumorale à partir d'une lame HES.
 
 # <span style="color:#999900"> vendredi 03/06/2022 
+arr 9h25; 
 * [ ] si Elodie m'a envoyé des commentaires sur le mat met, les lire
 * [ ] visio avec Elodie sur les commentaires du mat met
+
+
+
 
 # <span style="color:#999900"> lundi 06/06/2022  

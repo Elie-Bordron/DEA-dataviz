@@ -83,7 +83,7 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [ ] plot distri: relier tous les points. Ensuite, voir si c'est plus pertinent de le faire seulement avec certains points.
 * [ ] changer, dans le tableur excel, les GI agilent que j'utilise pour les E 3 et 18. cf cahier.
 * [X] ~~*Demander à Gaetan une photo de lame HES cerclée ou non mais scannée sur laquelle on voit facilement les cellules tumorales ou non tumorales.*~~ [2022-05-31] Claire a des photos de ce genre.
-* [ ] illustrer le plot de cellularité par une photo de lame HES cerclée; voir avec Claire.
+* [X] ~~*illustrer le plot de cellularité par une photo de lame HES cerclée; voir avec Claire.*~~ [2022-06-03]s
 ## 01/06/2022
 * [ ] retirer E 17 des plots et résultats
 * [ ] Mat Met ASCAT: changer le plot de distance entre les segments et les entiers non nuls les plus proches. cf cahier au 23/05
@@ -91,6 +91,8 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [X] ~~*résultats: utiliser les bons GI d'Agilent pour les échantillons qui en ont 2. cf cahier.*~~ [2022-06-02]
 * [ ] ajouter un label à chaque point du plot distri.
 * [X] ~~*CGHcall ## make it so a list containing only 1 cghCall result can't exist. do this at the end of pipelineCGHcall(). cf getPrbLvSegments()*~~ [2022-06-01]
-* [ ] make generateGrid() generate chromosome separations
+* [X] ~~*make generateGrid() generate chromosome separations*~~ [2022-06-03]
 ## 02/06/2022
 quand j'ajoute des objets à une liste, ne pas faire append(list, objet) mais list$nomObj = objet.
+## 02/06/2022
+* [ ] intégrer l'image de lame HES que claire m'a transmis
