@@ -10,6 +10,23 @@ rstudioapi::filesPaneNavigate(working_dir)
 library(rCGH)
 library(dplyr)
 
+#### load rCGH objects from .RDS files
+if(F) {
+    sampleNames = c("1-RV", "3-ES", "9-LA")
+    i=1
+    for (sampleName in sampleNames) {
+        probesetTxtFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
+        pathToProbesetTxt = paste0(probesetTxtFolder,"/",sampleName,".probeset.txt")
+        print(pathToProbesetTxt)
+        cgh = rCGH::readAffyOncoScan(pathToProbesetTxt, sampleName=i)
+        cgh@cnSet = removePointsForQuickPlotting(cgh@cnSet, 100)
+        saveRDS(cgh, paste0(working_dir, "/rCGH_", i, ".RDS"))
+        i=i+1
+    }
+    s1 = readRDS(paste0("rCGH_", sampleName, ".RDS"))
+}
+
+
 pipeline_rCGH = function(sampleName) {
     # sampleName="3-ES"
     # sampleName="1-RV"
@@ -33,13 +50,13 @@ pipeline_rCGH = function(sampleName) {
     ## removing probes with Log2Ratio=NaN 
     LRRData = cgh@cnSet
     cgh@cnSet = dplyr::filter(LRRData, !is.na(LRRData["Log2Ratio"]))
-    cghAdj <- hush(rCGH::adjustSignal(cgh, nCores=1, suppOutliers=F, verbose=F, Scale=T))
+    cghAdj <- hush(rCGH::adjustSignal(cgh, nCores=1, suppOutliers=T, verbose=F, Scale=T))
     # cghAdj@cnSet$adjMan = scale(cgh@cnSet$Log2Ratio, center=F)
     # x=cgh@cnSet$Log2Ratio; n=length(x); sd = sqrt(sum(x^2)/(n-1))
     # cghAdj@cnSet$adjManMan = x / sd
-    
-        
-        
+
+
+
     # x = c(0.2,0.8,1.5,50); n=length(x)
     # 
     # x = scale(x, center=F)
@@ -58,7 +75,7 @@ pipeline_rCGH = function(sampleName) {
 
 
     ## ----SegmentCGH---------------------------------------------------------------
-    cghSeg <- rCGH::segmentCGH(cghAdj, Smooth=F, nCores=1, minLen=0)
+    cghSeg <- rCGH::segmentCGH(cghAdj, Smooth=TRUE, nCores=1, minLen=10)
     
 
     ## ----segTable-----------------------------------------------------------------
@@ -139,7 +156,7 @@ main = function() {
     source(file.path(working_dir, "oncoscanR_functions.R"))
     source(file.path(working_dir, "rCGH_functions.R"))
     ## define paths
-    sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+    sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT", "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
     # sampleNames = c("2-AD", "3-ES")
     ## initialize list to contain all rCGH objects, and list of segTables
     rCGHResults = list()

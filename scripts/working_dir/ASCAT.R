@@ -10,8 +10,8 @@ rstudioapi::filesPaneNavigate(working_dir)
 library(ASCAT)
 library(dplyr)
 
-source(file.path(working_dir,"EaCoN_functions.R"))
-source(file.path(working_dir,"ASCAT_functions.R"))
+source(file.path(working_dir, "EaCoN_functions.R"))
+source(file.path(working_dir, "ASCAT_functions.R"))
 source(file.path(working_dir, "oncoscanR_functions.R"))
 source(file.path(working_dir, "crossPackagesFunctions.R"))
 
@@ -19,14 +19,34 @@ source(file.path(working_dir, "crossPackagesFunctions.R"))
 #### functions
 
 
-sampleName = "5-LD"
-sampleName = "6-VJ"
+# sampleName = "5-LD"
+# sampleName = "6-VJ"
 # sampleName = "7-DG"
 # sampleName = "17-VV"
 sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
 
 
 
+#### Save rCGH objects from .RDS files
+if(F) {
+    sampleNames = c("1-RV", "3-ES", "9-LA")
+    i=1
+    for (sampleName in sampleNames) {
+        OSCHPFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_OSCHP"
+        OSCHPPattern = paste0(".*",sampleName,".*","\\.OSCHP")
+        nameOSCHP = list.files(OSCHPFolder, pattern=OSCHPPattern)
+        pathToOSCHP = file.path(OSCHPFolder,nameOSCHP)
+        pathToCel = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_CEL"
+        pathToATCelFile = file.path(pathToCel, paste0(sampleName,"_AT_(OncoScan_CNV).CEL"))
+        pathToGCCelFile = file.path(pathToCel, paste0(sampleName,"_GC_(OncoScan_CNV).CEL"))
+        # loading data
+        rawData = custom_OS.Process(ATChannelCel = pathToATCelFile, GCChannelCel = pathToGCCelFile, samplename = sampleName, oschp_file=pathToOSCHP, force=T, oschp.keep=T, return.data=TRUE, plot=F, write.data=F) # To do as less data processing as possible, set: wave.renorm = F, gc.renorm=F,
+        rawData = removeSexChrData(rawData)
+        # cgh@cnSet = removePointsForQuickPlotting(cgh@cnSet, 100
+        saveRDS(rawData, paste0(working_dir, "/ASCAT_", i, ".RDS"))
+        i=i+1
+    }
+}
 
 
 pipelineASCAT = function(sampleName,outputFolder, ascatFolder, penalty) {

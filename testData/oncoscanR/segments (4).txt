@@ -1,0 +1,2 @@
+﻿File	Chromosome	Microarray Nomenclature	CN State	Type	Marker Count	Gene Count	Call	Mean Weighted Log2Ratio	Name/ID	Full Location
+8-MM.OSCHP	14	arr[GRCh37] 14q11.2q32.33(20219083_107282024)x1	1.0	Loss	6756	929		-0.49318242879125335	seg90	chr14:20219083-107282024

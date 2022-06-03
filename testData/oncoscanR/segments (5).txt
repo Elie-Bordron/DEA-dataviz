@@ -1,0 +1,3 @@
+﻿File	Chromosome	Microarray Nomenclature	CN State	Type	Marker Count	Gene Count	Call	Mean Weighted Log2Ratio	Name/ID	Full Location
+9-LA.OSCHP	1	arr[GRCh37] 1p36.33q21.1(754192_145402354)x1	1.0	Loss	9773	1501		-0.6977718921962798	seg69	chr1:754192-145402354
+9-LA.OSCHP	2	arr[GRCh37] 2p25.3p11.1(21494_91866487)x1	1.0	Loss	6781	689		-0.5975649493301323	seg71	chr2:21494-91866487

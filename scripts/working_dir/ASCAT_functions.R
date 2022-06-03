@@ -126,7 +126,7 @@ removeSexChrData = function(rawData) {
 
 cleanASCATSegData = function(callData, trimData = F) {
     ## get seg data from call result
-    segTable_raw = callData$segments_raw
+    # segTable_raw = callData$segments_raw
     segTable = callData$segments
     
     ## check seg data

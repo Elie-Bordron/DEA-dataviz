@@ -98,7 +98,7 @@ getSeg = function(currSampleSegs, s){
     return(segToReturn)
 }
 
-getSegTable = function(currSampleSegs) {
+get_seg_table = function(currSampleSegs) {
     ### name of value column must be "CN"
     ## initialize by-segments table 
     segTableBySegment = data.frame(matrix(ncol = 5, nrow = 0))
@@ -136,7 +136,7 @@ getSegTables = function(segTableByProbe, sampleNames) {
             # print(head(segTableByProbe))
             # print(c("currSample_SegTableByProbe: ", currSample_SegTableByProbe))
             # currSample_SegTableByProbe = cbind(rowsInfo, segTableByProbe[[sample]])
-            currSegTable = getSegTable(currSample_SegTableByProbe)
+            currSegTable = get_seg_table(currSample_SegTableByProbe)
             segTablesList = append(segTablesList, list(currSegTable))
         } else {
             print("skipping current sample since it is different of sample 9-LA")
