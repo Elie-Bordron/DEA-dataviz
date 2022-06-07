@@ -81,7 +81,7 @@ pipeline_rCGH = function(sampleName) {
     cghSeg <- segmentCGH_custom(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
     
 
-    ## ----segTable-----------------------------------------------------------------
+     ## ----segTable-----------------------------------------------------------------
     # head(segTable_rCGH)
 
     ## ----EMnormalize--------------------------------------------------------------

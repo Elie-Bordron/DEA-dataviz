@@ -2663,7 +2663,17 @@ arr 9h25; 40 min pause; départ à 18h30
 
 
 
-
 # <span style="color:#999900"> lundi 06/06/2022  
-arr 8h30
+Férié
+
+# <span style="color:#999900"> mardi 07/06/2022  
+arr 8h30; 40 min pause
 * [ ] cahier au 31/05: le plan de la partie résultats et discussion
+
+le GI est calculé pour tous les E, tous les pkg sauf rCGH.
+
+
+# <span style="color:#999900"> mercredi 08/06/2022  
+
+
+rdv à 16h30 avec Elodie et claire à https://meet.starleaf.com/4503281720/app
