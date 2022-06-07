@@ -75,7 +75,10 @@ pipeline_rCGH = function(sampleName) {
 
 
     ## ----SegmentCGH---------------------------------------------------------------
-    cghSeg <- rCGH::segmentCGH(cghAdj, Smooth=TRUE, nCores=1, minLen=10)
+    # cghSeg <- rCGH::segmentCGH(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
+    
+    source(file.path(working_dir, "rCGH_dev.R"))
+    cghSeg <- segmentCGH_custom(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
     
 
     ## ----segTable-----------------------------------------------------------------
@@ -184,7 +187,7 @@ main = function() {
     return(res_rCGH)
 }
 
-
+c("a","b","c","d","e","f","a","b","c","d","e","f","a","b","c","d","e","f")
 
 # runs only when script is run by itself
 if (sys.nframe() == 0){

@@ -97,11 +97,18 @@ if (sys.nframe() == 0){
     f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=2, stroke=NA) + 
         geom_line()
         xlab("") + ylab("Genomic Index") +  labs(fill="")
+    ## the same, with lines joining same points
+    
+    val=c(5,6,9,8,8,7,7,3,2,6,5,9)
+    x = as.data.frame(val)
+    x$ref = c(1,1,1,1,2,2,2,2,3,3,3,3)
+    x$indivs = c("a","b","c","d","a","b","c","d","a","b","c","d")
+    gg = ggplot(x)
+    gg = gg + geom_point(data=x, aes(y=val,x=ref,color=indivs), size=5, alpha=0.3)
+    gg = gg + geom_line(aes(x=ref, y=val, color=indivs))
+    gg
 
 
-    
-    
-    
     
     ## plot pkgs individually
     row.names(GI_table) = GI_table$sample

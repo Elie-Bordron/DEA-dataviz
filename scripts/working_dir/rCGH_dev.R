@@ -147,13 +147,17 @@ segmentCGH_custom = function (object, Smooth = TRUE, UndoSD = NULL, minLen = 10,
     }
     if (!is.null(minLen)) {
         if (verbose) 
-            message("Merging segments shorter than ", minLen, 
-                    "Kb.")
+            message("Merging segments shorter than ", minLen, "Kb.")
+            print("marker 1")
         segTable <- .smoothSeg(segTable, minLen)
     }
+    print("marker 2")
     segTable <- .computeMedSegm(segTable, L2R)
+    print("marker 3")
     segTable <- .mergeLevels(segTable)
+    print("marker 4")
     segTable <- .estimateCopy(segTable, ploidy)
+    print("marker 5")
     probeValues <- .probeSegValue(segTable)
     if (verbose) 
         message("Number of segments: ", nrow(segTable))
