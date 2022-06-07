@@ -75,7 +75,7 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [ ] Parler de ça dans la discussion: Laetitia m'indique que certaines altérations font parfois une dizaine de sondes. C'est à garder en tête pour discuter d'oncoscanR qui estime les altérations sur un bras entier, ou tous les outils qui lissent avant de déterminer les altérations.
 `dans les scripts: `
 * [ ] relancer tous calculs GI avec 1-RV.
-* [ ] 3 grp -> 2 grp. on enlève l'intermédiaire.
+* [X] ~~*3 grp -> 2 grp. on enlève l'intermédiaire.*~~ [2022-06-07]
 * [ ] refaire plot distri avec 2 grp
 * [ ] refaire plot cellularité: mêmes échelles en X et Y; vérifier les valeurs.
 * [ ] vérifier qu'ASCAT donne bien le % de cellules tumorales

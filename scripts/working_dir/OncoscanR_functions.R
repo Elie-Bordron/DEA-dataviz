@@ -347,10 +347,10 @@ generateGrid = function(graph_title, mode="CN", addAblines=TRUE, addChrGrid=TRUE
     }
     if(addChrGrid) {
         lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
-        abline(v=0, col="black", lwd=0.5, lty=2)
+        abline(v=0, col="light grey", lwd=0.5, lty=20)
         for (chr in 1:length(lengthOfChrs)) {
                 chrStart = sum(lengthOfChrs[1:chr])
-                abline(v=chrStart, col="black", lwd=0.5, lty=2)
+                abline(v=chrStart, col="light grey", lwd=0.5, lty=20)
             }
     }
 }

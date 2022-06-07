@@ -2657,11 +2657,13 @@ J'ai modifié getSegTables() pour qu'elle prenne en compte les NA comme valeur p
 * [ ] Aujourd'hui, il est prévu que je voie avec Benjamin ou Isabelle comment on détermine la cellularité tumorale à partir d'une lame HES.
 
 # <span style="color:#999900"> vendredi 03/06/2022 
-arr 9h25; 
-* [ ] si Elodie m'a envoyé des commentaires sur le mat met, les lire
-* [ ] visio avec Elodie sur les commentaires du mat met
+arr 9h25; 40 min pause; départ à 18h30
+* [X] ~~*si Elodie m'a envoyé des commentaires sur le mat met, les lire*~~ [2022-06-03]
+* [X] ~~*visio avec Elodie sur les commentaires du mat met*~~ [2022-06-03]
 
 
 
 
 # <span style="color:#999900"> lundi 06/06/2022  
+arr 8h30
+* [ ] cahier au 31/05: le plan de la partie résultats et discussion

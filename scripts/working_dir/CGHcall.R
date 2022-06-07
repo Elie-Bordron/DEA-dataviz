@@ -111,6 +111,7 @@ main = function() {
     ## get segments tables
     source(file.path(working_dir, "CGHcall_functions.R"))
     source(file.path(working_dir, "rCGH_functions.R"))
+    source(file.path(working_dir, "oncoscanR_functions.R"))
     allSegTables = getSegTables(CGHcall_segments,params$sampleNames)
     ## plot called data on all profiles
     plotSegTables(allSegTables,params$sampleNames,resultsDir)
@@ -122,7 +123,8 @@ main = function() {
     for (s in 1:length(allSegTables)) {
         print(paste0("======= sample ", params$sampleNames[s], " ======="))
         GI_res = calcGI_CGHcall(allSegTables[[s]])
-        if(runAsCohort) {
+        print(c("GI_res: ", GI_res))
+        if(params$runAsCohort) {
             GI_CGHcall_df[params$sampleNames[s],] = append(GI_res, callAllSamples[,s]$processingTime)
         } else {
             GI_CGHcall_df[params$sampleNames[s],] = append(GI_res, callAllSamples[[s]]$processingTime)

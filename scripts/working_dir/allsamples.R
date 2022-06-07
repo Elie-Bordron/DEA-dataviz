@@ -21,9 +21,9 @@ to2colDf = function(GI_table, agilentClass=NULL) {
         }
         for (i in 1:nbCols) {
             if(is.null(vecGI)) {
-                #### create df with one col: result of first package
+                #### first col of future df: result of first package
                 vecGI = c(GI_table[,i])
-                #### add col: group
+                #### 2nd col: group
                 vecGrps = rep(colnames(GI_table[i]), dim(GI_table)[1])
                 #### add col: color
                 if(!is.null(agilentClass)) {
@@ -94,12 +94,11 @@ if (sys.nframe() == 0){
     ## plot distribution  of values for each group
     GI2col = to2colDf(dplyr::select(GI_table_edited,  c("GI_oncoscanR", "GI_CGHcall", "GI_rCGH", "GI_ASCAT", "GI_rCGH", "GI_Agilent", "AgilentClass")), "AgilentClass")
     f <- ggplot(GI2col, aes(pkg, GI, fill = factor(color)))
-    f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=2, stroke=NA) +
+    f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=2, stroke=NA) + 
+        geom_line()
         xlab("") + ylab("Genomic Index") +  labs(fill="")
-    ## the same, zoomed in 
-    f <- ggplot(GI2col, aes(pkg, GI, fill = factor(color)))
-    f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=0.5, stroke=NA) +
-        xlab("") + ylab("Genomic Index") + labs(fill="") + ylim(0,30)
+
+
     
     
     
@@ -118,7 +117,7 @@ if (sys.nframe() == 0){
     purityTablePath = file.path(res_GI_dir, "cellularity.txt")
     purityTable = read.table(purityTablePath, h=T)
     purityTable = purityTable[order(purityTable$purity_HES), ]
-    plot(y=purityTable$estimPurity_ASCAT, x=purityTable$purity_HES, xlab = "HES-estimated purity", ylab = "ASCAT-estimated purity", main = "comparison of purity estimates")
+    plot(y=purityTable$estimPurity_ASCAT, x=purityTable$purity_HES, xlab = "HES-estimated purity", ylab = "ASCAT-estimated purity", main = "comparison of purity estimates", xlim=c(0,1), ylim=c(0,1))
 
     
     
