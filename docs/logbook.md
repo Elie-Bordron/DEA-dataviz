@@ -2667,13 +2667,19 @@ arr 9h25; 40 min pause; départ à 18h30
 Férié
 
 # <span style="color:#999900"> mardi 07/06/2022  
-arr 8h30; 40 min pause
+arr 8h30; 40 min pause; départ dans la nuit à 2h30
 * [ ] cahier au 31/05: le plan de la partie résultats et discussion
 
 le GI est calculé pour tous les E, tous les pkg sauf rCGH.
 
+Je travaille sur matériel et méthodes.
+
+rCGH: le rescaling est généralement utilisé pour ramener les données à une échelle facilement traitable par l'algorithme. voir `https://madanswer.com/14337/what-is-rescaling-of-data-and-how-is-it-done`.
 
 # <span style="color:#999900"> mercredi 08/06/2022  
-
-
+arr 9h; 1h pause; 
 rdv à 16h30 avec Elodie et claire à https://meet.starleaf.com/4503281720/app
+J'exporte les wgv dans `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\results\WGV`.
+
+
+# <span style="color:#999900"> jeudi 09/06/2022  

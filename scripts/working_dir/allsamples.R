@@ -111,49 +111,33 @@ if (sys.nframe() == 0){
     gg = ggplot(GI2col)
     ## uncomment next line to draw lines between from same sample
     # gg = gg + geom_line(aes(x=grpNum, y=GI, group=lineGrp, color=color))
-    gg = gg + geom_point(data=GI2col, aes(y=GI,x=grpNum,color=color), size=5, alpha=0.5, position = position_jitter(0.1))
+    gg = gg + geom_point(data=GI2col, aes(y=GI,x=grpNum,color=color), size=3, alpha=0.5, position = position_jitter(0.1))
     gg = gg + scale_x_continuous(labels=grpNames)
-    gg = gg + theme_bw() + xlab(NULL)
-    gg = gg + geom_label_repel(aes(y=GI,x=grpNum,label=lineGrp), box.padding = 0.2, point.padding = 0.1, segment.color = 'grey50')
+    gg = gg + theme_bw() + xlab(NULL) + guides(color = guide_legend(title = "Group"))
+    # gg = gg + geom_label_repel(aes(y=GI,x=grpNum,label=lineGrp), box.padding = 0.5, point.padding = 0.1, segment.color = 'grey50')
     gg
     
-    library(ggplot2)
     
-    nba <- read.csv("http://datasets.flowingdata.com/ppg2008.csv", sep = ",")
-    
-    nbaplot <- ggplot(nba, aes(x= MIN, y = PTS)) + 
-        geom_point(color = "blue", size = 3)
     
     ### geom_label_repel
-    nbaplot + 
-        geom_label_repel(aes(label = Name),
-                         box.padding   = 0.35, 
-                         point.padding = 0.5,
-                         segment.color = 'grey50') +
-        theme_classic()
+    if (FALSE) {
+        nba <- read.csv("http://datasets.flowingdata.com/ppg2008.csv", sep = ",")
+        nbaplot <- ggplot(nba, aes(x= MIN, y = PTS)) + geom_point(color = "blue", size = 3)
+        nbaplot + geom_label_repel(aes(label = Name), box.padding = 0.35, point.padding = 0.5, segment.color = 'grey50') +theme_bw()
+    }
     
-    #### test 
-    val=c(5,6,9,8,8,7,7,3,2,6,5,9)
-    x = as.data.frame(val)
-    x$ref = c(1,1,1,1,2,2,2,2,3,3,3,3)
-    x$indivs = c("a","b","c","d","a","b","c","d","a","b","c","d")
-    gg = ggplot(x)
-    gg = gg + geom_point(data=x, aes(y=val,x=ref), size=5, alpha=0.3)
-    gg = gg + geom_line(aes(x=ref, y=val, color=indivs))
-    gg
+    #### test for adding lines
+    if (FALSE) {
+        val=c(5,6,9,8,8,7,7,3,2,6,5,9)
+        x = as.data.frame(val)
+        x$ref = c(1,1,1,1,2,2,2,2,3,3,3,3)
+        x$indivs = c("a","b","c","d","a","b","c","d","a","b","c","d")
+        gg = ggplot(x)
+        gg = gg + geom_point(data=x, aes(y=val,x=ref), size=5, alpha=0.3)
+        gg = gg + geom_line(aes(x=ref, y=val, color=indivs))
+        gg
+    }
     
-    
-    # Change Color of a R ggplot Jitter
-    
-    # Importing the ggplot2 library
-    library(ggplot2)
-    
-    # Creating basic Jitter
-    ggplot(ChickWeight, aes(x = Diet, y = weight)) + 
-        geom_jitter(aes(colour = Diet))
-
-        
-    plot(ChickWeight$Diet, ChickWeight$weight)    
     
     ## plot pkgs individually
     row.names(GI_table) = GI_table$sample
@@ -180,7 +164,50 @@ if (sys.nframe() == 0){
     colnames(runTime2col) = c("runTime", "pkg")
     f <- ggplot(runTime2col, aes(pkg, runTime))
     f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=1) +
-        xlab("") + ylab("Processing time (s)")
+        xlab("") + ylab("Processing time (s)") +
+        theme_bw()
+    
+
+    
+    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_CGHcall")
+    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
+    plot(resRoc, main="CGHcall")
+    
+    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_oncoscanR")
+    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
+    plot(resRoc, main="oncoscanR")
+    
+    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_ASCAT")
+    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
+    plot(resRoc, main="ASCAT")
+    
+    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_rCGH")
+    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
+    plot(resRoc, main="rCGH")
+    
+    
+    # 
+    # 
+    # install.packages("verification")
+    # library(verification)
+    # x<- c(0,0,0,1,1,1)
+    # y<- c(.7, .7, 0, 1,5,.6)
+    # data<-data.frame(x,y)
+    # names(data)<-c("yes","no")
+    # roc.plot(data$yes, data$no)
+    # 
+    
+    ### ROC curves
+    library(pROC)
+    data(aSAH)
+    
+    ## Basic
+    roc(aSAH$outcome, aSAH$s100b)
+    roc(outcome ~ s100b, aSAH)
+    
+    ## smoothing
+    x = roc(outcome ~ s100b, aSAH, smooth=TRUE) 
+    plot(x)
 }
 
 

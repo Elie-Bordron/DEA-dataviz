@@ -66,7 +66,7 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 *Pendant la réunion d'aujourd'hui, j'ai pris ces notes:*
 * [X] ~~*GI Agilent: l'ajouter aux plots de corrélation des GIs.*~~ [2022-05-30]
 * [X] ~~*faire le plot comme indiqué par Claire. cf cahier bleu.*~~ [2022-05-30]
-* [ ] Dans le rapport, afficher tous les pipelines horizontalement, et éventuellement en annexe placer les images des pipelines à la verticale + les plots de données qui correspondent à chaque étape.
+* [X] ~~*Dans le rapport, afficher tous les pipelines horizontalement, et éventuellement en annexe placer les images des pipelines à la verticale + les plots de données qui correspondent à chaque étape.*~~ [2022-06-08]
 * [ ] Rapport, Res & Discussion, perspectives: parler du fait qu'on peut changer le seuil de 300 kbp d'oncoscanR pour jouer sur le calcul du GI.
 ## 30/05/2022
 * [X] ~~*ASCAT: renseigner la cellularité et voir si on obtient de meilleurs résultats*~~ [2022-05-30] Non. Mais comparer cette cellularité avec la cellularité estimée par lame HES.
@@ -74,14 +74,14 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 ## 31/05/2022
 * [ ] Parler de ça dans la discussion: Laetitia m'indique que certaines altérations font parfois une dizaine de sondes. C'est à garder en tête pour discuter d'oncoscanR qui estime les altérations sur un bras entier, ou tous les outils qui lissent avant de déterminer les altérations.
 `dans les scripts: `
-* [ ] relancer tous calculs GI avec 1-RV.
+* [X] ~~*relancer tous calculs GI avec 1-RV.*~~ [2022-06-08]
 * [X] ~~*3 grp -> 2 grp. on enlève l'intermédiaire.*~~ [2022-06-07]
-* [ ] refaire plot distri avec 2 grp
-* [ ] refaire plot cellularité: mêmes échelles en X et Y; vérifier les valeurs.
-* [ ] vérifier qu'ASCAT donne bien le % de cellules tumorales
+* [X] ~~*refaire plot distri avec 2 grp*~~ [2022-06-08]
+* [X] ~~*refaire plot cellularité: mêmes échelles en X et Y; vérifier les valeurs.*~~ [2022-06-08]
+* [X] ~~*vérifier qu'ASCAT donne bien le % de cellules tumorales*~~ [2022-06-08]
 * [ ] courbes ROC: regarder packages R, pROC
-* [ ] plot distri: relier tous les points. Ensuite, voir si c'est plus pertinent de le faire seulement avec certains points.
-* [ ] changer, dans le tableur excel, les GI agilent que j'utilise pour les E 3 et 18. cf cahier.
+* [X] ~~*plot distri: relier tous les points. Ensuite, voir si c'est plus pertinent de le faire seulement avec certains points.*~~ [2022-06-08] ça l'est. utiliser cette fonctionnalité pour les points intéressants.
+* [X] ~~*changer, dans le tableur excel, les GI agilent que j'utilise pour les E 3 et 18. cf cahier.*~~ [2022-06-08]
 * [X] ~~*Demander à Gaetan une photo de lame HES cerclée ou non mais scannée sur laquelle on voit facilement les cellules tumorales ou non tumorales.*~~ [2022-05-31] Claire a des photos de ce genre.
 * [X] ~~*illustrer le plot de cellularité par une photo de lame HES cerclée; voir avec Claire.*~~ [2022-06-03]s
 ## 01/06/2022
@@ -89,7 +89,7 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [ ] Mat Met ASCAT: changer le plot de distance entre les segments et les entiers non nuls les plus proches. cf cahier au 23/05
 * [ ] Mat Met ASCAT: eventuellement ajouter un plot qui résume comment on peut déterminer la ploïdie (ou le CN) et la cellularité à partir de log RAtio et BAF. cf cahier au 23/05, ou slides ASCAT 45-47 (donc dans `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_made\images`) ou à partir de la vidéo `https://www.biodiscovery.com/videos/ascat-algorithm`
 * [X] ~~*résultats: utiliser les bons GI d'Agilent pour les échantillons qui en ont 2. cf cahier.*~~ [2022-06-02]
-* [ ] ajouter un label à chaque point du plot distri.
+* [X] ~~*ajouter un label à chaque point du plot distri.*~~ [2022-06-08] pas possible pour _tous_ mais les labels sont là.
 * [X] ~~*CGHcall ## make it so a list containing only 1 cghCall result can't exist. do this at the end of pipelineCGHcall(). cf getPrbLvSegments()*~~ [2022-06-01]
 * [X] ~~*make generateGrid() generate chromosome separations*~~ [2022-06-03]
 ## 02/06/2022

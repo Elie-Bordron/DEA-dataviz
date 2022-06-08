@@ -116,6 +116,8 @@ main = function() {
     ## plot called data on all profiles
     plotSegTables(allSegTables,params$sampleNames,resultsDir)
     
+    
+    ############### compute GI
     ## initialize GI df
     GI_CGHcall_df = data.frame(matrix(ncol = 4, nrow = length(params$sampleNames)))
     colnames(GI_CGHcall_df) = c("GI", "nbAlter", "nbChr", "runTime")
@@ -130,6 +132,15 @@ main = function() {
             GI_CGHcall_df[params$sampleNames[s],] = append(GI_res, callAllSamples[[s]]$processingTime)
         }
     }
+    
+    ############### saving segmentation tables
+    saveSegTables = function(allSegTables, CGHcallDir, sampleNames) {
+        for (s in 1:length(allSegTables)) {
+            currSample = sampleNames[s]
+            currSegTablePath = paste0(CGHcallDir,"/",currSample,"_segtable.txt")
+            write.table(allSegTables[s], currSegTablePath)
+        }
+    saveSegTables(allSegTables)
     
     ############### saving GI table
     ### along GIs of other packages
