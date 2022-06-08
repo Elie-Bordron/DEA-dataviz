@@ -19,4 +19,5 @@
 * [ ] On peut exporter les données des segments à partir de la vue interne de ChAS, mais c'est fastidieux car il faut traiter chaque échantillon individuellement. Dans l'analysis setup, on peut générer en batch un fichier qui contient tous les segments des OSCHP qu'on lui donne -> plus rapide. J'aimerais bien pouvoir choisir les colonnes que je veux à ce niveau, est-ce possible? (je veux choisir les colonnes car pour OncoscanR, on a besoin de la colonne Full Location: c'est primordial.)
 * [X] ~~*comment ChAS estime le copy number? modèle de mélange de gaussiennes?*~~ [2022-05-12]
 * [ ] -> voir dans ChASRUO.pdf pour voir comment les segments sont estimés aussi.
+* [ ] de combien est la compaction des log Ratios?
 

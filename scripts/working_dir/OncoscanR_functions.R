@@ -347,10 +347,10 @@ generateGrid = function(graph_title, mode="CN", addAblines=TRUE, addChrGrid=TRUE
     }
     if(addChrGrid) {
         lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
-        abline(v=0, col="black", lwd=0.5, lty=2)
+        abline(v=0, col="light grey", lwd=0.5, lty=20)
         for (chr in 1:length(lengthOfChrs)) {
                 chrStart = sum(lengthOfChrs[1:chr])
-                abline(v=chrStart, col="black", lwd=0.5, lty=2)
+                abline(v=chrStart, col="light grey", lwd=0.5, lty=20)
             }
     }
 }
@@ -509,70 +509,3 @@ if (F) {
 
 }
 
-
-
-adjustSignal_custom = function (object, Scale = TRUE, Cy = TRUE, GC = TRUE, Ref = "cy3", 
-    suppOutliers = TRUE, nCores = NULL, verbose = TRUE) 
-{
-    if (!.validrCGHObject(object)) 
-        return(NULL)
-    cnSet <- getCNset(object)
-    if (!inherits(object, "rCGH-Agilent")) {
-        Cy <- FALSE
-        GC <- FALSE
-    }
-    if (Cy) {
-        if (verbose) {
-            message("Recall you are using ", Ref, " as reference.")
-            message("Cy effect adjustment...")
-        }
-        cnSet <- .CyAdjust(cnSet, Ref)
-    }
-    if (GC) {
-        if (verbose) 
-            message("GC% adjustment...")
-        cnSet <- .GCadjust(cnSet)
-    }
-    object@param$CyAdjusted = Cy
-    object@param$GCAdjusted = GC
-    object@param$dLRs <- .dlrs(cnSet$Log2Ratio)
-    object@param$MAD <- .MAD(cnSet$Log2Ratio)
-    if (verbose) {
-        message("Log2Ratios QCs:")
-        message("\tdLRs: ", round(object@param$dLRs, 3))
-        message("\tMAD: ", round(object@param$MAD, 3))
-        message()
-    }
-    if (Scale) {
-        if (verbose) 
-            message("Scaling...")
-        cnSet$Log2Ratio <- scale(cnSet$Log2Ratio, center = FALSE)
-        cnSet$Log2Ratio <- cnSet$Log2Ratio * 1.2
-    }
-    nCores <- .setCores(nCores, verbose)
-    if (suppOutliers) {
-        if (verbose) 
-            message("Signal filtering...")
-        L2R <- cnSet$Log2Ratio
-        Chr <- cnSet$ChrNum
-        S <- NA
-        cnSet$Log2Ratio <- .modelSignal(L2R, Chr, G = 1:5, method = "lr", 
-            alpha = 2000, S, nCores, verbose)
-    }
-    if ("Allele.Difference" %in% colnames(cnSet)) {
-        if (!all(is.na(cnSet$Allele.Difference))) {
-            if (verbose) 
-                message("Modeling allelic Difference...")
-            signal <- cnSet$Allele.Difference
-            chr <- cnSet$ChrNum
-            S <- ifelse(inherits(object, "rCGH-oncoScan"), 
-                0.05, 0.04)
-            modelAllDif <- .modelSignal(signal, chr, G = 2:5, 
-                method = "loh", alpha = 2500, S, nCores, 
-                verbose)
-            cnSet$modelAllDif <- modelAllDif
-        }
-    }
-    object@cnSet <- cnSet
-    return(object)
-}

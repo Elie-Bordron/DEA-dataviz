@@ -1,5 +1,5 @@
 EMnormalize_custom = function (object, G = 2:6, priorScale = 5, peakThresh = 0.5, mergeVal = 0.1, Title = NA, verbose = TRUE) {
-    if (!.validrCGHObject(object)) 
+    if (!rCGH:::.validrCGHObject(object)) 
         return(NULL)
     op <- options()
     options(warn = -1)
@@ -8,7 +8,7 @@ EMnormalize_custom = function (object, G = 2:6, priorScale = 5, peakThresh = 0.5
     if (nrow(segTable) == 0) {
         stop("Please run the segmentation step before centralizing.")
     }
-    simulLR <- .simulateLRfromST(segTable)
+    simulLR <- rCGH:::.simulateLRfromST(segTable)
     EM <- Mclust(simulLR, G = G, prior = priorControl(scale = priorScale))
     nG <- EM$G
     m <- EM$parameters$mean
@@ -24,7 +24,7 @@ EMnormalize_custom = function (object, G = 2:6, priorScale = 5, peakThresh = 0.5
         if (verbose) 
             message("Merging peaks closer than ", mergeVal, 
                 " ...")
-        mergedPars <- .mergePeaks(nG, simulLR, m, s, p, mergeVal, 
+        mergedPars <- rCGH:::.mergePeaks(nG, simulLR, m, s, p, mergeVal, 
             verbose)
         m <- mergedPars$m
         s <- mergedPars$s
@@ -57,10 +57,10 @@ EMnormalize_custom = function (object, G = 2:6, priorScale = 5, peakThresh = 0.5
     }
     segTable$seg.mean <- segTable$seg.mean - correct
     segTable$seg.med <- segTable$seg.med - correct
-    segTable <- .estimateCopy(segTable, ploidy)
+    segTable <- rCGH:::.estimateCopy(segTable, ploidy)
     cnSet <- getCNset(object)
     cnSet$Log2Ratio <- cnSet$Log2Ratio - correct
-    cnSet$estimCopy <- .probeCopyValue(segTable)
+    cnSet$estimCopy <- rCGH:::.probeCopyValue(segTable)
     object@segTable <- segTable
     object@cnSet <- cnSet
     object@param$EMcentralized <- TRUE
@@ -101,7 +101,7 @@ EMnormalize_custom = function (object, G = 2:6, priorScale = 5, peakThresh = 0.5
 
 segmentCGH_custom = function (object, Smooth = TRUE, UndoSD = NULL, minLen = 10, nCores = NULL, verbose = TRUE) 
 {
-    if (!.validrCGHObject(object)) 
+    if (!rCGH:::.validrCGHObject(object)) 
         return(NULL)
     ploidy <- as.numeric(getInfo(object, "ploidy"))
     cnSet <- getCNset(object)
@@ -109,11 +109,11 @@ segmentCGH_custom = function (object, Smooth = TRUE, UndoSD = NULL, minLen = 10,
     params <- getParam(object)
     params$minSegLen <- minLen
     if (Smooth) {
-        mad <- .getMAD(object)
+        mad <- rCGH:::.getMAD(object)
         params$ksmooth <- floor(150 * mad) * 2 + 1
     }
     if (is.null(UndoSD)) {
-        mad <- .getMAD(object)
+        mad <- rCGH:::.getMAD(object)
         alpha <- 0.5
         if (inherits(object, "rCGH-Illumina")) {
             alpha <- 0.95
@@ -122,8 +122,7 @@ segmentCGH_custom = function (object, Smooth = TRUE, UndoSD = NULL, minLen = 10,
             alpha <- 0.3
         }
         params$UndoSD <- alpha * mad^(1/2)
-    }
-    else {
+    } else {
         params$UndoSD <- UndoSD
     }
     L2R <- cnSet$Log2Ratio
@@ -133,28 +132,44 @@ segmentCGH_custom = function (object, Smooth = TRUE, UndoSD = NULL, minLen = 10,
     if (is.na(sampleName)) {
         sampleName <- "sample_x"
     }
-    nCores <- .setCores(nCores)
+    nCores <- rCGH:::.setCores(nCores)
     if (verbose) {
         usd <- format(params$UndoSD, digits = 3)
         message("Computing LRR segmentation using UndoSD: ", 
                 usd)
     }
-    segTable <- .computeSegmentation(L2R, Chr, Pos, sampleName, 
-                                     params, nCores)
+    segTable <- rCGH:::.computeSegmentation(L2R, Chr, Pos, sampleName, params, nCores)
     if (!is.null(minLen) && minLen < 0) {
         message("'minLen', the minimal segment length can't be < 0")
         minLen <- NULL
     }
     if (!is.null(minLen)) {
         if (verbose) 
-            message("Merging segments shorter than ", minLen, 
-                    "Kb.")
-        segTable <- .smoothSeg(segTable, minLen)
+            message("Merging segments shorter than ", minLen, "Kb.")
+            print("marker 1")
+        segTable <- rCGH:::.smoothSeg(segTable, minLen)
     }
-    segTable <- .computeMedSegm(segTable, L2R)
-    segTable <- .mergeLevels(segTable)
-    segTable <- .estimateCopy(segTable, ploidy)
-    probeValues <- .probeSegValue(segTable)
+    print("marker 2")
+    segTable <- rCGH:::.computeMedSegm(segTable, L2R)
+    print("marker 3")
+    # segTable$chrom = as.numeric(segTable$chrom)
+    # segTable$loc.start = as.numeric(segTable$loc.start)
+    # segTable$loc.end = as.numeric(segTable$loc.end)
+    # segTable$num.mark = as.numeric(segTable$num.mark)
+    # segTable$seg.mean = as.numeric(segTable$seg.mean)
+    # segTable$seg.med = as.numeric(segTable$seg.med)
+    # segTable$probes.Sd = as.numeric(segTable$probes.Sd)
+    for (col in 1:length(segTable)) {
+        currCol = segTable[[col]]
+        # print(c("currCol: ", currCol))
+        print(table(names(currCol)))
+    }
+    segTable = segTable[1:length(segTable[[1]])-1,]
+    segTable <- rCGH:::.mergeLevels(segTable)
+    print("marker 4")
+    segTable <- rCGH:::.estimateCopy(segTable, ploidy)
+    print("marker 5")
+    probeValues <- rCGH:::.probeSegValue(segTable)
     if (verbose) 
         message("Number of segments: ", nrow(segTable))
     params$nSegment <- nrow(segTable)
@@ -184,7 +199,7 @@ segmentCGH_custom = function (object, Smooth = TRUE, UndoSD = NULL, minLen = 10,
     })
     #P contains a distribution: either a dnorm or a vector : c(0,0,0,0,0...0,0,0,1) (30 values total). p too
     ratio <- sapply(P, function(p) { ## here we apply on P a function that returns either 0 or 2**(a value of expect) at each run
-        .estimateRatio(p, expect)
+        rCGH:::.estimateRatio(p, expect)
     })
     copies <- ifelse(ratio == 0, 0, ifelse(ratio > 0, 2 * ratio, 
         -1/ratio))
@@ -206,7 +221,7 @@ segmentCGH_custom = function (object, Smooth = TRUE, UndoSD = NULL, minLen = 10,
 
 plotLOH_custom = function (object, Title = NULL) 
 {
-    if (!.validrCGHObject(object)) 
+    if (!rCGH:::.validrCGHObject(object)) 
         return(NULL)
     hg18 <- hg18
     hg19 <- hg19
@@ -343,3 +358,111 @@ adjustSignal_custom = function (object, Scale = TRUE, Cy = TRUE, GC = TRUE, Ref 
 
 
 
+
+
+
+
+
+
+
+
+#################################################### for error "Value of SET_STRING_ELT() must be a 'CHARSXP' not a 'NULL'" when running rCGH::segmentCGH().   ## 07/06/2022
+
+## aCGH::mergeLevels
+mergeLevels = function (vecObs, vecPred, pv.thres = 1e-04, ansari.sign = 0.05, 
+    thresMin = 0.05, thresMax = 0.5, verbose = 1, scale = TRUE) 
+{
+    if (thresMin > thresMax) {
+        cat("Error, thresMax should be equal to or larger than thresMin\n")
+        return()
+    }
+    thresAbs = thresMin
+    sq <- numeric()
+    j = 0
+    ansari = numeric()
+    lv = numeric()
+    flag = 0
+    if (thresMin == thresMax) {
+        flag = 2
+    }
+    else {
+        l.step <- signif((thresMax - thresMin)/10, 1)
+        s.step <- signif((thresMax - thresMin)/200, 1)
+    }
+    while (1) {
+        if (verbose >= 1) {
+            cat("\nCurrent thresAbs: ", thresAbs, "\n")
+        }
+        j = j + 1
+        sq[j] <- thresAbs
+        vecPredNow = vecPred
+        mnNow = unique(vecPred)
+        mnNow = mnNow[!is.na(mnNow)]
+        cont = 0
+        while (cont == 0 & length(mnNow) > 1) {
+            mnNow = sort(mnNow)
+            n <- length(mnNow)
+            if (verbose >= 2) {
+                cat("\r", n, ":", length(unique(vecPred)), "\t")
+            }
+            if (scale) {
+                d <- (2 * 2^mnNow)[-n] - (2 * 2^mnNow)[-1]
+            }
+            else {
+                d <- (mnNow)[-n] - (mnNow)[-1]
+            }
+            dst <- cbind(abs(d)[order(abs(d))], (2:n)[order(abs(d))], 
+                (1:(n - 1))[order(abs(d))])
+            for (i in 1:nrow(dst)) {
+                cont = 1
+                out = combine.func(diff = dst[i, 1], vecObs, 
+                  vecPredNow, mnNow, mn1 = mnNow[dst[i, 2]], 
+                  mn2 = mnNow[dst[i, 3]], pv.thres = pv.thres, 
+                  thresAbs = if (scale) {
+                    2 * 2^thresAbs - 2
+                  }
+                  else {
+                    thresAbs
+                  })
+                if (out$pv > pv.thres) {
+                  cont = 0
+                  vecPredNow = out$vecPredNow
+                  mnNow = out$mnNow
+                  break
+                }
+            }
+        }
+        ansari[j] = ansari.test(sort(vecObs - vecPredNow), sort(vecObs - 
+            vecPred))$p.value
+        if (is.na(ansari[j])) {
+            ansari[j] = 0
+        }
+        lv[j] = length(mnNow)
+        if (flag == 2) {
+            break
+        }
+        if (ansari[j] < ansari.sign) {
+            flag = 1
+        }
+        if (flag) {
+            if (ansari[j] > ansari.sign | thresAbs == thresMin) {
+                break
+            }
+            else {
+                thresAbs = signif(thresAbs - s.step, 3)
+                if (thresAbs <= thresMin) {
+                  thresAbs = thresMin
+                }
+            }
+        }
+        else {
+            thresAbs = thresAbs + l.step
+        }
+        if (thresAbs >= thresMax) {
+            thresAbs = thresMax
+            flag = 2
+        }
+    }
+    return(list(vecMerged = vecPredNow, mnNow = mnNow, sq = sq, 
+        ansari = ansari))
+}

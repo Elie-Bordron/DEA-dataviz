@@ -56,19 +56,39 @@ getSeg = function(currSampleSegs, s){
                 }
             }
         } else {
+            if(is.na(segVal)) {
+                segVal_equals_probeVal = FALSE
+            } else {
+                segVal_equals_probeVal = probeVal==segVal
+            }
+        }
 
+        if (FALSE) {
+            if(! i<length(currSampleSegs[,1])) {
+                print("end of genome")
+                print(c("probeVal: ", probeVal))
+                print(c("segVal: ", segVal))            
+            } else if (! segVal_equals_probeVal) {
+                print("value discordance")
+                print(c("probeVal: ", probeVal))
+                print(c("segVal: ", segVal))                
+            } else if(! currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr) {
+                print("chr discordance")
+                print(c("probeVal: ", probeVal))
+                print(c("segVal: ", segVal))            
+            }
         }
 
 
         if(i>9770) {
-            print("\n")
-            print(c("i: ", i))
-            print(c("segVal_equals_probeVal: ", segVal_equals_probeVal))
-            print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
-            print(c("currSampleSegs$CN[i+1]: ", currSampleSegs$CN[i+1]))
-            print(c("segToReturn$currSegVal: ", segToReturn$currSegVal))
-            print(c("currSampleSegs[i+1,]$Chromosome: ", currSampleSegs[i+1,]$Chromosome))
-            print(c("segToReturn$currSegChr: ", segToReturn$currSegChr))
+            # print("\n")
+            # print(c("i: ", i))
+            # print(c("segVal_equals_probeVal: ", segVal_equals_probeVal))
+            # print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
+            # print(c("currSampleSegs$CN[i+1]: ", currSampleSegs$CN[i+1]))
+            # print(c("segToReturn$currSegVal: ", segToReturn$currSegVal))
+            # print(c("currSampleSegs[i+1,]$Chromosome: ", currSampleSegs[i+1,]$Chromosome))
+            # print(c("segToReturn$currSegChr: ", segToReturn$currSegChr))
         }
     }
     # addNextPosToSeg = TRUE
@@ -108,7 +128,7 @@ get_seg_table = function(currSampleSegs) {
     i=1 # end of segment
     # print(c("currSampleSegs: ", currSampleSegs)) 
     # print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
-    print(c("currSampleSegs: ", currSampleSegs))
+    # print(c("currSampleSegs: ", currSampleSegs))
     while (s < length(currSampleSegs[,1])) {
         print(paste0("------------- segId = ", segId," -------------"))
         resSeg = getSeg(currSampleSegs, s)
@@ -129,7 +149,7 @@ getSegTables = function(segTableByProbe, sampleNames) {
     # get segTables for all samples; concatenate them in a list
     segTablesList = list()
     for(sample in sampleNames) {
-        if(sample=="9-LA") {
+        # if(sample=="9-LA") {
             print(paste0("==================================== sample = ", sample," ===================================="))
             currSample_SegTableByProbe = dplyr::select(segTableByProbe, all_of(c( "Chromosome", "Start", "End", sample)))
             colnames(currSample_SegTableByProbe) = c( "Chromosome", "Start", "End", "CN")
@@ -138,9 +158,9 @@ getSegTables = function(segTableByProbe, sampleNames) {
             # currSample_SegTableByProbe = cbind(rowsInfo, segTableByProbe[[sample]])
             currSegTable = get_seg_table(currSample_SegTableByProbe)
             segTablesList = append(segTablesList, list(currSegTable))
-        } else {
-            print("skipping current sample since it is different of sample 9-LA")
-        }
+        # } else {
+        #     print("skipping current sample since it is different of sample 9-LA")
+        # }
     }
     return(segTablesList)
 }

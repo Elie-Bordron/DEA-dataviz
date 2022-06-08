@@ -53,8 +53,8 @@ plotSeg_rCGH = function(seg_df, value_col, indivSeg=FALSE){
     segments(segStartPos, estimCN, segEndPos, estimCN, col="black", lwd=2)
     if(indivSeg) {
         height = 0.05
-        segments(segStartPos, estimCN+height, segStartPos, estimCN-height, col="black", lwd=0.5)
-        segments(segEndPos, estimCN+height, segEndPos, estimCN-height, col="black", lwd=0.5)
+        segments(segStartPos, estimCN+height, segStartPos, estimCN-height, col="black", lwd=0.1)
+        segments(segEndPos, estimCN+height, segEndPos, estimCN-height, col="black", lwd=0.1)
     }
 }
 

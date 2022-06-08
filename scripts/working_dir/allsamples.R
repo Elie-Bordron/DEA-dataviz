@@ -4,6 +4,7 @@ resDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
 res_GI_dir = file.path(resDir, "GI_all_methods")
 setwd(working_dir)
 ## open working directory in Files tab
+options("max.print"=100)
 rstudioapi::filesPaneNavigate(working_dir)
 #loading libraries
 library(dplyr)
@@ -21,10 +22,11 @@ to2colDf = function(GI_table, agilentClass=NULL) {
         }
         for (i in 1:nbCols) {
             if(is.null(vecGI)) {
-                #### create df with one col: result of first package
+                #### first col of future df: result of first package
                 vecGI = c(GI_table[,i])
-                #### add col: group
+                #### 2nd col: group
                 vecGrps = rep(colnames(GI_table[i]), dim(GI_table)[1])
+                vecGrpsNum = rep(i, dim(GI_table)[1])
                 #### add col: color
                 if(!is.null(agilentClass)) {
                     vecCol = as.vector(GI_table$AgilentClass)
@@ -34,6 +36,7 @@ to2colDf = function(GI_table, agilentClass=NULL) {
             } else {
                 vecGI = c(vecGI, GI_table[,i])
                 vecGrps = c(vecGrps, rep(colnames(GI_table[i]), dim(GI_table)[1]))
+                vecGrpsNum = c(vecGrpsNum, rep(i, dim(GI_table)[1]))
                 if(!is.null(agilentClass)) {
                     vecCol = c(vecCol, as.vector(GI_table$AgilentClass))
                 } else {
@@ -42,9 +45,9 @@ to2colDf = function(GI_table, agilentClass=NULL) {
             }
         }
         if(all(is.null(vecCol))) {
-            df2Cols = data.frame = data.frame(GI=vecGI, pkg=vecGrps)
+            df2Cols = data.frame(GI=vecGI, pkg=vecGrps, grpNum=vecGrpsNum)
         } else {
-            df2Cols = data.frame = data.frame(GI=vecGI, pkg=vecGrps, color = vecCol)
+            df2Cols = data.frame(GI=vecGI, pkg=vecGrps, grpNum=vecGrpsNum, color = vecCol)
         }
         return(df2Cols)  
     }
@@ -70,6 +73,7 @@ plotOnePkg = function(GI_table, pkg) {
 if (sys.nframe() == 0){
     GI_table_path = file.path(res_GI_dir, "GI_all_methods.txt")
     GI_table = read.table(GI_table_path, h=T)
+    GI_table = dplyr::filter(GI_table, sample!="17-VV")
     ## R base correlation plots for all comparisons
     pairs(~ GI_oncoscanR + GI_CGHcall + GI_rCGH + GI_ASCAT + GI_Agilent, data = GI_table)
 
@@ -87,21 +91,52 @@ if (sys.nframe() == 0){
     GI_cols_edited = dplyr::select(GI_table_edited, c("GI_oncoscanR", "GI_CGHcall", "GI_rCGH", "GI_ASCAT", "GI_rCGH", "GI_Agilent"))
     
     ## correlation plots but aberrant values removed
-    ggpairs(GI_cols_edited, lower=list(continuous=wrap("smooth", colour="blue")),
-            diag=list(continuous=wrap("barDiag", fill="dark blue")),
-            upper=list(corSize=6), axisLabels='show', cardinality_threshold=20)
+    # ggpairs(GI_cols_edited, lower=list(continuous=wrap("smooth", colour="blue")),
+    #         diag=list(continuous=wrap("barDiag", fill="dark blue")),
+    #         upper=list(corSize=6), axisLabels='show', cardinality_threshold=20)
 
     ## plot distribution  of values for each group
     GI2col = to2colDf(dplyr::select(GI_table_edited,  c("GI_oncoscanR", "GI_CGHcall", "GI_rCGH", "GI_ASCAT", "GI_rCGH", "GI_Agilent", "AgilentClass")), "AgilentClass")
+    ## add grp for lines
+    unit  = c(GI_table_edited$sample)
+    GI2col$lineGrp = rep(unit, 5)
     f <- ggplot(GI2col, aes(pkg, GI, fill = factor(color)))
-    f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=2, stroke=NA) +
+    f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=2, stroke=NA) + 
+        # geom_line() +
         xlab("") + ylab("Genomic Index") +  labs(fill="")
-    ## the same, zoomed in 
-    f <- ggplot(GI2col, aes(pkg, GI, fill = factor(color)))
-    f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=0.5, stroke=NA) +
-        xlab("") + ylab("Genomic Index") + labs(fill="") + ylim(0,30)
+    ## the same, with lines joining same points
+    library(ggrepel)
+    grpNames = unique(GI2col$pkg)
+    
+    gg = ggplot(GI2col)
+    ## uncomment next line to draw lines between from same sample
+    # gg = gg + geom_line(aes(x=grpNum, y=GI, group=lineGrp, color=color))
+    gg = gg + geom_point(data=GI2col, aes(y=GI,x=grpNum,color=color), size=3, alpha=0.5, position = position_jitter(0.1))
+    gg = gg + scale_x_continuous(labels=grpNames)
+    gg = gg + theme_bw() + xlab(NULL) + guides(color = guide_legend(title = "Group"))
+    # gg = gg + geom_label_repel(aes(y=GI,x=grpNum,label=lineGrp), box.padding = 0.5, point.padding = 0.1, segment.color = 'grey50')
+    gg
     
     
+    
+    ### geom_label_repel
+    if (FALSE) {
+        nba <- read.csv("http://datasets.flowingdata.com/ppg2008.csv", sep = ",")
+        nbaplot <- ggplot(nba, aes(x= MIN, y = PTS)) + geom_point(color = "blue", size = 3)
+        nbaplot + geom_label_repel(aes(label = Name), box.padding = 0.35, point.padding = 0.5, segment.color = 'grey50') +theme_bw()
+    }
+    
+    #### test for adding lines
+    if (FALSE) {
+        val=c(5,6,9,8,8,7,7,3,2,6,5,9)
+        x = as.data.frame(val)
+        x$ref = c(1,1,1,1,2,2,2,2,3,3,3,3)
+        x$indivs = c("a","b","c","d","a","b","c","d","a","b","c","d")
+        gg = ggplot(x)
+        gg = gg + geom_point(data=x, aes(y=val,x=ref), size=5, alpha=0.3)
+        gg = gg + geom_line(aes(x=ref, y=val, color=indivs))
+        gg
+    }
     
     
     ## plot pkgs individually
@@ -118,7 +153,8 @@ if (sys.nframe() == 0){
     purityTablePath = file.path(res_GI_dir, "cellularity.txt")
     purityTable = read.table(purityTablePath, h=T)
     purityTable = purityTable[order(purityTable$purity_HES), ]
-    plot(y=purityTable$estimPurity_ASCAT, x=purityTable$purity_HES, xlab = "HES-estimated purity", ylab = "ASCAT-estimated purity", main = "comparison of purity estimates")
+    purityTable$estimPurity_ASCAT = as.numeric(purityTable$estimPurity_ASCAT)*100
+    plot(y=purityTable$estimPurity_ASCAT, x=purityTable$purity_HES, xlab = "HES-estimated purity", ylab = "ASCAT-estimated purity", main = "comparison of purity estimates", xlim=c(0,100), ylim=c(0,100))
 
     
     
@@ -128,7 +164,50 @@ if (sys.nframe() == 0){
     colnames(runTime2col) = c("runTime", "pkg")
     f <- ggplot(runTime2col, aes(pkg, runTime))
     f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=1) +
-        xlab("") + ylab("Processing time (s)")
+        xlab("") + ylab("Processing time (s)") +
+        theme_bw()
+    
+
+    
+    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_CGHcall")
+    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
+    plot(resRoc, main="CGHcall")
+    
+    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_oncoscanR")
+    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
+    plot(resRoc, main="oncoscanR")
+    
+    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_ASCAT")
+    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
+    plot(resRoc, main="ASCAT")
+    
+    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_rCGH")
+    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
+    plot(resRoc, main="rCGH")
+    
+    
+    # 
+    # 
+    # install.packages("verification")
+    # library(verification)
+    # x<- c(0,0,0,1,1,1)
+    # y<- c(.7, .7, 0, 1,5,.6)
+    # data<-data.frame(x,y)
+    # names(data)<-c("yes","no")
+    # roc.plot(data$yes, data$no)
+    # 
+    
+    ### ROC curves
+    library(pROC)
+    data(aSAH)
+    
+    ## Basic
+    roc(aSAH$outcome, aSAH$s100b)
+    roc(outcome ~ s100b, aSAH)
+    
+    ## smoothing
+    x = roc(outcome ~ s100b, aSAH, smooth=TRUE) 
+    plot(x)
 }
 
 
