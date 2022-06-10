@@ -75,10 +75,10 @@ pipeline_rCGH = function(sampleName) {
 
 
     ## ----SegmentCGH---------------------------------------------------------------
-    # cghSeg <- rCGH::segmentCGH(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
+    cghSeg <- rCGH::segmentCGH(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
     
-    source(file.path(working_dir, "rCGH_dev.R"))
-    cghSeg <- segmentCGH_custom(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
+    # source(file.path(working_dir, "rCGH_dev.R"))
+    # cghSeg <- segmentCGH_custom(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
     
 
      ## ----segTable-----------------------------------------------------------------
@@ -168,8 +168,8 @@ main = function() {
     GIdf_rCGH = data.frame(matrix(ncol=4, nrow=length(sampleNames)))
     colnames(GIdf_rCGH) = c("GI", "nbAlter", "nbChr", "runTime")
     rownames(GIdf_rCGH) = sampleNames
-    outputFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/rCGH/"
-    if(!dir.exists(outputFolder)) dir.create(outputFolder)
+    rCGHdir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/rCGH/"
+    if(!dir.exists(rCGHdir)) dir.create(rCGHdir)
     for (s in 1:length(sampleNames)) {
         currSampleName = sampleNames[s]
         print(paste0("processing pipeline for sample ", currSampleName))
@@ -187,13 +187,13 @@ main = function() {
     return(res_rCGH)
 }
 
-c("a","b","c","d","e","f","a","b","c","d","e","f","a","b","c","d","e","f")
 
-# runs only when script is run by itself
+# runs only when script is main
 if (sys.nframe() == 0){
     res_rCGH = main()
     GI_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/GI_all_methods"
     GIdf_rCGH = res_rCGH[[1]]
+    segTables = res_rCGH[[2]]
     ############## save GI data to file
     source(file.path(working_dir, "crossPackagesFunctions.R"))
     saveGI_ResToFile(GIdf_rCGH, "rCGH")
@@ -205,7 +205,18 @@ if (sys.nframe() == 0){
     generateGrid(paste0(currSampleName," estimated copy number"), mode="CN")
     apply(segTable_rCGH, 1, plotSeg_rCGH, "probes.Sd")
     # dev.off()
-    
+
+    ############## save segments table to file
+    saveSegTables = function(segTables, outputDir, sampleNames=c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )) {
+        segTablesDir = file.path(outputDir, "segTables")
+        if(!dir.exists(segTablesDir))dir.create(segTablesDir)
+        for (i in 1:length(segTables)) {
+            currSegTable = segTables[i]
+            currFilePath = file.path(segTablesDir, paste0(sampleNames[i], ".tsv"))
+            write.table(currSegTable, currFilePath, sep="\t", row.names=FALSE, quote=F)
+        }
+    }
+saveSegTables(segTables, rCGHdir)
 
 }
 

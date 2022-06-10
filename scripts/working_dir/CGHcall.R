@@ -124,6 +124,7 @@ main = function() {
     rownames(GI_CGHcall_df) = params$sampleNames
     for (s in 1:length(allSegTables)) {
         print(paste0("======= sample ", params$sampleNames[s], " ======="))
+        if("Value" %in% colnames(allSegTables[[s]])){ print(" a Value col is present. perfect")}else{warning(" need column named Value. Try agani, or GI will be miscalculated")}
         GI_res = calcGI_CGHcall(allSegTables[[s]])
         print(c("GI_res: ", GI_res))
         if(params$runAsCohort) {
@@ -134,13 +135,17 @@ main = function() {
     }
     
     ############### saving segmentation tables
-    saveSegTables = function(allSegTables, CGHcallDir, sampleNames) {
+    saveSegTables = function(allSegTables, CGHcallDir, sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC")) {
         for (s in 1:length(allSegTables)) {
             currSample = sampleNames[s]
             currSegTablePath = paste0(CGHcallDir,"/",currSample,"_segtable.txt")
-            write.table(allSegTables[s], currSegTablePath)
+            write.table(allSegTables[s], currSegTablePath, sep="\t", row.names=FALSE, quote=F)
         }
-    saveSegTables(allSegTables)
+    }
+    saveSegTables(allSegTables, CGHcallDir)
+    
+
+
     
     ############### saving GI table
     ### along GIs of other packages
@@ -161,7 +166,7 @@ main = function() {
     logText = x
     logfile = file.path(CGHcallDir, "log.txt")
     write(logText, logfile, append=T)
-        
+    }
 }
 
 if (sys.nframe() == 0){

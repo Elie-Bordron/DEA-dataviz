@@ -83,9 +83,8 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [X] ~~*plot distri: relier tous les points. Ensuite, voir si c'est plus pertinent de le faire seulement avec certains points.*~~ [2022-06-08] ça l'est. utiliser cette fonctionnalité pour les points intéressants.
 * [X] ~~*changer, dans le tableur excel, les GI agilent que j'utilise pour les E 3 et 18. cf cahier.*~~ [2022-06-08]
 * [X] ~~*Demander à Gaetan une photo de lame HES cerclée ou non mais scannée sur laquelle on voit facilement les cellules tumorales ou non tumorales.*~~ [2022-05-31] Claire a des photos de ce genre.
-* [X] ~~*illustrer le plot de cellularité par une photo de lame HES cerclée; voir avec Claire.*~~ [2022-06-03]s
 ## 01/06/2022
-* [ ] retirer E 17 des plots et résultats
+* [X] ~~*retirer E 17 des plots et résultats*~~ [2022-06-09]
 * [ ] Mat Met ASCAT: changer le plot de distance entre les segments et les entiers non nuls les plus proches. cf cahier au 23/05
 * [ ] Mat Met ASCAT: eventuellement ajouter un plot qui résume comment on peut déterminer la ploïdie (ou le CN) et la cellularité à partir de log RAtio et BAF. cf cahier au 23/05, ou slides ASCAT 45-47 (donc dans `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_made\images`) ou à partir de la vidéo `https://www.biodiscovery.com/videos/ascat-algorithm`
 * [X] ~~*résultats: utiliser les bons GI d'Agilent pour les échantillons qui en ont 2. cf cahier.*~~ [2022-06-02]
@@ -94,5 +93,17 @@ La citation du site d'Agilent Sureprint a un problème visuel de parenthèses qu
 * [X] ~~*make generateGrid() generate chromosome separations*~~ [2022-06-03]
 ## 02/06/2022
 quand j'ajoute des objets à une liste, ne pas faire append(list, objet) mais list$nomObj = objet.
-## 02/06/2022
+## 03/06/2022
 * [ ] intégrer l'image de lame HES que claire m'a transmis
+## 09/06/2022
+* [ ] ``j'ai oublié d'ajouter un paragraphe, dans les objectifs, qui souligne que l'un des objectifs est de donner aux biologistes une compréhension en profondeur des outils.``
+* [ ] mat met: après avoir refait les figures qui ont besoin d'être refaites, résoudre tous les commentaires d'élodie.
+* [ ] perspectives: que faire pour mieux caractériser les outils? -> + d'E ... -> pour le mois qui reste après la soutenance
+* [X] ~~*rCGH fait-il un calling ou une estimation du CN ? quelle différence?*~~ [2022-06-09] Les auteurs ne parlent pas de calling. Un calling cherche à trouver le CN réel?
+* [ ] voir dans CGHcall_article.pdf (ou ascat) si le calling est défini et peut être différencié d'une estimation de CN.
+* [ ] Res/Discu: ajouter le paragraphe praticité. Cf cahier.
+* [ ] illustrer le plot de cellularité par la photo de lame HES cerclée
+* [ ] répondre à toutes les questions à cocher du cahier bleu au 19/05
+* [ ] paragraphe ineraction bio-bioinfo: intégrer une slide d'un truc cplx que j'ai expliqué simplement
+* [ ] Dire qu'adapter les données aux outils n'est pas toujours facile puisqu'il fallait savoir comment exporter les fichiers à partir de ChAS.
+* [ ] `structure de la partie résultats: 31/05 dans le cahier rouge.`

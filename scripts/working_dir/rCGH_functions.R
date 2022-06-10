@@ -6,8 +6,9 @@ removePointsForQuickPlotting = function(cghDf, pointsToRemove=20) {
 }
 
 getNewPos_iterative = function(cghDf, lengthOfChrs) {
+    # print(c("cghDf[\"ChrNum\"]: ", cghDf["ChrNum"]))
     currentChr = as.numeric(cghDf["ChrNum"])
-    # print(c("currentChr: ", currentChr))
+    print(c("currentChr: ", currentChr))
     if (currentChr!=1){
         pos0CurrChr = sum(lengthOfChrs[1:currentChr-1])
     } else {

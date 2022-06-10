@@ -37,8 +37,6 @@ getSeg = function(currSampleSegs, s){
     #     segToReturn$currSegVal = "NA"
     # }
 
-
-
     # i_is_not_last_pos = i<length(currSampleSegs[,1])
     # CN_nextPos_equals_CN_currPos = currSampleSegs$CN[i+1]==segToReturn$currSegVal
     # chr_nextPos_equals_chr_currPos = currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr

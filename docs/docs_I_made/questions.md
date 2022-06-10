@@ -20,4 +20,5 @@
 * [X] ~~*comment ChAS estime le copy number? modèle de mélange de gaussiennes?*~~ [2022-05-12]
 * [ ] -> voir dans ChASRUO.pdf pour voir comment les segments sont estimés aussi.
 * [ ] de combien est la compaction des log Ratios?
+* [ ] est-ce que ChAS utilise le programme en ligne de commande Array Power Tools (APT, aussi appelé Affymetrix Power Tools ou Analysis Power Tools) pour déterminer le nombre de copies?
 

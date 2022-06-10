@@ -46,6 +46,8 @@ plotSeg = function(seg_df, allChrs, drawPolygons=F, drawDistances=F){
     }
 }
 
+# 247 249 719 = length of chr 1. 123 400 000 is the centromere position
+
 generateGrid = function(graph_title) {
     #create empty plot to add things in
     plot(1, ylim=c(0,2), xlim=c(0,3*10**9),col="white", xaxt="n", yaxt="n", xlab="nombre de bases", ylab="nombre de copies", main=graph_title)

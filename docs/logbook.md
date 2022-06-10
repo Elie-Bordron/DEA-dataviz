@@ -2687,3 +2687,38 @@ intro: j'ai intégré les refs de la version de claire.
 * [ ] la figure de comparaison des outils est déjà présente, juste changer l'appel.
 
 # <span style="color:#999900"> jeudi 09/06/2022  
+arr 7h30; 1h pause (30 minutes sieste + 30 min repas); départ dans la nuit à 3h30
+je finis l'intro et je l'envoie à Isabelle Soubeyran avec Claire et Elodie en copie.
+J'ai ajouté, dans la partie matériel, le paragraphe de claire sur les échantillons.
+``j'ai oublié d'ajouter un paragraphe, dans les objectifs, qui souligne que l'un des objectifs est de donner aux biologistes une compréhension en profondeur des outils.``
+
+toutes les tables de segmentation sont produites. je peux faire les plots "par 4" de segments par-dessus les données de sonde, mais ça va prendre au minimum 2h donc plutôt faire de la rédaction demain matin, et faire ces plots pendant qu'Elodie et claire relisent.
+
+
+# <span style="color:#999900"> vendredi 10/06/2022  
+arr 8h40; 45 min pause; 
+obj avant 11h: finir de rédiger la partie résultats & discussion
+
+*rdv elodie et claire 14h*
+
+- je sais quoi écrire dans la partie Res & discu
+- j'ai des figures à refaire dans mat met
+- j'ai des figures à faire (plot des 5 WGS) pour res discu et à refaire (pb légende...)
+
+* [ ] envoyer le rapport de ce soir à Elodie et Claire
+
+pour travailler ce week-end:
+- faire des slides
+    - faire figures. faisable à partir de données test donc ok pour ça
+- finir rapport
+    - n'avoir à faire que la rédaction serait super. Donc faire les figures à bergo si je peux
+    - besoin cahier donc le ramener chez moi
+
+
+# <span style="color:#999900"> lundi 13/06/2022  
+*Présentation slides à Claire et élodie à 10h*
+
+
+
+
+

@@ -11,6 +11,7 @@ library(dplyr)
 library("GGally")
 
 
+
 to2colDf = function(GI_table, agilentClass=NULL) {
         ## provide only columns with GI values + possibly column agilentClass, which must be the last.
         vecGI=NULL
@@ -54,9 +55,9 @@ to2colDf = function(GI_table, agilentClass=NULL) {
 
 addAgilentClass = function(GI_table) {
         GI_table = GI_table %>%
-            mutate(AgilentClass = case_when(GI_Agilent<10 ~ "low",
+            mutate(AgilentClass = case_when(GI_Agilent<10 ~ "faible",
                 # (GI_Agilent>=9.99) & (GI_Agilent<=10.01) ~ "intermediate",
-                GI_Agilent>10 ~ "high"))
+                GI_Agilent>10 ~ "haut"))
         return(GI_table)
     }
 
@@ -65,8 +66,9 @@ plotOnePkg = function(GI_table, pkg) {
     dfOnePkg = dplyr::select(GI_table, c(sample, GI_col))
     colnames(dfOnePkg) = c("sample", "GI")
     dfOnePkg = dfOnePkg[order(dfOnePkg$GI), ]
-    plot(dfOnePkg$GI, xaxt="n", main = paste0(pkg, " GI"))
+    plot(dfOnePkg$GI, xaxt="n", main = paste0(pkg, " GI"), xlab="", ylab="GI")
     axis(1,at=1:length(dfOnePkg$GI),labels=dfOnePkg$sample, las = 2)
+    
 }
 
 ############################### main
@@ -74,49 +76,55 @@ if (sys.nframe() == 0){
     GI_table_path = file.path(res_GI_dir, "GI_all_methods.txt")
     GI_table = read.table(GI_table_path, h=T)
     GI_table = dplyr::filter(GI_table, sample!="17-VV")
-    ## R base correlation plots for all comparisons
-    pairs(~ GI_oncoscanR + GI_CGHcall + GI_rCGH + GI_ASCAT + GI_Agilent, data = GI_table)
+
 
     ## correlation plots 
-    GI_cols = dplyr::select(GI_table, c("GI_oncoscanR", "GI_CGHcall", "GI_rCGH", "GI_ASCAT", "GI_rCGH", "GI_Agilent"))
+    GI_cols = dplyr::select(GI_table, c("GI_Agilent", "GI_oncoscanR", "GI_rCGH", "GI_CGHcall", "GI_ASCAT"))
+    grpNames = colnames(GI_cols)
+    grpNames = substr(grpNames, 4, nchar(grpNames))
     ggpairs(GI_cols, lower=list(continuous=wrap("smooth", colour="blue")),
             diag=list(continuous=wrap("barDiag", fill="dark blue")),
-            upper=list(corSize=6), axisLabels='show', cardinality_threshold=20)
+            upper=list(corSize=6), axisLabels='show', cardinality_threshold=20, columnLabels=grpNames)
 
+    
     ## remove aberrant values
     GI_table_edited = GI_table
     GI_table_edited = dplyr::mutate(GI_table_edited, GI_ASCAT = replace(GI_ASCAT, GI_ASCAT>200, NA))
     # GI_table_edited = dplyr::mutate(GI_table_edited, GI_rCGH = replace(GI_rCGH, GI_rCGH>80, NA))
     GI_table_edited = addAgilentClass(GI_table_edited)
-    GI_cols_edited = dplyr::select(GI_table_edited, c("GI_oncoscanR", "GI_CGHcall", "GI_rCGH", "GI_ASCAT", "GI_rCGH", "GI_Agilent"))
+    GI_cols_edited = dplyr::select(GI_table_edited, c("GI_Agilent", "GI_oncoscanR", "GI_rCGH", "GI_CGHcall", "GI_ASCAT"))
     
     ## correlation plots but aberrant values removed
     # ggpairs(GI_cols_edited, lower=list(continuous=wrap("smooth", colour="blue")),
     #         diag=list(continuous=wrap("barDiag", fill="dark blue")),
     #         upper=list(corSize=6), axisLabels='show', cardinality_threshold=20)
 
+    
     ## plot distribution  of values for each group
-    GI2col = to2colDf(dplyr::select(GI_table_edited,  c("GI_oncoscanR", "GI_CGHcall", "GI_rCGH", "GI_ASCAT", "GI_rCGH", "GI_Agilent", "AgilentClass")), "AgilentClass")
+    GI2col = to2colDf(dplyr::select(GI_table_edited,  c("GI_Agilent", "GI_oncoscanR", "GI_rCGH", "GI_CGHcall", "GI_ASCAT", "AgilentClass")), "AgilentClass")
     ## add grp for lines
-    unit  = c(GI_table_edited$sample)
+    unit = c(GI_table_edited$sample)
     GI2col$lineGrp = rep(unit, 5)
     f <- ggplot(GI2col, aes(pkg, GI, fill = factor(color)))
     f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=2, stroke=NA) + 
         # geom_line() +
-        xlab("") + ylab("Genomic Index") +  labs(fill="")
+        xlab("") + ylab("Genomic Index") +  labs(fill="groupe selon Agilent")
     ## the same, with lines joining same points
     library(ggrepel)
     grpNames = unique(GI2col$pkg)
-    
+    grpNames = substr(grpNames, 4, nchar(grpNames))
     gg = ggplot(GI2col)
-    ## uncomment next line to draw lines between from same sample
+    ## uncomment next line to draw lines between points of same sample
     # gg = gg + geom_line(aes(x=grpNum, y=GI, group=lineGrp, color=color))
-    gg = gg + geom_point(data=GI2col, aes(y=GI,x=grpNum,color=color), size=3, alpha=0.5, position = position_jitter(0.1))
+    gg = gg + geom_point(data=GI2col, aes(y=GI,x=grpNum,color=color), size=4, alpha=0.5, position = position_jitter(0.1))
     gg = gg + scale_x_continuous(labels=grpNames)
-    gg = gg + theme_bw() + xlab(NULL) + guides(color = guide_legend(title = "Group"))
+    gg = gg + theme_bw() + xlab(NULL) + guides(color = guide_legend(title = "Groupe selon Agilent"))
+    gg = gg + geom_abline(intercept = 10, slope=0, alpha=0.5)
+    gg = gg + geom_abline(intercept = 21, slope=0, alpha=0.5)
+    colors <- c("faible" = "#00BFC4", "haut" = "#F8766D")
+    gg = gg + scale_color_manual(values = colors)
     # gg = gg + geom_label_repel(aes(y=GI,x=grpNum,label=lineGrp), box.padding = 0.5, point.padding = 0.1, segment.color = 'grey50')
     gg
-    
     
     
     ### geom_label_repel
@@ -141,6 +149,11 @@ if (sys.nframe() == 0){
     
     ## plot pkgs individually
     row.names(GI_table) = GI_table$sample
+    o = GI_table$GI_oncoscanR
+    agilent = GI_table$GI_Agilent
+    ggplot(data=GI_table, aes(x=GI_Agilent, y=GI_oncoscanR)) + theme_bw()
+    plot(GI_table$GI_Agilent, GI_table$GI_oncoscanR, ylab="GI oncoscanR", xlab="GI Agilent")
+    
     plotOnePkg(GI_table, "oncoscanR")
     plotOnePkg(GI_table, "CGHcall")
     plotOnePkg(GI_table, "rCGH")
@@ -162,43 +175,42 @@ if (sys.nframe() == 0){
     # GI_table = addAgilentClass(GI_table)
     runTime2col = to2colDf(dplyr::select(GI_table, contains("runTime")))
     colnames(runTime2col) = c("runTime", "pkg")
+    grpNames = unique(runTime2col$pkg)
+    grpNames = substr(grpNames, 9, nchar(grpNames))
     f <- ggplot(runTime2col, aes(pkg, runTime))
     f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=1) +
-        xlab("") + ylab("Processing time (s)") +
+        xlab("") + ylab("Temps de calcul") +
         theme_bw()
     
 
-    
-    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_CGHcall")
-    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
-    plot(resRoc, main="CGHcall")
-    
-    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_oncoscanR")
-    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
-    plot(resRoc, main="oncoscanR")
-    
-    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_ASCAT")
-    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
-    plot(resRoc, main="ASCAT")
-    
-    subsetCGHcall = dplyr::filter(GI2col, pkg=="GI_rCGH")
-    resRoc = roc(subsetCGHcall$color, subsetCGHcall$GI)
-    plot(resRoc, main="rCGH")
-    
-    
-    # 
-    # 
-    # install.packages("verification")
-    # library(verification)
-    # x<- c(0,0,0,1,1,1)
-    # y<- c(.7, .7, 0, 1,5,.6)
-    # data<-data.frame(x,y)
-    # names(data)<-c("yes","no")
-    # roc.plot(data$yes, data$no)
-    # 
-    
-    ### ROC curves
+    ### plot ROC curves
     library(pROC)
+    subset = dplyr::filter(GI2col, pkg=="GI_oncoscanR")
+    resRoc = roc(subset$color, subset$GI)
+    gg = ggroc(resRoc, colour = 'steelblue', size=2, legacy.axes=TRUE)
+    gg + theme_bw() + ggtitle("oncoscanR")
+    print(resRoc)
+    
+    subset = dplyr::filter(GI2col, pkg=="GI_rCGH")
+    resRoc = roc(subset$color, subset$GI)
+    gg = ggroc(resRoc, colour = 'steelblue', size=2, legacy.axes=TRUE)
+    gg + theme_bw() + ggtitle("rCGH")
+    print(resRoc)
+    
+    
+    subset = dplyr::filter(GI2col, pkg=="GI_CGHcall")
+    resRoc = roc(subset$color, subset$GI)
+    gg = ggroc(resRoc, colour = 'steelblue', size=2, legacy.axes=TRUE)
+    gg + theme_bw() + ggtitle("CGHcall")
+    print(resRoc)
+    
+    subset = dplyr::filter(GI2col, pkg=="GI_ASCAT")
+    resRoc = roc(subset$color, subset$GI)
+    gg = ggroc(resRoc, colour = 'steelblue', size=2, legacy.axes=TRUE)
+    gg + theme_bw() + ggtitle("ASCAT")
+    print(resRoc)
+    
+    ## ROC curves
     data(aSAH)
     
     ## Basic
@@ -207,8 +219,55 @@ if (sys.nframe() == 0){
     
     ## smoothing
     x = roc(outcome ~ s100b, aSAH, smooth=TRUE) 
-    plot(x)
+    plot(x, legacy.axes=TRUE)
+    
+    
+    ### compute Spearman cor coeff
+    
+    pkg = "oncoscanR"
+    cor.test(x=GI_table[paste0("GI_", pkg)][[1]], y=GI_table$GI_Agilent, method="pearson")
+    
+    pkg = "rCGH"
+    cor.test(x=GI_table[paste0("GI_", pkg)][[1]], y=GI_table$GI_Agilent, method="pearson")
+    
+    pkg = "CGHcall"
+    cor.test(x=GI_table[paste0("GI_", pkg)][[1]], y=GI_table$GI_Agilent, method="pearson")
+    
+    pkg = "ASCAT"
+    cor.test(x=GI_table[paste0("GI_", pkg)][[1]], y=GI_table$GI_Agilent, method="pearson")
+    
+        
+    
+    
+    ###### plot WGS
+    ## imports
+    source(file.path(working_dir, "CGHcall_functions.R")) # for plotSegTable()
+    source(file.path(working_dir ,"rCGH_functions.R")) # To use removePointsForQuickPlotting()
+    
+    
+    
+    sample = "6-VJ"
+    pathProbeData = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
+    ## 1 load probe data for current sample
+    probeset_txt_file = paste0(pathProbeData, "/", sample, ".probeset.txt")
+    rawPrbData = read.table(probeset_txt_file, h=TRUE, sep='\t')
+    colnames(rawPrbData) = c("ProbeName","ChrNum","ChrStart","Log2Ratio","WeightedLog2Ratio","Allele.Difference","NormalDiploid","BAF")
+    ## 2 plot raw probes data
+    rawPrbData = dplyr::filter(rawPrbData, ChrNum<23)
+    rawPrbData = removePointsForQuickPlotting(rawPrbData)
+    rawPrbData = getNewPos(rawPrbData)
+    rawPrbData = rawPrbData[c(1:4, length(rawPrbData))]
+    plot(y=rawPrbData$Log2Ratio, x=rawPrbData$absPos, pch = 20, cex=0.01)
+    ### plot segments on top of it
+    ## load segTable: e.g. CGHcall
+    pathSegTables = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/CGHcall"
+    pathSegTable = paste0(pathSegTables, "/", sample, "_segtable.txt")
+    segTable = read.table(pathSegTable, h=TRUE, sep='\t')
+    plotSegTable(segTable)
+    
+    
 }
+
 
 
 
