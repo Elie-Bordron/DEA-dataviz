@@ -236,38 +236,72 @@ if (sys.nframe() == 0){
     pkg = "ASCAT"
     cor.test(x=GI_table[paste0("GI_", pkg)][[1]], y=GI_table$GI_Agilent, method="pearson")
     
-        
     
     
-    ###### plot WGS
+    
+    ###### plot WGV
     ## imports
     source(file.path(working_dir, "CGHcall_functions.R")) # for plotSegTable()
     source(file.path(working_dir ,"rCGH_functions.R")) # To use removePointsForQuickPlotting()
     
+    ## colors
+    customColors = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")
     
-    
+    alreadyGoodPos=FALSE
     sample = "6-VJ"
     pathProbeData = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
-    ## 1 load probe data for current sample
+    ## 1: load probe data for current sample
+    loadSegTable = function(sample, pkg, resDir) {
+        ## load file
+        pkgDir = file.path(resDir, pkg, "segTables")
+        segtabPath = paste0(pkgDir, "/", sample, ".tsv")
+        segTable = read.table(segtabPath, sep='\t', h=TRUE)
+        ## adapt columns according to pkg
+        if(pkg=="ASCAT") {
+            # segTable$logR = segTable$nAraw + segTable$nBraw 
+            # segTable = dplyr::select(segTable, -c("nMajor", "nMinor", "nAraw", "nBraw"))
+            # colnames(segTable) = c("sample" ,"chrom", "loc.start", "loc.end", "CN")
+            colnames(segTable) = c("chrom", "loc.start", "loc.end", "CN", "nbProbes")
+            chrom_as_str = unlist(stringr::str_split(segTable$chrom, "chr"))
+            chrom_as_str = chrom_as_str[nzchar(chrom_as_str)]
+            segTable$chrom = chrom_as_str
+            
+        } else if(pkg=="rCGH") {
+            colnames(segTable) = c("chrom", "loc.start", "loc.end", "CN", "nbProbes") 
+            
+        } else if(pkg=="CGHcall") {
+            colnames(segTable) = c("chrom", "loc.start", "loc.end", "CN") 
+            
+        } else if(pkg=="OncoscanR") {
+            colnames(segTable) = c("sample", "chrom", "loc.start", "loc.end", "CN")
+        }
+        return(segTable)
+    }
+    resDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
+    pkgs = c("OncoscanR", "rCGH", "CGHcall", "ASCAT")
+    
+    ## 2: load raw probes data
     probeset_txt_file = paste0(pathProbeData, "/", sample, ".probeset.txt")
     rawPrbData = read.table(probeset_txt_file, h=TRUE, sep='\t')
     colnames(rawPrbData) = c("ProbeName","ChrNum","ChrStart","Log2Ratio","WeightedLog2Ratio","Allele.Difference","NormalDiploid","BAF")
-    ## 2 plot raw probes data
     rawPrbData = dplyr::filter(rawPrbData, ChrNum<23)
     rawPrbData = removePointsForQuickPlotting(rawPrbData)
     rawPrbData = getNewPos(rawPrbData)
     rawPrbData = rawPrbData[c(1:4, length(rawPrbData))]
-    plot(y=rawPrbData$Log2Ratio, x=rawPrbData$absPos, pch = 20, cex=0.01)
-    ### plot segments on top of it
-    ## load segTable: e.g. CGHcall
-    pathSegTables = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/CGHcall"
-    pathSegTable = paste0(pathSegTables, "/", sample, "_segtable.txt")
-    segTable = read.table(pathSegTable, h=TRUE, sep='\t')
-    plotSegTable(segTable)
-    
+    ## 3: plot both
+
+    for (pkg in pkgs) {
+        print(c("===pkg===: ", pkg))
+        segTable = loadSegTable(sample, pkg, resDir)
+        if(pkg=="OncoscanR") {alreadyGoodPos=TRUE}
+        plot(y=rawPrbData$Log2Ratio, x=rawPrbData$absPos, pch = 20, cex=0.01, col="dark grey", xlab = "position génomique (bp)", ylab = "log Ratio", main = paste0(pkg, "  ", sample), ylim = c(-4,3))
+        print(c("segTable: ", segTable))
+        plotSegTableForWGV(segTable, sample, savePlot=FALSE, genGrid=FALSE, segColor="dark red", alreadyGoodPos=alreadyGoodPos) # segtables must have these columns: chrom, loc.start, loc.end, CN
+        alreadyGoodPos = FALSE
+    }
     
 }
 
-
-
-
+layout_matrix <- matrix(c(1:4), ncol = 1)
+layout(layout_matrix)
+layout(1)

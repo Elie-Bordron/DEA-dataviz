@@ -51,18 +51,7 @@ pipeline_rCGH = function(sampleName) {
     LRRData = cgh@cnSet
     cgh@cnSet = dplyr::filter(LRRData, !is.na(LRRData["Log2Ratio"]))
     cghAdj <- hush(rCGH::adjustSignal(cgh, nCores=1, suppOutliers=T, verbose=F, Scale=T))
-    # cghAdj@cnSet$adjMan = scale(cgh@cnSet$Log2Ratio, center=F)
-    # x=cgh@cnSet$Log2Ratio; n=length(x); sd = sqrt(sum(x^2)/(n-1))
-    # cghAdj@cnSet$adjManMan = x / sd
 
-
-
-    # x = c(0.2,0.8,1.5,50); n=length(x)
-    # 
-    # x = scale(x, center=F)
-    # s = x/sd
-    # plot(x, ylim=c(0,20))    
-    # plot(s, ylim=c(0,20))    
     if (F) {
         ### see difference between and after adjusting data
         adj = removePointsForQuickPlotting(cghAdj@cnSet)
@@ -169,6 +158,8 @@ main = function() {
     colnames(GIdf_rCGH) = c("GI", "nbAlter", "nbChr", "runTime")
     rownames(GIdf_rCGH) = sampleNames
     rCGHdir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/rCGH/"
+    
+    segsType = "raw"
     if(!dir.exists(rCGHdir)) dir.create(rCGHdir)
     for (s in 1:length(sampleNames)) {
         currSampleName = sampleNames[s]
@@ -176,14 +167,33 @@ main = function() {
         currCallRes = pipeline_rCGH(currSampleName)
         rCGHResults = append(rCGHResults,list(currCallRes))
         # extract seg table
-        segTable_rCGH = getSegTable(currCallRes)
+        if(segsType=="raw") {
+            segTable_rCGH = currCallRes@cnSet[["Segm"]]
+        } else if(segsType=="CN") {
+            segTable_rCGH = getSegTable(currCallRes)
+            # extract GI result
+            GI_res = calcGI_rCGH(segTable_rCGH)
+            cleanRunTime = round(as.numeric(getInfo(currCallRes, "runTime")), 2)
+            GIdf_rCGH[s,] = c(GI_res, cleanRunTime)
+        }
         segTables = append(segTables,list(segTable_rCGH))
-        # extract GI result
-        GI_res = calcGI_rCGH(segTable_rCGH)
-        cleanRunTime = round(as.numeric(getInfo(currCallRes, "runTime")), 2)
-        GIdf_rCGH[s,] = c(GI_res, cleanRunTime)
+    }
+    if(segsType == "raw") {
+        source(file.path(working_dir, "CGHcall_functions.R"))
+        segTables_rCGH = data.frame(segTables[[1]])
+        for (sample in 1:length(segTables)) {
+            segTables_rCGH[sample] = segTables[[sample]]
+            colnames(segTables_rCGH) = sampleNames
+        }
+        rowsInfo = currCallRes@cnSet[c("ChrNum", "ChrStart")]
+        rowsInfo$ChrEnd = rowsInfo$ChrStart+20
+        segTables_rCGH = cbind(rowsInfo, segTables_rCGH)
+        colnames(segTables_rCGH) = c("Chromosome", "Start", "End", colnames(segTables_rCGH)[4:length(segTables_rCGH)])
+        segTables_rCGH = getSegTables(segTables_rCGH, sampleNames)
+        segTables_rCGH
     }
     res_rCGH = list(GIdf_rCGH, segTables, rCGHResults)
+    
     return(res_rCGH)
 }
 
@@ -216,7 +226,7 @@ if (sys.nframe() == 0){
             write.table(currSegTable, currFilePath, sep="\t", row.names=FALSE, quote=F)
         }
     }
-saveSegTables(segTables, rCGHdir)
+saveSegTables(segTables_rCGH, rCGHdir)
 
 }
 

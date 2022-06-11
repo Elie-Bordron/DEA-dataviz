@@ -2715,6 +2715,31 @@ pour travailler ce week-end:
     - besoin cahier donc le ramener chez moi
 
 
+## plot WGV
+but: utiliser les segments bruts, qui se superposent avec le log Ratio.
+bonus: colorer en rouge les segments que le call considère comme altéré, et en vert les segments normaux. 
+* [X] ~~*pour ça, garder les segTables de call.*~~ [2022-06-10] Fait: les dossiers sont renommés
+* [ ] regarder comment exporter les segtables brutes est possible
+    - ASCAT: Ok
+    - CGHcall: Ok
+    - rCGH: 
+* [ ] cghcall: lui faire utiliser un dossier pour ranger les segtables.
+
+
+erreur rCGH: `no applicable method for 'filter' applied to an object of class "c('double', 'numeric')"`
+elle était causée par une ligne où je faisais un filter qui était voué à échouer. Quand un debugging devient long, faire du rubber duck debugging.
+
+
+* [X] ~~*les segTables de CGHcall sont en objets R. les sauvegarder.*~~ [2022-06-11]
+* [X] ~~*les segTables de rCGH se génèrent en tableaux par sondes. les convertir en segtables par la fonction de CGHcall, puis les sauvegarder.*~~ [2022-06-11]
+* [ ] ASCAT: les segmetns bruts doivent être extraits de l'objet segData, pas callData, en utilisant la syntaxe `segData[["Tumor_LogR_segmented"]]`
+
+* [ ] ASCAT segData contient les positions de chaque sonde , je peux faire le plot dont élodie parlait avec ça.
+
+* [ ] rCGH change les log Ratios d'échelle, donc sur le plot WGV, les segments sont plus éloignés de 0 que les points de LRR correspondants. Discuter cela.
+
+* [ ] 
+
 # <span style="color:#999900"> lundi 13/06/2022  
 *Présentation slides à Claire et élodie à 10h*
 

@@ -163,31 +163,58 @@ getSegTables = function(segTableByProbe, sampleNames) {
     return(segTablesList)
 }
 
-plotSegTable = function(currSegTable,currSampleName,resultsDir) {
+plotSegTable = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE) {
     print(c("plotting sample ", currSampleName))
     imgName = paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png")
-    png(imgName, width=700, height=484)
-    generateGrid(paste0(currSampleName, " Copy number"), mode="CN")
+    if(savePlot) {
+        png(imgName, width=700, height=484)
+    }
+    if(genGrid) {
+        generateGrid(paste0(currSampleName, " Copy number"), mode="CN")
+    }
     colnames(currSegTable) = c("chrom", "loc.start", "loc.end", "callVal", "nbProbes")
     apply(currSegTable, 1, plotSeg_rCGH, "callVal", indivSeg=TRUE)
-    dev.off()
+    if(savePlot) {
+        dev.off()
+    }
 }
 
-plotSegTables = function(segTablesList, sampleNames, resultsDir) {
+plotSegTableForWGV = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE, segColor="#00BFC4", alreadyGoodPos=FALSE) {
+    print(c("plotting sample ", currSampleName))
+    imgName = paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png")
+    if(savePlot) {
+        png(imgName, width=700, height=484)
+    }
+    if(genGrid) {
+        generateGrid(paste0(currSampleName, " Copy number"), mode="CN")
+    }
+    apply(currSegTable, 1, plotSeg_rCGH, "CN", indivSeg=TRUE, segColor=segColor, alreadyGoodPos=alreadyGoodPos)
+    if(savePlot) {
+        dev.off()
+    }
+}
+
+plotSegTables = function(segTablesList, sampleNames, resultsDir, savePlot=TRUE, genGrid=TRUE) {
     if(!dir.exists(resultsDir)) dir.create(resultsDir)
     for (i in 1:length(sampleNames)) {
         currSegTable = segTablesList[[i]]
         currSampleName = sampleNames[[i]]
-        plotSegTable(currSegTable,currSampleName,resultsDir)
+        plotSegTable(currSegTable,currSampleName,resultsDir, savePlot, genGrid)
     }    
 }
 
 
-getPrbLvSegmentsFromCallObj = function(callRes) {
+getPrbLvSegmentsFromCallObj = function(callRes, segsType="raw") {
     ### callRes must be a cghCall object containing results of one or more samples, but can't be a list of cghCall objects
-    sampleNames = colnames(callRes@assayData[["calls"]])
+
     rowsInfo = fData(callRes)
-    CGHcall_segments = as.data.frame(calls(callRes))
+    if(segsType=="CN") {
+        sampleNames = colnames(callRes@assayData[["calls"]])
+        CGHcall_segments = as.data.frame(calls(callRes))
+    } else if (segsType=="raw") {
+        sampleNames = colnames(callRes@assayData[["segmented"]])
+        CGHcall_segments = as.data.frame(segmented(callRes))
+    }
     CGHcall_segments = cbind(rowsInfo, CGHcall_segments)
     colnames(CGHcall_segments) = c(colnames(rowsInfo), sampleNames)
     return(CGHcall_segments)

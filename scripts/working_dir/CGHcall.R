@@ -142,7 +142,9 @@ main = function() {
             write.table(allSegTables[s], currSegTablePath, sep="\t", row.names=FALSE, quote=F)
         }
     }
-    saveSegTables(allSegTables, CGHcallDir)
+    segTablesDir = file.path(CGHcallDir, "segTables")
+    if(!dir.exists(segTablesDir)) dir.create(segTablesDir)
+    saveSegTables(allSegTables, segTablesDir)
     
 
 

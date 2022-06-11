@@ -49,7 +49,7 @@ if(F) {
 }
 
 
-pipelineASCAT = function(sampleName,outputFolder, ascatFolder, penalty) {
+pipelineASCAT = function(sampleName,outputFolder, ascatFolder, penalty=50) {
     ## set paths
     OSCHPFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_OSCHP"
     # pathToOSCHP = paste0(OSCHPFolder,sampleName,".OSCHP")
@@ -120,7 +120,7 @@ pipelineASCAT = function(sampleName,outputFolder, ascatFolder, penalty) {
         bestSolution = dplyr::filter(GOF_all_gammas, goodness_of_fit==max(goodness_of_fit))
         print(c("best solution: ", bestSolution))
     }
-    return(list(callData, GOF_all_gammas))
+    return(list(callData, GOF_all_gammas, segData))
 }
 
 
@@ -147,6 +147,7 @@ source(file.path(working_dir, "oncoscanR_functions.R"))
 s=1
 penalty = 50
 segTables = list()
+segsType = "raw"
 for (s in 1:length(sampleNames)) {
     sampleName = sampleNames[s]
     before = Sys.time()
@@ -169,7 +170,11 @@ for (s in 1:length(sampleNames)) {
     GI_res = append(GI_res,callData$purity) ## add purity estimate
     print(c("GI_res with runTime and purity: ", GI_res))
     GI_ASCAT_df[sampleName, ] = GI_res
-    segTable = callData$segments
+    if(segsType=="raw") {
+        segTable = resPipeline[[3]][["Tumor_LogR_segmented"]]
+    } else if (segsType=="CN") {
+        segTable = callData$segments
+    }
     segTables = append(segTables, list(segTable))
 }
 GI_ASCAT_df_copy = GI_ASCAT_df
@@ -204,6 +209,24 @@ if(F) {
     write.table(GI_oncosAndAscat,file.path(resultsDir, "gi_results_all_methods.txt"),sep="\t",row.names=FALSE)
 }
 ############## save segments table to file
+
+if(segsType == "raw") {
+    source(file.path(working_dir, "CGHcall_functions.R"))
+    # segTables_ASCAT = data.frame(segTables[[1]])
+    # for (sample in 1:length(segTables)) {
+    #     segTables_ASCAT[sample] = segTables[[sample]]
+    #     colnames(segTables_ASCAT) = sampleNames
+    # }
+    segTables_ASCAT = as.data.frame(segTables)
+    rowsInfo = segData[["SNPpos"]]
+    rowsInfo$ChrEnd = rowsInfo$pos+20
+    segTables_ASCAT = cbind(rowsInfo, segTables_ASCAT)
+    colnames(segTables_ASCAT) = c("Chromosome", "Start", "End", sampleNames)
+    segTables_ASCAT = getSegTables(segTables_ASCAT, sampleNames)
+    segTables_ASCAT
+}
+
+
 saveSegTables = function(segTables, outputDir, sampleNames=c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )) {
     segTablesDir = file.path(outputDir, "segTables")
     if(!dir.exists(segTablesDir))dir.create(segTablesDir)
@@ -213,7 +236,7 @@ saveSegTables = function(segTables, outputDir, sampleNames=c("1-RV", "2-AD", "3-
         write.table(currSegTable, currFilePath, sep="\t", row.names=FALSE, quote=F)
     }
 }
-saveSegTables(segTables, ascatFolder)
+saveSegTables(segTables_ASCAT, ascatFolder)
 
 ##
 print("end")
