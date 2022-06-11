@@ -2762,6 +2762,6 @@ voir `https://stackoverflow.com/questions/27800307/adding-a-picture-to-plot-in-r
 *Présentation slides à Claire et élodie à 10h*
 
 
+pouet
 
-
-
+j'oujousxhfcushef
