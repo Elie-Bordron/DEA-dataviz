@@ -121,7 +121,12 @@ if (FALSE) {
     ## plot to compare copynumber before/after maxmiss is applied
     # get log ratio of CN for first sample before and after maxmiss was applied
     s1CNBeforeMaxmiss = copynumber(ACGH_data)[,1]
+    s1CNBeforeMaxmiss = removePointsForQuickPlotting(s1CNBeforeMaxmiss)
     s1CNAfterMaxmiss = copynumber(preprocess(ACGH_data, maxmiss=30))[,1]
+    plot(s1CNBeforeMaxmiss$s1CNBeforeMaxmiss, grp=s1CNBeforeMaxmiss$lostVals_logicalVec)
+    
+    
+    
     lostVals_logicalVec = !(names(s1CNBeforeMaxmiss)%in%names(s1CNAfterMaxmiss))
     s1CNBeforeMaxmiss = as.data.frame(cbind(s1CNBeforeMaxmiss, lostVals_logicalVec))
     # plot(lostVals_logicalVec) ## these values are gathered around 2-3 chromosomes

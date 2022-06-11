@@ -2696,7 +2696,7 @@ toutes les tables de segmentation sont produites. je peux faire les plots "par 4
 
 
 # <span style="color:#999900"> vendredi 10/06/2022  
-arr 8h40; 45 min pause; 
+arr 8h40; 45 min pause; départ dans la nuit à 03:45
 obj avant 11h: finir de rédiger la partie résultats & discussion
 
 *rdv elodie et claire 14h*
@@ -2737,8 +2737,26 @@ elle était causée par une ligne où je faisais un filter qui était voué à �
 * [ ] ASCAT segData contient les positions de chaque sonde , je peux faire le plot dont élodie parlait avec ça.
 
 * [ ] rCGH change les log Ratios d'échelle, donc sur le plot WGV, les segments sont plus éloignés de 0 que les points de LRR correspondants. Discuter cela.
+`les dimensions du plot WGV que j'ai fait sont 917 x 1047`
+* [ ] les plots wgv marchent, je dois juste ajouter le profil WGV de ChAS et ce sera bon.
+voir `https://stackoverflow.com/questions/27800307/adding-a-picture-to-plot-in-r` pour ça.
 
-* [ ] 
+* [ ] quand j'intègre le WGV, c'est assez illisible. je vais plutôt faire les 4 outils ensemble dans le même plot WGV, puis un seul pkg avec la WGV de ChAS.
+
+* [ ] Mettre l'échelle des y en -2; 2 rend le tout plus lisible, mais ChAS sera quand meme trop petit.
+
+* [ ] voir si on peut modifier ça pour qu'ils soient tous dans la même structure de plot. mais surtout vu qu'il n'y a plus le temps, ne pas faire ça et plutôt rédiger.
+
+## refaire les figures dont les axes sont trop petits
+* [X] ~~*rCGH adjust Data*~~ [2022-06-11]
+* [ ] rCGH recentrage w/pics
+* [ ] rCGH segmentation DNAcopy : refaire les cadres dans ppt
+* [ ] CGHcall adjustData
+* [ ] CGHcall modèle de mélange
+* [ ] ASCAT les petits segments , ne pas oublierde changer le sens
+* [ ] ASCAT call: deux solutions de qualité de l'ajustement
+
+
 
 # <span style="color:#999900"> lundi 13/06/2022  
 *Présentation slides à Claire et élodie à 10h*

@@ -294,7 +294,7 @@ if (sys.nframe() == 0){
         print(c("===pkg===: ", pkg))
         segTable = loadSegTable(sample, pkg, resDir)
         if(pkg=="OncoscanR") {alreadyGoodPos=TRUE}
-        plot(y=rawPrbData$Log2Ratio, x=rawPrbData$absPos, pch = 20, cex=0.01, col="dark grey", xlab = "position génomique (bp)", ylab = "log Ratio", main = paste0(pkg, "  ", sample), ylim = c(-4,3))
+        plot(y=rawPrbData$Log2Ratio, x=rawPrbData$absPos, pch = 20, cex=0.01, col="dark grey", xlab = "", ylab = "log Ratio", main = paste0(pkg, "  ", sample), ylim = c(-2,2))
         print(c("segTable: ", segTable))
         plotSegTableForWGV(segTable, sample, savePlot=FALSE, genGrid=FALSE, segColor="dark red", alreadyGoodPos=alreadyGoodPos) # segtables must have these columns: chrom, loc.start, loc.end, CN
         alreadyGoodPos = FALSE
@@ -302,6 +302,7 @@ if (sys.nframe() == 0){
     
 }
 
-layout_matrix <- matrix(c(1:4), ncol = 1)
+layout_matrix <- matrix(c(1:5), ncol = 1)
 layout(layout_matrix)
 layout(1)
+plot(1)
