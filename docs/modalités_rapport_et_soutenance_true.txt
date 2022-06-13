@@ -23,7 +23,7 @@ Il est impératif de faire apparaitre sur votre page de garde :
 - L'établissement (université de Bordeaux et logo université)
 - logo lieu de stage (si possible)
 - Nom, Prénom, Intitulé du master et Parcours, Année promotion
-- Titre du stage 
+- Titre du stage   
 - les noms et les fonctions des responsables de stage
 
 Plan du rapport: 
