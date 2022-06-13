@@ -11,6 +11,20 @@ library(dplyr)
 library("GGally")
 
 
+############ a la maison
+## set working directory
+working_dir = "C:/Users/User/Desktop/CGH_scoring/M2_internship_Bergonie/scripts/working_dir"
+resDir = "C:/Users/User/Desktop/CGH_scoring/M2_internship_Bergonie/results"
+res_GI_dir = file.path(resDir, "GI_all_methods")
+setwd(working_dir)
+## open working directory in Files tab
+options("max.print"=100)
+rstudioapi::filesPaneNavigate(working_dir)
+#loading libraries
+library(dplyr)
+library("GGally")
+
+
 
 to2colDf = function(GI_table, agilentClass=NULL) {
         ## provide only columns with GI values + possibly column agilentClass, which must be the last.
@@ -306,3 +320,31 @@ layout_matrix <- matrix(c(1:5), ncol = 1)
 layout(layout_matrix)
 layout(1)
 plot(1)
+
+
+
+#load Default dataset from ISLR book
+data <- ISLR::Default
+
+#divide dataset into training and test set
+set.seed(1)
+sample <- sample(c(TRUE, FALSE), nrow(data), replace=TRUE, prob=c(0.7,0.3))
+train <- data[sample, ]
+test <- data[!sample, ]
+
+#fit logistic regression model to training set
+model <- glm(default~student+balance+income, family="binomial", data=train)
+
+#use model to make predictions on test set
+predicted <- predict(model, test, type="response")
+
+############ create a ROC plot:
+#load necessary packages
+library(ggplot2)
+library(pROC)
+
+#define object to plot
+rocobj <- pROC::roc(default, predicted)
+
+#create ROC plot
+ggplot2::ggroc(rocobj)

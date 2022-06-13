@@ -2747,19 +2747,28 @@ voir `https://stackoverflow.com/questions/27800307/adding-a-picture-to-plot-in-r
 
 * [ ] voir si on peut modifier ça pour qu'ils soient tous dans la même structure de plot. mais surtout vu qu'il n'y a plus le temps, ne pas faire ça et plutôt rédiger.
 
-## refaire les figures dont les axes sont trop petits
+## refaire ces figures (surtout car axes trop petits)
 * [X] ~~*rCGH adjust Data*~~ [2022-06-11]
 * [ ] rCGH recentrage w/pics
 * [ ] rCGH segmentation DNAcopy : refaire les cadres dans ppt
 * [ ] CGHcall adjustData
 * [ ] CGHcall modèle de mélange
-* [ ] ASCAT les petits segments , ne pas oublierde changer le sens
+* [ ] ASCAT les petits segments , ne pas oublier de changer le sens
 * [ ] ASCAT call: deux solutions de qualité de l'ajustement
+* [ ] distri plot: griser l'abline qui indique le 10. ou plutôt indiquer la valeur de 10 sur l'axe des ordonnées
+* [ ] tableau des AUC: vals de Pearson, comme plot correl.
+* [ ] fig:wgv12 : la changer par un *plot* wgv.
 
-
+* [ ] Res & Discu, courbes ROC, commenté: citer un échantillon facile à caractériser et référencer sa figure WGV.
 
 # <span style="color:#999900"> lundi 13/06/2022  
+
+
+
+à 16h: être en train de finir de relier le rapport
 *Présentation slides à Claire et élodie à 10h*
+Question à élodie
+
 
 
 
