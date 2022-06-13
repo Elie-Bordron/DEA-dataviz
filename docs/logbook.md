@@ -2760,6 +2760,8 @@ voir `https://stackoverflow.com/questions/27800307/adding-a-picture-to-plot-in-r
 * [ ] fig:wgv12 : la changer par un *plot* wgv.
 
 * [ ] Res & Discu, courbes ROC, commenté: citer un échantillon facile à caractériser et référencer sa figure WGV.
+* [ ] R&D, paragraphe discussion des pipelines, segmentation: parler d'un ou 2 E intéressants pour ça, qui montrent que rCGH fait une meilleure seg (ou l'inverse). plots wgv.
+ 
 
 # <span style="color:#999900"> lundi 13/06/2022  
 
