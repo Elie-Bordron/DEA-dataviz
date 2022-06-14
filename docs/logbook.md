@@ -2764,12 +2764,11 @@ voir `https://stackoverflow.com/questions/27800307/adding-a-picture-to-plot-in-r
  
 
 # <span style="color:#999900"> lundi 13/06/2022  
-
-
-
-à 16h: être en train de finir de relier le rapport
+à 15h: être en train de finir de relier le rapport
+15h05: rendre le rapport sur moodle
+16h: rapport rendu au labri
 *Présentation slides à Claire et élodie à 10h*
-Question à élodie
+
 
 
 

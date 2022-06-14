@@ -2,9 +2,10 @@
 working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
 resDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
 res_GI_dir = file.path(resDir, "GI_all_methods")
+manually_save_plots_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/res_aujd"
 setwd(working_dir)
 ## open working directory in Files tab
-options("max.print"=100)
+options("max.print" = 100)
 rstudioapi::filesPaneNavigate(working_dir)
 #loading libraries
 library(dplyr)
@@ -12,17 +13,19 @@ library("GGally")
 
 
 ############ a la maison
-## set working directory
-working_dir = "C:/Users/User/Desktop/CGH_scoring/M2_internship_Bergonie/scripts/working_dir"
-resDir = "C:/Users/User/Desktop/CGH_scoring/M2_internship_Bergonie/results"
-res_GI_dir = file.path(resDir, "GI_all_methods")
-setwd(working_dir)
-## open working directory in Files tab
-options("max.print"=100)
-rstudioapi::filesPaneNavigate(working_dir)
-#loading libraries
-library(dplyr)
-library("GGally")
+if (FALSE) {
+    ## set working directory
+    working_dir = "C:/Users/User/Desktop/CGH_scoring/M2_internship_Bergonie/scripts/working_dir"
+    resDir = "C:/Users/User/Desktop/CGH_scoring/M2_internship_Bergonie/results"
+    res_GI_dir = file.path(resDir, "GI_all_methods")
+    setwd(working_dir)
+    ## open working directory in Files tab
+    options("max.print"=100)
+    rstudioapi::filesPaneNavigate(working_dir)
+    #loading libraries
+    library(dplyr)
+    library("GGally")
+}
 
 
 
@@ -92,21 +95,23 @@ if (sys.nframe() == 0){
     GI_table = dplyr::filter(GI_table, sample!="17-VV")
 
 
-    ## correlation plots 
-    GI_cols = dplyr::select(GI_table, c("GI_Agilent", "GI_oncoscanR", "GI_rCGH", "GI_CGHcall", "GI_ASCAT"))
-    grpNames = colnames(GI_cols)
-    grpNames = substr(grpNames, 4, nchar(grpNames))
-    ggpairs(GI_cols, lower=list(continuous=wrap("smooth", colour="blue")),
-            diag=list(continuous=wrap("barDiag", fill="dark blue")),
-            upper=list(corSize=6), axisLabels='show', cardinality_threshold=20, columnLabels=grpNames)
-
-    
     ## remove aberrant values
     GI_table_edited = GI_table
     GI_table_edited = dplyr::mutate(GI_table_edited, GI_ASCAT = replace(GI_ASCAT, GI_ASCAT>200, NA))
     # GI_table_edited = dplyr::mutate(GI_table_edited, GI_rCGH = replace(GI_rCGH, GI_rCGH>80, NA))
     GI_table_edited = addAgilentClass(GI_table_edited)
     GI_cols_edited = dplyr::select(GI_table_edited, c("GI_Agilent", "GI_oncoscanR", "GI_rCGH", "GI_CGHcall", "GI_ASCAT"))
+    
+    ## correlation plots 
+    GI_cols = dplyr::select(GI_table, c("GI_Agilent", "GI_oncoscanR", "GI_rCGH", "GI_CGHcall", "GI_ASCAT"))
+    grpNames = colnames(GI_cols)
+    grpNames = substr(grpNames, 4, nchar(grpNames))
+    
+    
+    ggpairs(GI_cols, lower=list(continuous=wrap("smooth", colour="blue")),
+            diag=list(continuous=wrap("barDiag", fill="dark blue")),
+            upper=list(corSize=6), axisLabels='show', cardinality_threshold=20, columnLabels=grpNames)
+
     
     ## correlation plots but aberrant values removed
     # ggpairs(GI_cols_edited, lower=list(continuous=wrap("smooth", colour="blue")),
@@ -133,8 +138,7 @@ if (sys.nframe() == 0){
     gg = gg + geom_point(data=GI2col, aes(y=GI,x=grpNum,color=color), size=4, alpha=0.5, position = position_jitter(0.1))
     gg = gg + scale_x_continuous(labels=grpNames)
     gg = gg + theme_bw() + xlab(NULL) + guides(color = guide_legend(title = "Groupe selon Agilent"))
-    gg = gg + geom_abline(intercept = 10, slope=0, alpha=0.5)
-    gg = gg + geom_abline(intercept = 21, slope=0, alpha=0.5)
+    gg = gg + geom_abline(intercept = 10, slope=0, alpha=0.25)
     colors <- c("faible" = "#00BFC4", "haut" = "#F8766D")
     gg = gg + scale_color_manual(values = colors)
     # gg = gg + geom_label_repel(aes(y=GI,x=grpNum,label=lineGrp), box.padding = 0.5, point.padding = 0.1, segment.color = 'grey50')
@@ -181,7 +185,8 @@ if (sys.nframe() == 0){
     purityTable = read.table(purityTablePath, h=T)
     purityTable = purityTable[order(purityTable$purity_HES), ]
     purityTable$estimPurity_ASCAT = as.numeric(purityTable$estimPurity_ASCAT)*100
-    plot(y=purityTable$estimPurity_ASCAT, x=purityTable$purity_HES, xlab = "HES-estimated purity", ylab = "ASCAT-estimated purity", main = "comparison of purity estimates", xlim=c(0,100), ylim=c(0,100))
+    plot(y=purityTable$estimPurity_ASCAT, x=purityTable$purity_HES, xlab = "Cellularit� tumorale estim�e sur lame", ylab = "Cellularit� tumorale estim�e par ASCAT", main = "", # anciennement: "comparaison d'estimations de cellularit� tumorale"
+         xlim=c(40,100), ylim=c(40,100), pch=20)
 
     
     
@@ -258,11 +263,13 @@ if (sys.nframe() == 0){
     source(file.path(working_dir, "CGHcall_functions.R")) # for plotSegTable()
     source(file.path(working_dir ,"rCGH_functions.R")) # To use removePointsForQuickPlotting()
     
+    layout_matrix <- matrix(c(1:4), ncol = 1)
+    
+    # layout(1)
+    # plot(1)
     ## colors
     customColors = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")
     
-    alreadyGoodPos=FALSE
-    sample = "6-VJ"
     pathProbeData = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
     ## 1: load probe data for current sample
     loadSegTable = function(sample, pkg, resDir) {
@@ -291,6 +298,10 @@ if (sys.nframe() == 0){
         }
         return(segTable)
     }
+    
+    
+    alreadyGoodPos=FALSE
+    sample = "12-BC"
     resDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
     pkgs = c("OncoscanR", "rCGH", "CGHcall", "ASCAT")
     
@@ -303,23 +314,21 @@ if (sys.nframe() == 0){
     rawPrbData = getNewPos(rawPrbData)
     rawPrbData = rawPrbData[c(1:4, length(rawPrbData))]
     ## 3: plot both
-
+    png(paste0(resDir, "/", sample, ".png"), width = 900, height = 1200)
+    layout(layout_matrix)
     for (pkg in pkgs) {
         print(c("===pkg===: ", pkg))
         segTable = loadSegTable(sample, pkg, resDir)
         if(pkg=="OncoscanR") {alreadyGoodPos=TRUE}
         plot(y=rawPrbData$Log2Ratio, x=rawPrbData$absPos, pch = 20, cex=0.01, col="dark grey", xlab = "", ylab = "log Ratio", main = paste0(pkg, "  ", sample), ylim = c(-2,2))
-        print(c("segTable: ", segTable))
+        # print(c("segTable: ", segTable))
         plotSegTableForWGV(segTable, sample, savePlot=FALSE, genGrid=FALSE, segColor="dark red", alreadyGoodPos=alreadyGoodPos) # segtables must have these columns: chrom, loc.start, loc.end, CN
         alreadyGoodPos = FALSE
     }
+    dev.off()
     
 }
 
-layout_matrix <- matrix(c(1:5), ncol = 1)
-layout(layout_matrix)
-layout(1)
-plot(1)
 
 
 
