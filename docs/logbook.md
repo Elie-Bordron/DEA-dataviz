@@ -2777,6 +2777,7 @@ prise en compte des commentaires sur les slides
 # <span style="color:#999900"> mardi 14/06/2022  
 arr 9h; 1h pause
 
+Pour citer la figure des caryotypes: ``https://www.berkeley.edu/``
 
 
 

@@ -179,14 +179,14 @@ plotSegTable = function(currSegTable,currSampleName,resultsDir="delme", savePlot
     }
 }
 
-plotSegTableForWGV = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE, segColor="#00BFC4", alreadyGoodPos=FALSE) {
+plotSegTableForWGV = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE, segColor="#00BFC4", alreadyGoodPos=FALSE, ylim_def=c(-2,3)) {
     print(c("plotting sample ", currSampleName))
     imgName = paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png")
     if(savePlot) {
         png(imgName, width=700, height=484)
     }
     if(genGrid) {
-        generateGrid(paste0(currSampleName, " Copy number"), mode="CN")
+        generateGrid(paste0(currSampleName, " Copy number"), mode="CN", ylim = ylim_def)
     }
     apply(currSegTable, 1, plotSeg_rCGH, "CN", indivSeg=TRUE, segColor=segColor, alreadyGoodPos=alreadyGoodPos)
     if(savePlot) {

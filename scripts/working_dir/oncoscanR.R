@@ -33,7 +33,7 @@ source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/wo
 source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/onsoscanR_utils.R")
 
 sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC")
-# sampleNames = c("11-BG")
+sampleNames = c("1-RV")
 ## running oncoscanR
 main = function(dataDir, sampleNames, gendersTable) {
     source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/OncoscanR_functions.R")

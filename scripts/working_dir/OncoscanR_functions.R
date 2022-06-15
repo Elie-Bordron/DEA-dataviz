@@ -57,7 +57,7 @@ custom_workflow_oncoscan.run <- function(chas.fn, gender, cleanSegments=TRUE, pl
 
         chas.fn = filepath
         gender = curr_gender
-        sampleName = "11-BG"
+        sampleName = sampleNames
         working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
         source(file.path(working_dir, "CGHcall_functions.R"))
         source(file.path(working_dir, "oncoscanR_functions.R"))
@@ -114,7 +114,7 @@ custom_workflow_oncoscan.run <- function(chas.fn, gender, cleanSegments=TRUE, pl
         png(pathToSaveFile, width = pngWidth, height = pngHeight)
         plotSegTable(O_segs_cleaned_for_plot, sampleName, savePlot=FALSE, ylim = c(1,4), mainTitlePrefix = " after cleaning")
         dev.off()
-    }
+    } 
         
     # Split segments by type: Loss, LOH, gain or amplification and get the arm-level alterations.
     # Note that the segments with copy gains include all amplified segments.
@@ -197,7 +197,7 @@ computeOneFileWithOncoscanR = function(filepath,gender, plotPAA=F) {
     # print(c("filepath: ", filepath))
     # print(c("gender: ", gender))
     #### using custom run fx
-    curr_res = custom_workflow_oncoscan.run(filepath, gender,plotPAA)
+    curr_res = custom_workflow_oncoscan.run(filepath, gender, cleanSegments=TRUE, plotPAA)
     # curr_res = oncoscanR::workflow_oncoscan.run(filepath, gender)
     # print(c("computed result: ", curr_res))
     return(curr_res)

@@ -72,9 +72,9 @@ to2colDf = function(GI_table, agilentClass=NULL) {
 
 addAgilentClass = function(GI_table) {
         GI_table = GI_table %>%
-            mutate(AgilentClass = case_when(GI_Agilent<10 ~ "faible",
+            mutate(AgilentClass = case_when(GI_Agilent<10 ~ "faible (GI<=10)",
                 # (GI_Agilent>=9.99) & (GI_Agilent<=10.01) ~ "intermediate",
-                GI_Agilent>10 ~ "haut"))
+                GI_Agilent>10 ~ "haut (GI>10)"))
         return(GI_table)
     }
 
@@ -132,15 +132,18 @@ if (sys.nframe() == 0){
     library(ggrepel)
     grpNames = unique(GI2col$pkg)
     grpNames = substr(grpNames, 4, nchar(grpNames))
+    
     gg = ggplot(GI2col)
     ## uncomment next line to draw lines between points of same sample
     # gg = gg + geom_line(aes(x=grpNum, y=GI, group=lineGrp, color=color))
     gg = gg + geom_point(data=GI2col, aes(y=GI,x=grpNum,color=color), size=4, alpha=0.5, position = position_jitter(0.1))
     gg = gg + scale_x_continuous(labels=grpNames)
-    gg = gg + theme_bw() + xlab(NULL) + guides(color = guide_legend(title = "Groupe selon Agilent"))
-    gg = gg + geom_abline(intercept = 10, slope=0, alpha=0.25)
-    colors <- c("faible" = "#00BFC4", "haut" = "#F8766D")
+    gg = gg + theme_bw() + xlab(NULL) + guides(color = guide_legend(title = ""))
+    # gg = gg + geom_abline(intercept = 10, slope=0, alpha=0.25)
+    colors <- c("faible (GI<=10)" = "#00BFC4", "haut (GI>10)" = "#F8766D")
     gg = gg + scale_color_manual(values = colors)
+    gg = gg + geom_segment(aes(x=1.1, xend=0.89,
+                     y=10, yend=10))
     # gg = gg + geom_label_repel(aes(y=GI,x=grpNum,label=lineGrp), box.padding = 0.5, point.padding = 0.1, segment.color = 'grey50')
     gg
     
@@ -272,6 +275,7 @@ if (sys.nframe() == 0){
     
     pathProbeData = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
     ## 1: load probe data for current sample
+    
     loadSegTable = function(sample, pkg, resDir) {
         ## load file
         pkgDir = file.path(resDir, pkg, "segTables")
@@ -297,7 +301,8 @@ if (sys.nframe() == 0){
             # print(c("segTable: ", segTable))
             # print(c("class of segTable: ", class(segTable)))
             colnames(segTable) = c("sample", "chrom", "loc.start", "loc.end", "CN")
-            segTable$CN = segTable$CN - 2
+            segTable$CN = segTable$CN # -2
+            segTable$chrom = 1
             # print(c("colnames(segTable): ", colnames(segTable)))
             print(c("segTable: ", segTable))
         }
@@ -306,7 +311,7 @@ if (sys.nframe() == 0){
     
     
     alreadyGoodPos=FALSE
-    sample = "11-BG"
+    sample = "1-RV"
     resDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
     pkgs = c("OncoscanR", "rCGH", "CGHcall", "ASCAT")
     
@@ -325,9 +330,11 @@ if (sys.nframe() == 0){
         print(c("===pkg===: ", pkg))
         segTable = loadSegTable(sample, pkg, resDir)
         if(pkg=="OncoscanR") {alreadyGoodPos=TRUE}
-        plot(y=rawPrbData$Log2Ratio, x=rawPrbData$absPos, pch = 20, cex=0.01, col="dark grey", xlab = "", ylab = "log Ratio", main = paste0(pkg, "  ", sample), ylim = c(-2,2))
+        plot(y=rawPrbData$Log2Ratio, x=rawPrbData$absPos, pch = 20, cex=0.01, col="dark grey", xlab = "", ylab = "log Ratio", main = paste0(pkg, "  ", sample), ylim = c(-2,3))
         # print(c("segTable: ", segTable))
-        plotSegTableForWGV(segTable, sample, savePlot=FALSE, genGrid=FALSE, segColor="dark red", alreadyGoodPos=alreadyGoodPos) # segtables must have these columns: chrom, loc.start, loc.end, CN
+        png(paste0(working_dir, "/plots/oncosR_1-RV_ALA.png"), width=500, height=430)
+        plotSegTableForWGV(segTable, sample, savePlot=FALSE, genGrid=T, segColor="dark red", alreadyGoodPos=alreadyGoodPos, ylim = c(1,4)) # segtables must have these columns: chrom, loc.start, loc.end, CN
+        dev.off()
         alreadyGoodPos = FALSE
     }
     dev.off()
