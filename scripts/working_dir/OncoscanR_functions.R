@@ -29,7 +29,7 @@
 #' @examples
 #' segs.filename <- system.file("extdata", "chas_example.txt", package = "oncoscanR")
 #' workflow_oncoscan.run(segs.filename, "M")
-custom_workflow_oncoscan.run <- function(chas.fn, gender, cleanSegments=F, plotPAA=F){
+custom_workflow_oncoscan.run <- function(chas.fn, gender, cleanSegments=TRUE, plotPAA=F){
     if(!(gender %in% c('M', 'F'))){
         stop("The gender has to be 'F' or 'M'.")
     }
@@ -39,6 +39,46 @@ custom_workflow_oncoscan.run <- function(chas.fn, gender, cleanSegments=F, plotP
     oncoscan.cov <- oncoscanR::oncoscan_na33.cov[seqnames(oncoscanR::oncoscan_na33.cov) != '21p']
 
     # Load the ChAS file and assign subtypes.
+    
+    
+    if (FALSE) { ## to make internship defense plotSeg
+        ############ pour slides soutenance
+        soutenance_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/res_soutenance"
+        # ylim = c(-3,3)
+        ylim = c(1,4)
+        PercentRowsToRemove = 30
+        xlab = "position genomique"
+        pkgName="CGHcall"
+        ###### plot dimensions:
+        pngWidth = 500
+        pngHeight = 430
+        sampleName = params$sampleNames[1]
+
+
+        chas.fn = filepath
+        gender = curr_gender
+        sampleName = "11-BG"
+        working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+        source(file.path(working_dir, "CGHcall_functions.R"))
+        source(file.path(working_dir, "oncoscanR_functions.R"))
+        O_segs = read.table(chas.fn, sep='\t', h=TRUE)
+        
+        ### get start and end positions
+        for (i in 1:length(O_segs$Full.Location)) {
+            segLoc = O_segs$Full.Location[i]
+            val = stringr::str_split(segLoc, ":")[[1]][2]
+            val = stringr::str_split(val, "-")[[1]]
+            O_segs[i, "loc.start"] = val[1]
+            O_segs[i, "loc.end"] = val[2]
+        }
+
+        O_segsForPlot = O_segs[c("Chromosome", "loc.start", "loc.end", "CN.State", "Marker.Count")] ## Marker.Count is for replacing "nbProbes column".
+        pathToSaveFile = paste0(working_dir, "/plots/oncosR_", sampleName, "_raw.png")
+        png(pathToSaveFile, width = pngWidth, height = pngHeight)
+        plotSegTable(O_segsForPlot, sampleName, savePlot=FALSE, ylim = ylim, mainTitlePrefix = " raw ")
+        dev.off()
+    }
+    
     segments <- load_chas(chas.fn, oncoscan.cov)
     segments$cn.subtype <- get_cn_subtype(segments, gender)
     # print(c("segs with subtypes: ", segments$cn.subtype))
@@ -55,7 +95,27 @@ custom_workflow_oncoscan.run <- function(chas.fn, gender, cleanSegments=F, plotP
         merge_segments() %>%
         prune_by_size()
     }
-
+    
+    if(FALSE) {  ## to make internship defense plots
+        O_segs_cleaned = as.data.frame(segs.clean)
+        O_segs_cleaned_for_plot = O_segs_cleaned[c("seqnames", "start", "end", "cn", "width")] ## width is for replacing "nbProbes column".
+        ## get chrs from arms
+        O_segs_cleaned_for_plot$seqnames = as.character(O_segs_cleaned_for_plot$seqnames)
+        for(i in 1:length(O_segs_cleaned_for_plot$seqnames)) {
+            currSeg = O_segs_cleaned_for_plot$seqnames[[i]]
+            noq = stringr::str_split(currSeg, "q")[[1]][1]
+            nop = stringr::str_split(noq, "p")[[1]][1]
+            print(nop)
+            O_segs_cleaned_for_plot[i, "chrom"] = nop
+        }
+        O_segs_cleaned_for_plot = O_segs_cleaned_for_plot[c("chrom", "start", "end", "cn", "width")]
+        
+        pathToSaveFile = paste0(working_dir, "/plots/oncosR_", sampleName, "_postClean.png")
+        png(pathToSaveFile, width = pngWidth, height = pngHeight)
+        plotSegTable(O_segs_cleaned_for_plot, sampleName, savePlot=FALSE, ylim = c(1,4), mainTitlePrefix = " after cleaning")
+        dev.off()
+    }
+        
     # Split segments by type: Loss, LOH, gain or amplification and get the arm-level alterations.
     # Note that the segments with copy gains include all amplified segments.
     customThreshold = 0.8
@@ -324,11 +384,11 @@ plotSeg = function(seg_df, lengthOfChrs){
 #     axis(2, at = c(-7:8))
 # }
 
-generateGrid = function(graph_title, mode="CN", addAblines=TRUE, addChrGrid=TRUE) {
+generateGrid = function(graph_title, mode="CN", addAblines=TRUE, addChrGrid=TRUE, ylim=c(-2,3)) {
     print("in oncosanR's generateGrid()'")
     if (mode=="CN") {
         #create empty plot to add things in
-        plot(1, ylim=c(-2,3), xlim=c(0,3*10**9),col="white", xaxt="n", yaxt="n", xlab="nombre de bases", ylab="nombre de copies", main=graph_title)
+        plot(1, ylim=ylim, xlim=c(0,3*10**9),col="white", xaxt="n", yaxt="n", xlab="nombre de bases", ylab="nombre de copies", main=graph_title)
         #  add horizontal grid
         if (addAblines) {
             #  add horizontal grid

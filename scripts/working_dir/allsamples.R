@@ -206,7 +206,7 @@ if (sys.nframe() == 0){
     library(pROC)
     subset = dplyr::filter(GI2col, pkg=="GI_oncoscanR")
     resRoc = roc(subset$color, subset$GI)
-    gg = ggroc(resRoc, colour = 'steelblue', size=2, legacy.axes=TRUE)
+    gg = ggroc(resRoc, colour = 'steelblue', size=2, legacy.axes=TRUE, print.auc=TRUE)
     gg + theme_bw() + ggtitle("oncoscanR")
     print(resRoc)
     
@@ -294,14 +294,19 @@ if (sys.nframe() == 0){
             colnames(segTable) = c("chrom", "loc.start", "loc.end", "CN") 
             
         } else if(pkg=="OncoscanR") {
+            # print(c("segTable: ", segTable))
+            # print(c("class of segTable: ", class(segTable)))
             colnames(segTable) = c("sample", "chrom", "loc.start", "loc.end", "CN")
+            segTable$CN = segTable$CN - 2
+            # print(c("colnames(segTable): ", colnames(segTable)))
+            print(c("segTable: ", segTable))
         }
         return(segTable)
     }
     
     
     alreadyGoodPos=FALSE
-    sample = "12-BC"
+    sample = "11-BG"
     resDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
     pkgs = c("OncoscanR", "rCGH", "CGHcall", "ASCAT")
     
@@ -314,7 +319,7 @@ if (sys.nframe() == 0){
     rawPrbData = getNewPos(rawPrbData)
     rawPrbData = rawPrbData[c(1:4, length(rawPrbData))]
     ## 3: plot both
-    png(paste0(resDir, "/", sample, ".png"), width = 900, height = 1200)
+    png(paste0(resDir, "/", sample, ".png"), width = 800, height = 1000)
     layout(layout_matrix)
     for (pkg in pkgs) {
         print(c("===pkg===: ", pkg))

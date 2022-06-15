@@ -163,14 +163,14 @@ getSegTables = function(segTableByProbe, sampleNames) {
     return(segTablesList)
 }
 
-plotSegTable = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE) {
+plotSegTable = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE, ylim = c(-2,3), mainTitlePrefix = "") {
     print(c("plotting sample ", currSampleName))
     imgName = paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png")
     if(savePlot) {
         png(imgName, width=700, height=484)
     }
     if(genGrid) {
-        generateGrid(paste0(currSampleName, " Copy number"), mode="CN")
+        generateGrid(paste0(currSampleName, " Copy number", mainTitlePrefix), mode="CN", ylim = ylim)
     }
     colnames(currSegTable) = c("chrom", "loc.start", "loc.end", "callVal", "nbProbes")
     apply(currSegTable, 1, plotSeg_rCGH, "callVal", indivSeg=TRUE)

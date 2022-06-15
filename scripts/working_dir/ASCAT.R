@@ -6,6 +6,7 @@ ascatFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/res
 setwd(working_dir)
 ## open working directory in Files tab
 rstudioapi::filesPaneNavigate(working_dir)
+options("max.print" = 100)
 #loading libraries
 library(ASCAT)
 library(dplyr)
@@ -14,6 +15,7 @@ source(file.path(working_dir, "EaCoN_functions.R"))
 source(file.path(working_dir, "ASCAT_functions.R"))
 source(file.path(working_dir, "oncoscanR_functions.R"))
 source(file.path(working_dir, "crossPackagesFunctions.R"))
+source(file.path(working_dir, "rCGH_functions.R"))
 
 
 #### functions
@@ -27,7 +29,7 @@ sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM
 
 
 
-#### Save rCGH objects from .RDS files
+#### Save ASCAT objects from .RDS files
 if(F) {
     sampleNames = c("1-RV", "3-ES", "9-LA")
     i=1
@@ -266,6 +268,55 @@ print("end")
 
 
 
+############ pour slides soutenance
+
+soutenance_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/res_soutenance"
+
+if (TRUE){
+    callDataToPlot = callData
+    # remove "chr" so segments$chr matches hg38 notation (and is easier to see on plots)
+    callDataToPlot$segments$chr = lapply(callDataToPlot$segments$chr,stringr::str_replace, "chr", "")
+    callDataToPlot$segments_raw$chr = lapply(callDataToPlot$segments_raw$chr,stringr::str_replace, "chr", "")
+    segDataToPlot$chrs = as.vector(lapply(segDataToPlot$chrs,stringr::str_replace, "chr", ""))
+}
+
+ylim = c(-1,1)
+PercentRowsToRemove = 30
+xlab = "position genomique"
+pkgName="ASCAT"
+pngWidth = 350
+pngHeight=300
+
+###### plot dimensions: w=556, h=513
+### plot raw value per probe
+state="raw"
+rawVals = rawData[["data"]][["Tumor_LogR"]]
+rawVals = removePointsForQuickPlotting(rawVals, PercentRowsToRemove)
+savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+png(savePath, width = pngWidth, height = pngHeight)
+plot(rawVals[,1], pch = 20, cex = 0.01, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+dev.off()
+
+### plot seg value per probe
+state = "seg"
+segVals = as.data.frame(segData[["Tumor_LogR_segmented"]])
+segVals = removePointsForQuickPlotting(segVals, PercentRowsToRemove)
+savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+png(savePath, width = pngWidth, height = pngHeight)
+plot(segVals[,1], pch = 20, cex = 0.1, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+dev.off()
+
+### plot Call value per probe
+state = "call"
+callVals = as.data.frame(callDataToPlot$nA)
+callVals$nB = callDataToPlot$nB
+callVals = removePointsForQuickPlotting(callVals, PercentRowsToRemove)
+callVals$totCN = callVals[1] + callVals[2]
+indexes = c(1:length(callVals$totCN[[1]]))
+savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+png(savePath, width = pngWidth, height = pngHeight)
+plot(y = callVals$totCN[[1]], pch=20, cex = 0.1, x = indexes, ylab = 'Nombre de copies', xlab = xlab)
+dev.off()
 
 
 
@@ -328,20 +379,14 @@ if(!dir.exists(outputFolder_plots)) dir.create(outputFolder_plots)
 callDataToPlot = callData
 segDataToPlot = segData
 
-if (TRUE){
-# remove "chr" so segments$chr matches hg38 notation (and is easier to see on plots)
-callDataToPlot$segments$chr = lapply(callDataToPlot$segments$chr,stringr::str_replace, "chr", "")
-callDataToPlot$segments_raw$chr = lapply(callDataToPlot$segments_raw$chr,stringr::str_replace, "chr", "")
-segDataToPlot$chrs = as.vector(lapply(segDataToPlot$chrs,stringr::str_replace, "chr", ""))
-}
 
 
 
 ### plotting raw values of both alleles of a profile
 if (F) {
     # remove small segments that pollute visualization
-    segDf = callDataToPlot$segments_raw
-    segDf_trimmed = dplyr::filter(segDf, endpos-startpos>10**7)
+    segDf_trimmed = callDataToPlot$segments_raw
+    segDf_trimmed = dplyr::filter(segDf_trimmed, endpos-startpos>10**7)
     allChrs = unique(as.vector(segDf_trimmed[2]))
     # draw seg data
     graph_title = paste0(sampleName,"      ploidy:",round(callDataToPlot$ploidy,2),", cellularity:",callDataToPlot$purity)
@@ -353,35 +398,35 @@ if (F) {
     png(path_plot_no_polygon, width=700, height=484)
     # png(path_plot_no_polygon)
     generateGrid(graph_title)
-    apply(segDf_trimmed, 1, plotSeg, allChrs)
+    apply(segDf_trimmed, 1, plotSeg_ASCAT, allChrs)
     dev.off()
     
     path_plot_polygon = paste0(dir_customRun, "polygon.png")
     # png(path_plot_polygon, width=900, height=623)
     png(path_plot_polygon, width=700, height=484)
     generateGrid(graph_title)
-    apply(segDf_trimmed, 1, plotSeg, allChrs, drawPolygons=T)
+    apply(segDf_trimmed, 1, plotSeg_ASCAT, allChrs, drawPolygons=T)
     dev.off()
 }
 
 
 
 if (F){
-# remove Y chromosome data
-callDataToPlot$segments = dplyr::filter(callDataToPlot$segments,chr!="Y")
-ascat.plotAdjustedAscatProfile(callDataToPlot,REF="hg19",png_prefix=outputFolder_plots)
-## plot logR and BAF raw Data
-ascat.plotRawData(segDataToPlot,img.dir=outputFolder_plots) #5-LD.tumour.png
-## plot logR and BAF data before vs after segmentation
-ascat.plotSegmentedData(segDataToPlot,img.dir=outputFolder_plots) #5-LD.ASPCF.png
-## later
-ascat.plotAscatProfile(segData)          # purity for 5-LD is 90%
-ascat.plotAscatProfile(callDataToPlot[["nA"]], callDataToPlot[["nB"]], ploidy=callDataToPlot[["ploidy"]], rho=0.9,          # purity for 5-LD is 90%
-                       goodnessOfFit=callDataToPlot[["goodnessOfFit"]], nonaberrant=F) 
-ascat.plotGenotypes(callData)
-ascat.plotNonRounded(callData)
-## automatically generated already
-ascat.plotSunrise(callData$distance_matrix)
+    # remove Y chromosome data
+    callDataToPlot$segments = dplyr::filter(callDataToPlot$segments,chr!="Y")
+    ascat.plotAdjustedAscatProfile(callDataToPlot,REF="hg19",png_prefix=outputFolder_plots)
+    ## plot logR and BAF raw Data
+    ascat.plotRawData(segDataToPlot,img.dir=outputFolder_plots) #5-LD.tumour.png
+    ## plot logR and BAF data before vs after segmentation
+    ascat.plotSegmentedData(segDataToPlot,img.dir=outputFolder_plots) #5-LD.ASPCF.png
+    ## later
+    ascat.plotAscatProfile(segData)          # purity for 5-LD is 90%
+    ascat.plotAscatProfile(callDataToPlot[["nA"]], callDataToPlot[["nB"]], ploidy=callDataToPlot[["ploidy"]], rho=0.9,          # purity for 5-LD is 90%
+                           goodnessOfFit=callDataToPlot[["goodnessOfFit"]], nonaberrant=F) 
+    ascat.plotGenotypes(callData)
+    ascat.plotNonRounded(callData)
+    ## automatically generated already
+    ascat.plotSunrise(callData$distance_matrix)
 }
 
 
@@ -403,10 +448,10 @@ path_plot_no_polygon = paste0(dir_customRun, "nopol.png")
 ## seg data
 
 generateGrid(graph_title)
-apply(segDf, 1, plotSeg, allChrs, lengthOfChrs)
+apply(segDf, 1, plotSeg_ASCAT, allChrs, lengthOfChrs)
 ## call data
 generateGrid(graph_title)
-apply(callDf, 1, plotSeg, allChrs, lengthOfChrs)
+apply(callDf, 1, plotSeg_ASCAT, allChrs, lengthOfChrs)
 
 
 

@@ -1,5 +1,5 @@
 ## functions to plot values for segments of allele A and B
-plotSeg = function(seg_df, allChrs, drawPolygons=F, drawDistances=F){
+plotSeg_ASCAT = function(seg_df, allChrs, drawPolygons=F, drawDistances=F){
     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
     print(lengthOfChrs)
     ## get nb cols
@@ -423,6 +423,12 @@ custom_ascat.aspcf = function (ASCATobj, selectsamples = 1:length(ASCATobj$sampl
     ASCATobj$failedarrays = ascat.gg$failedarrays
     return(ASCATobj)
 }
+
+
+
+
+
+
 
 
 

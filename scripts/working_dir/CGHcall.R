@@ -17,7 +17,8 @@ library(CGHcall)
 
 pipelineCGHcall = function(osData, params) {
     # osData = rawProbesData
-    before=Sys.time() 
+    
+    before=Sys.time()
     # osData = s2Probes # to run on one sample
     if(is.null(params$tumor_prop)) {params$tumor_prop=1}
     # ACGH_data <- make_cghRaw(Wilting)
@@ -36,7 +37,9 @@ pipelineCGHcall = function(osData, params) {
     CghResult <- ExpandCGHcall(rawCghResult,postseg.cghdata,CellularityCorrectSeg=params$CellularityCorrectSeg) # use CellularityCorrectSeg=TRUE to correct using cellularity
     after = Sys.time()
     CghResult$processingTime = round(as.numeric(difftime(after, before, units = "secs"))/dim(CghResult)[2], 2) ## If more than 1 sample is processed for this run, the average value is given to each sample. This value is stored in CghResult@phenoData@data[["processingTime"]].
-    return(CghResult)
+    
+    # return(CghResult)
+    return(list(ACGH_data, cghdata, norm.cghdata, seg.cghdata, postseg.cghdata, rawCghResult, CghResult))
 }
 
 
@@ -61,6 +64,8 @@ main = function() {
     params$runName = "Default run"
     params$runAsCohort = F
     params$sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+    # params$sampleNames = c("11-BG") # for single sample run
+    # params$sampleNames = c("1-RV") # for single sample run
     params$inputFile = "allSamplesCleanProbeset_2_3Rec.txt"
     params$allSamplesClean_path = file.path(dataDirProbesets, params$inputFile)
     params$saveAsValidGI = F
@@ -82,7 +87,7 @@ main = function() {
     ######################## start analysis
     ## load all-samples probeset.txt file
     rawProbesData = read.table(params$allSamplesClean_path, h=T)
-    colnames(rawProbesData) = c("probeID", "CHROMOSOME", "START_POS", "END_POS", params$sampleNames)
+    colnames(rawProbesData) = c("probeID", "CHROMOSOME", "START_POS", "END_POS", c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" ))
     
     ### Run pipeline
     if(params$runAsCohort) {
@@ -168,19 +173,103 @@ main = function() {
     logText = x
     logfile = file.path(CGHcallDir, "log.txt")
     write(logText, logfile, append=T)
-    }
 }
+
+
+
+
+
+
+
+
+
+
+
+############ pour slides soutenance
+soutenance_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/res_soutenance"
+# ylim = c(-3,3)
+ylim = c(-1,1)
+PercentRowsToRemove = 30
+xlab = "position genomique"
+pkgName="CGHcall"
+###### plot dimensions:
+pngWidth = 350
+pngHeight = 300
+sampleName = params$sampleNames[1]
+
+## result of pipeline
+ACGH_data = currCallRes[[1]]
+cghdata = currCallRes[[2]]
+norm.cghdata = currCallRes[[3]]
+seg.cghdata = currCallRes[[4]]
+postseg.cghdata = currCallRes[[5]]
+rawCghResult = currCallRes[[6]]
+CghResult = currCallRes[[7]]
+
+
+### plot raw value per probe 
+state = "raw"
+vals = as.data.frame(ACGH_data@assayData[["copynumber"]])
+vals = removePointsForQuickPlotting(vals, PercentRowsToRemove)
+savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+png(savePath, width = pngWidth, height = pngHeight)
+plot(vals[[sampleName]], pch = 20, cex = 0.01, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+dev.off()
+
+### After preprocess
+state="preprocess"
+vals = as.data.frame(cghdata@assayData[["copynumber"]])
+vals = removePointsForQuickPlotting(vals, PercentRowsToRemove)
+savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+png(savePath, width = pngWidth, height = pngHeight)
+plot(vals[[sampleName]], pch = 20, cex = 0.01, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+dev.off()
+
+### After norm 1
+state="norm1"
+vals = as.data.frame(norm.cghdata@assayData[["copynumber"]])
+vals = removePointsForQuickPlotting(vals, PercentRowsToRemove)
+savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+png(savePath, width = pngWidth, height = pngHeight)
+plot(vals[[sampleName]], pch = 20, cex = 0.01, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+dev.off()
+
+### After seg
+state="seg"
+vals = as.data.frame(seg.cghdata@assayData[["segmented"]])
+vals = removePointsForQuickPlotting(vals, PercentRowsToRemove)
+savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+png(savePath, width = pngWidth, height = pngHeight)
+plot(vals[[sampleName]], pch = 20, cex = 0.01, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+dev.off()
+
+### After postsegnorm
+state="postsegnorm"
+vals = as.data.frame(postseg.cghdata@assayData[["segmented"]])
+vals = removePointsForQuickPlotting(vals, PercentRowsToRemove)
+savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+png(savePath, width = pngWidth, height = pngHeight)
+plot(vals[[sampleName]], pch = 20, cex = 0.01, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+dev.off()
+
+
+### plot Call value per probe
+state = "call"
+vals = as.data.frame(CghResult@assayData[["calls"]])
+vals = removePointsForQuickPlotting(vals, PercentRowsToRemove)[[1]]
+vals = vals + 2
+savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+png(savePath, width = pngWidth, height = pngHeight)
+plot(y = vals, x=1:length(vals), pch=20, cex = 0.1, ylab = 'Nombre de copies', xlab = xlab)
+dev.off()
+
+
+
+
 
 if (sys.nframe() == 0){
     main()
 }
-
-
-
-
-
-
-
 
 
 

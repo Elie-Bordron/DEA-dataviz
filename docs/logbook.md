@@ -2770,6 +2770,12 @@ voir `https://stackoverflow.com/questions/27800307/adding-a-picture-to-plot-in-r
 *Présentation slides à Claire et élodie à 10h*
 
 
+# <span style="color:#999900"> mardi 14/06/2022  
+arr 10h; 40 min pause; départ dans la nuit à 4h
+prise en compte des commentaires sur les slides
+
+# <span style="color:#999900"> mardi 14/06/2022  
+arr 9h; 1h pause
 
 
 
