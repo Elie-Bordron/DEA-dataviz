@@ -2857,3 +2857,4 @@ J'ai placé des tableaux factices et des sliders factices pour les paramètres.
 
 * [ ] question à élodie: Y a-t-il un moyen efficace de cacher/afficher un slider ou des boutons? 
 * [ ] Dans le panneau CGHcall, les paramètres ne vont pas jusqu'au bas de la page. pourtant, il y a de la place. Comment leur faire utiliser le bas de la page?
+* [ ] quand un tableau dépasse de la page, comment faire un menu déroulant?

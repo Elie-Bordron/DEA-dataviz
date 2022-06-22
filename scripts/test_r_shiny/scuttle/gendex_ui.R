@@ -14,6 +14,23 @@ ui <- fluidPage(
     headerPanel("GenDex - Genomic Index visualization tool"),
     tabsetPanel(
 
+        tabPanel(title = "Home",
+                 mainPanel(width = 12,align = "center",
+                    sidebarLayout(
+                        sidebarPanel(
+                            fileInput("file1", "Choose probeset.txt File", accept = ".txt"),
+                            checkboxInput("header", "Header", TRUE)
+                        ),
+                        mainPanel(
+                            tableOutput("contents")
+                        )
+                    )
+                           # selectInput("season_year","Select Season",choices=unique(sort(matches$season,
+                           #                                                               decreasing=TRUE)), selected = 2019),
+                           # submitButton("Go"),
+                           # tags$h3("Players table"),
+                           # div(style = "border:1px black solid;width:50%",tableOutput("player_table"))
+        )),
         tabPanel(title = "CGHcall",
             mainPanel(width = 12,align = "center",
                 verticalLayout(
@@ -38,7 +55,7 @@ ui <- fluidPage(
                             ),
                             checkboxInput ("correctCell", 
                                            "Correct data using proportion of tumoral cells", 
-                                           value=FALSE,
+                                           value=TRUE,
                             ),
                             sliderInput("cellularity",
                                         "Proportion of tumoral cells:",
@@ -58,14 +75,6 @@ ui <- fluidPage(
                       # div(style = "float:left;width:36%;",plotOutput("wins_bar_plot")),
                       # div(style = "float:right;width:64%;",plotOutput("points_bar_plot"))
             )),
-        tabPanel(title = "Home",
-                 mainPanel(width = 12,align = "center",
-                           # selectInput("season_year","Select Season",choices=unique(sort(matches$season,
-                           #                                                               decreasing=TRUE)), selected = 2019),
-                           # submitButton("Go"),
-                           # tags$h3("Players table"),
-                           # div(style = "border:1px black solid;width:50%",tableOutput("player_table"))
-                 )),
         tabPanel(title = "ASCAT",
             mainPanel(width = 12,align = "center",
                       # tags$h3("Team Wins & Points"),
