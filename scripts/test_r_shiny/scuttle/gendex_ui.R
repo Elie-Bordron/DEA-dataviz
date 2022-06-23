@@ -1,5 +1,6 @@
 library(shiny)
 library(tidyverse)
+library(DT)
 
 working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
 setwd(working_dir)
@@ -11,18 +12,20 @@ rstudioapi::filesPaneNavigate(working_dir)
 source(file.path(working_dir, "gendex_server.R"))
 
 ui <- fluidPage(
-    headerPanel("GenDex - Genomic Index visualization tool"),
-    tabsetPanel(
+    titlePanel("GenDex - Genomic Index visualization tool"),
+    tabsetPanel(selected="Home",
 
+                
         tabPanel(title = "Home",
                  mainPanel(width = 12,align = "center",
                     sidebarLayout(
                         sidebarPanel(
-                            fileInput("file1", "Choose probeset.txt File", accept = ".txt"),
+                            fileInput("probeset_txt", "Choose probeset.txt File", accept = ".txt"),
                             checkboxInput("header", "Header", TRUE)
                         ),
                         mainPanel(
-                            tableOutput("contents")
+                            # tableOutput("contents")
+                            DT::dataTableOutput("contents")
                         )
                     )
                            # selectInput("season_year","Select Season",choices=unique(sort(matches$season,
@@ -31,6 +34,8 @@ ui <- fluidPage(
                            # tags$h3("Players table"),
                            # div(style = "border:1px black solid;width:50%",tableOutput("player_table"))
         )),
+        
+        
         tabPanel(title = "CGHcall",
             mainPanel(width = 12,align = "center",
                 verticalLayout(
@@ -41,8 +46,9 @@ ui <- fluidPage(
                             selected = "segmentation results")
                         ),
                     ),
-                    splitLayout(
-                        verticalLayout(
+                    # splitLayout(
+                    sidebarLayout(
+                        sidebarPanel(width = "2",
                             sliderInput("undoSD",
                                         "Join segments if their difference is greater than this:",
                                         min = 0.1,
@@ -51,7 +57,7 @@ ui <- fluidPage(
                             ),
                             selectInput("prior",
                                         "How call probabilities should be calculated:", 
-                                        choices = c('On whole genome'='1','Per chromosome arm'='2')
+                                        choices = c('Per chromosome arm'='not all', 'On whole genome'='all')
                             ),
                             checkboxInput ("correctCell", 
                                            "Correct data using proportion of tumoral cells", 
@@ -63,10 +69,26 @@ ui <- fluidPage(
                                         max = 100,
                                         value = 100
                             ),
+                            sliderInput("minSegLenForFit",
+                                        "Minimum length of the segment (in Mb) to be used for fitting the model:",
+                                        min = 0,
+                                        max = 1000,
+                                        value = 1
+                            ),
                             
                         ),
-                        tableOutput("segTable"),
-                        tableOutput("geneTable")
+                        mainPanel(width = "10",
+                            splitLayout(
+                                verticalLayout(
+                                    h2("Segments table"),
+                                    DT::dataTableOutput("segTable")
+                                ),
+                                verticalLayout(
+                                    h2("Genes table"),
+                                    DT::dataTableOutput("geneTable")
+                                )
+                            )
+                        )
                         ## segs table,
                         ## genes table
                     )

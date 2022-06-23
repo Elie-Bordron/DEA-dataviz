@@ -2835,8 +2835,8 @@ commentaires reçus pendant la soutenance:
 
 J'ai fait des dessins des interfaces que je veux faire. Vers la fin je me dis que celle de rCGH est bien faite, je pense m'en inspirer.
 
-# <span style="color:#999900"> mardi 21/06/2022
-arr 9h
+# <span style="color:#999900"> mercredi 22/06/2022
+arr 9h; 40 min pause, dep 18h40
 *rdv 9h00* pour parler des différents layouts adaptables
 * [X] ~~*montrer l'interface rCGH*~~ [2022-06-22]
 * [X] ~~*montrer mes interfaces*~~ [2022-06-22]
@@ -2855,6 +2855,10 @@ Pour ça, les fonctions de layout que j'ai utilisées sont:
 - splitLayout pour organiser une région horizontalement en plusieurs blocs placés côte à côte. Fait donc la même chose pour moi.
 J'ai placé des tableaux factices et des sliders factices pour les paramètres.
 
-* [ ] question à élodie: Y a-t-il un moyen efficace de cacher/afficher un slider ou des boutons? 
-* [ ] Dans le panneau CGHcall, les paramètres ne vont pas jusqu'au bas de la page. pourtant, il y a de la place. Comment leur faire utiliser le bas de la page?
-* [ ] quand un tableau dépasse de la page, comment faire un menu déroulant?
+* [X] ~~*question à élodie: Y a-t-il un moyen efficace de cacher/afficher un slider ou des boutons?*~~ [2022-06-23] 
+* [X] ~~*Dans le panneau CGHcall, les paramètres ne vont pas jusqu'au bas de la page. pourtant, il y a de la place. Comment leur faire utiliser le bas de la page?*~~ [2022-06-23]
+* [X] ~~*quand un tableau dépasse de la page, comment faire un menu déroulant?*~~ [2022-06-23]
+
+
+# <span style="color:#999900"> jeudi 23/06/2022
+arr 9h10; 30 min pause

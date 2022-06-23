@@ -248,55 +248,57 @@ saveSegTables(segTables_rCGH, rCGHdir)
 
 
 ############ pour slides soutenance
+if (FALSE) {
+    soutenance_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/res_soutenance"
 
-soutenance_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/res_soutenance"
 
+    ylim = c(-3,3)
+    PercentRowsToRemove = 30
+    xlab = "position genomique"
+    pkgName="rCGH"
+    ###### plot dimensions:
+    pngWidth = 350
+    pngHeight=300
 
-ylim = c(-3,3)
-PercentRowsToRemove = 30
-xlab = "position genomique"
-pkgName="rCGH"
-###### plot dimensions:
-pngWidth = 350
-pngHeight=300
+    ### plot raw value per probe
+    state="raw"
+    rawVals = cgh@cnSet
+    rawVals = removePointsForQuickPlotting(rawVals, PercentRowsToRemove)
+    savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+    png(savePath, width = pngWidth, height = pngHeight)
+    plot(rawVals$Log2Ratio, pch = 20, cex = 0.01, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+    dev.off()
 
-### plot raw value per probe
-state="raw"
-rawVals = cgh@cnSet
-rawVals = removePointsForQuickPlotting(rawVals, PercentRowsToRemove)
-savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
-png(savePath, width = pngWidth, height = pngHeight)
-plot(rawVals$Log2Ratio, pch = 20, cex = 0.01, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
-dev.off()
+    ### plot adj value per probe
+    state = "adj"
+    adjVals = cghAdj@cnSet
+    adjVals = removePointsForQuickPlotting(adjVals, PercentRowsToRemove)
+    savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+    png(savePath, width = pngWidth, height = pngHeight)
+    plot(adjVals$Log2Ratio, pch = 20, cex = 0.1, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+    dev.off()
 
-### plot adj value per probe
-state = "adj"
-adjVals = cghAdj@cnSet
-adjVals = removePointsForQuickPlotting(adjVals, PercentRowsToRemove)
-savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
-png(savePath, width = pngWidth, height = pngHeight)
-plot(adjVals$Log2Ratio, pch = 20, cex = 0.1, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
-dev.off()
+    ### plot seg value per probe
+    state = "seg"
+    segVals = as.data.frame(cghSeg@cnSet)
+    segVals = removePointsForQuickPlotting(segVals, PercentRowsToRemove)
+    savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+    png(savePath, width = pngWidth, height = pngHeight)
+    plot(y=segVals$Segm, x=(1:length(segVals[[1]])), pch = 20, cex = 0.1, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+    dev.off()
 
-### plot seg value per probe
-state = "seg"
-segVals = as.data.frame(cghSeg@cnSet)
-segVals = removePointsForQuickPlotting(segVals, PercentRowsToRemove)
-savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
-png(savePath, width = pngWidth, height = pngHeight)
-plot(y=segVals$Segm, x=(1:length(segVals[[1]])), pch = 20, cex = 0.1, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
-dev.off()
+    ### plot Call value per probe
+    state = "norm"
+    savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+    vals = cghNorm@cnSet
+    vals = removePointsForQuickPlotting(vals, PercentRowsToRemove)
+    CNvals = vals[["estimCopy"]]
+    genomicPos = as.numeric(1:length(CNvals))
+    png(savePath, width = pngWidth, height = pngHeight)
+    plot(y = CNvals, x=genomicPos, pch=20, cex = 0.1, ylab = 'Nombre de copies', xlab = xlab)
+    dev.off()
 
-### plot Call value per probe
-state = "norm"
-savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
-vals = cghNorm@cnSet
-vals = removePointsForQuickPlotting(vals, PercentRowsToRemove)
-CNvals = vals[["estimCopy"]]
-genomicPos = as.numeric(1:length(CNvals))
-png(savePath, width = pngWidth, height = pngHeight)
-plot(y = CNvals, x=genomicPos, pch=20, cex = 0.1, ylab = 'Nombre de copies', xlab = xlab)
-dev.off()
+}
 
 
 
