@@ -2862,3 +2862,8 @@ J'ai placé des tableaux factices et des sliders factices pour les paramètres.
 
 # <span style="color:#999900"> jeudi 23/06/2022
 arr 9h10; 30 min pause
+
+J'ai relié le tableau de segments à la segtable générée par le pipeline de CGHcall.
+J'essaie de relier le plot de shiny avec plotSegTable, mais ça ne marche pas: dans renderPlot, je fais plotSegTable, qui contient, à un moment, colnames(segTable) = c([...]). or, ça renvoie une erreur, car segTable est à ce moment-là englobée dans reactive({}). Je retire cette étape de renommage en donnant les bons noms de colonne de base. en fait, si les colonnes sont bien nommées, le renommage n'est pas fait; dans le cas contraire, le renommage est appliqué.
+
+problème résolu: dans shiny, si tu fais x = reactive({ expression qui retourne la valeur y }), x ne prend pas la valeur y et est à la place "reactive({ expression qui retourne la valeur y })". Pour utiliser la valeur y, tu dois faire x(). Logique, x est une *fonction* réactive en fait.

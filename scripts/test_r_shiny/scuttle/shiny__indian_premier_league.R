@@ -2,14 +2,15 @@ library(shiny)
 library(tidyverse)
 
 working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+dataDir = file.path(working_dir, "IPL_data")
 setwd(working_dir)
 options("max.print"=100)
 ## open working directory in Files tab
 rstudioapi::filesPaneNavigate(working_dir)
 
 # Loading Dataset-------------------------------------------------------
-deliveries = read.csv(file.path(working_dir, "deliveries.csv"), stringsAsFactors = FALSE)
-matches = read.csv(file.path(working_dir, "matches.csv"), stringsAsFactors = FALSE)
+deliveries = read.csv(file.path(dataDir, "deliveries.csv"), stringsAsFactors = FALSE)
+matches = read.csv(file.path(dataDir, "matches.csv"), stringsAsFactors = FALSE)
 # Cleaning Dataset------------------------------------------------------
 names(matches)[1] = "match_id"
 IPL = dplyr::inner_join(matches,deliveries)

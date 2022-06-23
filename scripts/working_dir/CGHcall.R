@@ -1,6 +1,7 @@
 ## set working directory
+working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+
 if (FALSE) {
-    working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
     setwd(working_dir)
     options("max.print"=100)
     ## open working directory in Files tab

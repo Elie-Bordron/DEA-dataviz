@@ -64,7 +64,7 @@ ui <- fluidPage(
                                            value=TRUE,
                             ),
                             sliderInput("cellularity",
-                                        "Proportion of tumoral cells:",
+                                         "Proportion of tumoral cells:",
                                         min = 0,
                                         max = 100,
                                         value = 100
@@ -75,6 +75,7 @@ ui <- fluidPage(
                                         max = 1000,
                                         value = 1
                             ),
+                            # submitButton("Go"),
                             
                         ),
                         mainPanel(width = "10",
@@ -86,7 +87,8 @@ ui <- fluidPage(
                                 verticalLayout(
                                     h2("Genes table"),
                                     DT::dataTableOutput("geneTable")
-                                )
+                                ),
+                                textOutput("debug")
                             )
                         )
                         ## segs table,
