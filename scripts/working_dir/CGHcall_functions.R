@@ -206,17 +206,15 @@ getSegTables = function(segTableByProbe, sampleNames) {
 
 
 plotSegTable = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE, ylim = c(-2,3), mainTitlePrefix = "") {
-    print(c("plotting sample ", currSampleName))
+    print(c("plotSegTable runs on sample ", currSampleName))
     imgName = paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png")
     if(savePlot) {
         png(imgName, width=700, height=484)
     }
-    print(c("currSegTable: ", currSegTable))
     if(genGrid) {
         generateGrid(paste0(currSampleName, " Copy number", mainTitlePrefix), mode="CN", ylim = ylim)
     }
-    print(c("currSegTable: ", currSegTable))
-    if (colnames(currSegTable)[1:4] != c("chrom", "loc.start", "loc.end", "callVal")) {
+    if (any(colnames(currSegTable)[1:4] != c("chrom", "loc.start", "loc.end", "callVal"))) {
         colnames(currSegTable) = c("chrom", "loc.start", "loc.end", "callVal", "nbProbes")
     }
     apply(currSegTable, 1, plotSeg_rCGH, "callVal", indivSeg=TRUE)
@@ -225,8 +223,10 @@ plotSegTable = function(currSegTable,currSampleName,resultsDir="delme", savePlot
     }
 }
 
+
+
 plotSegTableForWGV = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE, segColor="#00BFC4", alreadyGoodPos=FALSE) {
-    print(c("plotting sample ", currSampleName))
+    print(c("plotSegTableForWGV runs on sample ", currSampleName))
     imgName = paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png")
     if(savePlot) {
         png(imgName, width=700, height=484)
@@ -239,6 +239,52 @@ plotSegTableForWGV = function(currSegTable,currSampleName,resultsDir="delme", sa
         dev.off()
     }
 }
+
+plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue", alreadyGoodPos=FALSE){
+    ########### Used by rCGH.R and CGHcall.R ########### 
+    # print(c("value_col: ", value_col))    
+    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+    ## get endpos of last segment of previous chromosome
+    if((seg_df["chrom"]=="X" ) || (seg_df["chrom"]=="Y") || (seg_df["chrom"]==24) || (seg_df["chrom"]==25)){
+        pos0CurrChr = sum(lengthOfChrs[1:22]) ## 22 because we exclude sex chromosomes
+    }else {
+        # print(c("seg_df['chrom']: ", seg_df["chrom"]))
+        # print(c("class(seg_df['chrom']): ", class(seg_df["chrom"])))
+        currChromosome = seg_df["chrom"]
+        currChromosome = as.numeric(currChromosome)
+        # print(c("currChromosome: ", currChromosome))
+        if (currChromosome!=1){
+            pos0CurrChr = sum(lengthOfChrs[1:currChromosome-1])
+        } else {
+            pos0CurrChr=0
+        }
+    }
+    ## drawing a segment on plot for each segment of the genome, using estimated values
+    segStartPos = pos0CurrChr + as.numeric(seg_df[["loc.start"]])
+    segEndPos = pos0CurrChr + as.numeric(seg_df[["loc.end"]])
+    if(alreadyGoodPos) {
+        segStartPos = as.numeric(seg_df[["loc.start"]])
+        segEndPos = as.numeric(seg_df[["loc.end"]])
+    }
+    # estimCN = as.numeric(seg_df[["Log2Ratio"]])
+    # estimCN = as.numeric(seg_df[["estimCopy"]])
+    # print(c("seg_df[[value_col]]: ", seg_df[[value_col]]))
+    estimCN = as.numeric(seg_df[[value_col]])
+    # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
+    segments(segStartPos, estimCN, segEndPos, estimCN, col=segColor, lwd=2)
+    if(indivSeg) {
+        height = 0.05
+        segments(segStartPos, estimCN+height, segStartPos, estimCN-height, col=segColor, lwd=0.1)
+        segments(segEndPos, estimCN+height, segEndPos, estimCN-height, col=segColor, lwd=0.1)
+    }
+}
+
+
+plotSegTableForWGV_GG = function(currSegTable,currSampleName,resultsDir="delme", savePlot=FALSE, genGrid=TRUE, segColor="#00BFC4", ylim = c(-2,3), mainTitlePrefix = "") {
+    
+
+}
+
 
 plotSegTables = function(segTablesList, sampleNames, resultsDir, savePlot=TRUE, genGrid=TRUE) {
     if(!dir.exists(resultsDir)) dir.create(resultsDir)

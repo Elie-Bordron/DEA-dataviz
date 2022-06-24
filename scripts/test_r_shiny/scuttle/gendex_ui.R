@@ -1,39 +1,37 @@
 library(shiny)
+library(shinybusy)
 library(tidyverse)
 library(DT)
 
-working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
-setwd(working_dir)
+working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+results_dir = file.path(working_dir_shiny, "gendex_results")
+if(!dir.exists(results_dir))dir.create(results_dir)
+setwd(working_dir_shiny)
 options("max.print"=100)
-## open working directory in Files tab
-rstudioapi::filesPaneNavigate(working_dir)
+rstudioapi::filesPaneNavigate(working_dir_shiny)
 
 #### load server information
-source(file.path(working_dir, "gendex_server.R"))
+source(file.path(working_dir_shiny, "gendex_server.R"))
 
 ui <- fluidPage(
     titlePanel("GenDex - Genomic Index visualization tool"),
+    add_busy_spinner(spin = "fading-circle"),
     tabsetPanel(selected="Home",
 
-                
         tabPanel(title = "Home",
-                 mainPanel(width = 12,align = "center",
-                    sidebarLayout(
-                        sidebarPanel(
-                            fileInput("probeset_txt", "Choose probeset.txt File", accept = ".txt"),
-                            checkboxInput("header", "Header", TRUE)
-                        ),
-                        mainPanel(
-                            # tableOutput("contents")
-                            DT::dataTableOutput("contents")
-                        )
-                    )
-                           # selectInput("season_year","Select Season",choices=unique(sort(matches$season,
-                           #                                                               decreasing=TRUE)), selected = 2019),
-                           # submitButton("Go"),
-                           # tags$h3("Players table"),
-                           # div(style = "border:1px black solid;width:50%",tableOutput("player_table"))
-        )),
+            sidebarLayout(
+                sidebarPanel(
+                    fileInput("probeset_txt", "Choose probeset.txt file", accept = ".txt"),
+                    checkboxInput("probeSetHeader", "Header", TRUE),
+                    fileInput("OSCHP", "Choose .OSCHP file", accept = ".OSCHP"),
+                    textInput("prefix", "insert prefix for sample")
+                ),
+                mainPanel(
+                    # tableOutput("contents")
+                    DT::dataTableOutput("probesetContent")
+                )
+            )
+        ),
         
         
         tabPanel(title = "CGHcall",
@@ -46,12 +44,11 @@ ui <- fluidPage(
                             selected = "segmentation results")
                         ),
                     ),
-                    # splitLayout(
                     sidebarLayout(
                         sidebarPanel(width = "2",
                             sliderInput("undoSD",
-                                        "Join segments if their difference is greater than this:",
-                                        min = 0.1,
+                                        "This represents the distance under which two segments are fused together:",
+                                        min = 0.01,
                                         max = 10,
                                         value = 3
                             ),
@@ -75,29 +72,30 @@ ui <- fluidPage(
                                         max = 1000,
                                         value = 1
                             ),
-                            # submitButton("Go"),
+                            actionButton("go", "Run")
                             
                         ),
                         mainPanel(width = "10",
                             splitLayout(
                                 verticalLayout(
                                     h2("Segments table"),
-                                    DT::dataTableOutput("segTable")
+                                    DT::dataTableOutput("segTable"),
+                                    downloadButton("download_segTable", "Download")
                                 ),
                                 verticalLayout(
                                     h2("Genes table"),
-                                    DT::dataTableOutput("geneTable")
+                                    DT::dataTableOutput("geneTable"),
+                                    downloadButton("download_genesTable", "Download")
                                 ),
-                                textOutput("debug")
+                                # textOutput("debug")
                             )
                         )
-                        ## segs table,
-                        ## genes table
                     )
                 )
-                      # tags$h3("Team Wins & Points"),
-                      # div(style = "float:left;width:36%;",plotOutput("wins_bar_plot")),
-                      # div(style = "float:right;width:64%;",plotOutput("points_bar_plot"))
+
+
+
+
             )),
         tabPanel(title = "ASCAT",
             mainPanel(width = 12,align = "center",

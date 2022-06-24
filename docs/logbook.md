@@ -2861,9 +2861,23 @@ J'ai placé des tableaux factices et des sliders factices pour les paramètres.
 
 
 # <span style="color:#999900"> jeudi 23/06/2022
-arr 9h10; 30 min pause
+arr 9h10; 30 min pause; départ 19h50
 
 J'ai relié le tableau de segments à la segtable générée par le pipeline de CGHcall.
-J'essaie de relier le plot de shiny avec plotSegTable, mais ça ne marche pas: dans renderPlot, je fais plotSegTable, qui contient, à un moment, colnames(segTable) = c([...]). or, ça renvoie une erreur, car segTable est à ce moment-là englobée dans reactive({}). Je retire cette étape de renommage en donnant les bons noms de colonne de base. en fait, si les colonnes sont bien nommées, le renommage n'est pas fait; dans le cas contraire, le renommage est appliqué.
-
+J'essaie de relier le plot de shiny avec plotSegTable, mais ça ne marche pas: dans renderPlot, je fais plotSegTable, qui contient, à un moment, colnames(segTable) = c([...]). or, ça renvoie une erreur, car segTable est à ce moment-là englobée dans reactive({}). Je vais retirer cette étape de renommage en donnant les bons noms de colonne de base. Ce que je veux faire est: si les colonnes sont bien nommées, le renommage n'est pas fait; dans le cas contraire, le renommage est appliqué.
+edit: je n'ai pas eu besoin de faire ça car le problème était autre:
 problème résolu: dans shiny, si tu fais x = reactive({ expression qui retourne la valeur y }), x ne prend pas la valeur y et est à la place "reactive({ expression qui retourne la valeur y })". Pour utiliser la valeur y, tu dois faire x(). Logique, x est une *fonction* réactive en fait.
+
+# <span style="color:#999900"> vendredi 24/06/2022
+arr 9h40; 50 min pause; 
+obj: afficher le plot wgv ou le plot proba call de CGHcall , au choix.
+* [ ] voir les noms de colonnes de rawProbesData pour plotter les log Ratio à partir de ce df.
+objs définis avec élodie: 
+* [X] ~~*boutons Run et download --> dossier résultats*~~ [2022-06-24]
+* [X] ~~*home pane: boite de texte où un préfixe peut être entré. ce préfixe est alors utilisé dans les fichiers output pour permettre un suivi de l'échantillon.*~~ [2022-06-24]
+* [ ] faire en sorte que plotSegTables utilise ggplot
+
+
+
+
+

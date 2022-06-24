@@ -308,7 +308,8 @@ if (sys.nframe() == 0){
     alreadyGoodPos=FALSE
     sample = "11-BG"
     resDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
-    pkgs = c("OncoscanR", "rCGH", "CGHcall", "ASCAT")
+    # pkgs = c("OncoscanR", "rCGH", "CGHcall", "ASCAT")
+    pkgs = c("rCGH", "CGHcall", "ASCAT", "OncoscanR")
     
     ## 2: load raw probes data
     probeset_txt_file = paste0(pathProbeData, "/", sample, ".probeset.txt")
@@ -319,8 +320,8 @@ if (sys.nframe() == 0){
     rawPrbData = getNewPos(rawPrbData)
     rawPrbData = rawPrbData[c(1:4, length(rawPrbData))]
     ## 3: plot both
-    png(paste0(resDir, "/", sample, ".png"), width = 800, height = 1000)
-    layout(layout_matrix)
+    # png(paste0(resDir, "/", sample, ".png"), width = 800, height = 1000)
+    # layout(layout_matrix)
     for (pkg in pkgs) {
         print(c("===pkg===: ", pkg))
         segTable = loadSegTable(sample, pkg, resDir)
@@ -330,7 +331,7 @@ if (sys.nframe() == 0){
         plotSegTableForWGV(segTable, sample, savePlot=FALSE, genGrid=FALSE, segColor="dark red", alreadyGoodPos=alreadyGoodPos) # segtables must have these columns: chrom, loc.start, loc.end, CN
         alreadyGoodPos = FALSE
     }
-    dev.off()
+    # dev.off()
     
 }
 
