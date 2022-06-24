@@ -5,7 +5,7 @@ removePointsForQuickPlotting = function(cghDf, pointsToRemove=20) {
     return(cghDfFiltered)
 }
 
-getNewPos_iterative = function(cghDf, lengthOfChrs) {
+getAbspos_probe = function(cghDf, lengthOfChrs) {
     # print(c("cghDf[\"ChrNum\"]: ", cghDf["ChrNum"]))
     currentChr = as.numeric(cghDf["ChrNum"])
     # print(c("currentChr: ", currentChr))
@@ -18,9 +18,9 @@ getNewPos_iterative = function(cghDf, lengthOfChrs) {
     return(newPos)
 }
 
-getNewPos = function(cghDf) {
+getAbspos_probeset = function(cghDf) {
     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
-    cghDf$absPos = apply(cghDf, 1, getNewPos_iterative, lengthOfChrs)
+    cghDf$absPos = apply(cghDf, 1, getAbspos_probe, lengthOfChrs)
     return(cghDf)
 }
 

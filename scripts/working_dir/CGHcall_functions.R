@@ -240,9 +240,28 @@ plotSegTableForWGV = function(currSegTable,currSampleName,resultsDir="delme", sa
     }
 }
 
-plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue", alreadyGoodPos=FALSE){
-    ########### Used by rCGH.R and CGHcall.R ########### 
-    # print(c("value_col: ", value_col))    
+
+#_______________________________________________________clean what's below_______________________________________________________
+getAbspos_seg = function(cghDf, lengthOfChrs) {
+    # print(c("cghDf[\"ChrNum\"]: ", cghDf["ChrNum"]))
+    currentChr = as.numeric(cghDf["chrom"])
+    # print(c("currentChr: ", currentChr))
+    if (currentChr!=1){
+        pos0CurrChr = sum(lengthOfChrs[1:currentChr-1])
+    } else {
+        pos0CurrChr=0
+    }
+    newPos = pos0CurrChr + as.numeric(cghDf["ChrStart"])
+    return(newPos)
+}
+
+getAbspos_segtable = function(cghDf) {
+    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+    cghDf$absPos = apply(cghDf, 1, getSegmentAbspos, lengthOfChrs)
+    return(cghDf)
+}
+
+prepareSegtableToPlotseg = function() {
     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
     ## get endpos of last segment of previous chromosome
     if((seg_df["chrom"]=="X" ) || (seg_df["chrom"]=="Y") || (seg_df["chrom"]==24) || (seg_df["chrom"]==25)){
@@ -259,6 +278,12 @@ plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="
             pos0CurrChr=0
         }
     }
+}
+
+
+
+
+plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue", alreadyGoodPos=FALSE){
     ## drawing a segment on plot for each segment of the genome, using estimated values
     segStartPos = pos0CurrChr + as.numeric(seg_df[["loc.start"]])
     segEndPos = pos0CurrChr + as.numeric(seg_df[["loc.end"]])
@@ -284,6 +309,9 @@ plotSegTableForWGV_GG = function(currSegTable,currSampleName,resultsDir="delme",
     
 
 }
+
+#_______________________________________________________clean what's above_______________________________________________________
+
 
 
 plotSegTables = function(segTablesList, sampleNames, resultsDir, savePlot=TRUE, genGrid=TRUE) {

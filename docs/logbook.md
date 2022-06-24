@@ -2869,13 +2869,19 @@ edit: je n'ai pas eu besoin de faire ça car le problème était autre:
 problème résolu: dans shiny, si tu fais x = reactive({ expression qui retourne la valeur y }), x ne prend pas la valeur y et est à la place "reactive({ expression qui retourne la valeur y })". Pour utiliser la valeur y, tu dois faire x(). Logique, x est une *fonction* réactive en fait.
 
 # <span style="color:#999900"> vendredi 24/06/2022
-arr 9h40; 50 min pause; 
+arr 9h40; 50 min pause; départ 17h30
 obj: afficher le plot wgv ou le plot proba call de CGHcall , au choix.
 * [ ] voir les noms de colonnes de rawProbesData pour plotter les log Ratio à partir de ce df.
 objs définis avec élodie: 
 * [X] ~~*boutons Run et download --> dossier résultats*~~ [2022-06-24]
 * [X] ~~*home pane: boite de texte où un préfixe peut être entré. ce préfixe est alors utilisé dans les fichiers output pour permettre un suivi de l'échantillon.*~~ [2022-06-24]
-* [ ] faire en sorte que plotSegTables utilise ggplot
+* [ ] faire en sorte que plotSegTables utilise ggplot:
+    - dans CGHcall_functions.R, je copie getNewPos() et sa sous-fonction et je les renomme getAbspos_segtable() et getAbspos_seg().
+        objectif: que cette fonction donne à la segTable passée en argument une colonne qui est la position absolue sur le génome
+    - dans CGHcall_functions.R, je prends plotSegTableForWGV() et la renomme plotSeg_rCGH___tochange().
+        objectif: que cette fonction utilise la colonne Position absolue d'une segTable pour afficher les segments altérés à l'aide de ggplot.
+
+    actuellement, getNewPos() est applicable sur des tableaux par sonde. J'ai renommé getNewPos() en getAbspos_probeset() pour plus de clarté.
 
 
 
