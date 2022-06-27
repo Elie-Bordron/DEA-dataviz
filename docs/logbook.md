@@ -2884,6 +2884,8 @@ objs définis avec élodie:
     actuellement, getNewPos() est applicable sur des tableaux par sonde. J'ai renommé getNewPos() en getAbspos_probeset() pour plus de clarté.
 
 
+# <span style="color:#999900"> lundi 27/06/2022
+arr 9h;  
 
 
 

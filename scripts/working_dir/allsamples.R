@@ -93,14 +93,18 @@ if (sys.nframe() == 0){
     GI_table_path = file.path(res_GI_dir, "GI_all_methods.txt")
     GI_table = read.table(GI_table_path, h=T)
     GI_table = dplyr::filter(GI_table, sample!="17-VV")
-
-
     ## remove aberrant values
     GI_table_edited = GI_table
     GI_table_edited = dplyr::mutate(GI_table_edited, GI_ASCAT = replace(GI_ASCAT, GI_ASCAT>200, NA))
     # GI_table_edited = dplyr::mutate(GI_table_edited, GI_rCGH = replace(GI_rCGH, GI_rCGH>80, NA))
     GI_table_edited = addAgilentClass(GI_table_edited)
     GI_cols_edited = dplyr::select(GI_table_edited, c("GI_Agilent", "GI_oncoscanR", "GI_rCGH", "GI_CGHcall", "GI_ASCAT"))
+    ## create df with 2 columns for specific plots
+    GI2col = to2colDf(dplyr::select(GI_table_edited,  c("GI_Agilent", "GI_oncoscanR", "GI_rCGH", "GI_CGHcall", "GI_ASCAT", "AgilentClass")), "AgilentClass")
+    ## add grp for lines
+    unit = c(GI_table_edited$sample)
+    GI2col$lineGrp = rep(unit, 5)
+
     
     ## correlation plots 
     GI_cols = dplyr::select(GI_table, c("GI_Agilent", "GI_oncoscanR", "GI_rCGH", "GI_CGHcall", "GI_ASCAT"))
@@ -120,10 +124,7 @@ if (sys.nframe() == 0){
 
     
     ## plot distribution  of values for each group
-    GI2col = to2colDf(dplyr::select(GI_table_edited,  c("GI_Agilent", "GI_oncoscanR", "GI_rCGH", "GI_CGHcall", "GI_ASCAT", "AgilentClass")), "AgilentClass")
-    ## add grp for lines
-    unit = c(GI_table_edited$sample)
-    GI2col$lineGrp = rep(unit, 5)
+
     f <- ggplot(GI2col, aes(pkg, GI, fill = factor(color)))
     f + geom_dotplot(binaxis = "y", stackdir = "centerwhole", binwidth=2, stroke=NA) + 
         # geom_line() +
@@ -167,7 +168,7 @@ if (sys.nframe() == 0){
     
     ## plot pkgs individually
     row.names(GI_table) = GI_table$sample
-    o = GI_table$GI_oncoscanR
+    # o = GI_table$GI_oncoscanR
     agilent = GI_table$GI_Agilent
     ggplot(data=GI_table, aes(x=GI_Agilent, y=GI_oncoscanR)) + theme_bw()
     plot(GI_table$GI_Agilent, GI_table$GI_oncoscanR, ylab="GI oncoscanR", xlab="GI Agilent")
@@ -192,6 +193,7 @@ if (sys.nframe() == 0){
     
     ## plot runTime
     # GI_table = addAgilentClass(GI_table)
+    ## Get 2-column df with runTime
     runTime2col = to2colDf(dplyr::select(GI_table, contains("runTime")))
     colnames(runTime2col) = c("runTime", "pkg")
     grpNames = unique(runTime2col$pkg)
@@ -270,7 +272,6 @@ if (sys.nframe() == 0){
     ## colors
     customColors = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")
     
-    pathProbeData = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
     ## 1: load probe data for current sample
     loadSegTable = function(sample, pkg, resDir) {
         ## load file
@@ -312,12 +313,13 @@ if (sys.nframe() == 0){
     pkgs = c("rCGH", "CGHcall", "ASCAT", "OncoscanR")
     
     ## 2: load raw probes data
+    pathProbeData = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
     probeset_txt_file = paste0(pathProbeData, "/", sample, ".probeset.txt")
     rawPrbData = read.table(probeset_txt_file, h=TRUE, sep='\t')
     colnames(rawPrbData) = c("ProbeName","ChrNum","ChrStart","Log2Ratio","WeightedLog2Ratio","Allele.Difference","NormalDiploid","BAF")
     rawPrbData = dplyr::filter(rawPrbData, ChrNum<23)
     rawPrbData = removePointsForQuickPlotting(rawPrbData)
-    rawPrbData = getNewPos(rawPrbData)
+    rawPrbData = getAbspos_probeset(rawPrbData)
     rawPrbData = rawPrbData[c(1:4, length(rawPrbData))]
     ## 3: plot both
     # png(paste0(resDir, "/", sample, ".png"), width = 800, height = 1000)
