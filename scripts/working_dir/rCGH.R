@@ -27,7 +27,7 @@ if(F) {
 }
 
 
-pipeline_rCGH = function(sampleName) {
+pipeline_rCGH = function(sampleName, silent = FALSE) {
     # sampleName="3-ES"
     # sampleName="2-AD"
     # sampleName="1-RV"
@@ -52,7 +52,11 @@ pipeline_rCGH = function(sampleName) {
     ## removing probes with Log2Ratio=NaN 
     LRRData = cgh@cnSet
     cgh@cnSet = dplyr::filter(LRRData, !is.na(LRRData["Log2Ratio"]))
-    cghAdj <- hush(rCGH::adjustSignal(cgh, nCores=1, suppOutliers=T, verbose=F, Scale=T))
+    if (silent) {
+        cghAdj <- hush(rCGH::adjustSignal(cgh, nCores=1, suppOutliers=T, verbose=F, Scale=T))
+    } else {
+        cghAdj <- rCGH::adjustSignal(cgh, nCores=1, suppOutliers=T, verbose=F, Scale=T)
+    }
 
     if (F) {
         ### see difference between and after adjusting data
@@ -149,9 +153,10 @@ pipeline_rCGH = function(sampleName) {
 main = function() {
     source(file.path(working_dir, "oncoscanR_functions.R"))
     source(file.path(working_dir, "rCGH_functions.R"))
+    source(file.path(working_dir, "CGHcall_functions.R"))
     ## define paths
-    sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT", "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
-    # sampleNames = c("2-AD", "3-ES")
+    # sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT", "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+    sampleNames = c("2-AD")
     ## initialize list to contain all rCGH objects, and list of segTables
     rCGHResults = list()
     segTables = list()
@@ -166,7 +171,7 @@ main = function() {
     for (s in 1:length(sampleNames)) {
         currSampleName = sampleNames[s]
         print(paste0("processing pipeline for sample ", currSampleName))
-        currCallRes = pipeline_rCGH(currSampleName)
+        currCallRes = pipeline_rCGH(currSampleName, silent=FALSE)
         rCGHResults = append(rCGHResults,list(currCallRes))
         # extract seg table
         if(segsType=="raw") {
@@ -180,6 +185,7 @@ main = function() {
         }
         segTables = append(segTables,list(segTable_rCGH))
     }
+    
     if(segsType == "raw") {
         source(file.path(working_dir, "CGHcall_functions.R"))
         segTables_rCGH = data.frame(segTables[[1]])

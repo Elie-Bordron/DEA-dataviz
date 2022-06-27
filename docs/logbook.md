@@ -2878,7 +2878,7 @@ objs définis avec élodie:
 * [ ] faire en sorte que plotSegTables utilise ggplot:
     - dans CGHcall_functions.R, je copie getNewPos() et sa sous-fonction et je les renomme getAbspos_segtable() et getAbspos_seg().
         ~~* [ ] objectif: que cette fonction donne à la segTable passée en argument une colonne qui est la position absolue sur le génome~~
-        * [ ] objectif: Quand une segTable est construite, lui donner les colonnes abs_startPos et abs_endPos
+        * [X] ~~*objectif: Quand une segTable est construite, lui donner les colonnes abs_startPos et abs_endPos*~~ [2022-06-27]
     - dans CGHcall_functions.R, je prends plotSegTableForWGV() et la renomme plotSeg_rCGH___tochange().
         * [ ] objectif: que cette fonction utilise les colonnes Position absolue (start et stop) d'une segTable pour afficher les segments altérés à l'aide de ggplot.
 
@@ -2894,5 +2894,7 @@ minor changes to allSamples.R in order to test changes for converting plotSegTab
 edit: ASCAT: callData ne contient pas non plus de probeset. j'utilise directement getAbsPos_segTable dessus quand sa segTable est créée.
 CGHcall et rCGH: J'utilise getabspos_probeset() sur le df probeset, puis j'utilise absPos pour créer des colonnes absPos dans la segTable.
 * [X] ~~*CGHcall: la table de segments a absPos pour start et stop  ;   rawProbesValue a absPos. *~~ [2022-06-27]
+* [X] ~~*rCGH: la table de segments a absPos pour start et stop  ;   rawProbesValue a absPos. *~~ [2022-06-27]
+
 
 

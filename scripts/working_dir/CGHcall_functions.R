@@ -222,15 +222,14 @@ plotSegTableForWGV = function(currSegTable,currSampleName,resultsDir="delme", sa
 }
 
 
-#_______________________________________________________clean what's below_______________________________________________________
-
 getAbspos_probe = function(probeSet_row, lengthOfChrs) {
     # Check that it doesn't match any non-number
     numbers_only <- function(x) !grepl("\\D", x)
     # print(c("probeSet_row: ", probeSet_row))
-    # print(c("probeSet_row[\"ChrNum\"]: ", probeSet_row["ChrNum"]))
-    if(numbers_only(probeSet_row["ChrNum"])) {
-        currentChr = as.numeric(probeSet_row["ChrNum"])
+    currentChr = probeSet_row["ChrNum"]
+    currentChr = stringr::str_replace(currentChr, " ", "")
+    if(numbers_only(currentChr)) {
+        currentChr = as.numeric(currentChr)
     } else {
         ## this works is string is like "chr13"; doesn't work for i.e. "Chr13"
         currentChr = stringr::str_split(probeSet_row["ChrNum"], "chr")[[1]]
@@ -247,6 +246,7 @@ getAbspos_probe = function(probeSet_row, lengthOfChrs) {
 }
 
 getAbspos_probeset = function(probeSet) {
+    print("retrieving absolute position for probeSet...")
     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
     probeSet$absPos = apply(probeSet, 1, getAbspos_probe, lengthOfChrs)
     return(probeSet)
@@ -280,40 +280,39 @@ getAbspos_segtable = function(segTable) {
     return(segTable)
 }
 
-prepareSegtableToPlotseg = function() {
-    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
-    ## get endpos of last segment of previous chromosome
-    if((seg_df["chrom"]=="X" ) || (seg_df["chrom"]=="Y") || (seg_df["chrom"]==24) || (seg_df["chrom"]==25)){
-        pos0CurrChr = sum(lengthOfChrs[1:22]) ## 22 because we exclude sex chromosomes
-    }else {
-        # print(c("seg_df['chrom']: ", seg_df["chrom"]))
-        # print(c("class(seg_df['chrom']): ", class(seg_df["chrom"])))
-        currChromosome = seg_df["chrom"]
-        currChromosome = as.numeric(currChromosome)
-        # print(c("currChromosome: ", currChromosome))
-        if (currChromosome!=1){
-            pos0CurrChr = sum(lengthOfChrs[1:currChromosome-1])
-        } else {
-            pos0CurrChr=0
-        }
-    }
-}
+
+#_______________________________________________________clean what's below_______________________________________________________
+
+# prepareSegtableToPlotseg = function() {
+#     ###                         ###
+#     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+#     ## get endpos of last segment of previous chromosome
+#     if((seg_df["chrom"]=="X" ) || (seg_df["chrom"]=="Y") || (seg_df["chrom"]==24) || (seg_df["chrom"]==25)){
+#         pos0CurrChr = sum(lengthOfChrs[1:22]) ## 22 because we exclude sex chromosomes
+#     }else {
+#         # print(c("seg_df['chrom']: ", seg_df["chrom"]))
+#         # print(c("class(seg_df['chrom']): ", class(seg_df["chrom"])))
+#         currChromosome = seg_df["chrom"]
+#         currChromosome = as.numeric(currChromosome)
+#         # print(c("currChromosome: ", currChromosome))
+#         if (currChromosome!=1){
+#             pos0CurrChr = sum(lengthOfChrs[1:currChromosome-1])
+#         } else {
+#             pos0CurrChr=0
+#         }
+#     }
+# }
 
 
 
 
-plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue", alreadyGoodPos=FALSE){
+plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue"){
     ## drawing a segment on plot for each segment of the genome, using estimated values
-    segStartPos = pos0CurrChr + as.numeric(seg_df[["loc.start"]])
-    segEndPos = pos0CurrChr + as.numeric(seg_df[["loc.end"]])
-    if(alreadyGoodPos) {
-        segStartPos = as.numeric(seg_df[["loc.start"]])
-        segEndPos = as.numeric(seg_df[["loc.end"]])
-    }
-    # estimCN = as.numeric(seg_df[["Log2Ratio"]])
+    segStartPos = as.numeric(seg_df[["absStartPos"]])
+    segEndPos = as.numeric(seg_df[["absEndPos"]])
+    estimCN = as.numeric(seg_df[["Log2Ratio"]])
     # estimCN = as.numeric(seg_df[["estimCopy"]])
     # print(c("seg_df[[value_col]]: ", seg_df[[value_col]]))
-    estimCN = as.numeric(seg_df[[value_col]])
     # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
     segments(segStartPos, estimCN, segEndPos, estimCN, col=segColor, lwd=2)
     if(indivSeg) {
@@ -324,8 +323,11 @@ plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="
 }
 
 
-plotSegTableForWGV_GG = function(currSegTable,currSampleName,resultsDir="delme", savePlot=FALSE, genGrid=TRUE, segColor="#00BFC4", ylim = c(-2,3), mainTitlePrefix = "") {
-    
+plotSegTableForWGV_GG = function(currSegTable,rawProbesData,currSampleName,resultsDir="delme", savePlot=FALSE, genGrid=TRUE, segColor="#00BFC4", ylim = c(-2,3), mainTitlePrefix = "") {
+    ### plot LRR points
+    plot(y=rawPrbData$Log2Ratio, x=rawPrbData$absPos, pch = 20, cex=0.01, col="dark grey", xlab = "", ylab = "log Ratio", main = paste0(pkg, "  ", sample), ylim = c(-2,2))
+    ### plot segments
+    apply(currSegTable, 1, plotSeg_rCGH___tochange, "CN", indivSeg=TRUE, segColor=segColor)
 
 }
 
