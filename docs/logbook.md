@@ -2886,12 +2886,13 @@ objs définis avec élodie:
 
 
 # <span style="color:#999900"> lundi 27/06/2022
-arr 9h;  
+arr 9h; 40 min pause
 minor changes to allSamples.R in order to test changes for converting plotSegTables from base R to ggplot2
 ```       Rihab Azmani est présente le mardi et le jeudi, et un lundi sur deux. Elle fait beaucoup de Shiny         ```
 * [ ] objectif: Quand une segTable est construite, lui donner les colonnes abs_startPos et abs_endPos
 ~~ASCAT: segData ne contient pas de dataframe équivalent aux données par sonde. callData, oui. j'utilise getabspos_probeset() dessus. En conséquence, quand je construis la segtable d'ASCAT, j'utilise la colonne absPos ainsi créée. ~~
 edit: ASCAT: callData ne contient pas non plus de probeset. j'utilise directement getAbsPos_segTable dessus quand sa segTable est créée.
 CGHcall et rCGH: J'utilise getabspos_probeset() sur le df probeset, puis j'utilise absPos pour créer des colonnes absPos dans la segTable.
+* [X] ~~*CGHcall: la table de segments a absPos pour start et stop  ;   rawProbesValue a absPos. *~~ [2022-06-27]
 
 

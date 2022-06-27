@@ -121,9 +121,9 @@ main = function() {
     CGHcall_segments = getPrbLvSegments(callAllSamples)
     
     ## get segments tables
-    # source(file.path(working_dir, "CGHcall_functions.R"))
     # source(file.path(working_dir, "rCGH_functions.R"))
     # source(file.path(working_dir, "oncoscanR_functions.R"))
+    source(file.path(working_dir, "CGHcall_functions.R"))
     allSegTables = getSegTables(CGHcall_segments,params$sampleNames)
     ## plot called data on all profiles
     plotSegTables(allSegTables,params$sampleNames,resultsDir)

@@ -25,21 +25,13 @@ cleanProbeset = function(pathToMultiProbeset="allSamples_2_3_centeredProbeset.tx
 
 getSeg = function(currSampleSegs, s){
     ### name of value column must be "CN"
-    i=s
-    # print(c("s: ", s))
-    # print(c("i: ", i))
+    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+
+    i <- s
     segToReturn = list()
-    # segToReturn$currSegChr = chrVec[s]
-    # print(c("currSegChr: ", currSegChr))
     segToReturn$currSegChr = currSampleSegs[s,]$Chromosome
     segToReturn$currSegVal = currSampleSegs$CN[s]
-    # if(is.na(segToReturn$currSegVal)) {
-    #     segToReturn$currSegVal = "NA"
-    # }
-
-    # i_is_not_last_pos = i<length(currSampleSegs[,1])
-    # CN_nextPos_equals_CN_currPos = currSampleSegs$CN[i+1]==segToReturn$currSegVal
-    # chr_nextPos_equals_chr_currPos = currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr
+    
     segVal_equals_probeVal=TRUE
     while((i<length(currSampleSegs[,1])) && (segVal_equals_probeVal) && (currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr)) {
         i=i+1
@@ -61,66 +53,49 @@ getSeg = function(currSampleSegs, s){
             }
         }
 
-        if (FALSE) {
-            if(! i<length(currSampleSegs[,1])) {
-                print("end of genome")
-                print(c("probeVal: ", probeVal))
-                print(c("segVal: ", segVal))            
-            } else if (! segVal_equals_probeVal) {
-                print("value discordance")
-                print(c("probeVal: ", probeVal))
-                print(c("segVal: ", segVal))                
-            } else if(! currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr) {
-                print("chr discordance")
-                print(c("probeVal: ", probeVal))
-                print(c("segVal: ", segVal))            
-            }
-        }
-
-
-        if(i>9770) {
-            # print("\n")
-            # print(c("i: ", i))
-            # print(c("segVal_equals_probeVal: ", segVal_equals_probeVal))
-            # print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
-            # print(c("currSampleSegs$CN[i+1]: ", currSampleSegs$CN[i+1]))
-            # print(c("segToReturn$currSegVal: ", segToReturn$currSegVal))
-            # print(c("currSampleSegs[i+1,]$Chromosome: ", currSampleSegs[i+1,]$Chromosome))
-            # print(c("segToReturn$currSegChr: ", segToReturn$currSegChr))
-        }
+        # if (FALSE) {
+        #     if(! i<length(currSampleSegs[,1])) {
+        #         print("end of genome")
+        #         print(c("probeVal: ", probeVal))
+        #         print(c("segVal: ", segVal))            
+        #     } else if (! segVal_equals_probeVal) {
+        #         print("value discordance")
+        #         print(c("probeVal: ", probeVal))
+        #         print(c("segVal: ", segVal))                
+        #     } else if(! currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr) {
+        #         print("chr discordance")
+        #         print(c("probeVal: ", probeVal))
+        #         print(c("segVal: ", segVal))            
+        #     }
+        # }
     }
-    # addNextPosToSeg = TRUE
-    # while(addNextPosToSeg) {
-    #     i=i+1
-    #     i_is_not_last_pos = i<length(currSampleSegs[,1])
-    #     CN_nextPos_equals_CN_currPos = currSampleSegs$CN[i+1]==segToReturn$currSegVal
-    #     chr_nextPos_equals_chr_currPos = currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr
-    #     print(c("i_is_not_last_pos", i_is_not_last_pos))
-    #     print(c("CN_nextPos_equals_CN_currPos", CN_nextPos_equals_CN_currPos))
-    #     print(c("chr_nextPos_equals_chr_currPos", chr_nextPos_equals_chr_currPos))
-    #     addNextPosToSeg = ((i_is_not_last_pos) && (CN_nextPos_equals_CN_currPos) && (chr_nextPos_equals_chr_currPos))
-    # }
-    # print(c("chrVec[i+1]: ", chrVec[i+1]))
-    # print(c("chrVec[i]: ", chrVec[i]))
-    # print(c("chrVec[i-1]: ", chrVec[i-1]))
     segToReturn$currSegStart = currSampleSegs[s,]$Start
     segToReturn$currSegEnd = currSampleSegs[i,]$End
+    print(c("segToReturn$currSegCh: ", segToReturn$currSegCh))
+        if (segToReturn$currSegCh==1){
+        pos0CurrChr=0
+    } else {
+        pos0CurrChr = sum(lengthOfChrs[1:segToReturn$currSegChr-1])
+    }
+    segToReturn$currSegAbsStart = currSampleSegs[s,]$Start + pos0CurrChr
+    segToReturn$currSegAbsEnd = currSampleSegs[i,]$End + pos0CurrChr
     segToReturn$currSegNbProbes = i-(s-1)
     segToReturn$i = i
     # print(c("class(currSegVal)", class(currSegVal)))
     # segToReturn = dplyr::select(segToReturn, c("currSegChr", "currSegStart", "currSegEnd", "currSegVal", "currSegNbProbes", "i"))
-    segToReturn = segToReturn[c("currSegChr", "currSegStart", "currSegEnd", "currSegVal", "currSegNbProbes", "i")]
+    segToReturn = segToReturn[c("currSegChr", "currSegStart", "currSegEnd", "currSegAbsStart", "currSegAbsEnd", "currSegVal", "currSegNbProbes", "i")]
     # print(c("segToReturn: ", segToReturn))
     # print(c("one segment: ", currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
-    # return(list(currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
+
     return(segToReturn)
+    # return(list(currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
 }
 
 get_seg_table = function(currSampleSegs) {
     ### name of value column must be "CN"
     ## initialize by-segments table 
-    segTableBySegment = data.frame(matrix(ncol = 5, nrow = 0))
-    colnames(segTableBySegment) = c("Chromosome", "Start", "End", "Value", "nbProbes")
+    segTableBySegment = data.frame(matrix(ncol = 7, nrow = 0))
+    colnames(segTableBySegment) = c("Chromosome", "Start", "End", "absStart", "absEnd", "Value", "nbProbes")
     segId = 1
     s=1 # start of segment
     i=1 # end of segment
@@ -132,7 +107,7 @@ get_seg_table = function(currSampleSegs) {
         resSeg = getSeg(currSampleSegs, s)
         # print(c("resSeg[1:5]: ", resSeg[1:5]))
         i = resSeg$i
-        segTableBySegment[segId,] = resSeg[1:5]
+        segTableBySegment[segId,] = resSeg[1:length(resSeg)-1] # all elmts of resSeg except last one
         # print(c("resSeg: ", resSeg))
         s = resSeg[[length(resSeg)]]+1
         segId = segId+1
@@ -150,7 +125,13 @@ getSegTables = function(segTableByProbe, sampleNames) {
         # if(sample=="9-LA") {
             print(paste0("==================================== sample = ", sample," ===================================="))
             currSample_SegTableByProbe = dplyr::select(segTableByProbe, all_of(c( "Chromosome", "Start", "End", sample)))
-            colnames(currSample_SegTableByProbe) = c( "Chromosome", "Start", "End", "CN")
+            ### add absPos column to probeSet
+            colnames(currSample_SegTableByProbe)[c(1:3)] = c("ChrNum", "ChrStart", "ChrEnd")
+            currSample_SegTableByProbe = getAbspos_probeset(currSample_SegTableByProbe)
+            
+            colnames(currSample_SegTableByProbe) = c( "Chromosome", "Start", "End", "CN", "absPos")
+
+
             # print(head(segTableByProbe))
             # print(c("currSample_SegTableByProbe: ", currSample_SegTableByProbe))
             # currSample_SegTableByProbe = cbind(rowsInfo, segTableByProbe[[sample]])
@@ -246,7 +227,7 @@ plotSegTableForWGV = function(currSegTable,currSampleName,resultsDir="delme", sa
 getAbspos_probe = function(probeSet_row, lengthOfChrs) {
     # Check that it doesn't match any non-number
     numbers_only <- function(x) !grepl("\\D", x)
-    print(c("probeSet_row: ", probeSet_row))
+    # print(c("probeSet_row: ", probeSet_row))
     # print(c("probeSet_row[\"ChrNum\"]: ", probeSet_row["ChrNum"]))
     if(numbers_only(probeSet_row["ChrNum"])) {
         currentChr = as.numeric(probeSet_row["ChrNum"])
@@ -261,7 +242,7 @@ getAbspos_probe = function(probeSet_row, lengthOfChrs) {
     } else {
         pos0CurrChr = sum(lengthOfChrs[1:currentChr-1])
     }
-    newPos = pos0CurrChr + as.numeric(probeSet["ChrStart"])
+    newPos = pos0CurrChr + as.numeric(probeSet_row["ChrStart"])
     return(newPos)
 }
 

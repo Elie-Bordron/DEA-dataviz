@@ -71,7 +71,6 @@ pipelineASCAT = function(sampleName,outputFolder, ascatFolder, penalty=50) {
     source(file.path(working_dir,"ASCAT_functions.R"))
     segData =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = penalty, out.dir=outputFolder) # 50 is EaCoN default value
     # segData =  custom_ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50, out.dir=outputFolder) # 50 is EaCoN default value
-    getAbsPos_probeset()
     
     # estimating copy number & ploidy & cellularity using ASCAT::ascat.runAscat. Also generates rawprofile, ascatprofile and sunrise plots
     ## if sample has not a best gamma value known in the reference file, process it with all gammas and update the file.
