@@ -42,7 +42,7 @@ pipeline_rCGH = function(sampleName) {
     ## remove sex chromosomes data
     cgh@cnSet = dplyr::filter(cgh@cnSet, ChrNum<23)
     ##-- create a column "absolute position" for better plots
-    cgh@cnSet = getNewPos(cgh@cnSet)
+    cgh@cnSet = getAbspos_probeset(cgh@cnSet)
     # Organize cghSet columns in the same layout as test rCGH file
     cgh@cnSet = cgh@cnSet %>% mutate(SmoothSignal=rep(NA, length(cgh@cnSet[,1])), .before=Allele.Difference)
     colnames(cgh@cnSet) = c("ProbeName","ChrNum","ChrStart","Log2Ratio","WeightedLog2Ratio","SmoothSignal","Allele.Difference","NormalDiploid","BAF","absPos")

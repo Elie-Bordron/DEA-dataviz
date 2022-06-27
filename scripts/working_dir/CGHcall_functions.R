@@ -242,23 +242,61 @@ plotSegTableForWGV = function(currSegTable,currSampleName,resultsDir="delme", sa
 
 
 #_______________________________________________________clean what's below_______________________________________________________
-getAbspos_seg = function(cghDf, lengthOfChrs) {
-    # print(c("cghDf[\"ChrNum\"]: ", cghDf["ChrNum"]))
-    currentChr = as.numeric(cghDf["chrom"])
-    # print(c("currentChr: ", currentChr))
-    if (currentChr!=1){
-        pos0CurrChr = sum(lengthOfChrs[1:currentChr-1])
+
+getAbspos_probe = function(probeSet_row, lengthOfChrs) {
+    # Check that it doesn't match any non-number
+    numbers_only <- function(x) !grepl("\\D", x)
+    print(c("probeSet_row: ", probeSet_row))
+    # print(c("probeSet_row[\"ChrNum\"]: ", probeSet_row["ChrNum"]))
+    if(numbers_only(probeSet_row["ChrNum"])) {
+        currentChr = as.numeric(probeSet_row["ChrNum"])
     } else {
-        pos0CurrChr=0
+        ## this works is string is like "chr13"; doesn't work for i.e. "Chr13"
+        currentChr = stringr::str_split(probeSet_row["ChrNum"], "chr")[[1]]
+        currentChr = as.numeric(currentChr[[2]])
     }
-    newPos = pos0CurrChr + as.numeric(cghDf["ChrStart"])
+    currentChr
+    if (currentChr==1){
+        pos0CurrChr=0
+    } else {
+        pos0CurrChr = sum(lengthOfChrs[1:currentChr-1])
+    }
+    newPos = pos0CurrChr + as.numeric(probeSet["ChrStart"])
     return(newPos)
 }
 
-getAbspos_segtable = function(cghDf) {
+getAbspos_probeset = function(probeSet) {
     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
-    cghDf$absPos = apply(cghDf, 1, getSegmentAbspos, lengthOfChrs)
-    return(cghDf)
+    probeSet$absPos = apply(probeSet, 1, getAbspos_probe, lengthOfChrs)
+    return(probeSet)
+}
+
+getAbspos_seg = function(segment, relativePos, lengthOfChrs) {
+    # Check that it doesn't match any non-number
+    numbers_only <- function(x) !grepl("\\D", x)
+    print(c("segment: ", segment))
+    # print(c("segment[\"ChrNum\"]: ", segment["ChrNum"]))
+    if(numbers_only(segment["ChrNum"])) {
+        currentChr = as.numeric(segment["ChrNum"])
+    } else {
+        ## this works if segment["ChrNum"] is like "chr13"; doesn't work for i.e. "Chr13"
+        currentChr = stringr::str_split(segment["ChrNum"], "chr")[[1]]
+        currentChr = as.numeric(currentChr[[2]])
+    }
+    if (currentChr==1){
+        pos0CurrChr=0
+    } else {
+        pos0CurrChr = sum(lengthOfChrs[1:currentChr-1])
+    }
+    absPos = pos0CurrChr + as.numeric(segment[relativePos])
+    return(absPos)
+}
+
+getAbspos_segtable = function(segTable) {
+    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+    segTable$absStartPos = apply(segTable, 1, getAbspos_seg, "ChrStart", lengthOfChrs)
+    segTable$absEndPos = apply(segTable, 1, getAbspos_seg, "ChrEnd", lengthOfChrs)
+    return(segTable)
 }
 
 prepareSegtableToPlotseg = function() {

@@ -2877,15 +2877,21 @@ objs définis avec élodie:
 * [X] ~~*home pane: boite de texte où un préfixe peut être entré. ce préfixe est alors utilisé dans les fichiers output pour permettre un suivi de l'échantillon.*~~ [2022-06-24]
 * [ ] faire en sorte que plotSegTables utilise ggplot:
     - dans CGHcall_functions.R, je copie getNewPos() et sa sous-fonction et je les renomme getAbspos_segtable() et getAbspos_seg().
-        objectif: que cette fonction donne à la segTable passée en argument une colonne qui est la position absolue sur le génome
+        ~~* [ ] objectif: que cette fonction donne à la segTable passée en argument une colonne qui est la position absolue sur le génome~~
+        * [ ] objectif: Quand une segTable est construite, lui donner les colonnes abs_startPos et abs_endPos
     - dans CGHcall_functions.R, je prends plotSegTableForWGV() et la renomme plotSeg_rCGH___tochange().
-        objectif: que cette fonction utilise la colonne Position absolue d'une segTable pour afficher les segments altérés à l'aide de ggplot.
+        * [ ] objectif: que cette fonction utilise les colonnes Position absolue (start et stop) d'une segTable pour afficher les segments altérés à l'aide de ggplot.
 
     actuellement, getNewPos() est applicable sur des tableaux par sonde. J'ai renommé getNewPos() en getAbspos_probeset() pour plus de clarté.
 
 
 # <span style="color:#999900"> lundi 27/06/2022
 arr 9h;  
-
+minor changes to allSamples.R in order to test changes for converting plotSegTables from base R to ggplot2
+```       Rihab Azmani est présente le mardi et le jeudi, et un lundi sur deux. Elle fait beaucoup de Shiny         ```
+* [ ] objectif: Quand une segTable est construite, lui donner les colonnes abs_startPos et abs_endPos
+~~ASCAT: segData ne contient pas de dataframe équivalent aux données par sonde. callData, oui. j'utilise getabspos_probeset() dessus. En conséquence, quand je construis la segtable d'ASCAT, j'utilise la colonne absPos ainsi créée. ~~
+edit: ASCAT: callData ne contient pas non plus de probeset. j'utilise directement getAbsPos_segTable dessus quand sa segTable est créée.
+CGHcall et rCGH: J'utilise getabspos_probeset() sur le df probeset, puis j'utilise absPos pour créer des colonnes absPos dans la segTable.
 
 

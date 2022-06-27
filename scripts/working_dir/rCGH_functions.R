@@ -5,24 +5,35 @@ removePointsForQuickPlotting = function(cghDf, pointsToRemove=20) {
     return(cghDfFiltered)
 }
 
-getAbspos_probe = function(cghDf, lengthOfChrs) {
-    # print(c("cghDf[\"ChrNum\"]: ", cghDf["ChrNum"]))
-    currentChr = as.numeric(cghDf["ChrNum"])
-    # print(c("currentChr: ", currentChr))
-    if (currentChr!=1){
-        pos0CurrChr = sum(lengthOfChrs[1:currentChr-1])
-    } else {
-        pos0CurrChr=0
-    }
-    newPos = pos0CurrChr + as.numeric(cghDf["ChrStart"])
-    return(newPos)
-}
 
-getAbspos_probeset = function(cghDf) {
-    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
-    cghDf$absPos = apply(cghDf, 1, getAbspos_probe, lengthOfChrs)
-    return(cghDf)
-}
+###########These functions are now in CGHcall.R
+# getAbspos_probe = function(probeSet, lengthOfChrs) {
+#     # Check that it doesn't match any non-number
+#     numbers_only <- function(x) !grepl("\\D", x)
+#     print(c("probeSet: ", probeSet))
+#     # print(c("probeSet[\"ChrNum\"]: ", probeSet["ChrNum"]))
+#     if(numbers_only(probeSet["ChrNum"])) {
+#         currentChr = as.numeric(probeSet["ChrNum"])
+#     } else {
+#         ## this works is string is like "chr13"; doesn't work for i.e. "Chr13"
+#         currentChr = stringr::str_split(probeSet["ChrNum"], "chr")[[1]]
+#         currentChr = as.numeric(currentChr[[2]])
+#     }
+#     currentChr
+#     if (currentChr==1){
+#         pos0CurrChr=0
+#     } else {
+#         pos0CurrChr = sum(lengthOfChrs[1:currentChr-1])
+#     }
+#     newPos = pos0CurrChr + as.numeric(probeSet["ChrStart"])
+#     return(newPos)
+# }
+
+# getAbspos_probeset = function(probeSet) {
+#     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+#     probeSet$absPos = apply(probeSet, 1, getAbspos_probe, lengthOfChrs)
+#     return(probeSet)
+# }
 
 plotSeg_rCGH = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue", alreadyGoodPos=FALSE){
     ########### Used by rCGH.R and CGHcall.R ########### 
