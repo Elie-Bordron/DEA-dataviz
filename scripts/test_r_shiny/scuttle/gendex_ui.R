@@ -91,22 +91,26 @@ ui <- fluidPage(useShinyjs(),
                                                 max = 1000,
                                                 value = 1
                             )),
-                            wellPanel(actionButton("go", "Run"))
+                            wellPanel(actionButton("go", "Run")),
+                            # wellPanel(actionButton("goPlot", "Run plot")),
                         ),
                         mainPanel(width = "10",
-                            textOutput("GItext"),
-                            splitLayout(
-                                verticalLayout(
-                                    h2("Segments table"),
-                                    DT::dataTableOutput("segTable"),
-                                    downloadButton("download_segTable", "Download")
-                                ),
-                                verticalLayout(
-                                    h2("Genes table"),
-                                    DT::dataTableOutput("geneTable"),
-                                    downloadButton("download_genesTable", "Download"),
-                                ),
-                                # textOutput("debug")
+                            verticalLayout(
+                                # h3(textOutput("GItext", container=pre)),
+                                wellPanel(h3(textOutput("GItext"))),
+                                splitLayout(
+                                    verticalLayout(
+                                        h2("Segments table"),
+                                        DT::dataTableOutput("segTable"),
+                                        downloadButton("download_segTable", "Download")
+                                    ),
+                                    verticalLayout(
+                                        h2("Genes table"),
+                                        DT::dataTableOutput("geneTable"),
+                                        downloadButton("download_genesTable", "Download"),
+                                    ),
+                                    # textOutput("debug")
+                                )
                             )
                         )
                     )

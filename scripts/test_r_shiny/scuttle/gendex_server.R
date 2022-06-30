@@ -24,6 +24,8 @@ server <- function(input, output) {
     })
     
     ######## CGHcall PANE
+
+    ### results computing
     rawProbesData = reactive({
         print("receiving rawProbesData")
         file <- input$probeset_txt
@@ -47,7 +49,6 @@ server <- function(input, output) {
         # print(c("rawProbesData: ", rawProbesData))
         ProbeData_filtered
     })
-
     baseparams = getDefParams()
     params <- reactive({
         print("initializing params")
@@ -59,18 +60,20 @@ server <- function(input, output) {
         baseparams$sampleNames = colnames(rawProbesData())[dim(rawProbesData())[2]]
         return(baseparams)
     })
-    resPipeline = reactive({  
+    # resPipeline = reactive({  
+    resPipeline = eventReactive(input$go, {  
         print("calculating pipeline result")
         # pipelineCGHcall(rawProbesData(), params())
         suppressMessages(suppressWarnings(pipelineCGHcall(rawProbesData(), params())))
     })
     CGHcall_segments = reactive({
         print("Extracting probe-level segments from CGHcall result")
-        print(c("resPipeline(): ", resPipeline()))
+        # print(c("resPipeline(): ", resPipeline()))
         prbLvSegs = getPrbLvSegmentsFromCallObj(resPipeline())  
         prbLvSegs
     })
-    segTable_calculated = eventReactive(input$go,{
+    # segTable_calculated = eventReactive(input$go,{
+    segTable_calculated = reactive({
         print("Extracting segments table from probe-level segments")
         params_obj = params()
         segtab = getSegTables(CGHcall_segments(),params_obj$sampleNames)[[1]]
@@ -82,6 +85,7 @@ server <- function(input, output) {
 
     ### plot
     chosenPlot <- reactive({
+    # chosenPlot <- eventReactive(input$goPlot, {
         switch(input$plotChoice,
             profile={
                 params = params()
@@ -91,7 +95,7 @@ server <- function(input, output) {
                 colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
                 currSampleName = params$sampleNames
                 colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
-                removePoints=100
+                removePoints=10
                 plotSegTableForWGV_GG(segTable_calculated(), probeData, removePoints)
                 # plotSegTable(segTable_calculated(),params$sampleNames,savePlot=FALSE)
                 # plot(c(5,5,5,5,5,5,5,5,6,5))
@@ -105,30 +109,8 @@ server <- function(input, output) {
     })
 
     output$profilePlot = renderPlot(chosenPlot())
+    # output$profilePlot = eventReactive(input$goPlot, {renderPlot(chosenPlot())})
 
-        # switch(input$select.profile.group,
-        #     ATAC={
-        #         selectInput("ATAC.chromHMM","",choices=c("opening","closing","stable","multi.baits"))
-        #     },
-        #     clusters.tSNE={
-        #         selectInput("clusters.chromHMM","",choices=c(names(chromHMM.G1)[grep("^cl",names(chromHMM.G1))],"selection.tSNE"))
-        #     }
-        #     )
-    
-    # # output$probaPlot <- renderPlot({ plot(c(5,6,9,3,6,5,52,3,6)) })
-    # output$probaPlot <- renderPlot({
-    #     })
-    
-    # observeEvent(input$plotChoice,{
-    #             req(input$plotChoice)
-    #             if(input$plotChoice == "proba"){
-    #                 hide("profilePlot")
-    #                 show("probaPlot")
-    #             }else{
-    #                 hide("probaPlot")
-    #                 show("profilePlot")
-    #             }
-    #         })
     
     ### Segments table
     output$segTable = DT::renderDataTable({ segTable_calculated() })
@@ -153,7 +135,7 @@ server <- function(input, output) {
     ### GI output as text
     output$GItext <- renderText({
         resGI = calcGI_CGHcall(segTable_calculated()) 
-        paste0(resGI[[2]], " alterations were found on ", resGI[[3]], " chromosomes. GI=", round(resGI[[1]],1) )
+        paste0(resGI[[2]], " alterations were found on ", resGI[[3]], " chromosomes. Genomic Index=", round(resGI[[1]],1) )
     }) 
     
     ######## Summary PANE

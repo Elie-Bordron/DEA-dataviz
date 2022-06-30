@@ -311,6 +311,7 @@ plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="
 plotSegTableForWGV_GG = function(currSegTable,rawProbesData, segColor="#3e9643", ylim = c(-2,3), mainTitlePrefix = "", rmPts=10) {
     rawProbesData_toPlot = rawProbesData
     if(dim(rawProbesData_toPlot)[2]>10**4) {rawProbesData_toPlot = removePointsForQuickPlotting(rawProbesData_toPlot, rmPts)}
+    else if(dim(rawProbesData_toPlot)[2]>10**5) {rawProbesData_toPlot = removePointsForQuickPlotting(rawProbesData_toPlot, rmPts*10)}
     ### plot LRR points
     gg = ggplot()
     gg = gg + geom_point(data=rawProbesData, aes(y=Log2Ratio, x=absPos), size=0.01, shape=20)
@@ -319,6 +320,11 @@ plotSegTableForWGV_GG = function(currSegTable,rawProbesData, segColor="#3e9643",
     ### plot segments
     gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Value, yend=Value), size=2, color=segColor)
     ### color Chromosome regions
+    # colrVec = rep(c("pink", "orange", "green"), 7); colrVec = c (colrVec, "pink", "orange")
+    # print(c("unique(rawProbesData_toPlot$CHROMOSOME): ", unique(rawProbesData_toPlot$CHROMOSOME)))
+    # names(colrVec) = unique(rawProbesData_toPlot$CHROMOSOME)
+    
+    
     
     
     gg = gg + theme_bw()
@@ -344,7 +350,7 @@ plotSegTables = function(segTablesList, sampleNames, resultsDir, savePlot=TRUE, 
 getPrbLvSegmentsFromCallObj = function(callRes, segsType="raw") {
     ### callRes must be a cghCall object containing results of one or more samples, but can't be a list of cghCall objects
     print(c("callRes: ", callRes))
-    print(c("class(callRes): ", class(callRes)))
+    # print(c("class(callRes): ", class(callRes)))
     rowsInfo = fData(callRes)
     if(segsType=="CN") {
         sampleNames = colnames(callRes@assayData[["calls"]])

@@ -2928,3 +2928,5 @@ dans le plot que j'ai mis en place, je garde 1 point sur 100 si le nombre de poi
 
 # <span style="color:#999900"> jeudi 30/06/2022
 arr 9h10; 
+
+Le plot ne lance plus le calcul avant que le bouton run ne soit cliqué
