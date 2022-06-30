@@ -81,6 +81,7 @@ server <- function(input, output) {
         print(c("CGHcall_segments(): ", CGHcall_segments()))
         CGHcall_segments = prepareSegtableByProbe(CGHcall_segments())
         segtab = get_seg_table(CGHcall_segments)
+        # segtab$CN = segtab$CN + 2
         segtab
     })
     
@@ -117,7 +118,13 @@ server <- function(input, output) {
 
     
     ### Segments table
-    output$segTable = DT::renderDataTable({ segTable_calculated() })
+
+    output$segTable = DT::renderDataTable({
+        segtab = segTable_calculated() 
+        # segtabToDisplay = dplyr::select(segtab, -contains("abs"))
+        segtabToDisplay$CN = segtabToDisplay$CN + 2
+        segtabToDisplay
+        })
     output$download_segTable <- downloadHandler(
         filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_segTable")),
         content = function(fileST) {

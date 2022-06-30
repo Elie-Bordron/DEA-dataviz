@@ -2927,6 +2927,8 @@ Je rends les fichiers probeset.txt utilisables par Gendex. la récupération du 
 dans le plot que j'ai mis en place, je garde 1 point sur 100 si le nombre de points à afficher est >10 000 .
 
 # <span style="color:#999900"> jeudi 30/06/2022
-arr 9h10; 
+arr 9h10; 30 min pause; départ 17h30
 
-Désormais, le plot ne lance plus les calcul avant que le bouton run ne soit cliqué
+Désormais, le plot ne lance plus les calcul avant que le bouton run ne soit cliqué.
+La couleur des chromosomes est affichée.
+Un seul tableau de segments est généré au lieu de deux. Il contient les valeurs de Log2Ratio *et* de nombre de copies des segments. Ces valeurs sont visibles dans le tableau affiché dans l'interface, et le GI est désormais calculé sur les valeurs de nombre de copies, comme prévu.
