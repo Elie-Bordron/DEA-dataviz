@@ -124,26 +124,51 @@ main = function() {
 
     ############### convert probes table to segments tables
     ## retrieve call segments
-    CGHcall_segments = getPrbLvSegments(callAllSamples)
+    CGHcall_segments = getPrbLvSegments(callAllSamples, segsType="both")
     
-    ## get segments tables
-    # source(file.path(working_dir, "rCGH_functions.R"))
-    # source(file.path(working_dir, "oncoscanR_functions.R"))
+    # ## get segments tables
+    # # source(file.path(working_dir, "rCGH_functions.R"))
+    # # source(file.path(working_dir, "oncoscanR_functions.R"))
+    # source(file.path(working_dir, "CGHcall_functions.R"))
+    # allSegTables = getSegTables(CGHcall_segments,params$sampleNames)
+    # probeData = removePointsForQuickPlotting(rawProbesData)
+    # colnames(probeData)[c(2:3)] = c("ChrNum", "ChrStart")
+    # probeData = getAbspos_probeset(probeData)
+    # colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
+    # currSegTable = allSegTables[[1]]
+    # # colnames(currSegTable)[6] <- "Log2Ratio"
+    # currSampleName = params$sampleNames
+    # colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
+    # plotSegTableForWGV_GG(currSegTable, probeData)
+    # # colnames(currSegTable)[6] <- "Value"
+    # colnames(probeData)[which(colnames(probeData)=="Log2Ratio")] <- currSampleName
+    # ## plot called data on all profiles
+    # # plotSegTables(allSegTables,params$sampleNames,resultsDir)
+    # 
+    # 
+    # 
+    # 
+    # 
+    
+    #--------------------------- test here, delete this section asap
     source(file.path(working_dir, "CGHcall_functions.R"))
-    allSegTables = getSegTables(CGHcall_segments,params$sampleNames)
-    probeData = removePointsForQuickPlotting(rawProbesData)
-    colnames(probeData)[c(2:3)] = c("ChrNum", "ChrStart")
-    probeData = getAbspos_probeset(probeData)
-    colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
-    currSegTable = allSegTables[[1]]
-    # colnames(currSegTable)[6] <- "Log2Ratio"
-    currSampleName = params$sampleNames
-    colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
-    plotSegTableForWGV_GG(currSegTable, probeData)
-    # colnames(currSegTable)[6] <- "Value"
-    colnames(probeData)[which(colnames(probeData)=="Log2Ratio")] <- currSampleName
-    ## plot called data on all profiles
-    # plotSegTables(allSegTables,params$sampleNames,resultsDir)
+    CGHcall_segments = getPrbLvSegments(callAllSamples, segsType="both")
+    segTableByProbe = prepareSegtableByProbe(CGHcall_segments)
+    segTable = get_seg_table(segTableByProbe)
+    GI = calcGI_CGHcall(segTable)
+    GI
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     ############### compute GI
@@ -281,7 +306,7 @@ if (FALSE) {
     state = "call"
     vals = as.data.frame(CghResult@assayData[["calls"]])
     vals = removePointsForQuickPlotting(vals, PercentRowsToRemove)[[1]]
-    vals = vals + 2
+    vals = vals + 2 # values are given as a normal CN == 0 , a single loss == -1, etc. For consistency, we make it like this: normal==2, single loss==1, etc.
     savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
     png(savePath, width = pngWidth, height = pngHeight)
     plot(y = vals, x=1:length(vals), pch=20, cex = 0.1, ylab = 'Nombre de copies', xlab = xlab)

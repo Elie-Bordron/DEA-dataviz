@@ -149,7 +149,7 @@ ui <- fluidPage(useShinyjs(),
                 h3("..."),
             )),
         tabPanel(title = "Summary",
-            mainPanel(
+            mainPanel(width = 12,
                 splitLayout(
                     verticalLayout(
                         h2("GI table"),

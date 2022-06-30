@@ -69,14 +69,18 @@ server <- function(input, output) {
     CGHcall_segments = reactive({
         print("Extracting probe-level segments from CGHcall result")
         # print(c("resPipeline(): ", resPipeline()))
-        prbLvSegs = getPrbLvSegmentsFromCallObj(resPipeline())  
+        # prbLvSegs = getPrbLvSegmentsFromCallObj(resPipeline(), segsType="both")  
+        prbLvSegs = getPrbLvSegments(resPipeline(), segsType="both")
         prbLvSegs
     })
     # segTable_calculated = eventReactive(input$go,{
     segTable_calculated = reactive({
         print("Extracting segments table from probe-level segments")
         params_obj = params()
-        segtab = getSegTables(CGHcall_segments(),params_obj$sampleNames)[[1]]
+        # segtab = getSegTables(CGHcall_segments(),params_obj$sampleNames)[[1]]
+        print(c("CGHcall_segments(): ", CGHcall_segments()))
+        CGHcall_segments = prepareSegtableByProbe(CGHcall_segments())
+        segtab = get_seg_table(CGHcall_segments)
         segtab
     })
     
@@ -102,7 +106,7 @@ server <- function(input, output) {
             },
             proba = {
                 CGHcall_obj = resPipeline()
-                print(c("CGHcall_obj: ", CGHcall_obj))
+                # print(c("CGHcall_obj: ", CGHcall_obj))
                 plot(CGHcall_obj)
             }
         )
