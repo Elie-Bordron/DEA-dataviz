@@ -149,10 +149,19 @@ ui <- fluidPage(useShinyjs(),
                 h3("..."),
             )),
         tabPanel(title = "Summary",
-            mainPanel(width = 12, # align = "center",
-                h2("GI table"),
-                DT::dataTableOutput("GI_table_summary"),
-                downloadButton("download_GI_table", "Download"),
+            mainPanel(
+                splitLayout(
+                    verticalLayout(
+                        h2("GI table"),
+                        DT::dataTableOutput("GI_table_summary"),
+                        downloadButton("download_GI_table", "Download"),
+                    ),
+                    verticalLayout(
+                        h2("Genes table"),
+                        DT::dataTableOutput("genes_table_summary"),
+                        downloadButton("download_genes_table_summary", "Download"),
+                    )
+                )
                 
             )),
         ))

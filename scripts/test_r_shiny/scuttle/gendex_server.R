@@ -149,6 +149,16 @@ server <- function(input, output) {
             write.table(GI_table, fileGT, quote=FALSE, row.names=FALSE, sep=";")
         }
     )
+    ### genes table
+    genes_table = data.frame(sample = c("BRCA1","CDK12","p53"), CN_CGHcall = c(2,1,2), CN_ASCAT = c(1,1,2), CN_rCGH = c(2,2,2))
+    output$genes_table_summary = DT::renderDataTable({genes_table})
+    
+    output$download_genes_table_summary <- downloadHandler(
+        filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_genes_table")),
+        content = function(fileGT) {
+            write.table(genes_table, fileGT, quote=FALSE, row.names=FALSE, sep=";")
+        }
+    )
     
     
 }
