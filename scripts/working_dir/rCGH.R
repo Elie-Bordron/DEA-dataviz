@@ -30,8 +30,8 @@ if(F) {
 pipeline_rCGH = function(sampleName, silent = FALSE) {
     # sampleName="3-ES"
     # sampleName="2-AD"
-    # sampleName="1-RV"
-    sampleName="11-BG"
+    sampleName="1-RV"
+    # sampleName="11-BG"
     # sampleName="9-LA" # has LOH
     ## ----readFiles----------------------------------
     probesetTxtFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"

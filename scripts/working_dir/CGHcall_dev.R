@@ -20,7 +20,7 @@ dplyr::filter(testDf, testDf["weight"])
 ## for loading data from individual probeset.txt files
 if(F) {
     sampleNames = c("5-LD", "6-VJ", "8-MM")
-    
+    osData = NULL
     for (sampleName in sampleNames) {
         currSamplePath = paste0(dataDirProbesets, "/", sampleName, ".probeset.txt")
         currSample = read.table(currSamplePath, sep='\t', h=T)
@@ -37,7 +37,7 @@ if(F) {
 
 
 
-
+# ProbeSetName	Chromosome	Position	Log2Ratio (1-RV.OSCHP)	WeightedLog2Ratio (1-RV.OSCHP)	AllelicDifference (1-RV.OSCHP)	NormalDiploid (1-RV.OSCHP)	BAF (1-RV.OSCHP)
 
 
 

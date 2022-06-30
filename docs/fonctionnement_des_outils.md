@@ -113,6 +113,11 @@ voir cahier 17/03. la vidéo dont je me suis basé explique également comment l
 On peut déterminer les probabilités psotérieures (donc les états) de chaque segment par bras chromosomique ou bien sur tout le génome.
 Quand on observe des gains multiples avec 3 classes (gain, normal, amp), inclure toutes les classes permet d'être plus précis dans la détection des gains *simples*. source: l'article. lancer l'anlayse en faisant varier le nombre de classes peut donc être intéressant.
 
+## à savoir
+L'input de CGHcall doit avoir la position de départ et de fin de chaque sonde. 
+A priori, ce genre d'input ne peut pas être obtenu à partir d'un probeset.txt, qui contient seulement la position du SNP couvert par chaque sonde. Cependant, en créant une colonne "position de fin" équivalente à la valeur de la colonne "Position" + 20, 20 étant la taille estimée d'une sonde (selon Tony Sierra, c'est plutôt 100 (paires de bases)), on obtient un input sur lequel CGHcall tourne.
+Il peut être imporant de voir si différentes valeurs ont une influence sur les résultats.
+Il pourrait même être plus intéressant de faire startpos=pos-1 et endpos=pos+1.
 
 
 # EaCoN
@@ -301,7 +306,7 @@ voir la doc de la fonction `segment()` de DNAcopy en ligne: https://rdrr.io/bioc
 ```
 Un segment = une ligne. Il s'agit ici de donneés test. à part les chromosomes 10 et 11, un seul segment par chromosome a été trouvé. ID = sample Id; num.mark = nombre de marqueurs dans le segment.
 
-
+_Pourquoi DNAcopy ne fusionne pas les segments en un unique segment qui couvrirait tout le génome: l'algorithme est appliqué chromosome par chromosome, c'est pourquoi deux chromosomes ne sont jamais fusionnés ensemble._
 
 # rCGH
 *Artistic License 2.0*: "Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed."

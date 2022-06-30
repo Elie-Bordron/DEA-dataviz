@@ -6,7 +6,6 @@ if (FALSE) {
     options("max.print"=100)
     ## open working directory in Files tab
     rstudioapi::filesPaneNavigate(working_dir)
-    ## to use plotSeg()
 }
 source(file.path(working_dir, "rCGH.R"))
 source(file.path(working_dir, "rCGH_functions.R"))
@@ -28,15 +27,21 @@ pipelineCGHcall = function(osData, params) {
     ACGH_data <- make_cghRaw(osData)
     # we want to apply fewest changes possible to data, so we want to do our own preprocess if we have time
     # cghdata = removedNaNProbes = dplyr::filter(ACGH_data, !is.na(ACGH_data[5]))
+    print("- preprocess -")
     cghdata <- preprocess(ACGH_data, maxmiss=params$Maxmiss, nchrom=22) # because we don't need sex chromosomes data for GI.
     # plot(cghdata)
+    print("- normalize -")
     norm.cghdata <- normalize(cghdata, method=params$NormMethod, smoothOutliers=params$SmoothOutliers)
+    print("- segment -")
     seg.cghdata <- segmentData(norm.cghdata, method="DNAcopy", undo.splits="sdundo",undo.SD=params$UndoSD, clen=params$Clen, relSDlong=params$RelSDlong)
     # segTable = segmented(seg.cghdata)
+    print("- postsegnormalize -")
     postseg.cghdata <- postsegnormalize(seg.cghdata, inter=params$Inter)
     # plot(postseg.cghdata, ylimit=c(-2,2))
-    print(c("params$tumor_prop,params$Prior, params$Robustsig, params$Minlsforfit: ", params$tumor_prop,params$Prior, params$Robustsig, params$Minlsforfit))
+    # print(c("params$tumor_prop,params$Prior, params$Robustsig, params$Minlsforfit: ", params$tumor_prop,params$Prior, params$Robustsig, params$Minlsforfit))
+    print("- call -")
     rawCghResult <- CGHcall(postseg.cghdata,nclass=5,cellularity=params$tumor_prop, prior=params$Prior, robustsig = params$Robustsig, minlsforfit = params$Minlsforfit)
+    print("- expand call -")
     CghResult <- ExpandCGHcall(rawCghResult,postseg.cghdata,CellularityCorrectSeg=params$CellularityCorrectSeg) # use CellularityCorrectSeg=TRUE to correct using cellularity
     after = Sys.time()
     CghResult$processingTime = round(as.numeric(difftime(after, before, units = "secs"))/dim(CghResult)[2], 2) ## If more than 1 sample is processed for this run, the average value is given to each sample. This value is stored in CghResult@phenoData@data[["processingTime"]].
@@ -85,7 +90,8 @@ main = function() {
     resultsDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/CGHcall"
     ######################## Define parameters
     params = getDefParams()
-    params$sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+    # params$sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+    params$sampleNames = "1-RV"
     inputFile = "allSamplesCleanProbeset_2_3Rec.txt"
     CleanInputFile_path = file.path(dataDirProbesets, inputFile)
     params$tumor_prop = c(0.9,0.9,0.9,0.9,0.9,0.8,0.9,0.8,0.9,0.8,0.8,0.9,0.8,0.8,0.8,0.9,0.8,1,0.95,0.8,0.8) # samples 1 to 21
@@ -105,7 +111,7 @@ main = function() {
         for (s in 1:length(params$sampleNames)) {
             currSampleName = params$sampleNames[s]
             print(c("currSampleName: ", currSampleName))
-            currProbesData = dplyr::select(rawProbesData, c("probeID", "CHROMOSOME", "START_POS", "END_POS", currSampleName))
+            currProbesData = dplyr::select(rawProbesData, c("probeID", "CHROMOSOME", "START_POS", "END_POS", all_of(currSampleName)))
             params$tumor_prop = tumor_prop[s]
             currCallRes = pipelineCGHcall(currProbesData, params)
             callAllSamples = append(callAllSamples, currCallRes)
@@ -125,8 +131,19 @@ main = function() {
     # source(file.path(working_dir, "oncoscanR_functions.R"))
     source(file.path(working_dir, "CGHcall_functions.R"))
     allSegTables = getSegTables(CGHcall_segments,params$sampleNames)
+    probeData = removePointsForQuickPlotting(rawProbesData)
+    colnames(probeData)[c(2:3)] = c("ChrNum", "ChrStart")
+    probeData = getAbspos_probeset(probeData)
+    colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
+    currSegTable = allSegTables[[1]]
+    # colnames(currSegTable)[6] <- "Log2Ratio"
+    currSampleName = params$sampleNames
+    colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
+    plotSegTableForWGV_GG(currSegTable, probeData)
+    # colnames(currSegTable)[6] <- "Value"
+    colnames(probeData)[which(colnames(probeData)=="Log2Ratio")] <- currSampleName
     ## plot called data on all profiles
-    plotSegTables(allSegTables,params$sampleNames,resultsDir)
+    # plotSegTables(allSegTables,params$sampleNames,resultsDir)
     
     
     ############### compute GI

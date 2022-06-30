@@ -2880,21 +2880,51 @@ objs définis avec élodie:
         ~~* [ ] objectif: que cette fonction donne à la segTable passée en argument une colonne qui est la position absolue sur le génome~~
         * [X] ~~*objectif: Quand une segTable est construite, lui donner les colonnes abs_startPos et abs_endPos*~~ [2022-06-27]
     - dans CGHcall_functions.R, je prends plotSegTableForWGV() et la renomme plotSeg_rCGH___tochange().
-        * [ ] objectif: que cette fonction utilise les colonnes Position absolue (start et stop) d'une segTable pour afficher les segments altérés à l'aide de ggplot.
+        * [X] ~~*objectif: que cette fonction utilise les colonnes Position absolue (start et stop) d'une segTable pour afficher les segments altérés à l'aide de ggplot.*~~ [2022-06-27]
 
     actuellement, getNewPos() est applicable sur des tableaux par sonde. J'ai renommé getNewPos() en getAbspos_probeset() pour plus de clarté.
 
 
+
 # <span style="color:#999900"> lundi 27/06/2022
-arr 9h; 40 min pause
+arr 9h; 40 min pause; départ 18h20
 minor changes to allSamples.R in order to test changes for converting plotSegTables from base R to ggplot2
 ```       Rihab Azmani est présente le mardi et le jeudi, et un lundi sur deux. Elle fait beaucoup de Shiny         ```
-* [ ] objectif: Quand une segTable est construite, lui donner les colonnes abs_startPos et abs_endPos
+* [X] ~~*objectif: Quand une segTable est construite, lui donner les colonnes abs_startPos et abs_endPos*~~ [2022-06-27]
 ~~ASCAT: segData ne contient pas de dataframe équivalent aux données par sonde. callData, oui. j'utilise getabspos_probeset() dessus. En conséquence, quand je construis la segtable d'ASCAT, j'utilise la colonne absPos ainsi créée. ~~
 edit: ASCAT: callData ne contient pas non plus de probeset. j'utilise directement getAbsPos_segTable dessus quand sa segTable est créée.
 CGHcall et rCGH: J'utilise getabspos_probeset() sur le df probeset, puis j'utilise absPos pour créer des colonnes absPos dans la segTable.
 * [X] ~~*CGHcall: la table de segments a absPos pour start et stop  ;   rawProbesValue a absPos. *~~ [2022-06-27]
 * [X] ~~*rCGH: la table de segments a absPos pour start et stop  ;   rawProbesValue a absPos. *~~ [2022-06-27]
 
+* [X] ~~*envoyer un lien et dire ce que je vais présenter*~~ [2022-06-27]
 
 
+
+# <span style="color:#999900"> mardi 28/06/2022
+arr 9h20; 40 min pause; départ 17h30
+
+On a fait une réunion avec Jennifer et Julie; j'ai pris des notes.
+
+J'ai mis des commentaires sur l'article original de CBS: `DNAcopy_CBS_base.pdf`. Quel SD est utilisé, ce n'est jamais dit; les auteurs expliquent que les breakpoints dûs à des tendances locales sont effectivement traités mais pas par la technique undo.SD (c'est la technique prune décrite dans la description de la fonction segment() de DNAcopy; voir l'aide de R).
+
+En attendant, je sais pourquoi DNAcopy ne fusionne pas les segments en un unique segment qui couvrirait tout le génome: l'algorithme est appliqué chromosome par chromosome, c'est pourquoi deux chromosomes ne sont jamais fusionnés ensemble.
+
+J'ai ajouté du texte qui décrit les paramètres dans l'onglet "Parameters", rempli de manièrer factice l'onglet Summary, mis le theme en bw(), fait des boîtes pour séparer les paramètres les uns des autres, et mis en place le choix entre le plot que j'ai implémenté et celui de CGHcall.
+
+# <span style="color:#999900"> mercredi 29/06/2022
+arr 9h30; 30 min pause; 17h30
+* [ ] ``scuttle_shiny.R`` contient le code qui permet d'appliquer à autant d'éléments que je veux le même style. utiliser ça au lieu de mettre ``wellPanel()`` autour de chaque élément.
+* [ ] CGHcall: problème: le tableau de segments "raw" ne permet pas de calculer le GI a priori, car il ne contient pas les valeurs de Call. régler ça.
+* [ ] CGHcall: voir pk les probas de call sont toujours de 0 ou 1 et jamais entre les deux. Chercher des probas plus nuancées dans les objets CGHcall -> lancer le pipeline à la main.
+
+Dans l'onglet CGHcall, j'utilisais fillPage(), ça empêchait la scrollbar d'apparaître quand des éléments dépassaient de la fenêtre. Je l'enlève, c'est bon.
+
+Le plot utilise switch() dsormais, et plus shinyjs.
+
+Je rends les fichiers probeset.txt utilisables par Gendex. la récupération du sampleName passe par le parsing des noms de colonnes. à savoir: dans le fichier texte, chaque nom de colonne contient le nom de l'échantillon entre parenthèses; une fois chargé dans R, les parenthèses et les espaces sont remplacés par des points.
+
+dans le plot que j'ai mis en place, je garde 1 point sur 100 si le nombre de points à afficher est >10 000 .
+
+# <span style="color:#999900"> jeudi 30/06/2022
+arr 9h10; 

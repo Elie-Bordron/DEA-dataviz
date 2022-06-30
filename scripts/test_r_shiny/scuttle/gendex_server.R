@@ -1,4 +1,4 @@
-
+options(shiny.maxRequestSize=102*1024^2)
 
 
 server <- function(input, output) {
@@ -17,6 +17,8 @@ server <- function(input, output) {
         req(file)
         validate(need(ext == "txt", "Please upload a txt file"))
         
+        options = list(scrollY = '800px', pageLength = 1000) 
+
         x = read.table(file$datapath, header = input$probeSetHeader, sep="\t")
         x
     })
@@ -25,12 +27,27 @@ server <- function(input, output) {
     rawProbesData = reactive({
         print("receiving rawProbesData")
         file <- input$probeset_txt
-        rawProbesData = read.table(file$datapath, header = input$probeSetHeader, sep="\t")
-        rawProbesData = rawProbesData[2:dim(rawProbesData)[2]] 
+        rawProbesData = read.table(file$datapath, header = input$probeSetHeader, sep="\t",check.names=FALSE)
+        # print(c("rawProbesData: ", rawProbesData))
+        ProbeData_filtered = dplyr::select(rawProbesData, c("ProbeSetName", "Chromosome", "Position", starts_with("Log2Ratio")) )
+        # print(c("ProbeData_filtered: ", ProbeData_filtered))
+        ProbeData_filtered = mutate(ProbeData_filtered, END_POS=Position+20)
+        # print(c("ProbeData_filtered after mutating: ", ProbeData_filtered))
+        sampleName_within_colName = colnames(dplyr::select(ProbeData_filtered, starts_with("Log2Ratio")))
+        split_by_leftBracket = stringr::str_split(sampleName_within_colName, "\\(") [[1]]
+        # print(c("split_by_leftBracket: ", split_by_leftBracket))
+        split_by_brackets = stringr::str_split(split_by_leftBracket[2], "\\)")[[1]]
+        # print(c("split_by_brackets: ", split_by_brackets))
+        sampleName = stringr::str_replace(split_by_brackets[1], ".OSCHP", "")
+        colnames(ProbeData_filtered) = c("probeID", "CHROMOSOME", "START_POS", sampleName, "END_POS" )
+        ProbeData_filtered = dplyr::select(ProbeData_filtered, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleName))
+        # print(c("ProbeData_filtered: ", ProbeData_filtered))
+        # rawProbesData = rawProbesData[2:dim(rawProbesData)[2]] 
         # colnames(rawProbesData) = c("probeID", "CHROMOSOME", "START_POS", "END_POS", colnames(rawProbesData)[dim(rawProbesData)[2]])
         # print(c("rawProbesData: ", rawProbesData))
-        rawProbesData
+        ProbeData_filtered
     })
+
     baseparams = getDefParams()
     params <- reactive({
         print("initializing params")
@@ -40,7 +57,6 @@ server <- function(input, output) {
         baseparams$UndoSD = input$undoSD
         baseparams$Minlsforfit = input$minSegLenForFit
         baseparams$sampleNames = colnames(rawProbesData())[dim(rawProbesData())[2]]
-        baseparams$delete_this_value = "PC2979"
         return(baseparams)
     })
     resPipeline = reactive({  
@@ -50,6 +66,7 @@ server <- function(input, output) {
     })
     CGHcall_segments = reactive({
         print("Extracting probe-level segments from CGHcall result")
+        print(c("resPipeline(): ", resPipeline()))
         prbLvSegs = getPrbLvSegmentsFromCallObj(resPipeline())  
         prbLvSegs
     })
@@ -62,26 +79,59 @@ server <- function(input, output) {
     
 
 
-    output$segTable = DT::renderDataTable({
-        segTab = segTable_calculated()
-        # DT::datatable(segTab)
-        segTab
+
+    ### plot
+    chosenPlot <- reactive({
+        switch(input$plotChoice,
+            profile={
+                params = params()
+                probeData = rawProbesData()
+                colnames(probeData)[c(2:3)] = c("ChrNum", "ChrStart")
+                probeData = getAbspos_probeset(probeData)
+                colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
+                currSampleName = params$sampleNames
+                colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
+                removePoints=100
+                plotSegTableForWGV_GG(segTable_calculated(), probeData, removePoints)
+                # plotSegTable(segTable_calculated(),params$sampleNames,savePlot=FALSE)
+                # plot(c(5,5,5,5,5,5,5,5,6,5))
+            },
+            proba = {
+                CGHcall_obj = resPipeline()
+                print(c("CGHcall_obj: ", CGHcall_obj))
+                plot(CGHcall_obj)
+            }
+        )
     })
 
-    geneTable_obj = data.frame(gene_id = c("BRCA1","CDK12","p53"), nb_breakpoints = c(0, 1, 0), nb_segments = c(1, 2, 1), copynumber = c(2,1,2))
-    output$geneTable = DT::renderDataTable({geneTable_obj})
-    
-    output$testPlot <- renderPlot({
-        params = params()
-        # plot(y=rawProbesData$Log2Ratio, x=rawProbesData$absPos, pch = 20, cex=0.01, col="dark grey", xlab = "", ylab = "log Ratio", ylim = c(-2,2))
-        # plotSegTableForWGV(segTable_calculated(), params$sampleNames, savePlot=FALSE, genGrid=FALSE, segColor="dark red", alreadyGoodPos=alreadyGoodPos) # segtables must have these columns: chrom, loc.start, loc.end, CN
-        
-        plotSegTable(segTable_calculated(),params$sampleNames,savePlot=FALSE)
-    })
-    
+    output$profilePlot = renderPlot(chosenPlot())
 
+        # switch(input$select.profile.group,
+        #     ATAC={
+        #         selectInput("ATAC.chromHMM","",choices=c("opening","closing","stable","multi.baits"))
+        #     },
+        #     clusters.tSNE={
+        #         selectInput("clusters.chromHMM","",choices=c(names(chromHMM.G1)[grep("^cl",names(chromHMM.G1))],"selection.tSNE"))
+        #     }
+        #     )
     
+    # # output$probaPlot <- renderPlot({ plot(c(5,6,9,3,6,5,52,3,6)) })
+    # output$probaPlot <- renderPlot({
+    #     })
     
+    # observeEvent(input$plotChoice,{
+    #             req(input$plotChoice)
+    #             if(input$plotChoice == "proba"){
+    #                 hide("profilePlot")
+    #                 show("probaPlot")
+    #             }else{
+    #                 hide("probaPlot")
+    #                 show("profilePlot")
+    #             }
+    #         })
+    
+    ### Segments table
+    output$segTable = DT::renderDataTable({ segTable_calculated() })
     output$download_segTable <- downloadHandler(
         filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_segTable")),
         content = function(fileST) {
@@ -89,13 +139,35 @@ server <- function(input, output) {
             write.table(segTable_calculated(), fileST, quote=FALSE, row.names=FALSE, sep=";")
         }
     )    
+    ### Gene table
+    geneTable_obj = data.frame(gene_id = c("BRCA1","CDK12","p53"), nb_breakpoints = c(0, 1, 0), nb_segments = c(1, 2, 1), copynumber = c(2,1,2))
+    output$geneTable = DT::renderDataTable({geneTable_obj})
     output$download_genesTable <- downloadHandler(
         filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_genesTable")),
         content = function(fileGT) {
             print(c("geneTable_obj: ", geneTable_obj))
             write.table(geneTable_obj, fileGT, quote=FALSE, row.names=FALSE, sep=";")
         }
-    )    
+    )
+    
+    ### GI output as text
+    output$GItext <- renderText({
+        resGI = calcGI_CGHcall(segTable_calculated()) 
+        paste0(resGI[[2]], " alterations were found on ", resGI[[3]], " chromosomes. GI=", round(resGI[[1]],1) )
+    }) 
+    
+    ######## Summary PANE
+    ### GI table
+    GI_table = data.frame(sample = c("1-RV","2-AD","3-ES"), GI_CGHcall = c(15,8,22), GI_ASCAT = c(12,18,31), GI_rCGH = c(9,6,13))
+    output$GI_table_summary = DT::renderDataTable({GI_table})
+    
+    output$download_GI_table <- downloadHandler(
+        filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_GI_table")),
+        content = function(fileGT) {
+            write.table(GI_table, fileGT, quote=FALSE, row.names=FALSE, sep=";")
+        }
+    )
+    
     
 }
 

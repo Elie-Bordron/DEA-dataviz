@@ -14,7 +14,7 @@ col <- function(width, ...) {
 }
 
 
-shinyUI(
+ui = shinyUI(
   fluidPage(navbarPage(theme = shinytheme("journal"),
                        add_busy_spinner(spin = "fading-circle"),
                        #titlePanel("Cell cycle entry during T-cell activation: a genomic perspective"),
@@ -249,3 +249,6 @@ shinyUI(
   )
   
 )
+
+source(paste0("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle/", "elodie_server.R"))
+shinyApp(ui, server)

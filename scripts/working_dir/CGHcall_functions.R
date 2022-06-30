@@ -53,25 +53,9 @@ getSeg = function(currSampleSegs, s){
             }
         }
 
-        # if (FALSE) {
-        #     if(! i<length(currSampleSegs[,1])) {
-        #         print("end of genome")
-        #         print(c("probeVal: ", probeVal))
-        #         print(c("segVal: ", segVal))            
-        #     } else if (! segVal_equals_probeVal) {
-        #         print("value discordance")
-        #         print(c("probeVal: ", probeVal))
-        #         print(c("segVal: ", segVal))                
-        #     } else if(! currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr) {
-        #         print("chr discordance")
-        #         print(c("probeVal: ", probeVal))
-        #         print(c("segVal: ", segVal))            
-        #     }
-        # }
     }
     segToReturn$currSegStart = currSampleSegs[s,]$Start
     segToReturn$currSegEnd = currSampleSegs[i,]$End
-    print(c("segToReturn$currSegCh: ", segToReturn$currSegCh))
         if (segToReturn$currSegCh==1){
         pos0CurrChr=0
     } else {
@@ -306,7 +290,7 @@ getAbspos_segtable = function(segTable) {
 
 
 
-plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue"){
+plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue", gg){
     ## drawing a segment on plot for each segment of the genome, using estimated values
     segStartPos = as.numeric(seg_df[["absStartPos"]])
     segEndPos = as.numeric(seg_df[["absEndPos"]])
@@ -315,6 +299,7 @@ plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="
     # print(c("seg_df[[value_col]]: ", seg_df[[value_col]]))
     # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
     segments(segStartPos, estimCN, segEndPos, estimCN, col=segColor, lwd=2)
+
     if(indivSeg) {
         height = 0.05
         segments(segStartPos, estimCN+height, segStartPos, estimCN-height, col=segColor, lwd=0.1)
@@ -323,11 +308,22 @@ plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="
 }
 
 
-plotSegTableForWGV_GG = function(currSegTable,rawProbesData,currSampleName,resultsDir="delme", savePlot=FALSE, genGrid=TRUE, segColor="#00BFC4", ylim = c(-2,3), mainTitlePrefix = "") {
+plotSegTableForWGV_GG = function(currSegTable,rawProbesData, segColor="#3e9643", ylim = c(-2,3), mainTitlePrefix = "", rmPts=10) {
+    rawProbesData_toPlot = rawProbesData
+    if(dim(rawProbesData_toPlot)[2]>10**4) {rawProbesData_toPlot = removePointsForQuickPlotting(rawProbesData_toPlot, rmPts)}
     ### plot LRR points
-    plot(y=rawPrbData$Log2Ratio, x=rawPrbData$absPos, pch = 20, cex=0.01, col="dark grey", xlab = "", ylab = "log Ratio", main = paste0(pkg, "  ", sample), ylim = c(-2,2))
+    gg = ggplot()
+    gg = gg + geom_point(data=rawProbesData, aes(y=Log2Ratio, x=absPos), size=0.01, shape=20)
+    ### abline at LRR=0
+    gg = gg + geom_hline(yintercept=0,linetype="dashed",size=0.3)
     ### plot segments
-    apply(currSegTable, 1, plotSeg_rCGH___tochange, "CN", indivSeg=TRUE, segColor=segColor)
+    gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Value, yend=Value), size=2, color=segColor)
+    ### color Chromosome regions
+    
+    
+    gg = gg + theme_bw()
+    gg
+
 
 }
 
@@ -347,7 +343,8 @@ plotSegTables = function(segTablesList, sampleNames, resultsDir, savePlot=TRUE, 
 
 getPrbLvSegmentsFromCallObj = function(callRes, segsType="raw") {
     ### callRes must be a cghCall object containing results of one or more samples, but can't be a list of cghCall objects
-
+    print(c("callRes: ", callRes))
+    print(c("class(callRes): ", class(callRes)))
     rowsInfo = fData(callRes)
     if(segsType=="CN") {
         sampleNames = colnames(callRes@assayData[["calls"]])
