@@ -33,7 +33,7 @@ ui <- fluidPage(useShinyjs(),
                         ######## App description
                         h3("Quick description"),
                         p("This application aims to help visualize and export the results related to the calculation of the Genomic Index on OncoScan CNV data by three R packages: CGHcall, ASCAT and rCGH."),
-                        p("To use it, first load a probeset.txt (CGHcall & rCGH) or .OSCHP file (ASCAT)."),
+                        p("To use it, first load a probeset.txt for CGHcall or rCGH, or load a .OSCHP file for ASCAT."),
                         p("Then run CGHcall, ASCAT or rCGH pipelines in their respective panes to compute Genomic Index."),
                         p("Results can be viewed there, along with a recap in the summary pane."),
                         p("The Parameters pane contains explanations on the parameters used by each pipeline."),
@@ -75,21 +75,23 @@ ui <- fluidPage(useShinyjs(),
                                                 "How call probabilities should be calculated:", 
                                                 choices = c('Per chromosome arm'='not all', 'On whole genome'='all')
                             )),
-                            wellPanel(checkboxInput("correctCell", 
+                            wellPanel(
+                                checkboxInput("correctCell", 
                                                 "Correct data using proportion of tumoral cells", 
                                                 value=TRUE,
-                            )),
-                            wellPanel(sliderInput("cellularity",
+                                ),
+                                sliderInput("cellularity",
                                                 "Proportion of tumoral cells:",
                                                 min = 0,
                                                 max = 100,
                                                 value = 100
-                            )),
+                                )
+                            ),
                             wellPanel(sliderInput("minSegLenForFit",
                                                 "Minimum length of the segment (in Mb) to be used for fitting the model:",
                                                 min = 0,
-                                                max = 1000,
-                                                value = 1
+                                                max = 10,
+                                                value = 0.5
                             )),
                             wellPanel(actionButton("go", "Run")),
                             # wellPanel(actionButton("goPlot", "Run plot")),
@@ -99,12 +101,14 @@ ui <- fluidPage(useShinyjs(),
                                 # h3(textOutput("GItext", container=pre)),
                                 wellPanel(h3(textOutput("GItext"))),
                                 splitLayout(
-                                    verticalLayout(
+                                    # verticalLayout(
+                                    wellPanel(
                                         h2("Segments table"),
                                         DT::dataTableOutput("segTable"),
                                         downloadButton("download_segTable", "Download")
                                     ),
-                                    verticalLayout(
+                                    # verticalLayout(
+                                    wellPanel(
                                         h2("Genes table"),
                                         DT::dataTableOutput("geneTable"),
                                         downloadButton("download_genesTable", "Download"),
@@ -125,29 +129,15 @@ ui <- fluidPage(useShinyjs(),
                     # tags$h3("Team Wins & Points"),
                     # div(style = "float:left;width:36%;",plotOutput("wins_bar_plot")),
                     # div(style = "float:right;width:64%;",plotOutput("points_bar_plot"))
-            )),
+            )
+        ),
         tabPanel(title = "rCGH",
             mainPanel(width = 12,align = "center",
                     # tags$h3("Team Wins & Points"),
                     # div(style = "float:left;width:36%;",plotOutput("wins_bar_plot")),
                     # div(style = "float:right;width:64%;",plotOutput("points_bar_plot"))
-            )),
-        tabPanel(title = "Parameters",
-            mainPanel(width = 12, # align = "center",
-                h1("CGHcall"),
-                h3("parameter 1: UndoSD"),
-                p("After segmenting, the algorithm undoes splits between two consecutive segments if these are less than undoSD (3 by default) sd apart, where sd is the standard deviation of the whole profile. The higher undoSD is, the higher the number of retained splits."),
-                h3("parameter 2: prior probability computing"),
-                h3("parameter 3: Correct values using cellularity"),
-                h3("parameter 4: cellularity value"),
-                h3("parameter 5: segment length to include in call computing"),
-                
-                h1("ASCAT"),
-                h3("..."),
-                
-                h1("rCGH"),
-                h3("..."),
-            )),
+            )
+        ),
         tabPanel(title = "Summary",
             mainPanel(width = 12,
                 splitLayout(
@@ -163,7 +153,25 @@ ui <- fluidPage(useShinyjs(),
                     )
                 )
                 
-            )),
+            )
+        ),
+        tabPanel(title = "Parameters",
+            mainPanel(width = 12, # align = "center",
+                h1("CGHcall"),
+                h3("parameter 1: UndoSD"),
+                p("After segmenting, the algorithm undoes splits between two consecutive segments if these are less than undoSD (3 by default) sd apart, where sd is the standard deviation of the whole profile. The higher undoSD is, the higher the number of retained splits."),
+                h3("parameter 2: prior probability computing"),
+                h3("parameter 3: Correct values using cellularity"),
+                h3("parameter 4: cellularity value"),
+                h3("parameter 5: segment length to include in call computing"),
+                
+                h1("ASCAT"),
+                h3("..."),
+                
+                h1("rCGH"),
+                h3("..."),
+            )
+        ),
         ))
 
 

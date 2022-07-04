@@ -7,6 +7,7 @@ server <- function(input, output) {
     working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
     results_dir = file.path(working_dir_shiny, "gendex_results")
     source(file.path(GI_scripts_dir, "CGHcall.R"))
+    source(file.path(GI_scripts_dir, "rCGH.R")) # for genes table
     source(file.path(working_dir_shiny, "gendex_functions.R"))
     
     ######## HOME PANE
@@ -26,28 +27,26 @@ server <- function(input, output) {
     ######## CGHcall PANE
 
     ### results computing
-    rawProbesData = reactive({
+    probesData = reactive({
         print("receiving rawProbesData")
         file <- input$probeset_txt
         rawProbesData = read.table(file$datapath, header = input$probeSetHeader, sep="\t",check.names=FALSE)
-        # print(c("rawProbesData: ", rawProbesData))
+        # print(c("colnames(rawProbesData): ", colnames(rawProbesData)))
         ProbeData_filtered = dplyr::select(rawProbesData, c("ProbeSetName", "Chromosome", "Position", starts_with("Log2Ratio")) )
         # print(c("ProbeData_filtered: ", ProbeData_filtered))
-        ProbeData_filtered = mutate(ProbeData_filtered, END_POS=Position+20)
-        # print(c("ProbeData_filtered after mutating: ", ProbeData_filtered))
-        sampleName_within_colName = colnames(dplyr::select(ProbeData_filtered, starts_with("Log2Ratio")))
+        ProbeDataWithEndPos = mutate(ProbeData_filtered, END_POS=Position+20)
+        # print(c("ProbeDataWithEndPos after mutating: ", ProbeDataWithEndPos))
+        sampleName_within_colName = colnames(dplyr::select(ProbeDataWithEndPos, starts_with("Log2Ratio")))
         split_by_leftBracket = stringr::str_split(sampleName_within_colName, "\\(") [[1]]
         # print(c("split_by_leftBracket: ", split_by_leftBracket))
         split_by_brackets = stringr::str_split(split_by_leftBracket[2], "\\)")[[1]]
         # print(c("split_by_brackets: ", split_by_brackets))
         sampleName = stringr::str_replace(split_by_brackets[1], ".OSCHP", "")
-        colnames(ProbeData_filtered) = c("probeID", "CHROMOSOME", "START_POS", sampleName, "END_POS" )
-        ProbeData_filtered = dplyr::select(ProbeData_filtered, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleName))
-        # print(c("ProbeData_filtered: ", ProbeData_filtered))
-        # rawProbesData = rawProbesData[2:dim(rawProbesData)[2]] 
-        # colnames(rawProbesData) = c("probeID", "CHROMOSOME", "START_POS", "END_POS", colnames(rawProbesData)[dim(rawProbesData)[2]])
-        # print(c("rawProbesData: ", rawProbesData))
-        ProbeData_filtered
+        colnames(ProbeDataWithEndPos) = c("probeID", "CHROMOSOME", "START_POS", sampleName, "END_POS" )
+        ProbeData_renamed = dplyr::select(ProbeDataWithEndPos, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleName))
+        # print(c("ProbeData_renamed: ", ProbeData_renamed))
+        # print(c("colnames(ProbeData_renamed): ", colnames(ProbeData_renamed)))
+        ProbeData_renamed
     })
     baseparams = getDefParams()
     params <- reactive({
@@ -57,30 +56,33 @@ server <- function(input, output) {
         baseparams$Prior = input$prior
         baseparams$UndoSD = input$undoSD
         baseparams$Minlsforfit = input$minSegLenForFit
-        baseparams$sampleNames = colnames(rawProbesData())[dim(rawProbesData())[2]]
+        baseparams$sampleNames = colnames(probesData())[dim(probesData())[2]]
         return(baseparams)
     })
     # resPipeline = reactive({  
     resPipeline = eventReactive(input$go, {  
-        print("calculating pipeline result")
-        # pipelineCGHcall(rawProbesData(), params())
-        suppressMessages(suppressWarnings(pipelineCGHcall(rawProbesData(), params())))
+        # print("calculating pipeline result")
+        # pipelineCGHcall(probesData(), params())
+        # print(c("colnames(probesData()): ", colnames(probesData())))
+        suppressMessages(suppressWarnings(pipelineCGHcall(probesData(), params())))
     })
     CGHcall_segments = reactive({
         print("Extracting probe-level segments from CGHcall result")
         # print(c("resPipeline(): ", resPipeline()))
+        # print(c("class(resPipeline()): ", class(resPipeline())))
         # prbLvSegs = getPrbLvSegmentsFromCallObj(resPipeline(), segsType="both")  
         prbLvSegs = getPrbLvSegments(resPipeline(), segsType="both")
         prbLvSegs
     })
-    # segTable_calculated = eventReactive(input$go,{
     segTable_calculated = reactive({
         print("Extracting segments table from probe-level segments")
         params_obj = params()
-        # segtab = getSegTables(CGHcall_segments(),params_obj$sampleNames)[[1]]
-        print(c("CGHcall_segments(): ", CGHcall_segments()))
-        CGHcall_segments = prepareSegtableByProbe(CGHcall_segments())
+        CGHcall_segments = CGHcall_segments()
+        # CGHcall_segments = prepareSegtableByProbe(CGHcall_segments)
         segtab = get_seg_table(CGHcall_segments)
+        print(c("colnames(CGHcall_segments): ", colnames(CGHcall_segments)))
+        # print(c("colnames(segtab): ", colnames(segtab)))
+        print(c("segtab: ", segtab))
         # segtab$CN = segtab$CN + 2
         segtab
     })
@@ -94,10 +96,11 @@ server <- function(input, output) {
         switch(input$plotChoice,
             profile={
                 params = params()
-                probeData = rawProbesData()
-                colnames(probeData)[c(2:3)] = c("ChrNum", "ChrStart")
+                probeData = probesData()
+                # colnames(probeData)[c(2:3)] = c("ChrNum", "ChrStart")
+                # print(c("probeData sent to getAbspos_probeset : ", probeData))
                 probeData = getAbspos_probeset(probeData)
-                colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
+                # colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
                 currSampleName = params$sampleNames
                 colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
                 removePoints=10
@@ -118,12 +121,15 @@ server <- function(input, output) {
 
     
     ### Segments table
-
-    output$segTable = DT::renderDataTable({
-        segtab = segTable_calculated() 
+    segtabToDisplay = reactive({
+        segtabToDisplay = segTable_calculated() 
         # segtabToDisplay = dplyr::select(segtab, -contains("abs"))
+        colnames(segtabToDisplay)[colnames(segtabToDisplay)=="Log2Ratio"] = "seg.mean"
         segtabToDisplay$CN = segtabToDisplay$CN + 2
         segtabToDisplay
+    })
+    output$segTable <- DT::renderDataTable(fillContainer=FALSE,
+        expr={segtabToDisplay()
         })
     output$download_segTable <- downloadHandler(
         filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_segTable")),
@@ -133,8 +139,26 @@ server <- function(input, output) {
         }
     )    
     ### Gene table
-    geneTable_obj = data.frame(gene_id = c("BRCA1","CDK12","p53"), nb_breakpoints = c(0, 1, 0), nb_segments = c(1, 2, 1), copynumber = c(2,1,2))
-    output$geneTable = DT::renderDataTable({geneTable_obj})
+    geneTable_obj = data.frame(
+        gene_id = c("BRCA1","CDK12","p53"), nb_breakpoints = c(0, 1, 0), nb_segments = c(1, 2, 1), copynumber = c(2,1,2)
+    )
+    geneTableToDisplay = reactive({
+        segTable = segTable_calculated()
+        segTable = dplyr::select(segTable, -c("absStart", "absEnd"))
+        print(c("colnames(segTable): ", colnames(segTable)))
+        segTable = segTable[c("Chromosome", "Start", "End", "nbProbes", "Log2Ratio", "seg.med", "probes.Sd", "CN")]
+        colnames(segTable) = c("chrom", "loc.start", "loc.end", "num.mark", "seg.mean", "seg.med", "probes.Sd", "estimCopy")
+        print(c("segTable: ", segTable))
+        geneTable = rCGH::byGeneTable(segTable)
+        geneTable = as.data.frame(geneTable)
+        print(c("geneTable: ", geneTable))
+        print(c("class(geneTable): ", class(geneTable)))
+        geneTable
+    })
+    output$geneTable = DT::renderDataTable({
+        geneTableToDisplay()
+        # geneTable_obj
+        })
     output$download_genesTable <- downloadHandler(
         filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_genesTable")),
         content = function(fileGT) {

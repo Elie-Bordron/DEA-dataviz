@@ -466,3 +466,50 @@ mergeLevels = function (vecObs, vecPred, pv.thres = 1e-04, ansari.sign = 0.05,
     return(list(vecMerged = vecPredNow, mnNow = mnNow, sq = sq, 
         ansari = ansari))
 }
+
+
+
+
+byGeneTable_custom = function (segTable, symbol = NULL, genome = c("hg19", "hg18", "hg38"), columns = NA, verbose = TRUE) 
+{
+    genome <- match.arg(genome)
+    .ByGene_custom(segTable, symbol, genome, columns, verbose)
+}
+
+
+
+.ByGene_custom = function (segTable, symbol, genome, columns, verbose) 
+{
+    hg18 <- hg18
+    hg19 <- hg19
+    hg38 <- hg38
+    HG <- switch(genome, hg18 = hg18, hg19 = hg19, hg38 = hg38)
+    geneDB <- rCGH:::.createGeneDB(genome)
+    print(c("geneDB: ", geneDB))
+    if (!"seg.med" %in% colnames(segTable)) 
+        segTable$seg.med <- segTable$seg.mean
+    if (!is.null(symbol)) 
+        return(rCGH:::.getSegFromGene(segTable, symbol, HG, geneDB, 
+            columns))
+    if (verbose) 
+        message("Creating byGene table...")
+    bygene <- lapply(seq_len(nrow(segTable)), function(ii) {
+        chr <- segTable$chrom[ii]
+        Start <- segTable$loc.start[ii]
+        End <- segTable$loc.end[ii]
+        l <- abs(End - Start)/1000
+        lrr <- segTable$seg.med[ii]
+        nm <- segTable$num.mark[ii]
+        copy <- segTable$estimCopy[ii]
+        g <- rCGH:::.getGenesFromSeg(chr, Start, End, geneDB, columns)
+        if (is.null(g)) 
+            return(NULL)
+        cbind.data.frame(g, Log2Ratio = lrr, num.mark = nm, segNum = ii, 
+            `segLength(kb)` = round(l, 2), estimCopy = ifelse(is.null(copy), 
+                NA, copy))
+    })
+    bygene <- do.call(rbind, bygene)
+    cmValues <- rCGH:::.cmValues(segTable, HG)
+    bygene$relativeLog <- rCGH:::.relativeLog(bygene, cmValues, HG)
+    rCGH:::.addGenomeLoc(bygene, HG)
+}

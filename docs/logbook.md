@@ -2932,3 +2932,19 @@ arr 9h10; 30 min pause; départ 17h30
 Désormais, le plot ne lance plus les calcul avant que le bouton run ne soit cliqué.
 La couleur des chromosomes est affichée.
 Un seul tableau de segments est généré au lieu de deux. Il contient les valeurs de Log2Ratio *et* de nombre de copies des segments. Ces valeurs sont visibles dans le tableau affiché dans l'interface, et le GI est désormais calculé sur les valeurs de nombre de copies, comme prévu.
+
+# <span style="color:#999900"> vendredi 01/07/2022
+arr9h50; 30 min pause; départ 17h40
+
+getAbspos_probeset() utilise maintenant les noms de colonne "CHROMOSOME", et "START_POS" (pas "END_POS").
+
+En bref, j'ai supprimé des calculs devenus inutiles pour l'onglet CGHcall.
+
+Je lance rCGH.R pour voir comment mapper les gènes sur les segments altérés.
+
+# <span style="color:#999900"> lundi 04/07/2022
+arr 9h30; 
+
+
+# <span style="color:#999900"> lundi 11/07/2022
+# cette semaine, élodie est 0% disponible

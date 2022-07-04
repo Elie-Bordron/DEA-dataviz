@@ -126,49 +126,49 @@
 ################################ interactive datatable + functional scrollbar in BASE R-SHINY
 
 ################################ find why I don't have a scrollbar -> found
-library(shiny)
-ui <- fluidPage(
-    titlePanel("TEST"),
-    verticalLayout(
-        splitLayout(cellWidths = c("80%", "20%"),
-            plotOutput("profilePlot"),
-            radioButtons("plotChoice","Profile display",choices = c("Call probability"="proba","segmentation results"="profile")),
-        ),
-        sidebarLayout(
-            sidebarPanel(
-                        h3("Parameters"),
-                        wellPanel(sliderInput("undoSD",
-                                                "Undo splits",
-                                                min = 0.01,
-                                                max = 10,
-                                                value = 3
-                        )),
-                        p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"),
-            ),
-            mainPanel(
-                splitLayout(
-                    verticalLayout(
-                        h2("Segments table"),
-                        DT::dataTableOutput("segTable"),
-                        downloadButton("download_segTable", "Download")
-                    ),
-                    verticalLayout(
-                        h2("Genes table"),
-                        DT::dataTableOutput("geneTable"),
-                        downloadButton("download_genesTable", "Download"),
-                        textOutput("GItext")
-                    ),
-                )
-            )
-        )
-    )
-)
+# library(shiny)
+# ui <- fluidPage(
+#     titlePanel("TEST"),
+#     verticalLayout(
+#         splitLayout(cellWidths = c("80%", "20%"),
+#             plotOutput("profilePlot"),
+#             radioButtons("plotChoice","Profile display",choices = c("Call probability"="proba","segmentation results"="profile")),
+#         ),
+#         sidebarLayout(
+#             sidebarPanel(
+#                         h3("Parameters"),
+#                         wellPanel(sliderInput("undoSD",
+#                                                 "Undo splits",
+#                                                 min = 0.01,
+#                                                 max = 10,
+#                                                 value = 3
+#                         )),
+#                         p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"), p("text"),
+#             ),
+#             mainPanel(
+#                 splitLayout(
+#                     verticalLayout(
+#                         h2("Segments table"),
+#                         DT::dataTableOutput("segTable"),
+#                         downloadButton("download_segTable", "Download")
+#                     ),
+#                     verticalLayout(
+#                         h2("Genes table"),
+#                         DT::dataTableOutput("geneTable"),
+#                         downloadButton("download_genesTable", "Download"),
+#                         textOutput("GItext")
+#                     ),
+#                 )
+#             )
+#         )
+#     )
+# )
 
-server <- function(input, output) {
-    output$profilePlot = renderPlot({plot(c(2,3,6,5,98,56,234))})
+# server <- function(input, output) {
+#     output$profilePlot = renderPlot({plot(c(2,3,6,5,98,56,234))})
 
-}
-shinyApp(ui, server)
+# }
+# shinyApp(ui, server)
 
 
 
@@ -246,4 +246,28 @@ shinyApp(ui, server)
 #         output$plot <- renderPlot( plot(head(cars, input$n)) )
 #     }
 # )
+
+library(ggplot2)
+
+data <- data.frame(row.names=paste0('row',1:20))
+data$x_baseline <- sample(1:20)
+data$x_followup <- sample(1:20)
+data$y_baseline <- sample(1:20)
+data$y_followup <- sample(1:20)
+
+
+data$lineColor <- factor(ifelse(data$x_followup - data$x_baseline < 0,'increase','decrease'))
+# data$lineColor <- factor(ifelse(data$x_followup - data$x_baseline < 0,'yellow','orange'))
+segColors = c("yellow", "orange")
+names(segColors) = c('increase','decrease')
+
+ggplot(data) + 
+geom_point(aes (x = data$x_baseline , y= data$y_baseline), color = "red") + 
+geom_point (aes (x = data$x_followup, y = data$y_followup), color = "blue") + 
+xlab("X") + 
+ylab ("Y") +
+geom_segment(data = data , aes(x=data$x_baseline, xend = data$x_followup, y=data$y_baseline, yend = data$y_followup, color=data$lineColor)) + 
+scale_color_manual(values=segColors)
+
+
 

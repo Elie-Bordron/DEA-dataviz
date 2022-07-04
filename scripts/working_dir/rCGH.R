@@ -42,7 +42,10 @@ pipeline_rCGH = function(sampleName, silent = FALSE) {
     ## remove sex chromosomes data
     cgh@cnSet = dplyr::filter(cgh@cnSet, ChrNum<23)
     ##-- create a column "absolute position" for better plots
+    normalColnames = colnames(cgh@cnSet)[c(2,3)]
+    colnames(cgh@cnSet)[c(2,3)] = c("CHROMOSOME", "START_POS")
     cgh@cnSet = getAbspos_probeset(cgh@cnSet)
+    colnames(cgh@cnSet)[c(2,3)] = normalColnames
     # Organize cghSet columns in the same layout as test rCGH file
     cgh@cnSet = cgh@cnSet %>% mutate(SmoothSignal=rep(NA, length(cgh@cnSet[,1])), .before=Allele.Difference)
     colnames(cgh@cnSet) = c("ProbeName","ChrNum","ChrStart","Log2Ratio","WeightedLog2Ratio","SmoothSignal","Allele.Difference","NormalDiploid","BAF","absPos")
@@ -76,7 +79,7 @@ pipeline_rCGH = function(sampleName, silent = FALSE) {
     # cghSeg <- segmentCGH_custom(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
     
 
-     ## ----segTable-----------------------------------------------------------------
+    ## ----segTable-----------------------------------------------------------------
     # head(segTable_rCGH)
 
     ## ----EMnormalize--------------------------------------------------------------
@@ -99,7 +102,9 @@ pipeline_rCGH = function(sampleName, silent = FALSE) {
     if(F) {
         ## plot gene positions on genome
         segTable_rCGH <- getSegTable(cghSeg)
-        geneTable <- byGeneTable(segTable_rCGH)
+        source(file.path(working_dir, "rCGH_dev.R"))
+        geneTable <- byGeneTable_custom(segTable_rCGH, genome="hg19")
+        # geneTable <- byGeneTable(segTable_rCGH)
         head(geneTable, n=3)
         colTransitoire = colnames(geneTable)
         index_chr = which(colTransitoire=="chr")
@@ -156,7 +161,8 @@ main = function() {
     source(file.path(working_dir, "CGHcall_functions.R"))
     ## define paths
     # sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT", "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
-    sampleNames = c("2-AD")
+    sampleNames = c("1-RV")
+    # sampleNames = c("2-AD")
     ## initialize list to contain all rCGH objects, and list of segTables
     rCGHResults = list()
     segTables = list()
