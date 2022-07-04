@@ -15,7 +15,7 @@ source(file.path(working_dir, "EaCoN_functions.R"))
 source(file.path(working_dir, "ASCAT_functions.R"))
 source(file.path(working_dir, "oncoscanR_functions.R"))
 source(file.path(working_dir, "crossPackagesFunctions.R"))
-source(file.path(working_dir, "rCGH_functions.R"))
+source(file.path(working_dir, "rCGH_functions.R")) # getAbspos_probeset(), 
 
 
 #### functions
@@ -71,8 +71,8 @@ pipelineASCAT = function(sampleName,outputFolder, ascatFolder, penalty=50) {
     source(file.path(working_dir,"ASCAT_functions.R"))
     segData =  ASCAT::ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = penalty, out.dir=outputFolder) # 50 is EaCoN default value
     # segData =  custom_ascat.aspcf(ASCATobj = rawData$data, ascat.gg = rawData$germline, penalty = 50, out.dir=outputFolder) # 50 is EaCoN default value
+    
     # estimating copy number & ploidy & cellularity using ASCAT::ascat.runAscat. Also generates rawprofile, ascatprofile and sunrise plots
-
     ## if sample has not a best gamma value known in the reference file, process it with all gammas and update the file.
     gammaRange = seq(0.35, 0.95, 0.05)
     bestGammas = read.table(file.path(ascatFolder,"bestGammas.txt"), h=T, sep='\t')
@@ -156,11 +156,21 @@ for (s in 1:length(sampleNames)) {
     outputFolder = file.path(ascatFolder,sampleName)
     resPipeline = pipelineASCAT(sampleName,outputFolder,ascatFolder, penalty)
     callData = resPipeline[[1]]
+    # callData_backup = callData
     GammasTested = resPipeline[[2]]
     if(!is.null(GammasTested)) {
         message("Writing gamma values along with goodness of fit in a table...")
         write.table(GammasTested, file.path(outputFolder, "gammas_tested.txt"))
     }
+    source(file.path(working_dir, "ASCAT_functions.R"))
+    source(file.path(working_dir, "rCGH_functions.R"))
+    
+    source(file.path(working_dir, "CGHcall_functions.R"))
+    segments_table = "segments_raw"
+    trueColnames = colnames(callData[[segments_table]])
+    colnames(callData[[segments_table]])[c(2,3,4)] = c("ChrNum", "ChrStart", "ChrEnd")
+    callData[[segments_table]] = getAbspos_segtable(callData[[segments_table]])
+    colnames(callData[[segments_table]]) = trueColnames
     segTable_clean = cleanASCATSegData(callData, trimData=F)
     GI_res = calcGI_ASCAT(segTable_clean)
     
@@ -175,7 +185,7 @@ for (s in 1:length(sampleNames)) {
     if(segsType=="raw") {
         segTable = resPipeline[[3]][["Tumor_LogR_segmented"]]
     } else if (segsType=="CN") {
-        segTable = callData$segments
+        segTable = callData[[segments_table]]
     }
     segTables = append(segTables, list(segTable))
 }

@@ -130,7 +130,7 @@ cleanASCATSegData = function(callData, trimData = F) {
     ## get seg data from call result
     # segTable_raw = callData$segments_raw
     segTable = callData$segments
-    
+    print(c("segTable: ", segTable))
     ## check seg data
     # graph_title = paste0(sampleName, " called data")
     # generateGrid(graph_title)

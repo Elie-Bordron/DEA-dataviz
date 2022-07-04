@@ -2753,10 +2753,10 @@ voir `https://stackoverflow.com/questions/27800307/adding-a-picture-to-plot-in-r
 * [ ] rCGH segmentation DNAcopy : refaire les cadres dans ppt
 * [ ] CGHcall adjustData
 * [ ] CGHcall modèle de mélange
-* [ ] ASCAT les petits segments , ne pas oublier de changer le sens
+* [ ] ASCAT les petits segments, ne pas oublier de changer le sens
 * [ ] ASCAT call: deux solutions de qualité de l'ajustement
 * [ ] distri plot: griser l'abline qui indique le 10. ou plutôt indiquer la valeur de 10 sur l'axe des ordonnées
-* [ ] tableau des AUC: vals de Pearson, comme plot correl.
+* [X] ~~*tableau des AUC: vals de Pearson, comme plot correl.*~~ [2022-06-20]
 * [ ] fig:wgv12 : la changer par un *plot* wgv.
 
 * [ ] Res & Discu, courbes ROC, commenté: citer un échantillon facile à caractériser et référencer sa figure WGV.
@@ -2770,15 +2770,182 @@ voir `https://stackoverflow.com/questions/27800307/adding-a-picture-to-plot-in-r
 *Présentation slides à Claire et élodie à 10h*
 
 
-# <span style="color:#999900"> mardi 14/06/2022  
+# <span style="color:#999900"> mardi 14/06/2022
 arr 10h; 40 min pause; départ dans la nuit à 4h
 prise en compte des commentaires sur les slides
 
-# <span style="color:#999900"> mardi 14/06/2022  
-arr 9h; 1h pause
+# <span style="color:#999900"> mercredi 15/06/2022  
+arr 9h; 1h pause; 
+
+Pour citer la figure des caryotypes: ``https://www.berkeley.edu/``
+
+# <span style="color:#999900"> jeudi 16/06/2022  
+soutenances
+# <span style="color:#999900"> vendredi 17/06/2022  
+soutenances
+
+
+# <span style="color:#999900"> lundi 20/06/2022  
+arrivée à 9h; 30 min pause; départ à 18h30
 
 Pour citer la figure des caryotypes: ``https://www.berkeley.edu/``
 
 
+Ai refait la figure de la section Methodes, rCGH, Segmentation, qui présente la fenêtre coulissante. + le texte qui en parlait: les régions de départ sont les chromosomes. + texte des axes en anglais. 
+Et la fig de rCGH norm qui montre les pics
+Et la figure du runtime: c'est maintenant des boxplots.
+* [ ] J'ai fait tous les plots de  probabilité de call de CGHcall; je m'attendais à avoir des probas modérées mais elles sont très tranchées: les valeurs sont rarement différentes de 0 ou 1. à voir si c'est modifiable dans une option. En tout cas je voulais utiliser un tel plot pour montrer l'effet du call par modèle de mélange de CGHcall, vu que remettre une image de distributions peut être redondant avec rCGH. quoique, le fait que ça utilise la courbe globale des valeurs est intéressant. Faire l'un ou l'autre.
+
+Les _notches_ d'un boxplot sont à interpréter ainsi: ` if two boxes' notches do not overlap there is ‘strong evidence’ (95% confidence) their medians differ`. Source: "Chambers, John M., William S. Cleveland, Beat Kleiner, and Paul A. Tukey. "Comparing Data Distributions." In Graphical Methods for Data Analysis, 62. Belmont, California: Wadsworth International Group;, 1983. ISBN 0-87150-413-8 International ISBN 0-534-98052-X", depuis `https://sites.google.com/site/davidsstatistics/davids-statistics/notched-box-plots`. un boxplot avec des notches ressemble à ça: 
+![représentation de 3 boxplots dont les notch montrent les intervalle&motte0CAPSLOCK2
+s de confiance de la médiane. Les intervalles des groupes 1, 2 et 3 sont représentés respectivement par des lignes rouges, vertes et bleues.](docs_I_made/images/notched_boxplots.png "Notched boxplots")
+
+# <span style="color:#999900"> mardi 21/06/2022
+arr 10h10; 45 min pause; départ 16h45
 
 
+Je convertis la figure 17 du critère d'optimisation de la seg ASPCF en une équation LaTeX.
+Je refais la fig du mat & met, ASCAT ASPCF avec le détail de 2 segments.
+ASCAT: fig. de la distance entre les segments et les entiers les plus proches: à refaire. le code de la fonction plotSeg_ASCAT() est donc à changer.
+
+Réunion avec Claire et Elodie pour la suite du stage (dans 4 semaines exactement). objectifs:
+* [ ] finir le rapport
+    * [X] ~~*plot du temps de calcul: en faire des boxplots*~~ [2022-06-21]
+    * [X] ~~*Suivre 2 échantillons le long des résultats: un fortement altéré et un faiblement altéré*~~ [2022-06-21]
+    * [ ] plutôt détailler 2 E pour certains résultats: Un bien caractérisé par rapport à ce qui avait été déterminé sur Agilent, l'autre avec une discordance entre Agilent et un ou plusieurs outils. ça permet de voir les limites des outils.
+* [ ] faire une présentation des outils à l'équipe biologiste.
+    - récap des 4 outils
+        * [ ] avoir un code couleur pour chaque outil et l'appliquer partout dans les plots
+    - détail de chaque outil
+        * [ ] ses + et ses -
+        * [ ] modifier le tableau comparatif 
+
+* [ ] faire tourner les outils sur d'autres échantillons
+
+* [ ] (faire un GUI shiny qui englobe les 4 outils et leurs options? -> menus déroulants; cases à cocher... ---> pas le temps?)
+    * [ ] Avant ça, organiser les scripts pour qu'on puisse contrôler les paramètres qu'on donne en input; faire notamment un fichier config?
+
+
+
+commentaires reçus pendant la soutenance: 
+* [ ] De quels échantillons parle-t-on? Mieux les présenter.
+* [ ] Beaucoup de matériel et méthodes, très peu de résultats. Gros déséquilibre
+* [ ] Je n'ai pas parlé de ce que j'ai implémenté; On ne comprend pas bien le code que j'ai fait.
+* [ ] Je parle de fichiers puce, de fichiers segments, etc. mais je ne les définis jamais
+
+
+J'ai fait des dessins des interfaces que je veux faire. Vers la fin je me dis que celle de rCGH est bien faite, je pense m'en inspirer.
+
+# <span style="color:#999900"> mercredi 22/06/2022
+arr 9h; 40 min pause, dep 18h40
+*rdv 9h00* pour parler des différents layouts adaptables
+* [X] ~~*montrer l'interface rCGH*~~ [2022-06-22]
+* [X] ~~*montrer mes interfaces*~~ [2022-06-22]
+* [X] ~~*parler du fait que ça peut être *très* long à recharger donc les curseurs, pas forcément top*~~ [2022-06-22]
+On part sur l'interface schématisée par `C:\Users\e.bordron\Desktop\CGH-scoring\M2_internship_Bergonie\docs\docs_I_made\images\aperçu_interface.png`.
+Objectif d'aujourd'hui: faire le squelette du GUI, donc les blocs principaux.
+Un nom que pourrait avoir cette interface est GenDex (GENomic inDEX)
+
+J'ai regardé les fonctions de DNAcopy pour voir quel SD était utilisé. Le SD du profil entier est utilisé. En effet, si on utilise le SD des 2 segments considérés, quand la distance aumente, le SD augmente; à un certain seuil, la distance n'est jamais supérieure à undoSD * SD.
+le but est d'éviter que les tendances *locales* ne génèrent trop de segments, c'est pour ça qu'on utilise le SD du profil entier. cf cahier violet au 18/03
+
+J'ai organisé les éléments de l'onglet CGHcall selon le schéma fait avec élodie et claire.
+Pour ça, les fonctions de layout que j'ai utilisées sont: 
+- verticalLayout pour organiser des éléments dans une colonne
+- fillPage pour simplement remplir ta section avec les éléments que tu lui donnes, et tu peux ensuite les agencer avec du CSS. J'ai fait ça pour positionner deux éléments horizontalement.
+- splitLayout pour organiser une région horizontalement en plusieurs blocs placés côte à côte. Fait donc la même chose pour moi.
+J'ai placé des tableaux factices et des sliders factices pour les paramètres.
+
+* [X] ~~*question à élodie: Y a-t-il un moyen efficace de cacher/afficher un slider ou des boutons?*~~ [2022-06-23] 
+* [X] ~~*Dans le panneau CGHcall, les paramètres ne vont pas jusqu'au bas de la page. pourtant, il y a de la place. Comment leur faire utiliser le bas de la page?*~~ [2022-06-23]
+* [X] ~~*quand un tableau dépasse de la page, comment faire un menu déroulant?*~~ [2022-06-23]
+
+
+# <span style="color:#999900"> jeudi 23/06/2022
+arr 9h10; 30 min pause; départ 19h50
+
+J'ai relié le tableau de segments à la segtable générée par le pipeline de CGHcall.
+J'essaie de relier le plot de shiny avec plotSegTable, mais ça ne marche pas: dans renderPlot, je fais plotSegTable, qui contient, à un moment, colnames(segTable) = c([...]). or, ça renvoie une erreur, car segTable est à ce moment-là englobée dans reactive({}). Je vais retirer cette étape de renommage en donnant les bons noms de colonne de base. Ce que je veux faire est: si les colonnes sont bien nommées, le renommage n'est pas fait; dans le cas contraire, le renommage est appliqué.
+edit: je n'ai pas eu besoin de faire ça car le problème était autre:
+problème résolu: dans shiny, si tu fais x = reactive({ expression qui retourne la valeur y }), x ne prend pas la valeur y et est à la place "reactive({ expression qui retourne la valeur y })". Pour utiliser la valeur y, tu dois faire x(). Logique, x est une *fonction* réactive en fait.
+
+# <span style="color:#999900"> vendredi 24/06/2022
+arr 9h40; 50 min pause; départ 17h30
+obj: afficher le plot wgv ou le plot proba call de CGHcall , au choix.
+* [ ] voir les noms de colonnes de rawProbesData pour plotter les log Ratio à partir de ce df.
+objs définis avec élodie: 
+* [X] ~~*boutons Run et download --> dossier résultats*~~ [2022-06-24]
+* [X] ~~*home pane: boite de texte où un préfixe peut être entré. ce préfixe est alors utilisé dans les fichiers output pour permettre un suivi de l'échantillon.*~~ [2022-06-24]
+* [ ] faire en sorte que plotSegTables utilise ggplot:
+    - dans CGHcall_functions.R, je copie getNewPos() et sa sous-fonction et je les renomme getAbspos_segtable() et getAbspos_seg().
+        ~~* [ ] objectif: que cette fonction donne à la segTable passée en argument une colonne qui est la position absolue sur le génome~~
+        * [X] ~~*objectif: Quand une segTable est construite, lui donner les colonnes abs_startPos et abs_endPos*~~ [2022-06-27]
+    - dans CGHcall_functions.R, je prends plotSegTableForWGV() et la renomme plotSeg_rCGH___tochange().
+        * [X] ~~*objectif: que cette fonction utilise les colonnes Position absolue (start et stop) d'une segTable pour afficher les segments altérés à l'aide de ggplot.*~~ [2022-06-27]
+
+    actuellement, getNewPos() est applicable sur des tableaux par sonde. J'ai renommé getNewPos() en getAbspos_probeset() pour plus de clarté.
+
+
+
+# <span style="color:#999900"> lundi 27/06/2022
+arr 9h; 40 min pause; départ 18h20
+minor changes to allSamples.R in order to test changes for converting plotSegTables from base R to ggplot2
+```       Rihab Azmani est présente le mardi et le jeudi, et un lundi sur deux. Elle fait beaucoup de Shiny         ```
+* [X] ~~*objectif: Quand une segTable est construite, lui donner les colonnes abs_startPos et abs_endPos*~~ [2022-06-27]
+~~ASCAT: segData ne contient pas de dataframe équivalent aux données par sonde. callData, oui. j'utilise getabspos_probeset() dessus. En conséquence, quand je construis la segtable d'ASCAT, j'utilise la colonne absPos ainsi créée. ~~
+edit: ASCAT: callData ne contient pas non plus de probeset. j'utilise directement getAbsPos_segTable dessus quand sa segTable est créée.
+CGHcall et rCGH: J'utilise getabspos_probeset() sur le df probeset, puis j'utilise absPos pour créer des colonnes absPos dans la segTable.
+* [X] ~~*CGHcall: la table de segments a absPos pour start et stop  ;   rawProbesValue a absPos. *~~ [2022-06-27]
+* [X] ~~*rCGH: la table de segments a absPos pour start et stop  ;   rawProbesValue a absPos. *~~ [2022-06-27]
+
+* [X] ~~*envoyer un lien et dire ce que je vais présenter*~~ [2022-06-27]
+
+
+
+# <span style="color:#999900"> mardi 28/06/2022
+arr 9h20; 40 min pause; départ 17h30
+
+On a fait une réunion avec Jennifer et Julie; j'ai pris des notes.
+
+J'ai mis des commentaires sur l'article original de CBS: `DNAcopy_CBS_base.pdf`. Quel SD est utilisé, ce n'est jamais dit; les auteurs expliquent que les breakpoints dûs à des tendances locales sont effectivement traités mais pas par la technique undo.SD (c'est la technique prune décrite dans la description de la fonction segment() de DNAcopy; voir l'aide de R).
+
+En attendant, je sais pourquoi DNAcopy ne fusionne pas les segments en un unique segment qui couvrirait tout le génome: l'algorithme est appliqué chromosome par chromosome, c'est pourquoi deux chromosomes ne sont jamais fusionnés ensemble.
+
+J'ai ajouté du texte qui décrit les paramètres dans l'onglet "Parameters", rempli de manièrer factice l'onglet Summary, mis le theme en bw(), fait des boîtes pour séparer les paramètres les uns des autres, et mis en place le choix entre le plot que j'ai implémenté et celui de CGHcall.
+
+# <span style="color:#999900"> mercredi 29/06/2022
+arr 9h30; 30 min pause; 17h30
+* [ ] ``scuttle_shiny.R`` contient le code qui permet d'appliquer à autant d'éléments que je veux le même style. utiliser ça au lieu de mettre ``wellPanel()`` autour de chaque élément.
+* [ ] CGHcall: problème: le tableau de segments "raw" ne permet pas de calculer le GI a priori, car il ne contient pas les valeurs de Call. régler ça.
+* [ ] CGHcall: voir pk les probas de call sont toujours de 0 ou 1 et jamais entre les deux. Chercher des probas plus nuancées dans les objets CGHcall -> lancer le pipeline à la main.
+
+Dans l'onglet CGHcall, j'utilisais fillPage(), ça empêchait la scrollbar d'apparaître quand des éléments dépassaient de la fenêtre. Je l'enlève, c'est bon.
+
+Le plot utilise switch() dsormais, et plus shinyjs.
+
+Je rends les fichiers probeset.txt utilisables par Gendex. la récupération du sampleName passe par le parsing des noms de colonnes. à savoir: dans le fichier texte, chaque nom de colonne contient le nom de l'échantillon entre parenthèses; une fois chargé dans R, les parenthèses et les espaces sont remplacés par des points.
+
+dans le plot que j'ai mis en place, je garde 1 point sur 100 si le nombre de points à afficher est >10 000 .
+
+# <span style="color:#999900"> jeudi 30/06/2022
+arr 9h10; 30 min pause; départ 17h30
+
+Désormais, le plot ne lance plus les calcul avant que le bouton run ne soit cliqué.
+La couleur des chromosomes est affichée.
+Un seul tableau de segments est généré au lieu de deux. Il contient les valeurs de Log2Ratio *et* de nombre de copies des segments. Ces valeurs sont visibles dans le tableau affiché dans l'interface, et le GI est désormais calculé sur les valeurs de nombre de copies, comme prévu.
+
+# <span style="color:#999900"> vendredi 01/07/2022
+arr9h50; 30 min pause; départ 17h40
+
+getAbspos_probeset() utilise maintenant les noms de colonne "CHROMOSOME", et "START_POS" (pas "END_POS").
+
+En bref, j'ai supprimé des calculs devenus inutiles pour l'onglet CGHcall.
+
+Je lance rCGH.R pour voir comment mapper les gènes sur les segments altérés.
+
+# <span style="color:#999900"> lundi 04/07/2022
+arr 9h30; 
+
+
+# <span style="color:#999900"> lundi 11/07/2022
+# cette semaine, élodie est 0% disponible
