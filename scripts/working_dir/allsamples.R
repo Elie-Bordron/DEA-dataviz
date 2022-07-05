@@ -1,5 +1,9 @@
 ## set working directory
+if(FALSE){
+    working_dir = "C:/Users/User/Desktop/CGH_scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+}
 working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    
 resDir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results"
 res_GI_dir = file.path(resDir, "GI_all_methods")
 manually_save_plots_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/res_aujd"
@@ -85,7 +89,6 @@ plotOnePkg = function(GI_table, pkg) {
     dfOnePkg = dfOnePkg[order(dfOnePkg$GI), ]
     plot(dfOnePkg$GI, xaxt="n", main = paste0(pkg, " GI"), xlab="", ylab="GI")
     axis(1,at=1:length(dfOnePkg$GI),labels=dfOnePkg$sample, las = 2)
-    
 }
 
 ############################### main

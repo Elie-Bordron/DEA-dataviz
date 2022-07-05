@@ -76,7 +76,7 @@ getSeg = function(currSampleSegs, s){
 
 get_seg_table = function(currSampleSegs) {
     ## initialize by-segments table 
-    print(c("currSampleSegs: ", currSampleSegs))
+    # print(c("currSampleSegs: ", currSampleSegs))
     ncols = length(colnames(currSampleSegs))
     if("absPos" %in% colnames(currSampleSegs)) {
         colNames_not_absPos = colnames(currSampleSegs)!="absPos"
@@ -88,13 +88,13 @@ get_seg_table = function(currSampleSegs) {
         segTableBySegment = data.frame(matrix(ncol = ncols+4, nrow = 0)) # +4 because column rawLRR gets removed and columns absStart, absEnd, nbProbes, seg.med & probes.Sd get added
         colNames_segTable = colnames(currSampleSegs)
     }
-    print(c("colNames_segTable: ", colNames_segTable))
+    # print(c("colNames_segTable: ", colNames_segTable))
     colNames_not_rawLRR = colNames_segTable!="rawLRR"
-    print(c("colNames_not_rawLRR: ", colNames_not_rawLRR))
+    # print(c("colNames_not_rawLRR: ", colNames_not_rawLRR))
     colNames_without_rawLRR = colNames_segTable[colNames_not_rawLRR]
     colNames_segTable = colNames_without_rawLRR
     # colnames(segTableBySegment) = c(colNames_without_absPos, "absStart", "absEnd")
-    print(c("colNames_segTable: ", colNames_segTable))
+    # print(c("colNames_segTable: ", colNames_segTable))
     colNamesWithAbsStartEnd = R.utils::insert(colNames_segTable,length(colNames_segTable)-1,c("absStart", "absEnd"))
     # print(c("colNamesWithAbsStartEnd: ", colNamesWithAbsStartEnd))
     colnames(segTableBySegment) = c(colNamesWithAbsStartEnd, "nbProbes", "seg.med", "probes.Sd")
@@ -115,10 +115,10 @@ get_seg_table = function(currSampleSegs) {
 }
 
 prepareSegtableByProbe = function(segTableByProbe) {
-    print(c("segTableByProbe: ", segTableByProbe))
+    # print(c("segTableByProbe: ", segTableByProbe))
     ### add absPos column to probeSet
-    print(c("colnames(segTableByProbe): ", colnames(segTableByProbe)))
-    print(c("'Chromosome', 'Start', 'End' colnames: ", colnames(segTableByProbe)[colnames(segTableByProbe) %in% c("Chromosome", "Start", "End")]))
+    # print(c("colnames(segTableByProbe): ", colnames(segTableByProbe)))
+    # print(c("'Chromosome', 'Start', 'End' colnames: ", colnames(segTableByProbe)[colnames(segTableByProbe) %in% c("Chromosome", "Start", "End")]))
 
     # colnames(segTableByProbe)[colnames(segTableByProbe) %in% c("Chromosome", "Start", "End")] = c("ChrNum", "ChrStart", "ChrEnd")
     segTableByProbe = getAbspos_probeset(segTableByProbe)
@@ -143,44 +143,6 @@ getSegTables = function(segTableByProbe, sampleNames) {
     return(segTablesList)
 }
 
-########################## not completed
-# plotSeg_CGHcall = function(seg_df, indivSeg=FALSE, segColor="dark blue", alreadyGoodPos=FALSE) {
-#     ########### Used by CGHcall.R to plot segTables through ########### 
-#     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
-#     ## get endpos of last segment of previous chromosome
-#     if((seg_df["chrom"]=="X" ) || (seg_df["chrom"]=="Y") || (seg_df["chrom"]==24) || (seg_df["chrom"]==25)){
-#         pos0CurrChr = sum(lengthOfChrs[1:22]) ## 22 because we exclude sex chromosomes
-#     }else {
-#         # print(c("seg_df['chrom']: ", seg_df["chrom"]))
-#         # print(c("class(seg_df['chrom']): ", class(seg_df["chrom"])))
-#         currChromosome = seg_df["chrom"]
-#         currChromosome = as.numeric(currChromosome)
-#         # print(c("currChromosome: ", currChromosome))
-#         if (currChromosome!=1){
-#             pos0CurrChr = sum(lengthOfChrs[1:currChromosome-1])
-#         } else {
-#             pos0CurrChr=0
-#         }
-#     }
-#     ## drawing a segment on plot for each segment of the genome, using estimated values
-#     segStartPos = pos0CurrChr + as.numeric(seg_df[["loc.start"]])
-#     segEndPos = pos0CurrChr + as.numeric(seg_df[["loc.end"]])
-#     if(alreadyGoodPos) {
-#         segStartPos = as.numeric(seg_df[["loc.start"]])
-#         segEndPos = as.numeric(seg_df[["loc.end"]])
-#     }
-#     # estimCN = as.numeric(seg_df[["Log2Ratio"]])
-#     # estimCN = as.numeric(seg_df[["estimCopy"]])
-#     # print(c("seg_df[[value_col]]: ", seg_df[[value_col]]))
-#     estimCN = as.numeric(seg_df[[value_col]])
-#     # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
-#     segments(segStartPos, estimCN, segEndPos, estimCN, col=segColor, lwd=2)
-#     if(indivSeg) {
-#         height = 0.05
-#         segments(segStartPos, estimCN+height, segStartPos, estimCN-height, col=segColor, lwd=0.1)
-#         segments(segEndPos, estimCN+height, segEndPos, estimCN-height, col=segColor, lwd=0.1)
-#     }
-# }
 
 
 
@@ -278,29 +240,6 @@ getAbspos_segtable = function(segTable) {
 }
 
 
-#_______________________________________________________clean what's below_______________________________________________________
-
-# prepareSegtableToPlotseg = function() {
-#     ###                         ###
-#     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
-#     ## get endpos of last segment of previous chromosome
-#     if((seg_df["chrom"]=="X" ) || (seg_df["chrom"]=="Y") || (seg_df["chrom"]==24) || (seg_df["chrom"]==25)){
-#         pos0CurrChr = sum(lengthOfChrs[1:22]) ## 22 because we exclude sex chromosomes
-#     }else {
-#         # print(c("seg_df['chrom']: ", seg_df["chrom"]))
-#         # print(c("class(seg_df['chrom']): ", class(seg_df["chrom"])))
-#         currChromosome = seg_df["chrom"]
-#         currChromosome = as.numeric(currChromosome)
-#         # print(c("currChromosome: ", currChromosome))
-#         if (currChromosome!=1){
-#             pos0CurrChr = sum(lengthOfChrs[1:currChromosome-1])
-#         } else {
-#             pos0CurrChr=0
-#         }
-#     }
-# }
-
-
 
 
 plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue", gg){
@@ -325,6 +264,7 @@ plotSegTableForWGV_GG = function(currSegTable,probesData, segColor="#3e9643", yl
     if(!"absPos" %in% colnames(probesData)) {
         probesData = getAbspos_probeset(probesData)
     }
+    print(c("currSegTable in plotSegTableForWGV_GG: ", currSegTable))
     rawProbesData_toPlot = probesData
     if(dim(rawProbesData_toPlot)[2]>10**4) {rawProbesData_toPlot = removePointsForQuickPlotting(rawProbesData_toPlot, rmPts*4)}
     else if(dim(rawProbesData_toPlot)[2]>10**5) {rawProbesData_toPlot = removePointsForQuickPlotting(rawProbesData_toPlot, rmPts*40)}
@@ -342,9 +282,10 @@ plotSegTableForWGV_GG = function(currSegTable,probesData, segColor="#3e9643", yl
     gg = gg + geom_hline(yintercept=0,linetype="dashed",size=0.3)
     ### plot segments
     if(!is.null(currSegTable)) {
+        gg = gg + ggnewscale::new_scale_color() ## to use more than one scale_color in the same ggplot
         # gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Log2Ratio, yend=Log2Ratio), size=1, color=segColor)  # to set one color for all segments
-        gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Log2Ratio, yend=Log2Ratio), size=1, color=CN) # to change color of segments according to CN value
-        segColrVec = c("green", "blue", "black")
+        gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Log2Ratio, yend=Log2Ratio, color=factor(CN)), size=1) # to change color of segments according to CN value
+        segColrVec = c("green", "red", "black")
         names(segColrVec) = c("1", "3", "2")
         gg = gg + scale_color_manual(values = segColrVec)
     }
@@ -399,7 +340,7 @@ getPrbLvSegmentsFromCallObj = function(callRes, segsType="raw") {
     CGHcall_segments = cbind(rowsInfo, rawLRR, CGHcall_segments)
     colnames(CGHcall_segments) = c(colnames(rowsInfo), "rawLRR", sampleNames)
     }
-    print(c("CGHcall_segments: ", CGHcall_segments))
+    # print(c("CGHcall_segments: ", CGHcall_segments))
     return(CGHcall_segments)
 }
 

@@ -1,21 +1,31 @@
 library(shiny)
 library(shinyBS)
-library(shinyjs)
+# library(shinyjs)
 library(shinybusy)
 library(tidyverse)
 library(DT)
 
-working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+
+if(FALSE){ # set this to TRUE on bergo PC 
+    print("bergo path")
+    working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+    GI_scripts_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+} else { # this is used on my own PC
+    working_dir_shiny = "C:/Users/User/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+    GI_scripts_dir = "C:/Users/User/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+}
+
+
+#### load server information
+source(file.path(working_dir_shiny, "gendex_server.R"))
 results_dir = file.path(working_dir_shiny, "gendex_results")
 if(!dir.exists(results_dir))dir.create(results_dir)
 setwd(working_dir_shiny)
 options("max.print"=100)
 rstudioapi::filesPaneNavigate(working_dir_shiny)
 
-#### load server information
-source(file.path(working_dir_shiny, "gendex_server.R"))
 
-ui <- fluidPage(useShinyjs(),
+ui <- fluidPage( #useShinyjs(),
     titlePanel("GenDex - Genomic Index visualization tool"),
     add_busy_spinner(spin = "fading-circle"),
     tabsetPanel(selected="Home",
@@ -64,17 +74,21 @@ ui <- fluidPage(useShinyjs(),
                     sidebarLayout(
                         sidebarPanel( width = "2",
                             h3("Parameters"),
-                            bsTooltip("undoSD", "This represents the distance under which two segments are fused together.", placement = "bottom", trigger = "hover"),
+                            shinyBS::bsTooltip("undoSD", "This represents the distance under which two segments are fused together.", placement = "bottom", trigger = "hover"),
                             wellPanel(sliderInput("undoSD",
                                                 "Undo splits",
                                                 min = 0.01,
                                                 max = 10,
-                                                value = 3
-                            )),
+                                                value = 3)
+                            ),
+                            shinyBS::bsTooltip("prior", "How call probabilities should be calculated.", placement = "bottom", trigger = "hover"
+                            ),
                             wellPanel(selectInput("prior",
-                                                "How call probabilities should be calculated:", 
-                                                choices = c('Per chromosome arm'='not all', 'On whole genome'='all')
-                            )),
+                                                "Computing of call probabilities", 
+                                                choices = c('Per chromosome arm'='not all', 'On whole genome'='all'))
+                            ),
+                            shinyBS::bsTooltip("correctCell", "Whether call computing should take the proportion of tumoral cells into account", placement = "bottom", trigger = "hover"
+                            ),
                             wellPanel(
                                 checkboxInput("correctCell", 
                                                 "Correct data using proportion of tumoral cells", 
@@ -91,8 +105,8 @@ ui <- fluidPage(useShinyjs(),
                                                 "Minimum length of the segment (in Mb) to be used for fitting the model:",
                                                 min = 0,
                                                 max = 10,
-                                                value = 0.5
-                            )),
+                                                value = 0.5)
+                            ),
                             wellPanel(actionButton("go", "Run")),
                             # wellPanel(actionButton("goPlot", "Run plot")),
                         ),
@@ -104,16 +118,18 @@ ui <- fluidPage(useShinyjs(),
                                     # verticalLayout(
                                     wellPanel(
                                         h2("Segments table"),
+                                        selectInput("selectCN",
+                                                "", 
+                                                choices = c('Altered (Loss & Gain)'='CN!=2', 'Loss (CN<2)'='CN<2', 'Gain (CN>2)'='CN>2', 'All'='is.numeric(CN)')),
                                         DT::dataTableOutput("segTable"),
                                         downloadButton("download_segTable", "Download")
                                     ),
-                                    # verticalLayout(
-                                    wellPanel(
-                                        h2("Genes table"),
-                                        DT::dataTableOutput("geneTable"),
-                                        downloadButton("download_genesTable", "Download"),
-                                    ),
-                                    # textOutput("debug")
+                                    ### Genes table
+                                    # wellPanel(
+                                    #     h2("Genes table"),
+                                    #     DT::dataTableOutput("geneTable"),
+                                    #     downloadButton("download_genesTable", "Download"),
+                                    # ),
                                 )
                             )
                         )

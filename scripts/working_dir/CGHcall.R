@@ -1,5 +1,10 @@
-## set working directory
-working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+## set working directory from shiny app
+if(exists("working_dir_shiny")) {
+    working_dir = working_dir_shiny
+} else {
+    working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+}
+
 
 if (FALSE) {
     setwd(working_dir)
@@ -7,11 +12,6 @@ if (FALSE) {
     ## open working directory in Files tab
     rstudioapi::filesPaneNavigate(working_dir)
 }
-source(file.path(working_dir, "rCGH.R"))
-source(file.path(working_dir, "rCGH_functions.R"))
-source(file.path(working_dir, "CGHcall_functions.R"))
-source(file.path(working_dir, "crossPackagesFunctions.R"))
-source(file.path(working_dir, "oncoscanR_functions.R"))
 
 ## import libraries
 library(dplyr)
@@ -319,6 +319,11 @@ if (FALSE) {
 
 
 if (sys.nframe() == 0){
+    source(file.path(working_dir, "rCGH.R"))
+    source(file.path(working_dir, "rCGH_functions.R"))
+    source(file.path(working_dir, "CGHcall_functions.R"))
+    source(file.path(working_dir, "crossPackagesFunctions.R"))
+    source(file.path(working_dir, "oncoscanR_functions.R"))
     main()
 }
 

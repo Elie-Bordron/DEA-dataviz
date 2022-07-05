@@ -1,12 +1,36 @@
+# library(shiny)
+# library(shinyBS)
+# # library(shinyjs)
+# library(shinybusy)
+# library(tidyverse)
+# library(DT)
+
 options(shiny.maxRequestSize=102*1024^2)
+
+
+
+# devtools::install_github('VanLoo-lab/ascat/ASCAT')
+
 
 
 server <- function(input, output) {
     #### variables
-    GI_scripts_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
-    working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+    # working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+
+    if(FALSE){ # set this to TRUE on bergo PC 
+        # print("bergo path")
+        working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+        GI_scripts_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    } else { # this is used on my own PC
+        working_dir_shiny = "C:/Users/User/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+        GI_scripts_dir = "C:/Users/User/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    }
     results_dir = file.path(working_dir_shiny, "gendex_results")
+    ### load functions
     source(file.path(GI_scripts_dir, "CGHcall.R"))
+    source(file.path(GI_scripts_dir, "CGHcall_functions.R")) # for several CGHcall.R functions to work
+    source(file.path(GI_scripts_dir, "OncoscanR_functions.R")) # calcGI()
+
     source(file.path(GI_scripts_dir, "rCGH.R")) # for genes table
     source(file.path(working_dir_shiny, "gendex_functions.R"))
     
@@ -80,10 +104,11 @@ server <- function(input, output) {
         CGHcall_segments = CGHcall_segments()
         # CGHcall_segments = prepareSegtableByProbe(CGHcall_segments)
         segtab = get_seg_table(CGHcall_segments)
-        print(c("colnames(CGHcall_segments): ", colnames(CGHcall_segments)))
+        # print(c("colnames(CGHcall_segments): ", colnames(CGHcall_segments)))
         # print(c("colnames(segtab): ", colnames(segtab)))
-        print(c("segtab: ", segtab))
-        # segtab$CN = segtab$CN + 2
+        # print(c("segtab: ", segtab))
+        segtab$CN = segtab$CN + 2
+        
         segtab
     })
     
@@ -125,12 +150,20 @@ server <- function(input, output) {
         segtabToDisplay = segTable_calculated() 
         # segtabToDisplay = dplyr::select(segtab, -contains("abs"))
         colnames(segtabToDisplay)[colnames(segtabToDisplay)=="Log2Ratio"] = "seg.mean"
-        segtabToDisplay$CN = segtabToDisplay$CN + 2
+        # segtabToDisplay$CN = segtabToDisplay$CN + 2
+
+        parsed.str <- parse(text=paste0("dplyr::filter(segtabToDisplay,", input$selectCN, ")"))
+        segtabToDisplay = eval(parsed.str)
+        # print(c("segtabToDisplay: ", segtabToDisplay))
         segtabToDisplay
     })
-    output$segTable <- DT::renderDataTable(fillContainer=FALSE,
-        expr={segtabToDisplay()
-        })
+    output$segTable <- DT::renderDataTable(
+        fillContainer=FALSE,
+        expr={
+            segtabToDisplay()
+        }, 
+        quoted = FALSE,
+    )
     output$download_segTable <- downloadHandler(
         filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_segTable")),
         content = function(fileST) {
@@ -139,37 +172,39 @@ server <- function(input, output) {
         }
     )    
     ### Gene table
-    geneTable_obj = data.frame(
-        gene_id = c("BRCA1","CDK12","p53"), nb_breakpoints = c(0, 1, 0), nb_segments = c(1, 2, 1), copynumber = c(2,1,2)
-    )
-    geneTableToDisplay = reactive({
-        segTable = segTable_calculated()
-        segTable = dplyr::select(segTable, -c("absStart", "absEnd"))
-        print(c("colnames(segTable): ", colnames(segTable)))
-        segTable = segTable[c("Chromosome", "Start", "End", "nbProbes", "Log2Ratio", "seg.med", "probes.Sd", "CN")]
-        colnames(segTable) = c("chrom", "loc.start", "loc.end", "num.mark", "seg.mean", "seg.med", "probes.Sd", "estimCopy")
-        print(c("segTable: ", segTable))
-        geneTable = rCGH::byGeneTable(segTable)
-        geneTable = as.data.frame(geneTable)
-        print(c("geneTable: ", geneTable))
-        print(c("class(geneTable): ", class(geneTable)))
-        geneTable
-    })
-    output$geneTable = DT::renderDataTable({
-        geneTableToDisplay()
-        # geneTable_obj
-        })
-    output$download_genesTable <- downloadHandler(
-        filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_genesTable")),
-        content = function(fileGT) {
-            print(c("geneTable_obj: ", geneTable_obj))
-            write.table(geneTable_obj, fileGT, quote=FALSE, row.names=FALSE, sep=";")
-        }
-    )
+    # geneTable_obj = data.frame(
+    #     gene_id = c("BRCA1","CDK12","p53"), nb_breakpoints = c(0, 1, 0), nb_segments = c(1, 2, 1), copynumber = c(2,1,2)
+    # )
+    # geneTableToDisplay = reactive({
+    #     segTable = segTable_calculated()
+    #     segTable = dplyr::select(segTable, -c("absStart", "absEnd"))
+    #     # print(c("colnames(segTable): ", colnames(segTable)))
+    #     segTable = segTable[c("Chromosome", "Start", "End", "nbProbes", "Log2Ratio", "seg.med", "probes.Sd", "CN")]
+    #     colnames(segTable) = c("chrom", "loc.start", "loc.end", "num.mark", "seg.mean", "seg.med", "probes.Sd", "estimCopy")
+    #     # print(c("segTable: ", segTable))
+    #     geneTable = rCGH::byGeneTable(segTable)
+    #     geneTable = as.data.frame(geneTable)
+    #     # print(c("geneTable: ", geneTable))
+    #     print(c("class(geneTable): ", class(geneTable)))
+    #     geneTable
+    # })
+    # output$geneTable = DT::renderDataTable({
+    #     geneTableToDisplay()
+    #     # geneTable_obj
+    #     })
+    # output$download_genesTable <- downloadHandler(
+    #     filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_genesTable")),
+    #     content = function(fileGT) {
+    #         # print(c("geneTable_obj: ", geneTable_obj))
+    #         write.table(geneTable_obj, fileGT, quote=FALSE, row.names=FALSE, sep=";")
+    #     }
+    # )
     
     ### GI output as text
     output$GItext <- renderText({
-        resGI = calcGI_CGHcall(segTable_calculated()) 
+        segTab = segTable_calculated()
+        segTab$CN = segTab$CN-2
+        resGI = calcGI_CGHcall(segTab) 
         paste0(resGI[[2]], " alterations were found on ", resGI[[3]], " chromosomes. Genomic Index=", round(resGI[[1]],1) )
     }) 
     
@@ -185,15 +220,15 @@ server <- function(input, output) {
         }
     )
     ### genes table
-    genes_table = data.frame(sample = c("BRCA1","CDK12","p53"), CN_CGHcall = c(2,1,2), CN_ASCAT = c(1,1,2), CN_rCGH = c(2,2,2))
-    output$genes_table_summary = DT::renderDataTable({genes_table})
+    # genes_table = data.frame(sample = c("BRCA1","CDK12","p53"), CN_CGHcall = c(2,1,2), CN_ASCAT = c(1,1,2), CN_rCGH = c(2,2,2))
+    # output$genes_table_summary = DT::renderDataTable({genes_table})
     
-    output$download_genes_table_summary <- downloadHandler(
-        filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_genes_table")),
-        content = function(fileGT) {
-            write.table(genes_table, fileGT, quote=FALSE, row.names=FALSE, sep=";")
-        }
-    )
+    # output$download_genes_table_summary <- downloadHandler(
+    #     filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_genes_table")),
+    #     content = function(fileGT) {
+    #         write.table(genes_table, fileGT, quote=FALSE, row.names=FALSE, sep=";")
+    #     }
+    # )
     
     
 }

@@ -247,6 +247,7 @@
 #     }
 # )
 
+### apply multiple color_scale on same graph
 library(ggplot2)
 
 data <- data.frame(row.names=paste0('row',1:20))
@@ -254,20 +255,28 @@ data$x_baseline <- sample(1:20)
 data$x_followup <- sample(1:20)
 data$y_baseline <- sample(1:20)
 data$y_followup <- sample(1:20)
-
-
 data$lineColor <- factor(ifelse(data$x_followup - data$x_baseline < 0,'increase','decrease'))
-# data$lineColor <- factor(ifelse(data$x_followup - data$x_baseline < 0,'yellow','orange'))
+
+##colors for segments
 segColors = c("yellow", "orange")
 names(segColors) = c('increase','decrease')
+## colors for "baseline" points 
+b_pointsColors = c("light green", "dark green")
+names(b_pointsColors) = c('increase','decrease')
+## colors for "followup" points 
+f_pointsColors = c("light blue", "dark blue")
+names(f_pointsColors) = c('increase','decrease')
 
 ggplot(data) + 
-geom_point(aes (x = data$x_baseline , y= data$y_baseline), color = "red") + 
-geom_point (aes (x = data$x_followup, y = data$y_followup), color = "blue") + 
-xlab("X") + 
-ylab ("Y") +
-geom_segment(data = data , aes(x=data$x_baseline, xend = data$x_followup, y=data$y_baseline, yend = data$y_followup, color=data$lineColor)) + 
+# first color scale
+geom_point(aes (x = x_baseline , y= y_baseline, color = lineColor)) +
+scale_color_manual(values=b_pointsColors) +
+# new color scale
+ggnewscale::new_scale_color()+
+geom_point (aes (x = x_followup, y = y_followup, color = lineColor)) + 
+scale_color_manual(values=f_pointsColors) +
+# new color scale
+ggnewscale::new_scale_color()+
+geom_segment(data = data , aes(x=x_baseline, xend = x_followup, y=y_baseline, yend = y_followup, color=lineColor)) + 
 scale_color_manual(values=segColors)
-
-
 

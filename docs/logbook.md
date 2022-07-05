@@ -2944,7 +2944,14 @@ En bref, j'ai supprimé des calculs devenus inutiles pour l'onglet CGHcall.
 Je lance rCGH.R pour voir comment mapper les gènes sur les segments altérés.
 
 # <span style="color:#999900"> lundi 04/07/2022
-arr 9h30; 
+arr 9h30; départ à 13h30; reprise à 20h30; fin à 23h00
+J'ai téléchargé les pkg sur mon ordi
+
+# <span style="color:#999900"> mardi 05/07/2022
+début 13h30;
+* [X] ~~*mep le filtrage de la colonne CN de la segTable dans le but de n'afficher que les segments en perte ou que les segments altérés*~~ [2022-07-05]
+* [X] ~~*mep la coloration des segments selon leur nombre de copies: CN<2 ->bleu;  CN>2 -> rouge*~~ [2022-07-05]
+
 
 
 # <span style="color:#999900"> lundi 11/07/2022

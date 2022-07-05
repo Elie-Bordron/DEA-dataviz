@@ -1,11 +1,16 @@
 ##### this is the guide to rCGH package. use this with the pdf in docs
 
 ### run this when starting R session 
+## set working directory from shiny app
 ## set working directory
-working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
-setwd(working_dir)
-## open working directory in Files tab
-rstudioapi::filesPaneNavigate(working_dir)
+if(exists("working_dir_shiny")) {
+    working_dir = working_dir_shiny
+} else {
+    working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    setwd(working_dir)
+    ## open working directory in Files tab
+    rstudioapi::filesPaneNavigate(working_dir)
+}
 ## loading libraries
 library(rCGH)
 library(dplyr)
