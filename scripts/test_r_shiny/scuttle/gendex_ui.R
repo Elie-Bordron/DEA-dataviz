@@ -113,7 +113,13 @@ ui <- fluidPage( #useShinyjs(),
                         mainPanel(width = "10",
                             verticalLayout(
                                 # h3(textOutput("GItext", container=pre)),
+                                
                                 wellPanel(h3(textOutput("GItext"))),
+                                # wellPanel(
+                                    # h3("test - start"),
+                                uiOutput("test_warnPanel"),
+                                    # h3("test - end")
+                                    # ),
                                 splitLayout(
                                     # verticalLayout(
                                     wellPanel(

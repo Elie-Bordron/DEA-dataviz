@@ -2951,7 +2951,7 @@ J'ai téléchargé les pkg sur mon ordi
 début 13h30;
 * [X] ~~*mep le filtrage de la colonne CN de la segTable dans le but de n'afficher que les segments en perte ou que les segments altérés*~~ [2022-07-05]
 * [X] ~~*mep la coloration des segments selon leur nombre de copies: CN<2 ->bleu;  CN>2 -> rouge*~~ [2022-07-05]
-
+* [ ] find how to hide/show a panel depending on conditions. then use this to display only a text panel saying "load a probeset.txt" until a probeset.txt is loaded, then display normal panels.
 
 
 # <span style="color:#999900"> lundi 11/07/2022

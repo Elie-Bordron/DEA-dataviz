@@ -247,36 +247,74 @@
 #     }
 # )
 
-### apply multiple color_scale on same graph
-library(ggplot2)
+# ### apply multiple color_scale on same graph
+# library(ggplot2)
 
-data <- data.frame(row.names=paste0('row',1:20))
-data$x_baseline <- sample(1:20)
-data$x_followup <- sample(1:20)
-data$y_baseline <- sample(1:20)
-data$y_followup <- sample(1:20)
-data$lineColor <- factor(ifelse(data$x_followup - data$x_baseline < 0,'increase','decrease'))
+# data <- data.frame(row.names=paste0('row',1:20))
+# data$x_baseline <- sample(1:20)
+# data$x_followup <- sample(1:20)
+# data$y_baseline <- sample(1:20)
+# data$y_followup <- sample(1:20)
+# data$lineColor <- factor(ifelse(data$x_followup - data$x_baseline < 0,'increase','decrease'))
 
-##colors for segments
-segColors = c("yellow", "orange")
-names(segColors) = c('increase','decrease')
-## colors for "baseline" points 
-b_pointsColors = c("light green", "dark green")
-names(b_pointsColors) = c('increase','decrease')
-## colors for "followup" points 
-f_pointsColors = c("light blue", "dark blue")
-names(f_pointsColors) = c('increase','decrease')
+# ##colors for segments
+# segColors = c("yellow", "orange")
+# names(segColors) = c('increase','decrease')
+# ## colors for "baseline" points 
+# b_pointsColors = c("light green", "dark green")
+# names(b_pointsColors) = c('increase','decrease')
+# ## colors for "followup" points 
+# f_pointsColors = c("light blue", "dark blue")
+# names(f_pointsColors) = c('increase','decrease')
 
-ggplot(data) + 
-# first color scale
-geom_point(aes (x = x_baseline , y= y_baseline, color = lineColor)) +
-scale_color_manual(values=b_pointsColors) +
-# new color scale
-ggnewscale::new_scale_color()+
-geom_point (aes (x = x_followup, y = y_followup, color = lineColor)) + 
-scale_color_manual(values=f_pointsColors) +
-# new color scale
-ggnewscale::new_scale_color()+
-geom_segment(data = data , aes(x=x_baseline, xend = x_followup, y=y_baseline, yend = y_followup, color=lineColor)) + 
-scale_color_manual(values=segColors)
+# ggplot(data) + 
+# # first color scale
+# geom_point(aes (x = x_baseline , y= y_baseline, color = lineColor)) +
+# scale_color_manual(values=b_pointsColors) +
+# # new color scale
+# ggnewscale::new_scale_color()+
+# geom_point (aes (x = x_followup, y = y_followup, color = lineColor)) + 
+# scale_color_manual(values=f_pointsColors) +
+# # new color scale
+# ggnewscale::new_scale_color()+
+# geom_segment(data = data , aes(x=x_baseline, xend = x_followup, y=y_baseline, yend = y_followup, color=lineColor)) + 
+# scale_color_manual(values=segColors)
 
+
+library(shiny)
+library(shinydashboard)
+
+ui <- dashboardPage(
+    
+    dashboardHeader(),
+    dashboardSidebar(
+        selectInput(inputId = "select", 
+                    label = "please select an option", 
+                    choices = LETTERS[1:3]),
+        uiOutput("conditional_comment")
+    ),
+    dashboardBody(
+        uiOutput("selection_text"),
+        uiOutput("comment_text")
+    )
+)
+
+server <- function(input, output) {
+    
+    output$selection_text <- renderUI({
+        paste("The selected option is", input$select)
+    })
+    
+    output$conditional_comment <- renderUI({
+        req(input$select == "B")
+        textAreaInput(inputId = "comment", 
+                      label = "please add a comment", 
+                      placeholder = "write comment here")
+    })
+    
+    output$comment_text <- renderText({
+        input$comment
+    })
+}
+
+shinyApp(ui = ui, server = server)

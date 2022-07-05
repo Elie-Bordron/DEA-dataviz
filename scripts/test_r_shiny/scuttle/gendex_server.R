@@ -53,6 +53,7 @@ server <- function(input, output) {
     ### results computing
     probesData = reactive({
         print("receiving rawProbesData")
+        req(!is.null(input$probeset_txt))
         file <- input$probeset_txt
         rawProbesData = read.table(file$datapath, header = input$probeSetHeader, sep="\t",check.names=FALSE)
         # print(c("colnames(rawProbesData): ", colnames(rawProbesData)))
@@ -84,8 +85,8 @@ server <- function(input, output) {
         return(baseparams)
     })
     # resPipeline = reactive({  
-    resPipeline = eventReactive(input$go, {  
-        # print("calculating pipeline result")
+    resPipeline = eventReactive(input$go, { 
+        print("calculating pipeline result")
         # pipelineCGHcall(probesData(), params())
         # print(c("colnames(probesData()): ", colnames(probesData())))
         suppressMessages(suppressWarnings(pipelineCGHcall(probesData(), params())))
@@ -160,6 +161,8 @@ server <- function(input, output) {
     output$segTable <- DT::renderDataTable(
         fillContainer=FALSE,
         expr={
+            print("Creating table to display")
+            req(!is.null(input$probeset_txt))
             segtabToDisplay()
         }, 
         quoted = FALSE,
@@ -202,12 +205,37 @@ server <- function(input, output) {
     
     ### GI output as text
     output$GItext <- renderText({
+        req(!is.null(input$probeset_txt))
+        print(c("segTable_calculated() according to output$GItext", segTable_calculated()))
         segTab = segTable_calculated()
         segTab$CN = segTab$CN-2
         resGI = calcGI_CGHcall(segTab) 
         paste0(resGI[[2]], " alterations were found on ", resGI[[3]], " chromosomes. Genomic Index=", round(resGI[[1]],1) )
     }) 
     
+    ###### panel that says "load a probeset.txt" and disappears when it is done
+    output$test_warnPanel = renderUI({
+        # req(input$probeset_txt != "")
+        # req( is.null(input$probeset_txt))
+        req( is.null(input$probeset_txt$name))
+        print(c("input$probeset_txt: ", input$probeset_txt))
+        print(c("input$probeset_txt$name: ", input$probeset_txt$name))
+        fileName = input$probeset_txt$name
+        fileExt = substr(fileName, nchar(fileName)-12+1, nchar(fileName))
+        print(c("file extension: ", fileExt)) # 12 = nb of char in "probeset.txt"
+        
+        if(exists("fileName")){ print(c("fileName: ", fileName))} else {print("no 'name' attribute to input$probeset_txt")}
+        # paste0("input file given is currently ", input$probeset_txt$name, " .")
+        
+        "Please load a probeset.txt"
+    })
+
+
+
+
+
+
+
     ######## Summary PANE
     ### GI table
     GI_table = data.frame(sample = c("1-RV","2-AD","3-ES"), GI_CGHcall = c(15,8,22), GI_ASCAT = c(12,18,31), GI_rCGH = c(9,6,13))
