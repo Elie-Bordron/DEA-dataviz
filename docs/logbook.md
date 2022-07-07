@@ -2948,10 +2948,22 @@ arr 9h30; départ à 13h30; reprise à 20h30; fin à 23h00
 J'ai téléchargé les pkg sur mon ordi
 
 # <span style="color:#999900"> mardi 05/07/2022
-début 13h30;
+4h de travail au total environ
 * [X] ~~*mep le filtrage de la colonne CN de la segTable dans le but de n'afficher que les segments en perte ou que les segments altérés*~~ [2022-07-05]
 * [X] ~~*mep la coloration des segments selon leur nombre de copies: CN<2 ->bleu;  CN>2 -> rouge*~~ [2022-07-05]
-* [ ] find how to hide/show a panel depending on conditions. then use this to display only a text panel saying "load a probeset.txt" until a probeset.txt is loaded, then display normal panels.
+* [X] ~~*find how to hide/show a panel depending on conditions. then use this to display only a text panel saying "load a probeset.txt" until a probeset.txt is loaded, then display normal panels.*~~ [2022-07-06]
+
+# <span style="color:#999900"> mercredi 06/07/2022
+6h au total je pense
+I can now hide/show conditionnally a panel using conditionalPanel().
+I made the text visible.
+* [ ] create a ggplot for allele difference under the regular ggplot
+* [X] ~~*set up skeleton for rCGH*~~ [2022-07-07]
+
+# <span style="color:#999900"> mercredi 06/07/2022
+
+
+
 
 
 # <span style="color:#999900"> lundi 11/07/2022

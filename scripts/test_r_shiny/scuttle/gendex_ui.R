@@ -6,6 +6,9 @@ library(tidyverse)
 library(DT)
 
 
+
+
+
 if(FALSE){ # set this to TRUE on bergo PC 
     print("bergo path")
     working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
@@ -14,6 +17,8 @@ if(FALSE){ # set this to TRUE on bergo PC
     working_dir_shiny = "C:/Users/User/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
     GI_scripts_dir = "C:/Users/User/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
 }
+
+
 
 
 #### load server information
@@ -61,14 +66,20 @@ ui <- fluidPage( #useShinyjs(),
         tabPanel(title = "CGHcall",
             mainPanel(width = 12,align = "center",
                 verticalLayout(
-                    # div(style = "float:left;width:90%;",plotOutput("profilePlot"),plotOutput("probaPlot")),
-                    # div(style = "float:right;width:10%;position:relative;top:70px;",
-                    #     radioButtons("plotChoice","Profile display",choices = c("Call probability"="proba","segmentation results"="profile"),
-                    #     selected = "profile")
-                    # ),
-                    splitLayout(cellWidths = c("80%", "20%"),
-                        plotOutput("profilePlot"),
+                    conditionalPanel(
+                        condition = "output.CGHcall_probesetLoaded == false",  # js
+                        wellPanel(
+                            h1(span(textOutput("test_warnPanel"), style = 'color:green; font-weight: bold;')),
+                        ),
+                    ),
+
+                    splitLayout( cellWidths = c("80%", "20%"),
+                        verticalLayout(
+                            plotOutput("CGHcall_profilePlot"),
+                            # plotOutput("CGHcall_allDiffPlot"),
+                        ),
                         radioButtons("plotChoice","Profile display",choices = c("Call probability"="proba","segmentation results"="profile")),
+
                     ),
 
                     sidebarLayout(
@@ -112,14 +123,12 @@ ui <- fluidPage( #useShinyjs(),
                         ),
                         mainPanel(width = "10",
                             verticalLayout(
-                                # h3(textOutput("GItext", container=pre)),
+                                # h3(textOutput("CGHcall_GItext", container=pre)),
                                 
-                                wellPanel(h3(textOutput("GItext"))),
-                                # wellPanel(
-                                    # h3("test - start"),
-                                uiOutput("test_warnPanel"),
-                                    # h3("test - end")
-                                    # ),
+                                conditionalPanel(
+                                    condition = "output.CGHcall_probesetLoaded == true",  # js
+                                    wellPanel(h3(textOutput("CGHcall_GItext")))
+                                ),
                                 splitLayout(
                                     # verticalLayout(
                                     wellPanel(
@@ -127,8 +136,8 @@ ui <- fluidPage( #useShinyjs(),
                                         selectInput("selectCN",
                                                 "", 
                                                 choices = c('Altered (Loss & Gain)'='CN!=2', 'Loss (CN<2)'='CN<2', 'Gain (CN>2)'='CN>2', 'All'='is.numeric(CN)')),
-                                        DT::dataTableOutput("segTable"),
-                                        downloadButton("download_segTable", "Download")
+                                        DT::dataTableOutput("CGHcall_segTable"),
+                                        downloadButton("CGHcall_download_segTable", "Download")
                                     ),
                                     ### Genes table
                                     # wellPanel(
@@ -141,11 +150,103 @@ ui <- fluidPage( #useShinyjs(),
                         )
                     )
                 )
+            )
+        ),
+
+        
+        tabPanel(title = "rCGH",
+            mainPanel(width = 12,align = "center",
+                verticalLayout(
+                    conditionalPanel(
+                        condition = "output.rCGH_probesetLoaded == false",  # js
+                        wellPanel(
+                            h1(span(textOutput("test_warnPanel"), style = 'color:green; font-weight: bold;')),
+                        ),
+                    ),
+
+                    splitLayout( cellWidths = c("80%", "20%"),
+                        verticalLayout(
+                            plotOutput("rCGH_profilePlot"),
+                            # plotOutput("rCGH_allDiffPlot"),
+                        ),
+                        radioButtons("plotChoice","Profile display",choices = c("Call probability"="proba","segmentation results"="profile")),
+
+                    ),
+
+                    sidebarLayout(
+                        sidebarPanel( width = "2",
+                            h3("Parameters"),
+                            shinyBS::bsTooltip("undoSD", "This represents the distance under which two segments are fused together.", placement = "bottom", trigger = "hover"),
+                            wellPanel(sliderInput("undoSD",
+                                                "Undo splits",
+                                                min = 0.01,
+                                                max = 10,
+                                                value = 3)
+                            ),
+                            shinyBS::bsTooltip("prior", "How call probabilities should be calculated.", placement = "bottom", trigger = "hover"
+                            ),
+                            wellPanel(selectInput("prior",
+                                                "Computing of call probabilities", 
+                                                choices = c('Per chromosome arm'='not all', 'On whole genome'='all'))
+                            ),
+                            shinyBS::bsTooltip("correctCell", "Whether call computing should take the proportion of tumoral cells into account", placement = "bottom", trigger = "hover"
+                            ),
+                            wellPanel(
+                                checkboxInput("correctCell", 
+                                                "Correct data using proportion of tumoral cells", 
+                                                value=TRUE,
+                                ),
+                                sliderInput("cellularity",
+                                                "Proportion of tumoral cells:",
+                                                min = 0,
+                                                max = 100,
+                                                value = 100
+                                )
+                            ),
+                            wellPanel(sliderInput("minSegLenForFit",
+                                                "Minimum length of the segment (in Mb) to be used for fitting the model:",
+                                                min = 0,
+                                                max = 10,
+                                                value = 0.5)
+                            ),
+                            wellPanel(actionButton("go", "Run")),
+                            # wellPanel(actionButton("goPlot", "Run plot")),
+                        ),
+                        mainPanel(width = "10",
+                            verticalLayout(
+                                # h3(textOutput("rCGH_GItext", container=pre)),
+                                
+                                conditionalPanel(
+                                    condition = "output.rCGH_probesetLoaded == true",  # js
+                                    wellPanel(h3(textOutput("rCGH_GItext")))
+                                ),
+                                splitLayout(
+                                    # verticalLayout(
+                                    wellPanel(
+                                        h2("Segments table"),
+                                        selectInput("selectCN",
+                                                "", 
+                                                choices = c('Altered (Loss & Gain)'='CN!=2', 'Loss (CN<2)'='CN<2', 'Gain (CN>2)'='CN>2', 'All'='is.numeric(CN)')),
+                                        DT::dataTableOutput("rCGH_segTable"),
+                                        downloadButton("rCGH_download_segTable", "Download")
+                                    ),
+                                    ### Genes table
+                                    # wellPanel(
+                                    #     h2("Genes table"),
+                                    #     DT::dataTableOutput("geneTable"),
+                                    #     downloadButton("download_genesTable", "Download"),
+                                    # ),
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        ),
 
 
 
 
-            )),
         tabPanel(title = "ASCAT",
             mainPanel(width = 12,align = "center",
                     # tags$h3("Team Wins & Points"),
@@ -153,13 +254,7 @@ ui <- fluidPage( #useShinyjs(),
                     # div(style = "float:right;width:64%;",plotOutput("points_bar_plot"))
             )
         ),
-        tabPanel(title = "rCGH",
-            mainPanel(width = 12,align = "center",
-                    # tags$h3("Team Wins & Points"),
-                    # div(style = "float:left;width:36%;",plotOutput("wins_bar_plot")),
-                    # div(style = "float:right;width:64%;",plotOutput("points_bar_plot"))
-            )
-        ),
+
         tabPanel(title = "Summary",
             mainPanel(width = 12,
                 splitLayout(
@@ -176,7 +271,8 @@ ui <- fluidPage( #useShinyjs(),
                 )
                 
             )
-        ),
+        ), 
+        
         tabPanel(title = "Parameters",
             mainPanel(width = 12, # align = "center",
                 h1("CGHcall"),

@@ -13,7 +13,7 @@ options(shiny.maxRequestSize=102*1024^2)
 
 
 
-server <- function(input, output) {
+server <- function(input, output, session) { ##session is required for conditionalPanel js expression to use output variables
     #### variables
     # working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
 
@@ -48,6 +48,12 @@ server <- function(input, output) {
         x
     })
     
+
+    ########
+    ########
+    ########
+    ########
+    ########
     ######## CGHcall PANE
 
     ### results computing
@@ -114,11 +120,9 @@ server <- function(input, output) {
     })
     
 
-
-
     ### plot
-    chosenPlot <- reactive({
-    # chosenPlot <- eventReactive(input$goPlot, {
+    CGHcall_chosenPlot <- reactive({
+    # CGHcall_chosenPlot <- eventReactive(input$goPlot, {
         switch(input$plotChoice,
             profile={
                 params = params()
@@ -129,7 +133,7 @@ server <- function(input, output) {
                 # colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
                 currSampleName = params$sampleNames
                 colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
-                removePoints=10
+                 removePoints=10
                 plotSegTableForWGV_GG(segTable_calculated(), probeData, removePoints)
                 # plotSegTable(segTable_calculated(),params$sampleNames,savePlot=FALSE)
                 # plot(c(5,5,5,5,5,5,5,5,6,5))
@@ -142,10 +146,14 @@ server <- function(input, output) {
         )
     })
 
-    output$profilePlot = renderPlot(chosenPlot())
-    # output$profilePlot = eventReactive(input$goPlot, {renderPlot(chosenPlot())})
+    output$CGHcall_profilePlot = renderPlot(CGHcall_chosenPlot())
+    # output$CGHcall_profilePlot = eventReactive(input$goPlot, {renderPlot(CGHcall_chosenPlot())})
 
-    
+    output$CGHcall_allDiffPlot = reactive({
+
+    })
+
+
     ### Segments table
     segtabToDisplay = reactive({
         segtabToDisplay = segTable_calculated() 
@@ -158,7 +166,7 @@ server <- function(input, output) {
         # print(c("segtabToDisplay: ", segtabToDisplay))
         segtabToDisplay
     })
-    output$segTable <- DT::renderDataTable(
+    output$CGHcall_segTable <- DT::renderDataTable(
         fillContainer=FALSE,
         expr={
             print("Creating table to display")
@@ -167,7 +175,7 @@ server <- function(input, output) {
         }, 
         quoted = FALSE,
     )
-    output$download_segTable <- downloadHandler(
+    output$CGHcall_download_segTable <- downloadHandler(
         filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_segTable")),
         content = function(fileST) {
             print(c("segTable_calculated(): ", segTable_calculated()))
@@ -203,18 +211,21 @@ server <- function(input, output) {
     #     }
     # )
     
+
     ### GI output as text
-    output$GItext <- renderText({
+    output$CGHcall_GItext <- renderText({
         req(!is.null(input$probeset_txt))
-        print(c("segTable_calculated() according to output$GItext", segTable_calculated()))
+        print(c("segTable_calculated() according to output$CGHcall_GItext", segTable_calculated()))
         segTab = segTable_calculated()
         segTab$CN = segTab$CN-2
         resGI = calcGI_CGHcall(segTab) 
         paste0(resGI[[2]], " alterations were found on ", resGI[[3]], " chromosomes. Genomic Index=", round(resGI[[1]],1) )
     }) 
     
+
     ###### panel that says "load a probeset.txt" and disappears when it is done
-    output$test_warnPanel = renderUI({
+    # output$test_warnPanel = renderUI({
+    output$test_warnPanel = renderText({
         # req(input$probeset_txt != "")
         # req( is.null(input$probeset_txt))
         req( is.null(input$probeset_txt$name))
@@ -227,8 +238,228 @@ server <- function(input, output) {
         if(exists("fileName")){ print(c("fileName: ", fileName))} else {print("no 'name' attribute to input$probeset_txt")}
         # paste0("input file given is currently ", input$probeset_txt$name, " .")
         
-        "Please load a probeset.txt"
+        "Please load a probeset.txt from Home pane"
     })
+
+    output$CGHcall_probesetLoaded = reactive({
+        pb_loaded = is.character(input$probeset_txt$name)
+        print(c("pb_loaded: ", pb_loaded))
+        pb_loaded
+    })
+    
+    
+    #### output options for different output objects
+    outputOptions(output, 'CGHcall_probesetLoaded', suspendWhenHidden = FALSE)
+
+
+
+
+
+
+
+    ########
+    ########
+    ########
+    ########
+    ########
+    ######## rCGH PANE
+
+    ### results computing
+    probesData = reactive({
+        print("receiving rawProbesData")
+        req(!is.null(input$probeset_txt))
+        file <- input$probeset_txt
+        rawProbesData = read.table(file$datapath, header = input$probeSetHeader, sep="\t",check.names=FALSE)
+        # print(c("colnames(rawProbesData): ", colnames(rawProbesData)))
+        ProbeData_filtered = dplyr::select(rawProbesData, c("ProbeSetName", "Chromosome", "Position", starts_with("Log2Ratio")) )
+        # print(c("ProbeData_filtered: ", ProbeData_filtered))
+        ProbeDataWithEndPos = mutate(ProbeData_filtered, END_POS=Position+20)
+        # print(c("ProbeDataWithEndPos after mutating: ", ProbeDataWithEndPos))
+        sampleName_within_colName = colnames(dplyr::select(ProbeDataWithEndPos, starts_with("Log2Ratio")))
+        split_by_leftBracket = stringr::str_split(sampleName_within_colName, "\\(") [[1]]
+        # print(c("split_by_leftBracket: ", split_by_leftBracket))
+        split_by_brackets = stringr::str_split(split_by_leftBracket[2], "\\)")[[1]]
+        # print(c("split_by_brackets: ", split_by_brackets))
+        sampleName = stringr::str_replace(split_by_brackets[1], ".OSCHP", "")
+        colnames(ProbeDataWithEndPos) = c("probeID", "CHROMOSOME", "START_POS", sampleName, "END_POS" )
+        ProbeData_renamed = dplyr::select(ProbeDataWithEndPos, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleName))
+        # print(c("ProbeData_renamed: ", ProbeData_renamed))
+        # print(c("colnames(ProbeData_renamed): ", colnames(ProbeData_renamed)))
+        ProbeData_renamed
+    })
+    baseparams = getDefParams()
+    params <- reactive({
+        print("initializing params")
+        baseparams$CellularityCorrectSeg = input$correctCell
+        baseparams$tumor_prop = input$cellularity
+        baseparams$Prior = input$prior
+        baseparams$UndoSD = input$undoSD
+        baseparams$Minlsforfit = input$minSegLenForFit
+        baseparams$sampleNames = colnames(probesData())[dim(probesData())[2]]
+        return(baseparams)
+    })
+    # resPipeline = reactive({  
+    resPipeline = eventReactive(input$go, { 
+        print("calculating pipeline result")
+        # pipelineCGHcall(probesData(), params())
+        # print(c("colnames(probesData()): ", colnames(probesData())))
+        suppressMessages(suppressWarnings(pipelineCGHcall(probesData(), params())))
+    })
+    CGHcall_segments = reactive({
+        print("Extracting probe-level segments from CGHcall result")
+        # print(c("resPipeline(): ", resPipeline()))
+        # print(c("class(resPipeline()): ", class(resPipeline())))
+        # prbLvSegs = getPrbLvSegmentsFromCallObj(resPipeline(), segsType="both")  
+        prbLvSegs = getPrbLvSegments(resPipeline(), segsType="both")
+        prbLvSegs
+    })
+    segTable_calculated = reactive({
+        print("Extracting segments table from probe-level segments")
+        params_obj = params()
+        CGHcall_segments = CGHcall_segments()
+        # CGHcall_segments = prepareSegtableByProbe(CGHcall_segments)
+        segtab = get_seg_table(CGHcall_segments)
+        # print(c("colnames(CGHcall_segments): ", colnames(CGHcall_segments)))
+        # print(c("colnames(segtab): ", colnames(segtab)))
+        # print(c("segtab: ", segtab))
+        segtab$CN = segtab$CN + 2
+        
+        segtab
+    })
+    
+
+    ### plot
+    rCGH_chosenPlot <- reactive({
+    # rCGH_chosenPlot <- eventReactive(input$goPlot, {
+        switch(input$plotChoice,
+            profile={
+                params = params()
+                probeData = probesData()
+                # colnames(probeData)[c(2:3)] = c("ChrNum", "ChrStart")
+                # print(c("probeData sent to getAbspos_probeset : ", probeData))
+                probeData = getAbspos_probeset(probeData)
+                # colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
+                currSampleName = params$sampleNames
+                colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
+                 removePoints=10
+                plotSegTableForWGV_GG(segTable_calculated(), probeData, removePoints)
+                # plotSegTable(segTable_calculated(),params$sampleNames,savePlot=FALSE)
+                # plot(c(5,5,5,5,5,5,5,5,6,5))
+            },
+            proba = {
+                rCGH_obj = resPipeline()
+                # print(c("rCGH_obj: ", rCGH_obj))
+                plot(rCGH_obj)
+            }
+        )
+    })
+
+    output$rCGH_profilePlot = renderPlot(rCGH_chosenPlot())
+    # output$rCGH_profilePlot = eventReactive(input$goPlot, {renderPlot(rCGH_chosenPlot())})
+
+    output$rCGH_allDiffPlot = reactive({
+
+    })
+
+
+    ### Segments table
+    segtabToDisplay = reactive({
+        segtabToDisplay = segTable_calculated() 
+        # segtabToDisplay = dplyr::select(segtab, -contains("abs"))
+        colnames(segtabToDisplay)[colnames(segtabToDisplay)=="Log2Ratio"] = "seg.mean"
+        # segtabToDisplay$CN = segtabToDisplay$CN + 2
+
+        parsed.str <- parse(text=paste0("dplyr::filter(segtabToDisplay,", input$selectCN, ")"))
+        segtabToDisplay = eval(parsed.str)
+        # print(c("segtabToDisplay: ", segtabToDisplay))
+        segtabToDisplay
+    })
+    output$rCGH_segTable <- DT::renderDataTable(
+        fillContainer=FALSE,
+        expr={
+            print("Creating table to display")
+            req(!is.null(input$probeset_txt))
+            segtabToDisplay()
+        }, 
+        quoted = FALSE,
+    )
+    output$rCGH_download_segTable <- downloadHandler(
+        filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_segTable")),
+        content = function(fileST) {
+            print(c("segTable_calculated(): ", segTable_calculated()))
+            write.table(segTable_calculated(), fileST, quote=FALSE, row.names=FALSE, sep=";")
+        }
+    )    
+    ### Gene table
+    # geneTable_obj = data.frame(
+    #     gene_id = c("BRCA1","CDK12","p53"), nb_breakpoints = c(0, 1, 0), nb_segments = c(1, 2, 1), copynumber = c(2,1,2)
+    # )
+    # geneTableToDisplay = reactive({
+    #     segTable = segTable_calculated()
+    #     segTable = dplyr::select(segTable, -c("absStart", "absEnd"))
+    #     # print(c("colnames(segTable): ", colnames(segTable)))
+    #     segTable = segTable[c("Chromosome", "Start", "End", "nbProbes", "Log2Ratio", "seg.med", "probes.Sd", "CN")]
+    #     colnames(segTable) = c("chrom", "loc.start", "loc.end", "num.mark", "seg.mean", "seg.med", "probes.Sd", "estimCopy")
+    #     # print(c("segTable: ", segTable))
+    #     geneTable = rCGH::byGeneTable(segTable)
+    #     geneTable = as.data.frame(geneTable)
+    #     # print(c("geneTable: ", geneTable))
+    #     print(c("class(geneTable): ", class(geneTable)))
+    #     geneTable
+    # })
+    # output$geneTable = DT::renderDataTable({
+    #     geneTableToDisplay()
+    #     # geneTable_obj
+    #     })
+    # output$download_genesTable <- downloadHandler(
+    #     filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_genesTable")),
+    #     content = function(fileGT) {
+    #         # print(c("geneTable_obj: ", geneTable_obj))
+    #         write.table(geneTable_obj, fileGT, quote=FALSE, row.names=FALSE, sep=";")
+    #     }
+    # )
+    
+
+    ### GI output as text
+    output$rCGH_GItext <- renderText({
+        req(!is.null(input$probeset_txt))
+        print(c("segTable_calculated() according to output$rCGH_GItext", segTable_calculated()))
+        segTab = segTable_calculated()
+        segTab$CN = segTab$CN-2
+        resGI = calcGI_CGHcall(segTab) 
+        paste0(resGI[[2]], " alterations were found on ", resGI[[3]], " chromosomes. Genomic Index=", round(resGI[[1]],1) )
+    }) 
+    
+
+    ###### panel that says "load a probeset.txt" and disappears when it is done
+    # output$test_warnPanel = renderUI({
+    output$test_warnPanel = renderText({
+        # req(input$probeset_txt != "")
+        # req( is.null(input$probeset_txt))
+        req( is.null(input$probeset_txt$name))
+        print(c("input$probeset_txt: ", input$probeset_txt))
+        print(c("input$probeset_txt$name: ", input$probeset_txt$name))
+        fileName = input$probeset_txt$name
+        fileExt = substr(fileName, nchar(fileName)-12+1, nchar(fileName))
+        print(c("file extension: ", fileExt)) # 12 = nb of char in "probeset.txt"
+        
+        if(exists("fileName")){ print(c("fileName: ", fileName))} else {print("no 'name' attribute to input$probeset_txt")}
+        # paste0("input file given is currently ", input$probeset_txt$name, " .")
+        
+        "Please load a probeset.txt from Home pane"
+    })
+
+    output$rCGH_probesetLoaded = reactive({
+        pb_loaded = is.character(input$probeset_txt$name)
+        print(c("pb_loaded: ", pb_loaded))
+        pb_loaded
+    })
+    
+    
+    #### output options for different output objects
+    outputOptions(output, 'rCGH_probesetLoaded', suspendWhenHidden = FALSE)
+
+
 
 
 

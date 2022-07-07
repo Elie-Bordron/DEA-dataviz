@@ -280,41 +280,137 @@
 # geom_segment(data = data , aes(x=x_baseline, xend = x_followup, y=y_baseline, yend = y_followup, color=lineColor)) + 
 # scale_color_manual(values=segColors)
 
+# ####### hide/show an element using renderUI and req()
+# library(shiny)
+# library(shinydashboard)
 
-library(shiny)
-library(shinydashboard)
-
-ui <- dashboardPage(
+# ui <- dashboardPage(
     
-    dashboardHeader(),
-    dashboardSidebar(
-        selectInput(inputId = "select", 
-                    label = "please select an option", 
-                    choices = LETTERS[1:3]),
-        uiOutput("conditional_comment")
-    ),
-    dashboardBody(
-        uiOutput("selection_text"),
-        uiOutput("comment_text")
-    )
+#     dashboardHeader(),
+#     dashboardSidebar(
+#         selectInput(inputId = "select", 
+#                     label = "please select an option", 
+#                     choices = LETTERS[1:3]),
+#         uiOutput("conditional_comment")
+#     ),
+#     dashboardBody(
+#         uiOutput("selection_text"),
+#         uiOutput("comment_text")
+#     )
+# )
+
+# server <- function(input, output) {
+    
+#     output$selection_text <- renderUI({
+#         paste("The selected option is", input$select)
+#     })
+    
+#     output$conditional_comment <- renderUI({
+#         req(input$select == "B")
+#         textAreaInput(inputId = "comment", 
+#                       label = "please add a comment", 
+#                       placeholder = "write comment here")
+#     })
+    
+#     output$comment_text <- renderText({
+#         input$comment
+#     })
+# }
+
+# shinyApp(ui = ui, server = server)
+
+
+# ##### hide/show a an element using conditionalPanel()
+# library(shiny)
+
+# ## Module code for 'selectorUI' and 'selector'
+# selectorUI <- function(id) {
+#   ns <- NS(id)
+#   selectizeInput(inputId = ns('select'),
+#                  label = 'Make a choice:',
+#                  choices = c('Option one', 'Option two'))
+# }
+
+# ## Main app
+# ui <- shinyUI(fluidPage(
+#   selectorUI('id1'),
+#   conditionalPanel(condition = "input['id1-select'] == 'Option one'",
+#                    p('Option one is selected.'))
+# ))
+
+# server <- shinyServer(function(input, output, session) {
+
+# })
+
+# shinyApp(ui = ui, server = server)
+
+
+
+
+# ##### 
+# library(shiny)
+# ## Module code for 'selectorUI' and 'selector'
+# selectorUI <- function(id) {
+#   ns <- NS(id)
+#   selectizeInput(inputId = ns('select'),
+#                  label = 'Make a choice:',
+#                  choices = c('Option one', 'Option two'))
+# }
+
+# selector <- function(input, output, session) {
+#   reactive(input$select)
+# }
+
+# ## Main app
+# ui <- shinyUI(fluidPage(
+#   selectorUI('id1'),
+#   uiOutput("dynamic1")
+# ))
+
+# server <- shinyServer(function(input, output, session) {
+
+
+#   output$dynamic1 <- renderUI({
+#     condition1 <- callModule(selector, 'id1') # or just callModule(selector, 'id1')()
+#     if (condition1() == 'Option one') return(p('Option one is selected.'))
+#   })
+
+# })
+
+# shinyApp(ui = ui, server = server)
+
+
+
+
+
+
+
+
+
+
+
+n <- 200
+library("shiny")
+
+# Define the UI
+ui <- bootstrapPage(
+  numericInput('n', 'Number of obs', n),
+  conditionalPanel(condition = "output.cond == true", # here use the condition defined in the server
+                   plotOutput('plot') ),
+  HTML("Bottom")
 )
 
-server <- function(input, output) {
-    
-    output$selection_text <- renderUI({
-        paste("The selected option is", input$select)
-    })
-    
-    output$conditional_comment <- renderUI({
-        req(input$select == "B")
-        textAreaInput(inputId = "comment", 
-                      label = "please add a comment", 
-                      placeholder = "write comment here")
-    })
-    
-    output$comment_text <- renderText({
-        input$comment
-    })
+# Define the server code
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+    if (input$n > 50) hist(runif(input$n)) else return(NULL)
+  })
+  # create a condition you use in the ui
+  output$cond <- reactive({
+    input$n > 50
+  })
+  outputOptions(output, "cond", suspendWhenHidden = FALSE)
 }
 
-shinyApp(ui = ui, server = server)
+# Return a Shiny app object
+shinyApp(ui = ui, server = server) 

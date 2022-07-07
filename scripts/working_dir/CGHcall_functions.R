@@ -284,7 +284,7 @@ plotSegTableForWGV_GG = function(currSegTable,probesData, segColor="#3e9643", yl
     if(!is.null(currSegTable)) {
         gg = gg + ggnewscale::new_scale_color() ## to use more than one scale_color in the same ggplot
         # gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Log2Ratio, yend=Log2Ratio), size=1, color=segColor)  # to set one color for all segments
-        gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Log2Ratio, yend=Log2Ratio, color=factor(CN)), size=1) # to change color of segments according to CN value
+        gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Log2Ratio, yend=Log2Ratio, color=factor(CN)), size=1, show.legend = FALSE) # to change color of segments according to CN value
         segColrVec = c("green", "red", "black")
         names(segColrVec) = c("1", "3", "2")
         gg = gg + scale_color_manual(values = segColrVec)
