@@ -26,13 +26,14 @@ source(file.path(working_dir_shiny, "gendex_server.R"))
 results_dir = file.path(working_dir_shiny, "gendex_results")
 if(!dir.exists(results_dir))dir.create(results_dir)
 setwd(working_dir_shiny)
-options("max.print"=100)
+# options("max.print"=10**9)
+options("max.print"=10**2)
 rstudioapi::filesPaneNavigate(working_dir_shiny)
 
 
 ui <- fluidPage( #useShinyjs(),
     titlePanel("GenDex - Genomic Index visualization tool"),
-    add_busy_spinner(spin = "fading-circle"),
+    add_busy_spinner(spin = "fading-circle"), 
     tabsetPanel(selected="Home",
 
                 
@@ -76,9 +77,9 @@ ui <- fluidPage( #useShinyjs(),
                     splitLayout( cellWidths = c("80%", "20%"),
                         verticalLayout(
                             plotOutput("CGHcall_profilePlot"),
-                            # plotOutput("CGHcall_allDiffPlot"),
+                            plotOutput("CGHcall_allDiffPlot"),
                         ),
-                        radioButtons("plotChoice","Profile display",choices = c("Call probability"="proba","segmentation results"="profile")),
+                        radioButtons("CGHcall_plotChoice","Profile display",choices = c("Call probability"="proba","segmentation results"="profile")),
 
                     ),
 
@@ -160,7 +161,7 @@ ui <- fluidPage( #useShinyjs(),
                     conditionalPanel(
                         condition = "output.rCGH_probesetLoaded == false",  # js
                         wellPanel(
-                            h1(span(textOutput("test_warnPanel"), style = 'color:green; font-weight: bold;')),
+                            h1(span(textOutput("rCGH_test_warnPanel"), style = 'color:green; font-weight: bold;')),
                         ),
                     ),
 
@@ -169,7 +170,7 @@ ui <- fluidPage( #useShinyjs(),
                             plotOutput("rCGH_profilePlot"),
                             # plotOutput("rCGH_allDiffPlot"),
                         ),
-                        radioButtons("plotChoice","Profile display",choices = c("Call probability"="proba","segmentation results"="profile")),
+                        radioButtons("rCGH_plotChoice","Profile display",choices = c("Call probability"="proba","segmentation results"="profile")),
 
                     ),
 

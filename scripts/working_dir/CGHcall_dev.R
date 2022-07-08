@@ -19,7 +19,11 @@ dplyr::filter(testDf, testDf["weight"])
 
 ## for loading data from individual probeset.txt files
 if(F) {
-    sampleNames = c("5-LD", "6-VJ", "8-MM")
+    print("changing value of dataDirProbesets")
+    # dataDirProbesets = "C:/Users/User/Desktop/CGH-scoring/M2_internship_Bergonie/testData"
+    dataDirProbesets = "C:/Users/User/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+    # sampleNames = c("5-LD", "6-VJ", "8-MM")
+    sampleNames = c("1-RV")
     osData = NULL
     for (sampleName in sampleNames) {
         currSamplePath = paste0(dataDirProbesets, "/", sampleName, ".probeset.txt")
@@ -35,7 +39,17 @@ if(F) {
     colnames(osData) = c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleNames)
 }
 
-
+## to create a subset of a probeset.txt file
+if (F) {
+    dataDirProbesets = "C:/Users/User/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+    sampleName = "1-RV"
+    currSamplePath = paste0(dataDirProbesets, "/", sampleName, ".probeset.txt")
+    currSample = read.table(currSamplePath, sep='\t', h=T)
+    # source(paste0(working_dir, "rCGH_functions.R"))
+    source(paste0(GI_scripts_dir, "/rCGH_functions.R"))
+    currSample = removePointsForQuickPlotting(currSample, 100)
+    write.table(currSample, paste0(dataDirProbesets, "/", sampleName, "_small_complete.probeset.txt"), quote=F, sep='\t', row.names=FALSE)
+}
 
 # ProbeSetName	Chromosome	Position	Log2Ratio (1-RV.OSCHP)	WeightedLog2Ratio (1-RV.OSCHP)	AllelicDifference (1-RV.OSCHP)	NormalDiploid (1-RV.OSCHP)	BAF (1-RV.OSCHP)
 
@@ -418,9 +432,9 @@ if (F) {
     hist(df_logCN[,1], breaks=200)
 
     ### use mixtools to visualize histogram + the gaussians
-    library(mixtools)
-    wait1 <- normalmixEM(df_logCN[,1], lambda = .5, mu = c(-1,0), sigma = 0.5)
-    plot(wait1, density=TRUE)
+    # library(mixtools)
+    # wait1 <- normalmixEM(df_logCN[,1], lambda = .5, mu = c(-1,0), sigma = 0.5)
+    # plot(wait1, density=TRUE)
 
 
     #- visualize mode in R : use abline()

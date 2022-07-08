@@ -54,6 +54,16 @@ server <- function(input, output, session) { ##session is required for condition
     ########
     ########
     ########
+    ########
+    ########
+    ########
+    ########
+    ########
+    ########
+    ########
+    ########
+    ########
+    ########
     ######## CGHcall PANE
 
     ### results computing
@@ -62,9 +72,31 @@ server <- function(input, output, session) { ##session is required for condition
         req(!is.null(input$probeset_txt))
         file <- input$probeset_txt
         rawProbesData = read.table(file$datapath, header = input$probeSetHeader, sep="\t",check.names=FALSE)
-        # print(c("colnames(rawProbesData): ", colnames(rawProbesData)))
-        ProbeData_filtered = dplyr::select(rawProbesData, c("ProbeSetName", "Chromosome", "Position", starts_with("Log2Ratio")) )
+        ### remove unused columns
+        rawProbesData = dplyr::select(rawProbesData, -contains(c("BAF")))
+        rawProbesData = dplyr::select(rawProbesData, -contains(c("WeightedLog2Ratio")))
+        rawProbesData = dplyr::select(rawProbesData, -contains(c("NormalDiploid")))
+        print(c("rawProbesData with trimmed columns: ", rawProbesData))
+        ### remove NA probes on AllelicDifference and Log2Ratio columns
+        name_col_allDiff = colnames(dplyr::select(rawProbesData, contains("AllelicDifference")))
+        colnames(rawProbesData)[which(colnames(rawProbesData)==name_col_allDiff)] = "AllelicDifference"
+        name_col_LRR = colnames(dplyr::select(rawProbesData, starts_with("Log2Ratio")))
+        # colnames(rawProbesData)[which(colnames(rawProbesData)==name_col_allDiff)] = "AllelicDifference"
+        rawProbesData = dplyr::filter(rawProbesData, !is.na(AllelicDifference))
+        rawProbesData = dplyr::filter(rawProbesData, !is.na(get(name_col_LRR)))
+
+
+
+        
+        # print(c("rawProbesData without NA on AllelicDifference col: ", rawProbesData))
+        ProbeData_filtered = dplyr::select(rawProbesData, c("ProbeSetName", "Chromosome", "Position", starts_with("Log2Ratio"), "AllelicDifference") )
         # print(c("ProbeData_filtered: ", ProbeData_filtered))
+
+        # where_NA = dplyr::filter_all(ProbeData_filtered, is.na(all_vars()))
+        # print(c("where_NA: ", where_NA))
+        
+        
+        
         ProbeDataWithEndPos = mutate(ProbeData_filtered, END_POS=Position+20)
         # print(c("ProbeDataWithEndPos after mutating: ", ProbeDataWithEndPos))
         sampleName_within_colName = colnames(dplyr::select(ProbeDataWithEndPos, starts_with("Log2Ratio")))
@@ -73,9 +105,9 @@ server <- function(input, output, session) { ##session is required for condition
         split_by_brackets = stringr::str_split(split_by_leftBracket[2], "\\)")[[1]]
         # print(c("split_by_brackets: ", split_by_brackets))
         sampleName = stringr::str_replace(split_by_brackets[1], ".OSCHP", "")
-        colnames(ProbeDataWithEndPos) = c("probeID", "CHROMOSOME", "START_POS", sampleName, "END_POS" )
-        ProbeData_renamed = dplyr::select(ProbeDataWithEndPos, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleName))
-        # print(c("ProbeData_renamed: ", ProbeData_renamed))
+        colnames(ProbeDataWithEndPos) = c("probeID", "CHROMOSOME", "START_POS", sampleName, "AllelicDifference", "END_POS" )
+        ProbeData_renamed = dplyr::select(ProbeDataWithEndPos, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleName, "AllelicDifference"))
+        print(c("ProbeData_renamed: ", ProbeData_renamed))
         # print(c("colnames(ProbeData_renamed): ", colnames(ProbeData_renamed)))
         ProbeData_renamed
     })
@@ -93,9 +125,11 @@ server <- function(input, output, session) { ##session is required for condition
     # resPipeline = reactive({  
     resPipeline = eventReactive(input$go, { 
         print("calculating pipeline result")
+        probesData = probesData()
+        print(c("probesData() used in pipeline: ", probesData))
         # pipelineCGHcall(probesData(), params())
         # print(c("colnames(probesData()): ", colnames(probesData())))
-        suppressMessages(suppressWarnings(pipelineCGHcall(probesData(), params())))
+        suppressMessages(suppressWarnings(pipelineCGHcall(probesData, params())))
     })
     CGHcall_segments = reactive({
         print("Extracting probe-level segments from CGHcall result")
@@ -109,10 +143,13 @@ server <- function(input, output, session) { ##session is required for condition
         print("Extracting segments table from probe-level segments")
         params_obj = params()
         CGHcall_segments = CGHcall_segments()
+        print("======================================================")
+        print(c("(CGHcall_segments): ", (CGHcall_segments)))
+        print("======================================================")
         # CGHcall_segments = prepareSegtableByProbe(CGHcall_segments)
         segtab = get_seg_table(CGHcall_segments)
-        # print(c("colnames(CGHcall_segments): ", colnames(CGHcall_segments)))
-        # print(c("colnames(segtab): ", colnames(segtab)))
+        print(c("colnames(CGHcall_segments): ", colnames(CGHcall_segments)))
+        print(c("colnames(segtab): ", colnames(segtab)))
         # print(c("segtab: ", segtab))
         segtab$CN = segtab$CN + 2
         
@@ -123,7 +160,7 @@ server <- function(input, output, session) { ##session is required for condition
     ### plot
     CGHcall_chosenPlot <- reactive({
     # CGHcall_chosenPlot <- eventReactive(input$goPlot, {
-        switch(input$plotChoice,
+        switch(input$CGHcall_plotChoice,
             profile={
                 params = params()
                 probeData = probesData()
@@ -133,7 +170,7 @@ server <- function(input, output, session) { ##session is required for condition
                 # colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
                 currSampleName = params$sampleNames
                 colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
-                 removePoints=10
+                removePoints=10
                 plotSegTableForWGV_GG(segTable_calculated(), probeData, removePoints)
                 # plotSegTable(segTable_calculated(),params$sampleNames,savePlot=FALSE)
                 # plot(c(5,5,5,5,5,5,5,5,6,5))
@@ -150,7 +187,14 @@ server <- function(input, output, session) { ##session is required for condition
     # output$CGHcall_profilePlot = eventReactive(input$goPlot, {renderPlot(CGHcall_chosenPlot())})
 
     output$CGHcall_allDiffPlot = reactive({
-
+        probeData = probesData()
+        print("colnames(probeData) for alldiff plot: ", colnames(probeData))
+        gg = ggPlot(data=probeData, aes(y=AllelicDifference, x=absPos))
+        gg = gg + geom_point(aes(color=factor(CHROMOSOME)), size=0.01, shape=20, show.legend = FALSE)
+        colrVec = rep(c("pink", "green", "orange"), 7); colrVec = c (colrVec, "pink")
+        names(colrVec) = unique(rawProbesData_toPlot$CHROMOSOME)
+        gg = gg + scale_color_manual(values = colrVec)
+        gg + theme_bw()
     })
 
 
@@ -229,13 +273,13 @@ server <- function(input, output, session) { ##session is required for condition
         # req(input$probeset_txt != "")
         # req( is.null(input$probeset_txt))
         req( is.null(input$probeset_txt$name))
-        print(c("input$probeset_txt: ", input$probeset_txt))
-        print(c("input$probeset_txt$name: ", input$probeset_txt$name))
-        fileName = input$probeset_txt$name
-        fileExt = substr(fileName, nchar(fileName)-12+1, nchar(fileName))
-        print(c("file extension: ", fileExt)) # 12 = nb of char in "probeset.txt"
+        # print(c("input$probeset_txt: ", input$probeset_txt))
+        # print(c("input$probeset_txt$name: ", input$probeset_txt$name))
+        # fileName = input$probeset_txt$name
+        # fileExt = substr(fileName, nchar(fileName)-12+1, nchar(fileName))
+        # print(c("file extension: ", fileExt)) # 12 = nb of char in "probeset.txt"
         
-        if(exists("fileName")){ print(c("fileName: ", fileName))} else {print("no 'name' attribute to input$probeset_txt")}
+        # if(exists("fileName")){ print(c("fileName: ", fileName))} else {print("no 'name' attribute to input$probeset_txt")}
         # paste0("input file given is currently ", input$probeset_txt$name, " .")
         
         "Please load a probeset.txt from Home pane"
@@ -262,76 +306,86 @@ server <- function(input, output, session) { ##session is required for condition
     ########
     ########
     ########
+    ########
+    ########
+    ########
+    ########
+    ########
+    ########
+    ########
+    ########
+    ########
+    ########
     ######## rCGH PANE
 
     ### results computing
-    probesData = reactive({
-        print("receiving rawProbesData")
-        req(!is.null(input$probeset_txt))
-        file <- input$probeset_txt
-        rawProbesData = read.table(file$datapath, header = input$probeSetHeader, sep="\t",check.names=FALSE)
-        # print(c("colnames(rawProbesData): ", colnames(rawProbesData)))
-        ProbeData_filtered = dplyr::select(rawProbesData, c("ProbeSetName", "Chromosome", "Position", starts_with("Log2Ratio")) )
-        # print(c("ProbeData_filtered: ", ProbeData_filtered))
-        ProbeDataWithEndPos = mutate(ProbeData_filtered, END_POS=Position+20)
-        # print(c("ProbeDataWithEndPos after mutating: ", ProbeDataWithEndPos))
-        sampleName_within_colName = colnames(dplyr::select(ProbeDataWithEndPos, starts_with("Log2Ratio")))
-        split_by_leftBracket = stringr::str_split(sampleName_within_colName, "\\(") [[1]]
-        # print(c("split_by_leftBracket: ", split_by_leftBracket))
-        split_by_brackets = stringr::str_split(split_by_leftBracket[2], "\\)")[[1]]
-        # print(c("split_by_brackets: ", split_by_brackets))
-        sampleName = stringr::str_replace(split_by_brackets[1], ".OSCHP", "")
-        colnames(ProbeDataWithEndPos) = c("probeID", "CHROMOSOME", "START_POS", sampleName, "END_POS" )
-        ProbeData_renamed = dplyr::select(ProbeDataWithEndPos, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleName))
-        # print(c("ProbeData_renamed: ", ProbeData_renamed))
-        # print(c("colnames(ProbeData_renamed): ", colnames(ProbeData_renamed)))
-        ProbeData_renamed
-    })
-    baseparams = getDefParams()
-    params <- reactive({
-        print("initializing params")
-        baseparams$CellularityCorrectSeg = input$correctCell
-        baseparams$tumor_prop = input$cellularity
-        baseparams$Prior = input$prior
-        baseparams$UndoSD = input$undoSD
-        baseparams$Minlsforfit = input$minSegLenForFit
-        baseparams$sampleNames = colnames(probesData())[dim(probesData())[2]]
-        return(baseparams)
-    })
-    # resPipeline = reactive({  
-    resPipeline = eventReactive(input$go, { 
-        print("calculating pipeline result")
-        # pipelineCGHcall(probesData(), params())
-        # print(c("colnames(probesData()): ", colnames(probesData())))
-        suppressMessages(suppressWarnings(pipelineCGHcall(probesData(), params())))
-    })
-    CGHcall_segments = reactive({
-        print("Extracting probe-level segments from CGHcall result")
-        # print(c("resPipeline(): ", resPipeline()))
-        # print(c("class(resPipeline()): ", class(resPipeline())))
-        # prbLvSegs = getPrbLvSegmentsFromCallObj(resPipeline(), segsType="both")  
-        prbLvSegs = getPrbLvSegments(resPipeline(), segsType="both")
-        prbLvSegs
-    })
-    segTable_calculated = reactive({
-        print("Extracting segments table from probe-level segments")
-        params_obj = params()
-        CGHcall_segments = CGHcall_segments()
-        # CGHcall_segments = prepareSegtableByProbe(CGHcall_segments)
-        segtab = get_seg_table(CGHcall_segments)
-        # print(c("colnames(CGHcall_segments): ", colnames(CGHcall_segments)))
-        # print(c("colnames(segtab): ", colnames(segtab)))
-        # print(c("segtab: ", segtab))
-        segtab$CN = segtab$CN + 2
+    # probesData = reactive({
+    #     print("receiving rawProbesData")
+    #     req(!is.null(input$probeset_txt))
+    #     file <- input$probeset_txt
+    #     rawProbesData = read.table(file$datapath, header = input$probeSetHeader, sep="\t",check.names=FALSE)
+    #     # print(c("colnames(rawProbesData): ", colnames(rawProbesData)))
+    #     ProbeData_filtered = dplyr::select(rawProbesData, c("ProbeSetName", "Chromosome", "Position", starts_with("Log2Ratio"), starts_with("AllelicDifference")) )
+    #     # print(c("ProbeData_filtered: ", ProbeData_filtered))
+    #     ProbeDataWithEndPos = mutate(ProbeData_filtered, END_POS=Position+20)
+    #     # print(c("ProbeDataWithEndPos after mutating: ", ProbeDataWithEndPos))
+    #     sampleName_within_colName = colnames(dplyr::select(ProbeDataWithEndPos, starts_with("Log2Ratio")))
+    #     split_by_leftBracket = stringr::str_split(sampleName_within_colName, "\\(") [[1]]
+    #     # print(c("split_by_leftBracket: ", split_by_leftBracket))
+    #     split_by_brackets = stringr::str_split(split_by_leftBracket[2], "\\)")[[1]]
+    #     # print(c("split_by_brackets: ", split_by_brackets))
+    #     sampleName = stringr::str_replace(split_by_brackets[1], ".OSCHP", "")
+    #     colnames(ProbeDataWithEndPos) = c("probeID", "CHROMOSOME", "START_POS", sampleName, "AllelicDifference", "END_POS" )
+    #     ProbeData_renamed = dplyr::select(ProbeDataWithEndPos, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleName, "AllelicDifference"))
+    #     # print(c("ProbeData_renamed: ", ProbeData_renamed))
+    #     # print(c("colnames(ProbeData_renamed): ", colnames(ProbeData_renamed)))
+    #     ProbeData_renamed
+    # })
+    # baseparams = getDefParams()
+    # params <- reactive({
+    #     print("initializing params")
+    #     baseparams$CellularityCorrectSeg = input$correctCell
+    #     baseparams$tumor_prop = input$cellularity
+    #     baseparams$Prior = input$prior
+    #     baseparams$UndoSD = input$undoSD
+    #     baseparams$Minlsforfit = input$minSegLenForFit
+    #     baseparams$sampleNames = colnames(probesData())[dim(probesData())[2]]
+    #     return(baseparams)
+    # })
+    # # resPipeline = reactive({  
+    # resPipeline = eventReactive(input$go, { 
+    #     print("calculating pipeline result")
+    #     # pipelineCGHcall(probesData(), params())
+    #     # print(c("colnames(probesData()): ", colnames(probesData())))
+    #     suppressMessages(suppressWarnings(pipelineCGHcall(probesData(), params())))
+    # })
+    # CGHcall_segments = reactive({
+    #     print("Extracting probe-level segments from CGHcall result")
+    #     # print(c("resPipeline(): ", resPipeline()))
+    #     # print(c("class(resPipeline()): ", class(resPipeline())))
+    #     # prbLvSegs = getPrbLvSegmentsFromCallObj(resPipeline(), segsType="both")  
+    #     prbLvSegs = getPrbLvSegments(resPipeline(), segsType="both")
+    #     prbLvSegs
+    # })
+    # segTable_calculated = reactive({
+    #     print("Extracting segments table from probe-level segments")
+    #     params_obj = params()
+    #     CGHcall_segments = CGHcall_segments()
+    #     # CGHcall_segments = prepareSegtableByProbe(CGHcall_segments)
+    #     segtab = get_seg_table(CGHcall_segments)
+    #     # print(c("colnames(CGHcall_segments): ", colnames(CGHcall_segments)))
+    #     # print(c("colnames(segtab): ", colnames(segtab)))
+    #     # print(c("segtab: ", segtab))
+    #     segtab$CN = segtab$CN + 2
         
-        segtab
-    })
+    #     segtab
+    # })
     
 
     ### plot
     rCGH_chosenPlot <- reactive({
     # rCGH_chosenPlot <- eventReactive(input$goPlot, {
-        switch(input$plotChoice,
+        switch(input$rCGH_plotChoice,
             profile={
                 params = params()
                 probeData = probesData()
@@ -432,19 +486,17 @@ server <- function(input, output, session) { ##session is required for condition
     
 
     ###### panel that says "load a probeset.txt" and disappears when it is done
-    # output$test_warnPanel = renderUI({
-    output$test_warnPanel = renderText({
-        # req(input$probeset_txt != "")
-        # req( is.null(input$probeset_txt))
+    # output$rCGH_test_warnPanel = renderUI({
+    output$rCGH_test_warnPanel = renderText({
         req( is.null(input$probeset_txt$name))
-        print(c("input$probeset_txt: ", input$probeset_txt))
-        print(c("input$probeset_txt$name: ", input$probeset_txt$name))
-        fileName = input$probeset_txt$name
-        fileExt = substr(fileName, nchar(fileName)-12+1, nchar(fileName))
-        print(c("file extension: ", fileExt)) # 12 = nb of char in "probeset.txt"
+        # # print(c("input$probeset_txt: ", input$probeset_txt))
+        # # print(c("input$probeset_txt$name: ", input$probeset_txt$name))
+        # fileName = input$probeset_txt$name
+        # fileExt = substr(fileName, nchar(fileName)-12+1, nchar(fileName))
+        # # print(c("file extension: ", fileExt)) # 12 = nb of char in "probeset.txt"
         
-        if(exists("fileName")){ print(c("fileName: ", fileName))} else {print("no 'name' attribute to input$probeset_txt")}
-        # paste0("input file given is currently ", input$probeset_txt$name, " .")
+        # if(exists("fileName")){ print(c("fileName: ", fileName))} else {print("no 'name' attribute to input$probeset_txt")}
+        # # paste0("input file given is currently ", input$probeset_txt$name, " .")
         
         "Please load a probeset.txt from Home pane"
     })

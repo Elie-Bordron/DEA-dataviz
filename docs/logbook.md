@@ -2960,9 +2960,10 @@ I made the text visible.
 * [ ] create a ggplot for allele difference under the regular ggplot
 * [X] ~~*set up skeleton for rCGH*~~ [2022-07-07]
 
-# <span style="color:#999900"> mercredi 06/07/2022
+# <span style="color:#999900"> jeudi 07/07/2022
+J'ai recréé unfichier inpu qui contient l'allele Diff
 
-
+# <span style="color:#999900"> vendredi 08/07/2022
 
 
 

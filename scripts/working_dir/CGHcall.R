@@ -19,7 +19,8 @@ library(CGHcall)
 
 pipelineCGHcall = function(osData, params) {
     # osData = rawProbesData
-    
+    print(c("osData: ", osData))
+
     before=Sys.time()
     # osData = s2Probes # to run on one sample
     if(is.null(params$tumor_prop)) {params$tumor_prop=1}

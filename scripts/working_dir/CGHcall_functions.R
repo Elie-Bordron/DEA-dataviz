@@ -81,22 +81,22 @@ get_seg_table = function(currSampleSegs) {
     if("absPos" %in% colnames(currSampleSegs)) {
         colNames_not_absPos = colnames(currSampleSegs)!="absPos"
         colNames_without_absPos = colnames(currSampleSegs)[colNames_not_absPos]
-        # print(c("colNames_without_absPos: ", colNames_without_absPos))
+        print(c("colNames_without_absPos: ", colNames_without_absPos))
         segTableBySegment = data.frame(matrix(ncol = ncols+3, nrow = 0)) # +3 because column absPos & rawLRR gets removed and columns absStart, absEnd, nbProbes, seg.med & probes.Sd get added
         colNames_segTable = colNames_without_absPos
     } else {
         segTableBySegment = data.frame(matrix(ncol = ncols+4, nrow = 0)) # +4 because column rawLRR gets removed and columns absStart, absEnd, nbProbes, seg.med & probes.Sd get added
         colNames_segTable = colnames(currSampleSegs)
     }
-    # print(c("colNames_segTable: ", colNames_segTable))
+    print(c("colNames_segTable: ", colNames_segTable))
     colNames_not_rawLRR = colNames_segTable!="rawLRR"
-    # print(c("colNames_not_rawLRR: ", colNames_not_rawLRR))
+    print(c("colNames_not_rawLRR: ", colNames_not_rawLRR))
     colNames_without_rawLRR = colNames_segTable[colNames_not_rawLRR]
     colNames_segTable = colNames_without_rawLRR
     # colnames(segTableBySegment) = c(colNames_without_absPos, "absStart", "absEnd")
-    # print(c("colNames_segTable: ", colNames_segTable))
+    print(c("colNames_segTable: ", colNames_segTable))
     colNamesWithAbsStartEnd = R.utils::insert(colNames_segTable,length(colNames_segTable)-1,c("absStart", "absEnd"))
-    # print(c("colNamesWithAbsStartEnd: ", colNamesWithAbsStartEnd))
+    print(c("colNamesWithAbsStartEnd: ", colNamesWithAbsStartEnd))
     colnames(segTableBySegment) = c(colNamesWithAbsStartEnd, "nbProbes", "seg.med", "probes.Sd")
     segId = 1
     s=1 # start of segment
@@ -271,7 +271,7 @@ plotSegTableForWGV_GG = function(currSegTable,probesData, segColor="#3e9643", yl
     ### plot LRR points
     rawProbesData_toPlot = dplyr::filter(rawProbesData_toPlot, CHROMOSOME<23)
     gg = ggplot(data=rawProbesData_toPlot, aes(y=Log2Ratio, x=absPos))
-    gg = gg + geom_point(aes(color=factor(CHROMOSOME)), size=0.01, shape=20, show.legend = FALSE)#+ theme(legend.position="none") ## to hide legend of which chromosome is which color
+    gg = gg + geom_point(aes(color=factor(CHROMOSOME)), size=0.01, shape=20, show.legend = FALSE) ## to hide legend of which chromosome is which color
     ### color Chromosome regions
     colrVec = rep(c("pink", "green", "orange"), 7); colrVec = c (colrVec, "pink")
     # print(c("unique(rawProbesData_toPlot$CHROMOSOME): ", unique(rawProbesData_toPlot$CHROMOSOME)))
@@ -313,6 +313,7 @@ plotSegTables = function(segTablesList, sampleNames, resultsDir, savePlot=TRUE, 
 
 getPrbLvSegmentsFromCallObj = function(callRes, segsType="raw") {
     ### callRes must be a cghCall object containing results of one or more samples, but can't be a list of cghCall objects
+    print(" __________ retrieving CGHcall_segments __________ ")
     # print(c("callRes: ", callRes))
     # print(c("class(callRes): ", class(callRes)))
     rowsInfo = fData(callRes)
@@ -325,6 +326,8 @@ getPrbLvSegmentsFromCallObj = function(callRes, segsType="raw") {
         call_segments = as.data.frame(calls(callRes))
         raw_segments = as.data.frame(segmented(callRes))
         CGHcall_segments = cbind(rowsInfo, rawLRR, raw_segments, call_segments)
+        print(c("call_segments: ", call_segments))
+        print(c("raw_segments: ", raw_segments))
         colnames(CGHcall_segments) = c(colnames(rowsInfo), "rawLRR", "Log2Ratio", "CN")
         
     } else {
@@ -338,9 +341,10 @@ getPrbLvSegmentsFromCallObj = function(callRes, segsType="raw") {
             CGHcall_segments = as.data.frame(calls(callRes))
         }
     CGHcall_segments = cbind(rowsInfo, rawLRR, CGHcall_segments)
+    print(c("get_seg_table: CGHcall_segments before column renaming", CGHcall_segments))
     colnames(CGHcall_segments) = c(colnames(rowsInfo), "rawLRR", sampleNames)
     }
-    # print(c("CGHcall_segments: ", CGHcall_segments))
+    print(c("CGHcall_segments: ", CGHcall_segments))
     return(CGHcall_segments)
 }
 
