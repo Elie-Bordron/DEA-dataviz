@@ -21,30 +21,51 @@ cleanProbeset = function(pathToMultiProbeset="allSamples_2_3_centeredProbeset.tx
     write.table(ProbeData_ordered, allSamplesClean_path, sep='\t', quote=F)
 }
 
+loadProbesets = function(dataDirProbesets, sampleNames=NULL) {
+    if(is.null(sampleNames)){sampleNames = c("1-RV")}
+    osData = NULL
+    for (sampleName in sampleNames) {
+        currSamplePath = paste0(dataDirProbesets, "/", sampleName, ".probeset.txt")
+        currSample = read.table(currSamplePath, sep='\t', h=T)
+        if(is.null(osData)){
+            ## for first sample, initialize osData with columns Probe_id, Chr, startpos and endpos
+            osData = currSample[,1:3]
+            osData = cbind(osData, currSample[,3]+20)
+        }
+        ## add log ratio values for current sample, including the first one
+        osData = cbind(osData, currSample[,4])
+    }
+    colnames(osData) = c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleNames)
+    return(osData)
+}
 
+loadProbeset = function(dataDirProbesets, sampleName=NULL) {
+    if(is.null(sampleName)) {sampleName="1-RV"}
+    currSamplePath = paste0(dataDirProbesets, "/", sampleName, ".probeset.txt")
+    currSample = read.table(currSamplePath, sep='\t', h=T)
+    return(currSample)
+}
 
+nameprobeset = function(probesetDf) {
+    # colnames(probesetDf) = c("probeID", "CHROMOSOME", "START_POS", "Log2Ratio", "WeightedLog2Ratio", "AllelicDifference", "NormalDiploid", "BAF")
+    colnames(probesetDf) = c("probeID", "CHROMOSOME", "START_POS", "1-RV", "WeightedLog2Ratio", "AllelicDifference", "NormalDiploid", "BAF")
+    probesetDf = mutate(probesetDf, END_POS = START_POS+20)
+    probesetDf
+}
+
+  
 getSeg = function(currSampleSegs, s){
-    ### name of value column must be "CN"
-    i=s
-    # print(c("s: ", s))
-    # print(c("i: ", i))
+    ### name of value column must be "Log2Ratio"       # previously "CN"
+    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+    i <- s
     segToReturn = list()
-    # segToReturn$currSegChr = chrVec[s]
-    # print(c("currSegChr: ", currSegChr))
     segToReturn$currSegChr = currSampleSegs[s,]$Chromosome
-    segToReturn$currSegVal = currSampleSegs$CN[s]
-    # if(is.na(segToReturn$currSegVal)) {
-    #     segToReturn$currSegVal = "NA"
-    # }
-
-    # i_is_not_last_pos = i<length(currSampleSegs[,1])
-    # CN_nextPos_equals_CN_currPos = currSampleSegs$CN[i+1]==segToReturn$currSegVal
-    # chr_nextPos_equals_chr_currPos = currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr
+    segToReturn$currSegLRR = currSampleSegs$Log2Ratio[s]
     segVal_equals_probeVal=TRUE
     while((i<length(currSampleSegs[,1])) && (segVal_equals_probeVal) && (currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr)) {
         i=i+1
-        probeVal = currSampleSegs$CN[i+1]
-        segVal = segToReturn$currSegVal
+        probeVal = currSampleSegs$Log2Ratio[i+1]
+        segVal = segToReturn$currSegLRR
         if(is.na(probeVal)) {
             if(is.na(segVal)) {
                 segVal_equals_probeVal = TRUE
@@ -60,139 +81,262 @@ getSeg = function(currSampleSegs, s){
                 segVal_equals_probeVal = probeVal==segVal
             }
         }
-
-        if (FALSE) {
-            if(! i<length(currSampleSegs[,1])) {
-                print("end of genome")
-                print(c("probeVal: ", probeVal))
-                print(c("segVal: ", segVal))            
-            } else if (! segVal_equals_probeVal) {
-                print("value discordance")
-                print(c("probeVal: ", probeVal))
-                print(c("segVal: ", segVal))                
-            } else if(! currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr) {
-                print("chr discordance")
-                print(c("probeVal: ", probeVal))
-                print(c("segVal: ", segVal))            
-            }
-        }
-
-
-        if(i>9770) {
-            # print("\n")
-            # print(c("i: ", i))
-            # print(c("segVal_equals_probeVal: ", segVal_equals_probeVal))
-            # print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
-            # print(c("currSampleSegs$CN[i+1]: ", currSampleSegs$CN[i+1]))
-            # print(c("segToReturn$currSegVal: ", segToReturn$currSegVal))
-            # print(c("currSampleSegs[i+1,]$Chromosome: ", currSampleSegs[i+1,]$Chromosome))
-            # print(c("segToReturn$currSegChr: ", segToReturn$currSegChr))
-        }
     }
-    # addNextPosToSeg = TRUE
-    # while(addNextPosToSeg) {
-    #     i=i+1
-    #     i_is_not_last_pos = i<length(currSampleSegs[,1])
-    #     CN_nextPos_equals_CN_currPos = currSampleSegs$CN[i+1]==segToReturn$currSegVal
-    #     chr_nextPos_equals_chr_currPos = currSampleSegs[i+1,]$Chromosome==segToReturn$currSegChr
-    #     print(c("i_is_not_last_pos", i_is_not_last_pos))
-    #     print(c("CN_nextPos_equals_CN_currPos", CN_nextPos_equals_CN_currPos))
-    #     print(c("chr_nextPos_equals_chr_currPos", chr_nextPos_equals_chr_currPos))
-    #     addNextPosToSeg = ((i_is_not_last_pos) && (CN_nextPos_equals_CN_currPos) && (chr_nextPos_equals_chr_currPos))
-    # }
-    # print(c("chrVec[i+1]: ", chrVec[i+1]))
-    # print(c("chrVec[i]: ", chrVec[i]))
-    # print(c("chrVec[i-1]: ", chrVec[i-1]))
     segToReturn$currSegStart = currSampleSegs[s,]$Start
     segToReturn$currSegEnd = currSampleSegs[i,]$End
+        if (segToReturn$currSegCh==1){
+        pos0CurrChr=0
+    } else {
+        pos0CurrChr = sum(lengthOfChrs[1:segToReturn$currSegChr-1])
+    }
+    segToReturn$currSegAbsStart = currSampleSegs[s,]$Start + pos0CurrChr
+    segToReturn$currSegAbsEnd = currSampleSegs[i,]$End + pos0CurrChr
     segToReturn$currSegNbProbes = i-(s-1)
     segToReturn$i = i
-    # print(c("class(currSegVal)", class(currSegVal)))
-    # segToReturn = dplyr::select(segToReturn, c("currSegChr", "currSegStart", "currSegEnd", "currSegVal", "currSegNbProbes", "i"))
-    segToReturn = segToReturn[c("currSegChr", "currSegStart", "currSegEnd", "currSegVal", "currSegNbProbes", "i")]
+    segToReturn$currSegCN = currSampleSegs[s,]$CN
+    LRRValues_currSeg = currSampleSegs$rawLRR[s:i]
+    # print(c("LRRValues_currSeg: ", LRRValues_currSeg))
+    segToReturn$probes.Sd = round(sd(LRRValues_currSeg), 2)
+    segToReturn$seg.med = median(LRRValues_currSeg)
+    segToReturn = segToReturn[c("currSegChr", "currSegStart", "currSegEnd", "currSegAbsStart", "currSegAbsEnd", "currSegLRR", "currSegCN", "currSegNbProbes", "seg.med", "probes.Sd", "i")]
     # print(c("segToReturn: ", segToReturn))
-    # print(c("one segment: ", currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
-    # return(list(currSegChr, currSegStart, currSegEnd, currSegVal, currSegNbProbes, i))
+
     return(segToReturn)
 }
 
+
 get_seg_table = function(currSampleSegs) {
-    ### name of value column must be "CN"
     ## initialize by-segments table 
-    segTableBySegment = data.frame(matrix(ncol = 5, nrow = 0))
-    colnames(segTableBySegment) = c("Chromosome", "Start", "End", "Value", "nbProbes")
+    # print(c("currSampleSegs: ", currSampleSegs))
+    ncols = length(colnames(currSampleSegs))
+    if("absPos" %in% colnames(currSampleSegs)) {
+        colNames_not_absPos = colnames(currSampleSegs)!="absPos"
+        colNames_without_absPos = colnames(currSampleSegs)[colNames_not_absPos]
+        # print(c("colNames_without_absPos: ", colNames_without_absPos))
+        # segTableBySegment = data.frame(matrix(ncol = ncols+3, nrow = 0)) # +3 because column absPos & rawLRR gets removed and columns absStart, absEnd, nbProbes, seg.med & probes.Sd get added
+        segTableBySegment = data.frame(matrix(ncol = 10, nrow = 0)) # getSeg result has 10 columns
+        colNames_segTable = colNames_without_absPos
+    } else {
+        # segTableBySegment = data.frame(matrix(ncol = ncols+4, nrow = 0)) # +4 because column rawLRR gets removed and columns absStart, absEnd, nbProbes, seg.med & probes.Sd get added
+        segTableBySegment = data.frame(matrix(ncol = 10, nrow = 0)) # getSeg result has 10 columns
+        colNames_segTable = colnames(currSampleSegs)
+    }
+    # print(c("colNames_segTable: ", colNames_segTable))
+    # colNames_not_rawLRR = colNames_segTable!="rawLRR"
+    # print(c("colNames_not_rawLRR: ", colNames_not_rawLRR))
+    # colNames_without_rawLRR = colNames_segTable[colNames_not_rawLRR]
+    # colNames_segTable = colNames_without_rawLRR
+    # # colnames(segTableBySegment) = c(colNames_without_absPos, "absStart", "absEnd")
+    # print(c("colNames_segTable: ", colNames_segTable))
+    # colNamesWithAbsStartEnd = R.utils::insert(colNames_segTable,length(colNames_segTable)-1,c("absStart", "absEnd"))
+    # print(c("colNamesWithAbsStartEnd: ", colNamesWithAbsStartEnd))
+    # colnames(segTableBySegment) = c(colNamesWithAbsStartEnd, "nbProbes", "seg.med", "probes.Sd")
+
+    colnames(segTableBySegment) = c("Chromosome", "Start", "End", "absStart", "absEnd", "seg.mean", "CN", "nbProbes", "seg.med", "probes.Sd")
     segId = 1
     s=1 # start of segment
     i=1 # end of segment
-    # print(c("currSampleSegs: ", currSampleSegs)) 
-    # print(c("length(currSampleSegs[,1]): ", length(currSampleSegs[,1])))
-    # print(c("currSampleSegs: ", currSampleSegs))
     while (s < length(currSampleSegs[,1])) {
-        print(paste0("------------- segId = ", segId," -------------"))
+        # print(paste0("------------- segId = ", segId," -------------"))
         resSeg = getSeg(currSampleSegs, s)
-        # print(c("resSeg[1:5]: ", resSeg[1:5]))
         i = resSeg$i
-        segTableBySegment[segId,] = resSeg[1:5]
         # print(c("resSeg: ", resSeg))
+        segTableBySegment[segId,] = resSeg[1:length(resSeg)-1] # all elmts of resSeg except last one
         s = resSeg[[length(resSeg)]]+1
         segId = segId+1
         # print(c("segId: ", segId))
     }
+    # print(c("segTableBySegment", segTableBySegment))
     return(segTableBySegment)
 }
 
+prepareSegtableByProbe = function(segTableByProbe) {
+    # print(c("segTableByProbe: ", segTableByProbe))
+    ### add absPos column to probeSet
+    # print(c("colnames(segTableByProbe): ", colnames(segTableByProbe)))
+    # print(c("'Chromosome', 'Start', 'End' colnames: ", colnames(segTableByProbe)[colnames(segTableByProbe) %in% c("Chromosome", "Start", "End")]))
 
+    # colnames(segTableByProbe)[colnames(segTableByProbe) %in% c("Chromosome", "Start", "End")] = c("ChrNum", "ChrStart", "ChrEnd")
+    segTableByProbe = getAbspos_probeset(segTableByProbe)
+    # colnames(segTableByProbe)[colnames(segTableByProbe) %in% c("ChrNum", "ChrStart", "ChrEnd")] = c( "Chromosome", "Start", "End") #, "CN", "absPos"
+    # colnames(segTableByProbe) = c( "Chromosome", "Start", "End", "CN", "absPos")
+    # print(head(segTableByProbe))
+    # print(c("segTableByProbe: ", segTableByProbe))
+    # segTableByProbe = cbind(rowsInfo, segTableByProbe[[sample]])
+    return(segTableByProbe)
+}
 
 getSegTables = function(segTableByProbe, sampleNames) {
     # get segTables for all samples; concatenate them in a list
     segTablesList = list()
     for(sample in sampleNames) {
-        # if(sample=="9-LA") {
-            print(paste0("==================================== sample = ", sample," ===================================="))
-            currSample_SegTableByProbe = dplyr::select(segTableByProbe, all_of(c( "Chromosome", "Start", "End", sample)))
-            colnames(currSample_SegTableByProbe) = c( "Chromosome", "Start", "End", "CN")
-            # print(head(segTableByProbe))
-            # print(c("currSample_SegTableByProbe: ", currSample_SegTableByProbe))
-            # currSample_SegTableByProbe = cbind(rowsInfo, segTableByProbe[[sample]])
-            currSegTable = get_seg_table(currSample_SegTableByProbe)
-            segTablesList = append(segTablesList, list(currSegTable))
-        # } else {
-        #     print("skipping current sample since it is different of sample 9-LA")
-        # }
+        print(paste0("==================================== sample = ", sample," ===================================="))
+        currSample_SegTableByProbe = dplyr::select(segTableByProbe, all_of(c( "Chromosome", "Start", "End", sample)))
+        # currSample_SegTableByProbe = prepareSegtableByProbe(currSample_SegTableByProbe)
+        currSegTable = get_seg_table(currSample_SegTableByProbe)
+        segTablesList = append(segTablesList, list(currSegTable))
     }
     return(segTablesList)
 }
 
-plotSegTable = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE) {
-    print(c("plotting sample ", currSampleName))
+
+
+
+
+plotSegTable = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE, ylim = c(-2,3), mainTitlePrefix = "") {
+    print(c("plotSegTable runs on sample ", currSampleName))
     imgName = paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png")
     if(savePlot) {
         png(imgName, width=700, height=484)
     }
     if(genGrid) {
-        generateGrid(paste0(currSampleName, " Copy number"), mode="CN")
+        generateGrid(paste0(currSampleName, " Copy number", mainTitlePrefix), mode="CN", ylim = ylim)
     }
-    colnames(currSegTable) = c("chrom", "loc.start", "loc.end", "callVal", "nbProbes")
+    if (any(colnames(currSegTable)[1:4] != c("chrom", "loc.start", "loc.end", "callVal"))) {
+        colnames(currSegTable) = c("chrom", "loc.start", "loc.end", "callVal", "nbProbes")
+    }
     apply(currSegTable, 1, plotSeg_rCGH, "callVal", indivSeg=TRUE)
     if(savePlot) {
         dev.off()
     }
 }
 
-plotSegTableForWGV = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE, segColor="#00BFC4", alreadyGoodPos=FALSE) {
-    print(c("plotting sample ", currSampleName))
+plotSegTableForWGV = function(currSegTable,currSampleName,resultsDir="delme", savePlot=TRUE, genGrid=TRUE, segColor="#00BFC4", alreadyGoodPos=FALSE, ylim_def=c(-2,3)) {
+    print(c("plotSegTableForWGV runs on sample ", currSampleName))
     imgName = paste0(resultsDir,"/",currSampleName,"segsUsedForGI.png")
     if(savePlot) {
         png(imgName, width=700, height=484)
     }
     if(genGrid) {
-        generateGrid(paste0(currSampleName, " Copy number"), mode="CN")
+        generateGrid(paste0(currSampleName, " Copy number"), mode="CN", ylim = ylim_def)
     }
     apply(currSegTable, 1, plotSeg_rCGH, "CN", indivSeg=TRUE, segColor=segColor, alreadyGoodPos=alreadyGoodPos)
     if(savePlot) {
         dev.off()
     }
 }
+
+
+getAbspos_probe = function(probeSet_row, lengthOfChrs) {
+    # Check that it doesn't match any non-number
+    numbers_only <- function(x) !grepl("\\D", x)
+    # print(c("probeSet_row: ", probeSet_row))
+    currentChr = probeSet_row["CHROMOSOME"]
+    currentChr = stringr::str_replace(currentChr, " ", "")
+    if(numbers_only(currentChr)) {
+        currentChr = as.numeric(currentChr)
+    } else {
+        ## this works is string is like "chr13"; doesn't work for i.e. "Chr13"
+        currentChr = stringr::str_split(probeSet_row["CHROMOSOME"], "chr")[[1]]
+        currentChr = as.numeric(currentChr[[2]])
+    }
+    currentChr
+    if (currentChr==1){
+        pos0CurrChr=0
+    } else {
+        pos0CurrChr = sum(lengthOfChrs[1:currentChr-1])
+    }
+    newPos = pos0CurrChr + as.numeric(probeSet_row["START_POS"])
+    return(newPos)
+}
+
+getAbspos_probeset = function(probeSet) {
+    print("retrieving absolute position for probeSet...")
+    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+    probeSet$absPos = apply(probeSet, 1, getAbspos_probe, lengthOfChrs)
+    return(probeSet)
+}
+
+getAbspos_seg = function(segment, relativePos, lengthOfChrs) {
+    # Check that it doesn't match any non-number
+    numbers_only <- function(x) !grepl("\\D", x)
+    print(c("segment: ", segment))
+    # print(c("segment[\"Chromosome\"]: ", segment["Chromosome"]))
+    if(numbers_only(segment["Chromosome"])) {
+        currentChr = as.numeric(segment["Chromosome"])
+    } else {
+        ## this works if segment["Chromosome"] is like "chr13"; doesn't work for i.e. "Chr13"
+        currentChr = stringr::str_split(segment["Chromosome"], "chr")[[1]]
+        currentChr = as.numeric(currentChr[[2]])
+    }
+    if (currentChr==1){
+        pos0CurrChr=0
+    } else {
+        pos0CurrChr = sum(lengthOfChrs[1:currentChr-1])
+    }
+    absPos = pos0CurrChr + as.numeric(segment[relativePos])
+    return(absPos)
+}
+
+getAbspos_segtable = function(segTable) {
+    lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
+    segTable$absStartPos = apply(segTable, 1, getAbspos_seg, "ChrStart", lengthOfChrs)
+    segTable$absEndPos = apply(segTable, 1, getAbspos_seg, "ChrEnd", lengthOfChrs)
+    return(segTable)
+}
+
+
+
+
+plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue", gg){
+    ## drawing a segment on plot for each segment of the genome, using estimated values
+    segStartPos = as.numeric(seg_df[["absStartPos"]])
+    segEndPos = as.numeric(seg_df[["absEndPos"]])
+    estimCN = as.numeric(seg_df[["Log2Ratio"]])
+    # estimCN = as.numeric(seg_df[["estimCopy"]])
+    # print(c("seg_df[[value_col]]: ", seg_df[[value_col]]))
+    # print(c("pos0CurrChr, segStartPos: ", pos0CurrChr+segStartPos))
+    segments(segStartPos, estimCN, segEndPos, estimCN, col=segColor, lwd=2)
+
+    if(indivSeg) {
+        height = 0.05
+        segments(segStartPos, estimCN+height, segStartPos, estimCN-height, col=segColor, lwd=0.1)
+        segments(segEndPos, estimCN+height, segEndPos, estimCN-height, col=segColor, lwd=0.1)
+    }
+}
+
+
+plotSegTableForWGV_GG = function(currSegTable,probesData, segColor="#3e9643", ylim = c(-1.5,1.5), mainTitlePrefix = "", rmPts=10) {
+    if(!"absPos" %in% colnames(probesData)) {
+        probesData = getAbspos_probeset(probesData)
+    }
+    print(c("currSegTable in plotSegTableForWGV_GG: ", currSegTable))
+    probesDataToPlot = probesData
+    ### remove points
+    if(dim(probesDataToPlot)[2]>10**4) {probesDataToPlot = removePointsForQuickPlotting(probesDataToPlot, rmPts*4)}
+    else if(dim(probesDataToPlot)[2]>10**5) {probesDataToPlot = removePointsForQuickPlotting(probesDataToPlot, rmPts*40)}
+    ### plot LRR points
+    probesDataToPlot = dplyr::filter(probesDataToPlot, CHROMOSOME<23)
+    gg = ggplot(data=probesDataToPlot, aes(y=Log2Ratio, x=absPos))
+    gg = gg + geom_point(aes(color=factor(CHROMOSOME)), size=0.01, shape=20, show.legend = FALSE) ## to hide legend of which chromosome is which color
+    ### color Chromosome regions
+    colrVec = rep(c("pink", "green", "orange"), 7); colrVec = c (colrVec, "pink")
+    # print(c("unique(probesDataToPlot$CHROMOSOME): ", unique(probesDataToPlot$CHROMOSOME)))
+    names(colrVec) = unique(probesDataToPlot$CHROMOSOME)
+    # print(c("colrVec: ", colrVec))
+    gg = gg + scale_color_manual(values = colrVec)
+    ### abline at LRR=0
+    gg = gg + geom_hline(yintercept=0,linetype="dashed",size=0.3)
+    ### plot segments
+    if(!is.null(currSegTable)) {
+        gg = gg + ggnewscale::new_scale_color() ## to use more than one scale_color in the same ggplot
+        # gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Log2Ratio, yend=Log2Ratio), size=1, color=segColor)  # to set one color for all segments
+        gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Log2Ratio, yend=Log2Ratio, color=factor(CN)), size=1, show.legend = FALSE) # to change color of segments according to CN value
+        segColrVec = c("green", "red", "black")
+        names(segColrVec) = c("1", "3", "2")
+        gg = gg + scale_color_manual(values = segColrVec)
+    }
+    gg = gg + ylim(ylim)
+    
+    gg = gg + theme_bw()
+    gg
+
+
+}
+
+#_______________________________________________________clean what's above_______________________________________________________
+
+
 
 plotSegTables = function(segTablesList, sampleNames, resultsDir, savePlot=TRUE, genGrid=TRUE) {
     if(!dir.exists(resultsDir)) dir.create(resultsDir)
@@ -206,37 +350,66 @@ plotSegTables = function(segTablesList, sampleNames, resultsDir, savePlot=TRUE, 
 
 getPrbLvSegmentsFromCallObj = function(callRes, segsType="raw") {
     ### callRes must be a cghCall object containing results of one or more samples, but can't be a list of cghCall objects
-
-    rowsInfo = fData(callRes)
-    if(segsType=="CN") {
-        sampleNames = colnames(callRes@assayData[["calls"]])
-        CGHcall_segments = as.data.frame(calls(callRes))
-    } else if (segsType=="raw") {
-        sampleNames = colnames(callRes@assayData[["segmented"]])
-        CGHcall_segments = as.data.frame(segmented(callRes))
+    print(" __________ retrieving CGHcall_segments __________ ")
+    # print(c("callRes: ", callRes))
+    # print(c("class(callRes): ", class(callRes)))
+    rowsInfo = fData(callRes) # cols: "Chromosome", "Start", "End"
+    # print(c("callRes: ", callRes))
+    # print(c("callRes@assayData: ", callRes@assayData))
+    # print(c("callRes@assayData['copynumber']: ", callRes@assayData[["copynumber"]]))
+    # rawLRR = callRes@assayData[["copynumber"]]
+    rawValues = as.data.frame(copynumber(callRes)) # cols: "1-RV", "AllelicDifference"
+    colnames(rawValues) = addSuffixToStrVec(colnames(rawValues), "_rawValues")
+    if(segsType=="both") {
+        segments = as.data.frame(segmented(callRes)) # cols: "1-RV", "AllelicDifference"
+        colnames(segments) = addSuffixToStrVec(colnames(segments), "_LRRSegments")
+        call_segments = as.data.frame(calls(callRes)) # cols: "1-RV", "AllelicDifference"
+        colnames(call_segments) = addSuffixToStrVec(colnames(call_segments), "_callSegments")
+        print(c("rowsInfo: ", rowsInfo))
+        print(c("rawValues: ", rawValues))
+        print(c("segments: ", segments))
+        print(c("call_segments: ", call_segments))
+        CGHcall_segments = cbind(rowsInfo, rawValues, segments, call_segments) # add raw LRR values (used to compute median and SD later in get_seg_table())
+        # CGHcall_segments = cbind(rowsInfo, segments, call_segments) # omit raw LRR values
+        CGHcall_segments = dplyr::select(CGHcall_segments, -contains("AllelicDifference"))
+        print(c("------CGHcall_segments après avoir supprimé les colonnes AllelicDifference: ------", CGHcall_segments))
+        colnames(CGHcall_segments) = c(colnames(rowsInfo), "rawLRR", "Log2Ratio", "CN")
+        # print(c("------CGHcall_segments après renommage:------", CGHcall_segments))
+    } else {
+        if (segsType=="raw") {
+            # sampleNames = colnames(callRes@assayData[["segmented"]])
+            colName = "Log2Ratio"
+            CGHcall_segments = as.data.frame(segmented(callRes))
+        } else if(segsType=="CN") {
+            colName = "CN"
+            sampleNames = colnames(callRes@assayData[["calls"]])
+            CGHcall_segments = as.data.frame(calls(callRes))
+        }
+        CGHcall_segments = cbind(rowsInfo, rawValues, CGHcall_segments)
+        print(c("get_seg_table: CGHcall_segments before column renaming", CGHcall_segments))
+        colnames(CGHcall_segments) = c(colnames(rowsInfo), "rawValues", sampleNames)
     }
-    CGHcall_segments = cbind(rowsInfo, CGHcall_segments)
-    colnames(CGHcall_segments) = c(colnames(rowsInfo), sampleNames)
+    print(c("CGHcall_segments: ", CGHcall_segments))
     return(CGHcall_segments)
 }
 
 
-getPrbLvSegments = function(pipelineRes) {
-    ### this works whatever the input is, as long as the pipeline ran correctly.
+getPrbLvSegments = function(pipelineRes, segsType="raw") {
+    ### this works whatever the input is, as long as it comes from the CGHcall pipeline.
     if(is.list(pipelineRes)) {
         print("result is a list of individual cghCall objects")
         currRes = pipelineRes[[1]]
-        probeLevelSegments = getPrbLvSegmentsFromCallObj(currRes)
-        for(i in 2:length(pipelineRes)) { ## I must make it so a list containing only 1 cghCall result can't exist
+        probeLevelSegments = getPrbLvSegmentsFromCallObj(currRes,segsType)
+        for(i in 2:length(pipelineRes)) {
             currRes = pipelineRes[[i]]
-            curr_prbLevSegs = getPrbLvSegmentsFromCallObj(currRes)
+            curr_prbLevSegs = getPrbLvSegmentsFromCallObj(currRes,segsType)
             probeLevelSegments = cbind(probeLevelSegments, curr_prbLevSegs[,length(curr_prbLevSegs)])
             colnames(probeLevelSegments)[length(probeLevelSegments)] = colnames(curr_prbLevSegs)[length(colnames(curr_prbLevSegs))]
             # print(c("probeLevelSegments: ", probeLevelSegments))
         }
     } else if(class(pipelineRes)=="cghCall") {
             print("result is a single cghCall object.")
-            probeLevelSegments = getPrbLvSegmentsFromCallObj(pipelineRes)
+            probeLevelSegments = getPrbLvSegmentsFromCallObj(pipelineRes,segsType)
     } else {
         print("invalid input")
     }
@@ -258,12 +431,11 @@ getNbChrsCGHcall = function(segmentsTable) { # function from ASCAT.R
 
 calcGI_CGHcall = function(segmentsTable) {
     ## removing segments of log ratio 0 as they are not aberrations
-    segmentsTableClean = dplyr::filter(segmentsTable, Value!=0)
+    segmentsTableClean = dplyr::filter(segmentsTable, CN!=0)
     nbOrigin = dim(segmentsTable)[1]
     nbClean = dim(segmentsTableClean)[1]
     nbRemoved = nbOrigin-nbClean
     print(paste0(nbRemoved, " segments removed out of ", nbOrigin))
-
     nbChr = getNbChrsCGHcall(segmentsTableClean)
     nbAlter = dim(segmentsTableClean)[1]
     print(c("nbAlter: ", nbAlter))

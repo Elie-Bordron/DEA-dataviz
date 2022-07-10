@@ -1,11 +1,20 @@
 ##### this is the guide to rCGH package. use this with the pdf in docs
 
 ### run this when starting R session 
+## set working directory from shiny app
 ## set working directory
-working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
-setwd(working_dir)
-## open working directory in Files tab
-rstudioapi::filesPaneNavigate(working_dir)
+if(exists("working_dir_shiny")) {
+    working_dir = working_dir_shiny
+} else {
+    print("in rCGH.R; working_dir_shiny doesn't exist")
+    ## Bergo
+    # working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    ## Cass
+    working_dir = "C:/Users/warew/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    setwd(working_dir)
+    ## open working directory in Files tab
+    rstudioapi::filesPaneNavigate(working_dir)
+}
 ## loading libraries
 library(rCGH)
 library(dplyr)
@@ -27,9 +36,11 @@ if(F) {
 }
 
 
-pipeline_rCGH = function(sampleName) {
+pipeline_rCGH = function(sampleName, silent = FALSE) {
     # sampleName="3-ES"
-    sampleName="2-AD"
+    # sampleName="2-AD"
+    sampleName="1-RV"
+    # sampleName="11-BG"
     # sampleName="9-LA" # has LOH
     ## ----readFiles----------------------------------
     probesetTxtFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
@@ -40,7 +51,10 @@ pipeline_rCGH = function(sampleName) {
     ## remove sex chromosomes data
     cgh@cnSet = dplyr::filter(cgh@cnSet, ChrNum<23)
     ##-- create a column "absolute position" for better plots
-    cgh@cnSet = getNewPos(cgh@cnSet)
+    normalColnames = colnames(cgh@cnSet)[c(2,3)]
+    colnames(cgh@cnSet)[c(2,3)] = c("CHROMOSOME", "START_POS")
+    cgh@cnSet = getAbspos_probeset(cgh@cnSet)
+    colnames(cgh@cnSet)[c(2,3)] = normalColnames
     # Organize cghSet columns in the same layout as test rCGH file
     cgh@cnSet = cgh@cnSet %>% mutate(SmoothSignal=rep(NA, length(cgh@cnSet[,1])), .before=Allele.Difference)
     colnames(cgh@cnSet) = c("ProbeName","ChrNum","ChrStart","Log2Ratio","WeightedLog2Ratio","SmoothSignal","Allele.Difference","NormalDiploid","BAF","absPos")
@@ -50,7 +64,11 @@ pipeline_rCGH = function(sampleName) {
     ## removing probes with Log2Ratio=NaN 
     LRRData = cgh@cnSet
     cgh@cnSet = dplyr::filter(LRRData, !is.na(LRRData["Log2Ratio"]))
-    cghAdj <- hush(rCGH::adjustSignal(cgh, nCores=1, suppOutliers=T, verbose=F, Scale=T))
+    if (silent) {
+        cghAdj <- hush(rCGH::adjustSignal(cgh, nCores=1, suppOutliers=T, verbose=F, Scale=T))
+    } else {
+        cghAdj <- rCGH::adjustSignal(cgh, nCores=1, suppOutliers=T, verbose=F, Scale=T)
+    }
 
     if (F) {
         ### see difference between and after adjusting data
@@ -70,7 +88,7 @@ pipeline_rCGH = function(sampleName) {
     # cghSeg <- segmentCGH_custom(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
     
 
-     ## ----segTable-----------------------------------------------------------------
+    ## ----segTable-----------------------------------------------------------------
     # head(segTable_rCGH)
 
     ## ----EMnormalize--------------------------------------------------------------
@@ -93,7 +111,9 @@ pipeline_rCGH = function(sampleName) {
     if(F) {
         ## plot gene positions on genome
         segTable_rCGH <- getSegTable(cghSeg)
-        geneTable <- byGeneTable(segTable_rCGH)
+        source(file.path(working_dir, "rCGH_dev.R"))
+        geneTable <- byGeneTable_custom(segTable_rCGH, genome="hg19")
+        # geneTable <- byGeneTable(segTable_rCGH)
         head(geneTable, n=3)
         colTransitoire = colnames(geneTable)
         index_chr = which(colTransitoire=="chr")
@@ -147,9 +167,11 @@ pipeline_rCGH = function(sampleName) {
 main = function() {
     source(file.path(working_dir, "oncoscanR_functions.R"))
     source(file.path(working_dir, "rCGH_functions.R"))
+    source(file.path(working_dir, "CGHcall_functions.R"))
     ## define paths
-    sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT", "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
-    # sampleNames = c("2-AD", "3-ES")
+    # sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT", "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC" )
+    sampleNames = c("1-RV")
+    # sampleNames = c("2-AD")
     ## initialize list to contain all rCGH objects, and list of segTables
     rCGHResults = list()
     segTables = list()
@@ -164,7 +186,7 @@ main = function() {
     for (s in 1:length(sampleNames)) {
         currSampleName = sampleNames[s]
         print(paste0("processing pipeline for sample ", currSampleName))
-        currCallRes = pipeline_rCGH(currSampleName)
+        currCallRes = pipeline_rCGH(currSampleName, silent=FALSE)
         rCGHResults = append(rCGHResults,list(currCallRes))
         # extract seg table
         if(segsType=="raw") {
@@ -178,6 +200,7 @@ main = function() {
         }
         segTables = append(segTables,list(segTable_rCGH))
     }
+    
     if(segsType == "raw") {
         source(file.path(working_dir, "CGHcall_functions.R"))
         segTables_rCGH = data.frame(segTables[[1]])
@@ -234,6 +257,69 @@ saveSegTables(segTables_rCGH, rCGHdir)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+############ pour slides soutenance
+if (FALSE) {
+    soutenance_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/results/res_soutenance"
+
+
+    ylim = c(-3,3)
+    PercentRowsToRemove = 30
+    xlab = "position genomique"
+    pkgName="rCGH"
+    ###### plot dimensions:
+    pngWidth = 350
+    pngHeight=300
+
+    ### plot raw value per probe
+    state="raw"
+    rawVals = cgh@cnSet
+    rawVals = removePointsForQuickPlotting(rawVals, PercentRowsToRemove)
+    savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+    png(savePath, width = pngWidth, height = pngHeight)
+    plot(rawVals$Log2Ratio, pch = 20, cex = 0.01, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+    dev.off()
+
+    ### plot adj value per probe
+    state = "adj"
+    adjVals = cghAdj@cnSet
+    adjVals = removePointsForQuickPlotting(adjVals, PercentRowsToRemove)
+    savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+    png(savePath, width = pngWidth, height = pngHeight)
+    plot(adjVals$Log2Ratio, pch = 20, cex = 0.1, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+    dev.off()
+
+    ### plot seg value per probe
+    state = "seg"
+    segVals = as.data.frame(cghSeg@cnSet)
+    segVals = removePointsForQuickPlotting(segVals, PercentRowsToRemove)
+    savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+    png(savePath, width = pngWidth, height = pngHeight)
+    plot(y=segVals$Segm, x=(1:length(segVals[[1]])), pch = 20, cex = 0.1, ylab = 'log Ratio', xlab = xlab, ylim = ylim)
+    dev.off()
+
+    ### plot Call value per probe
+    state = "norm"
+    savePath = paste0(soutenance_dir, "/", pkgName, "_", sampleName, "_", state, ".png")
+    vals = cghNorm@cnSet
+    vals = removePointsForQuickPlotting(vals, PercentRowsToRemove)
+    CNvals = vals[["estimCopy"]]
+    genomicPos = as.numeric(1:length(CNvals))
+    png(savePath, width = pngWidth, height = pngHeight)
+    plot(y = CNvals, x=genomicPos, pch=20, cex = 0.1, ylab = 'Nombre de copies', xlab = xlab)
+    dev.off()
+
+}
 
 
 

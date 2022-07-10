@@ -33,7 +33,7 @@ source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/wo
 source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/onsoscanR_utils.R")
 
 sampleNames = c("1-RV", "2-AD", "3-ES", "4-GM", "5-LD",  "6-VJ",  "7-DG",  "8-MM", "9-LA", "10-CB",  "11-BG",  "12-BC",  "13-VT",  "14-CJ", "15-GG", "16-DD", "17-VV", "18-JA", "19-BF", "20-CJ", "21-DC")
-# sampleNames = c("12-BC")
+sampleNames = c("1-RV")
 ## running oncoscanR
 main = function(dataDir, sampleNames, gendersTable) {
     source("C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir/OncoscanR_functions.R")
@@ -70,7 +70,7 @@ main = function(dataDir, sampleNames, gendersTable) {
 lengthOfChrs = c(0, 247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
 posOfCentromeres = c(123.4, 93.9, 90.9, 50.0, 48.8, 59.8, 60.1, 45.2, 43.0, 39.8, 53.4, 35.5, 17.7, 17.2, 19.0, 36.8, 25.1, 18.5, 26.2, 28.1, 12.0, 15.0, 61.0, 10.4) * 10**6
 
-CN_per_alter = list(); CN_per_alter$GAIN = 3; CN_per_alter$LOSS = 1
+CN_per_alter = list("GAIN"=3, "LOSS"=1)
 
 segTables = list()
 for (s in 1:length(sampleNames)) {
