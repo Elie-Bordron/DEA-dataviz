@@ -76,12 +76,14 @@ plotSeg_rCGH = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue",
 
 getPrbLvSegments_rCGH = function(cghNorm) {
     ### extract LRR & CN
-    print(c("cghNorm@cnSet: ", cghNorm@cnSet))
+    # print(c("cghNorm@cnSet: ", cghNorm@cnSet))
     # print(c("class(cghNorm@cnSet): ", class(cghNorm@cnSet)))
     cghNorm@cnSet = cghNorm@cnSet[c("ProbeName", "ChrNum", "ChrStart", "Log2Ratio", "Segm", "estimCopy")] # absPos not needed for get_seg_table()
-    print(c("cghNorm@cnSet after selecting columns: ", cghNorm@cnSet))
-    colnames(cghNorm@cnSet) = c("probeID", "Chromosome", "Start", "absPos", "rawLRR", "Log2Ratio", "CN")
-    print(c("cghNorm@cnSet after renaming columns: ", cghNorm@cnSet))
+    cghNorm@cnSet = dplyr::mutate(cghNorm@cnSet, End=ChrStart+20)
+    # print(c("cghNorm@cnSet after selecting columns: ", cghNorm@cnSet))
+    colnames(cghNorm@cnSet) = c("probeID", "Chromosome", "Start", "rawLRR", "Log2Ratio", "CN", "End")
+    cghNorm@cnSet = cghNorm@cnSet[c("probeID", "Chromosome", "Start", "End", "rawLRR", "Log2Ratio", "CN")]
+    # print(c("cghNorm@cnSet after renaming columns: ", cghNorm@cnSet))
     cghNorm@cnSet
 }
 
@@ -97,14 +99,17 @@ hush=function(code){ ## function to silence another function's prints while stil
 #################################### calculate GI
 
 getNbChrs = function(segmentsTable) { # function from ASCAT.R
-    chrs = as.vector(segmentsTable$chrom)
+    # chrs = as.vector(segmentsTable$chrom)
+    chrs = as.vector(segmentsTable$Chromosome)
     nbChr = length(unique(chrs))
     return(nbChr)
 }
 
 calcGI_rCGH = function(segmentsTable) {
+    print(c("segmentsTable in calcGI_rCGH(): ", segmentsTable))
     ## removing segments of copy number 2 as they are not aberrations (actually,they could be Copy Number-neutral events, but rCGH can't detect these)
-    segmentsTable = dplyr::filter(segmentsTable, estimCopy!=2)
+    # segmentsTable = dplyr::filter(segmentsTable, estimCopy!=2)
+    segmentsTable = dplyr::filter(segmentsTable, CN!=2)
     nbChr = getNbChrs(segmentsTable)
     nbAlter = dim(segmentsTable)[1]
     print(c("nbAlter: ", nbAlter))

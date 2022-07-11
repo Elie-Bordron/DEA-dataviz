@@ -8,9 +8,9 @@ if(exists("working_dir_shiny")) {
 } else {
     print("in rCGH.R; working_dir_shiny doesn't exist")
     ## Bergo
-    working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    # working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
     ## Cass
-    # working_dir = "C:/Users/warew/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    working_dir = "C:/Users/warew/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
     setwd(working_dir)
     ## open working directory in Files tab
     # rstudioapi::filesPaneNavigate(working_dir)
@@ -27,7 +27,7 @@ if(F) {
         probesetTxtFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
         pathToProbesetTxt = paste0(probesetTxtFolder,"/",sampleName,".probeset.txt")
         print(pathToProbesetTxt)
-        cgh = rCGH::readAffyOncoScan(pathgetAbspos_probesetToProbesetTxt, sampleName=i)
+        cgh = rCGH::readAffyOncoScan(pathToProbesetTxt, sampleName=i)
         cgh@cnSet = removePointsForQuickPlotting(cgh@cnSet, 100)
         saveRDS(cgh, paste0(working_dir, "/rCGH_", i, ".RDS"))
         i=i+1
@@ -36,19 +36,25 @@ if(F) {
 }
 
 
-pipeline_rCGH = function(sampleName, silent = FALSE) {
+# pipeline_rCGH = function(sampleName, silent = FALSE) {
+pipeline_rCGH = function(probesetPath, silent = FALSE) {
     # sampleName="3-ES"
     # sampleName="2-AD"
     sampleName="1-RV"
     # sampleName="11-BG"
     # sampleName="9-LA" # has LOH
     ## ----readFiles----------------------------------
-    probesetTxtFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
-    pathToProbesetTxt = paste0(probesetTxtFolder,"/",sampleName,".probeset.txt")
-    print(pathToProbesetTxt)
+    if(FALSE) { #set this to TRUE on bergo
+        probesetTxtFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
+    } else {
+        ## cass
+        probesetTxtFolder = "C:/Users/warew/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
+    }
+    # probesetPath = paste0(probesetTxtFolder,"/",sampleName,".probeset.txt")
+    print(probesetPath)
     before = Sys.time()
     print("- rawProbesData to rCGH object -")
-    cgh = rCGH::readAffyOncoScan(pathToProbesetTxt, sampleName=sampleName)
+    cgh = rCGH::readAffyOncoScan(probesetPath, sampleName=sampleName)
     ## remove sex chromosomes data
     cgh@cnSet = dplyr::filter(cgh@cnSet, ChrNum<23)
     ##-- create a column "absolute position" for better plots

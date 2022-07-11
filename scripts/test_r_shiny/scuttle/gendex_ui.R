@@ -9,7 +9,7 @@ library(ggplot2)
 
 
 
-if(TRUE){ # set this to TRUE on bergo PC 
+if(FALSE){ # set this to TRUE on bergo PC 
     print("bergo path")
     working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
     GI_scripts_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
@@ -175,7 +175,7 @@ ui <- fluidPage( #useShinyjs(),
                     splitLayout( cellWidths = c("80%", "20%"),
                         verticalLayout(
                             plotOutput("rCGH_profilePlot"),
-                            # plotOutput("rCGH_allDiffPlot"),
+                            plotOutput("rCGH_allDiffPlot"),
                         ),
                         radioButtons("rCGH_plotChoice","Profile display",choices = c("Call probability"="proba","segmentation results"="profile")),
 
@@ -265,19 +265,11 @@ ui <- fluidPage( #useShinyjs(),
 
         tabPanel(title = "Summary",
             mainPanel(width = 12,
-                splitLayout(
-                    verticalLayout(
-                        h2("GI table"),
-                        DT::dataTableOutput("GI_table_summary"),
-                        downloadButton("download_GI_table", "Download"),
-                    ),
-                    verticalLayout(
-                        h2("Genes table"),
-                        DT::dataTableOutput("genes_table_summary"),
-                        downloadButton("download_genes_table_summary", "Download"),
-                    )
-                )
-                
+                verticalLayout(
+                    h2("GI table"),
+                    DT::dataTableOutput("GI_table_summary"),
+                    downloadButton("download_GI_table", "Download"),
+                ),
             )
         ), 
         

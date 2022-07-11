@@ -3025,8 +3025,8 @@ Objectif après avoir fait fonctionner CGHcall comme avant:
 
 
 # <span style="color:#999900"> lundi 11/07/202
-arr 9h30; 
-# cette semaine, élodie est 0% disponible
+arr 9h30; 30 min pause; départ 17h
+*cette semaine, élodie est 0% disponible*
 ~~* [ ] ne pas utiliser ``segmented(callRes)`` mais plutôt ``callRes@assayData["segmented"]`` et voir si ça résout le problème de l'allele diff qui remplace LRR.~~ -> résolu.
 
 * [ ] S'assurer que jennifer et julie sont dispo demain
@@ -3047,23 +3047,24 @@ Le problème vient certainement du fait que l'input de CGHcall doit être de la 
     -> ds autre plot: non
 
 * [ ] retirer les if() superflus de get_seg_table()
-* [ ] retirer les ``$End`` dans getSeg e`t les remplacer par des ``$Start``
+* [ ] retirer les ``$End`` dans getSeg et les remplacer par des ``$Start``
 
 ## rCGH
-* [ ] écrire le sampleName en dur et résoudre ça plus tard. pour débugger ces 2 tâches, j'aurai besoin de visualiser l'output; je vais donc d'abord relier les résultats à des boîtes et ensuite faire ces tâches.
+* [X] ~~*écrire le sampleName en dur et résoudre ça plus tard. pour débugger ces 2 tâches, j'aurai besoin de visualiser l'output; je vais donc d'abord relier les résultats à des boîtes et ensuite faire ces tâches.*~~ [2022-07-11]
     * [ ] mettre en place un objet de paramètres et le passer au pipeline
-    * [ ] le pipeline prend actuellement en input  le sampleName et récupère le fichier à partir de ça. changer le pipeline pour que le pipeline rCGH prenne en input un df rawprobesData.
-* [ ] relier les résultats de rCGH aux boîtes.
+    * [ ] le pipeline prend actuellement en input le sampleName et récupère le fichier à partir de ça. changer le pipeline pour que le pipeline rCGH prenne en input ~~un df rawprobesData~~ le filename du probeset.txt .
+* [X] ~~*relier les résultats de rCGH aux boîtes.*~~ [2022-07-11]
     Je sais ce qui se trouve dans rCGHobj@cnSet. J'en sélectionne les colonnes utiles de façon à avoir un objet de segments par sondes dont les colonnes sont comme CGHcall_segments, et j'envoie ça dans get_seg_table(), comme pour CGHcall.
-
 * [ ] utiliser ces plots de rCGH:
     ```
     plotProfile(cghNorm, symbol = c("egfr", "erbb2"))
     ### also plotting LOH
     plotLOH(cghNorm)
     ```
-
-
+* [ ] dans Summary, récaps du GI obtenu sur les différents outils.
+* [ ] rCGH: afficher les paramètres.
 * [ ] Faire un dépôt clean ce soir
 
+* [ ] ``multiplot(cghNorm)`` affiche les segments *et* l'allele diff. ça peut être intéressant d'afficher soit le multiplot, soit mon plot de segments + le plot allele diff dessous (comme pour CGHcall). à voir + tard.
 
+Le message ``Warning: Error in <Anonymous>: erreur d'ï¿½valuation de l'argument 'object' lors de la sï¿½lection d'une mï¿½thode pour la fonction 'plotLOH' : `` existe mais n'empêche pas le plot de se faire plus tard. Ce warning apparaît aussi quand je tente de faire profilePlot() mais alors, l'erreur unclass(x) apparaît.
