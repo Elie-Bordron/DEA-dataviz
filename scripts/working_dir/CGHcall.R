@@ -30,6 +30,7 @@ pipelineCGHcall = function(osData, params) {
     if(is.null(params$tumor_prop)) {params$tumor_prop=1}
     # ACGH_data <- make_cghRaw(Wilting)
     ACGH_data <- make_cghRaw(osData)
+    # print(c("checking ACGH_data for a second sampleName: ", ACGH_data))
     # we want to apply fewest changes possible to data, so we want to do our own preprocess if we have time
     # cghdata = removedNaNProbes = dplyr::filter(ACGH_data, !is.na(ACGH_data[5]))
     print("- preprocess -")

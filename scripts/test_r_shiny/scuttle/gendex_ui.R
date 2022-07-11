@@ -9,7 +9,7 @@ library(ggplot2)
 
 
 
-if(FALSE){ # set this to TRUE on bergo PC 
+if(TRUE){ # set this to TRUE on bergo PC 
     print("bergo path")
     working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
     GI_scripts_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"

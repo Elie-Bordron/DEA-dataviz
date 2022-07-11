@@ -297,20 +297,21 @@ plotSeg_rCGH___tochange = function(seg_df, value_col, indivSeg=FALSE, segColor="
 
 
 plotSegTableForWGV_GG = function(currSegTable,probesData, segColor="#3e9643", ylim = c(-1.5,1.5), mainTitlePrefix = "", rmPts=10) {
+    # print(c("probesData given to plotSegTableForWGV_GG: ", probesData))
     if(!"absPos" %in% colnames(probesData)) {
         probesData = getAbspos_probeset(probesData)
     }
-    print(c("currSegTable in plotSegTableForWGV_GG: ", currSegTable))
     probesDataToPlot = probesData
     ### remove points
     if(dim(probesDataToPlot)[2]>10**4) {probesDataToPlot = removePointsForQuickPlotting(probesDataToPlot, rmPts*4)}
     else if(dim(probesDataToPlot)[2]>10**5) {probesDataToPlot = removePointsForQuickPlotting(probesDataToPlot, rmPts*40)}
     ### plot LRR points
     probesDataToPlot = dplyr::filter(probesDataToPlot, CHROMOSOME<23)
+    # print(c("probesDataToPlot used for geom_point of Log2Ratio: ", probesDataToPlot))
     gg = ggplot(data=probesDataToPlot, aes(y=Log2Ratio, x=absPos))
     gg = gg + geom_point(aes(color=factor(CHROMOSOME)), size=0.01, shape=20, show.legend = FALSE) ## to hide legend of which chromosome is which color
     ### color Chromosome regions
-    colrVec = rep(c("pink", "green", "orange"), 7); colrVec = c (colrVec, "pink")
+    colrVec = rep(c("#fc99d1", "#88ff88", "#fca355"), 7); colrVec = c (colrVec, "#fc99d1")
     # print(c("unique(probesDataToPlot$CHROMOSOME): ", unique(probesDataToPlot$CHROMOSOME)))
     names(colrVec) = unique(probesDataToPlot$CHROMOSOME)
     # print(c("colrVec: ", colrVec))
@@ -318,16 +319,17 @@ plotSegTableForWGV_GG = function(currSegTable,probesData, segColor="#3e9643", yl
     ### abline at LRR=0
     gg = gg + geom_hline(yintercept=0,linetype="dashed",size=0.3)
     ### plot segments
+    print(c("currSegTable in plotSegTableForWGV_GG: ", currSegTable))
     if(!is.null(currSegTable)) {
         gg = gg + ggnewscale::new_scale_color() ## to use more than one scale_color in the same ggplot
         # gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Log2Ratio, yend=Log2Ratio), size=1, color=segColor)  # to set one color for all segments
-        gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Log2Ratio, yend=Log2Ratio, color=factor(CN)), size=1, show.legend = FALSE) # to change color of segments according to CN value
-        segColrVec = c("green", "red", "black")
+        gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=seg.mean, yend=seg.mean, color=factor(CN)), size=1, show.legend = FALSE) # to change color of segments according to CN value
+        # segColrVec = c("dark red", "dark green", "grey")
+        segColrVec = c("#ad1813", "#13ad18", "cccccc")
         names(segColrVec) = c("1", "3", "2")
         gg = gg + scale_color_manual(values = segColrVec)
     }
     gg = gg + ylim(ylim)
-    
     gg = gg + theme_bw()
     gg
 
@@ -359,20 +361,21 @@ getPrbLvSegmentsFromCallObj = function(callRes, segsType="raw") {
     # print(c("callRes@assayData['copynumber']: ", callRes@assayData[["copynumber"]]))
     # rawLRR = callRes@assayData[["copynumber"]]
     rawValues = as.data.frame(copynumber(callRes)) # cols: "1-RV", "AllelicDifference"
+    # print(c("rawValues before renaming: ", rawValues))
     colnames(rawValues) = addSuffixToStrVec(colnames(rawValues), "_rawValues")
     if(segsType=="both") {
         segments = as.data.frame(segmented(callRes)) # cols: "1-RV", "AllelicDifference"
         colnames(segments) = addSuffixToStrVec(colnames(segments), "_LRRSegments")
         call_segments = as.data.frame(calls(callRes)) # cols: "1-RV", "AllelicDifference"
         colnames(call_segments) = addSuffixToStrVec(colnames(call_segments), "_callSegments")
-        print(c("rowsInfo: ", rowsInfo))
-        print(c("rawValues: ", rawValues))
-        print(c("segments: ", segments))
-        print(c("call_segments: ", call_segments))
+        # print(c("rowsInfo: ", rowsInfo))
+        # print(c("rawValues: ", rawValues))
+        # print(c("segments: ", segments))
+        # print(c("call_segments: ", call_segments))
         CGHcall_segments = cbind(rowsInfo, rawValues, segments, call_segments) # add raw LRR values (used to compute median and SD later in get_seg_table())
         # CGHcall_segments = cbind(rowsInfo, segments, call_segments) # omit raw LRR values
         CGHcall_segments = dplyr::select(CGHcall_segments, -contains("AllelicDifference"))
-        print(c("------CGHcall_segments après avoir supprimé les colonnes AllelicDifference: ------", CGHcall_segments))
+        # print(c("------CGHcall_segments après avoir supprimé les colonnes AllelicDifference: ------", CGHcall_segments))
         colnames(CGHcall_segments) = c(colnames(rowsInfo), "rawLRR", "Log2Ratio", "CN")
         # print(c("------CGHcall_segments après renommage:------", CGHcall_segments))
     } else {
@@ -389,7 +392,7 @@ getPrbLvSegmentsFromCallObj = function(callRes, segsType="raw") {
         print(c("get_seg_table: CGHcall_segments before column renaming", CGHcall_segments))
         colnames(CGHcall_segments) = c(colnames(rowsInfo), "rawValues", sampleNames)
     }
-    print(c("CGHcall_segments: ", CGHcall_segments))
+    # print(c("CGHcall_segments: ", CGHcall_segments))
     return(CGHcall_segments)
 }
 
@@ -430,8 +433,9 @@ getNbChrsCGHcall = function(segmentsTable) { # function from ASCAT.R
 }
 
 calcGI_CGHcall = function(segmentsTable) {
-    ## removing segments of log ratio 0 as they are not aberrations
-    segmentsTableClean = dplyr::filter(segmentsTable, CN!=0)
+    ## removing segments of CN==2 as they are not aberrations
+    # segmentsTableClean = dplyr::filter(segmentsTable, CN!=0) ## previously
+    segmentsTableClean = dplyr::filter(segmentsTable, CN!=2)
     nbOrigin = dim(segmentsTable)[1]
     nbClean = dim(segmentsTableClean)[1]
     nbRemoved = nbOrigin-nbClean

@@ -3021,8 +3021,36 @@ EDIT: les valeurs rawLRR sont à garder car dans getSeg(), on calcule l'écart-t
 Objectif après avoir fait fonctionner CGHcall comme avant:
 * [ ] vérifier que ça marche bien avec le plot allele Diff
 * [ ] Pour plus tard, n'afficher l'allele diff qu'avec le plot que j'ai généré. à débattre
-* [ ] allele diff fonctionne avec CGHcall -> relier le pipeline de rCGH aux boîtes du GUI CGHcall
+* [ ] qd allele diff fonctionne avec CGHcall -> relier le pipeline de rCGH aux boîtes du GUI CGHcall
 
 
-# <span style="color:#999900"> lundi 11/07/2022
+# <span style="color:#999900"> lundi 11/07/202
+arr 9h30; 
 # cette semaine, élodie est 0% disponible
+~~* [ ] ne pas utiliser ``segmented(callRes)`` mais plutôt ``callRes@assayData["segmented"]`` et voir si ça résout le problème de l'allele diff qui remplace LRR.~~ -> résolu.
+
+* [ ] S'assurer que jennifer et julie sont dispo demain
+* [X] ~~*Le problème vient-il du fait que la mauvaise colonne est nommée Log2Ratio dans plotsegtable_gg() ?*~~ [2022-07-11] -> oui
+* [X] ~~*la colonne est reçue ainsi par plotsegtable_gg(). Je cherche à quel endroit survient cette erreur.*~~ [2022-07-11]
+* [X] ~~*Quand la colonne "1-RV" est renommée en "Log2Ratio", c'est en fait la colonne AlleleDifference qui est renommée. Car currSampleName = params$sampleNames = "AllelicDifference". Car le dernier element de colnames(probesData) était utilisé; c'est maintenant corrigé: le 5eme est utilisé.*~~ [2022-07-11]
+le plot que j'ai implémenté fonctionne désormais, mais le plot CGHcall affiche toujours l'AllelicDifference.
+* [X] ~~*Faire afficher le Log2Ratio au plot CGHcall*~~ [2022-07-11]
+* [X] ~~*donc comprendre pourquoi l'alleleDiff est utilisée*~~ [2022-07-11]
+je pense qu'"AlleleDiff" est considéré comme le sampleName par CGHcall.
+* [X] ~~*je regarde comment resPipeline est créée et où le sampleName est défini. à la rigueur faire print(callRes) devrait me dire si le sampleName est bon ou non.*~~ [2022-07-11]
+Résultat: ```sampleNames: 1-RV AllelicDifference```
+Je regarde dans params si les sampleNames donnés sont effectivement 1-RV *et* AllelicDifference.
+Le problème vient certainement du fait que l'input de CGHcall doit être de la forme c(probeID, chr, start, end, LRR), où LRR peut être autant de colonnes que voulu correspondant au Log Ratio d'autant d'échantillons différents. AlleleDifference est donné au pipeline CGHcall, qui l'interprète comme un échantillon à part entière.
+* [X] ~~*voir à quel moment l'allelediff est utilisée, si elle n'a pas besoin d'être donnée au pipeline, je la retire de l'input du pipeline.*~~ [2022-07-11]
+    -> ds segTable: non
+    -> ds alldiff plot: oui
+    -> ds autre plot: non
+
+* [ ] 
+
+
+
+* [ ] Faire un dépôt clean ce soir
+
+
+<!-- Transmettre l'info à Claire: société MC2, M. Bayle, dans la salle des hybridizers -->

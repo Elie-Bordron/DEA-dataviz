@@ -18,7 +18,7 @@ server <- function(input, output, session) { ##session is required for condition
     # working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
 
 
-    if(FALSE){ # set this to TRUE on bergo PC 
+    if(TRUE){ # set this to TRUE on bergo PC 
         print("bergo path")
         working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
         GI_scripts_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
@@ -128,30 +128,28 @@ server <- function(input, output, session) { ##session is required for condition
         baseparams$Prior = input$prior
         baseparams$UndoSD = input$undoSD
         baseparams$Minlsforfit = input$minSegLenForFit
-        baseparams$sampleNames = colnames(probesData())[dim(probesData())[2]]
+        # baseparams$sampleNames = colnames(sampleName())[dim(probesData())[2]]
+        baseparams$sampleNames = colnames(probesData())[5]
         return(baseparams)
     })
 
-    # resPipeline_ctrlled_by_button <- reactive({
-    #     print("calculating pipeline result")
-    #     probesData = probesData()
-    #     print(c("probesData() used in pipeline: ", probesData))
-    #     # resPipeline = pipelineCGHcall(probesData(), params())
-    #     # print(c("colnames(probesData()): ", colnames(probesData())))
-    #     res = suppressMessages(suppressWarnings(pipelineCGHcall(probesData, params())))
-    #     res
-    #     }) %>%
-    #     bindCache(probesData()) %>%
-    #     bindEvent(input$go)
 
     resPipeline_ctrlled_by_button <- eventReactive(input$go, { 
     # resPipeline_ctrlled_by_button = reactive({ 
         print("calculating pipeline result")
         probesData = probesData()
+        params = params()
+        print(c("params used in pipeline: ", params))
+        print(c("probesData to be used in pipeline: ", probesData))
+        ### removing AllelicDifference since it will be interpreted as another sample's LRR values by CGHcall.
+        probesData = dplyr::select(probesData, -"AllelicDifference")
+        print(c("probesData used in pipeline: ", probesData))
+
         # print(c("probesData() used in pipeline: ", probesData))
-        # resPipeline = pipelineCGHcall(probesData(), params())
         # print(c("colnames(probesData()): ", colnames(probesData())))
-        res = suppressMessages(suppressWarnings(pipelineCGHcall(probesData, params())))
+        # res = pipelineCGHcall(probesData, params())
+        res = suppressMessages(suppressWarnings(pipelineCGHcall(probesData, params)))
+        print(c("CGHcall pipeline result: ", res))
         res
     })
 
@@ -176,16 +174,17 @@ server <- function(input, output, session) { ##session is required for condition
         print("Extracting segments table from probe-level segments")
         params_obj = params()
         CGHcall_segments = CGHcall_segments()
-        print("======================================================")
-        print(c("(CGHcall_segments): ", (CGHcall_segments)))
-        print("======================================================")
+        # print("======================================================")
+        # print(c("(CGHcall_segments): ", (CGHcall_segments)))
+        # print("======================================================")
         # CGHcall_segments = prepareSegtableByProbe(CGHcall_segments)
         segtab = get_seg_table(CGHcall_segments)
         # print(c("colnames(CGHcall_segments): ", colnames(CGHcall_segments)))
         # print(c("colnames(segtab): ", colnames(segtab)))
-        print(c("segtab: ", segtab))
+        
+        # print(c("segtab from get_seg_table: ", segtab))
+        # print(c("segtab$CN + 2: ", segtab$CN + 2))
         segtab$CN = segtab$CN + 2
-        print(c("segtab$CN + 2: ", segtab$CN + 2))
         
         segtab
     })
@@ -203,7 +202,12 @@ server <- function(input, output, session) { ##session is required for condition
                 probeData = getAbspos_probeset(probeData)
                 # colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
                 currSampleName = params$sampleNames
+                # print(c("probeData before renaming: ", probeData))
+                # print(c("currSampleName: ", currSampleName))
+                # print(c("colnames(probeData): ", colnames(probeData)))
+                # print(c("colname==currSampleName: ", colnames(probeData)==currSampleName))
                 colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
+                # print(c("probeData after renaming: ", probeData))
                 removePoints=10
                 plotSegTableForWGV_GG(segTable_calculated(), probeData, removePoints)
                 # plotSegTable(segTable_calculated(),params$sampleNames,savePlot=FALSE)
@@ -221,26 +225,37 @@ server <- function(input, output, session) { ##session is required for condition
     # output$CGHcall_profilePlot = eventReactive(input$goPlot, {renderPlot(CGHcall_chosenPlot())})
 
     output$CGHcall_allDiffPlot = renderPlot({
-        # print("Allele Difference Plot")
-        # probeData = probesData()
+        print("Allele Difference Plot")
+        probeData = probesData()
         # print(c("probeData: ", probeData))
-        # probeData = dplyr::filter(probeData, CHROMOSOME<23)
-        # probeData = getAbspos_probeset(probeData)
+        probeData = dplyr::filter(probeData, CHROMOSOME<23)
+        probeData = getAbspos_probeset(probeData)
         # print(c("probeData for alldiff plot: ", probeData))
-        # ggAllDiff = ggplot(data=probeData, aes(y=AllelicDifference, x=absPos))
-        # ggAllDiff = ggAllDiff + geom_point(aes(color=factor(CHROMOSOME)), size=0.01, shape=20, show.legend = FALSE)
+        ggAllDiff = ggplot(data=probeData, aes(y=AllelicDifference, x=absPos))
+        ggAllDiff = ggAllDiff + geom_point(aes(color=factor(CHROMOSOME)), size=0.01, shape=20, show.legend = FALSE)
         # colrVec = rep(c("pink", "green", "orange"), 7); colrVec = c (colrVec, "pink")
-        # names(colrVec) = unique(probeData$CHROMOSOME)
-        # ggAllDiff = ggAllDiff + scale_color_manual(values = colrVec)
-        # # print("Allele Difference Plot DONE")
-        # ggAllDiff = ggAllDiff + theme_bw()
-        # ggAllDiff
+        colrVec = rep(c("#fc99d1", "#88ff88", "#fca355"), 7); colrVec = c (colrVec, "#fc99d1")
+        names(colrVec) = unique(probeData$CHROMOSOME)
+        ggAllDiff = ggAllDiff + scale_color_manual(values = colrVec)
+        # print("Allele Difference Plot DONE")
+        ggAllDiff = ggAllDiff + theme_bw()
+        ggAllDiff
 
         ### to see if Alldiff data is in the place where Log2Ratio should be in callRes.
-        resPipe = resPipeline()
-        rawLRR = as.data.frame(resPipe@assayData[["copynumber"]])
-        print(c("rawLRR plotted: ", rawLRR))
-        plot(rawLRR["1-RV"])
+        # resPipe = resPipeline()
+        # rawLRR = as.data.frame(resPipe@assayData[["copynumber"]])
+        # rowsInfo = as.data.frame(fData(resPipe))
+        # rawLRR = cbind(rowsInfo, rawLRR)
+        # # print(c("rawLRR to be plotted: ", rawLRR))
+        # colnames(rawLRR)[1:2] = c("CHROMOSOME", "START_POS")
+        # rawLRR = getAbspos_probeset(rawLRR)
+        # # print(c("rawLRR to be plotted, but 2 columns have been renamed: CHROMOSOME and START_POS. + absPos has been added : ", rawLRR))
+        # LRRcol = rawLRR[["1-RV"]]
+        # absPoscol = rawLRR[["absPos"]]
+        # # print(c("class(LRRcol): ", class(LRRcol)))
+        # # print(c("class(absPoscol): ", class(absPoscol)))
+        # plot(y=LRRcol, x=absPoscol)
+
 
         # plot(c(9,2,5,6))
     })
@@ -307,9 +322,10 @@ server <- function(input, output, session) { ##session is required for condition
     ### GI output as text
     output$CGHcall_GItext <- renderText({
         req(!is.null(input$probeset_txt))
-        print(c("segTable_calculated() according to output$CGHcall_GItext", segTable_calculated()))
         segTab = segTable_calculated()
+        print(c("segTable_calculated() according to output$CGHcall_GItext", segTab))
         # segTab$CN = segTab$CN-2
+        # colnames(segTab$seg.mean) = "CN"
         resGI = calcGI_CGHcall(segTab) 
         paste0(resGI[[2]], " alterations were found on ", resGI[[3]], " chromosomes. Genomic Index=", round(resGI[[1]],1) )
     }) 
@@ -438,12 +454,13 @@ server <- function(input, output, session) { ##session is required for condition
                 params = params()
                 probeData = probesData()
                 # colnames(probeData)[c(2:3)] = c("ChrNum", "ChrStart")
-                # print(c("probeData sent to getAbspos_probeset : ", probeData))
                 probeData = getAbspos_probeset(probeData)
                 # colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
+                print(c("probeData after getAbspos_probeset : ", probeData))
                 currSampleName = params$sampleNames
                 colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
-                 removePoints=10
+                removePoints=10
+                print(c("probeData after renaming : ", probeData))
                 plotSegTableForWGV_GG(segTable_calculated(), probeData, removePoints)
                 # plotSegTable(segTable_calculated(),params$sampleNames,savePlot=FALSE)
                 # plot(c(5,5,5,5,5,5,5,5,6,5))
@@ -525,7 +542,7 @@ server <- function(input, output, session) { ##session is required for condition
     ### GI output as text
     output$rCGH_GItext <- renderText({
         req(!is.null(input$probeset_txt))
-        print(c("segTable_calculated() according to output$rCGH_GItext", segTable_calculated()))
+        # print(c("segTable_calculated() according to output$rCGH_GItext", segTable_calculated()))
         segTab = segTable_calculated()
         segTab$CN = segTab$CN-2
         resGI = calcGI_CGHcall(segTab) 

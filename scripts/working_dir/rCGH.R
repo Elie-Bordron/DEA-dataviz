@@ -8,12 +8,12 @@ if(exists("working_dir_shiny")) {
 } else {
     print("in rCGH.R; working_dir_shiny doesn't exist")
     ## Bergo
-    # working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
     ## Cass
-    working_dir = "C:/Users/warew/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    # working_dir = "C:/Users/warew/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
     setwd(working_dir)
     ## open working directory in Files tab
-    rstudioapi::filesPaneNavigate(working_dir)
+    # rstudioapi::filesPaneNavigate(working_dir)
 }
 ## loading libraries
 library(rCGH)
@@ -27,7 +27,7 @@ if(F) {
         probesetTxtFolder = "C:/Users/e.bordron/Desktop/CGH-scoring/data/working_data/from_laetitia/premiers_E_recus/all_probeset"
         pathToProbesetTxt = paste0(probesetTxtFolder,"/",sampleName,".probeset.txt")
         print(pathToProbesetTxt)
-        cgh = rCGH::readAffyOncoScan(pathToProbesetTxt, sampleName=i)
+        cgh = rCGH::readAffyOncoScan(pathgetAbspos_probesetToProbesetTxt, sampleName=i)
         cgh@cnSet = removePointsForQuickPlotting(cgh@cnSet, 100)
         saveRDS(cgh, paste0(working_dir, "/rCGH_", i, ".RDS"))
         i=i+1
