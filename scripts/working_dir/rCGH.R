@@ -47,6 +47,7 @@ pipeline_rCGH = function(sampleName, silent = FALSE) {
     pathToProbesetTxt = paste0(probesetTxtFolder,"/",sampleName,".probeset.txt")
     print(pathToProbesetTxt)
     before = Sys.time()
+    print("- rawProbesData to rCGH object -")
     cgh = rCGH::readAffyOncoScan(pathToProbesetTxt, sampleName=sampleName)
     ## remove sex chromosomes data
     cgh@cnSet = dplyr::filter(cgh@cnSet, ChrNum<23)
@@ -64,6 +65,7 @@ pipeline_rCGH = function(sampleName, silent = FALSE) {
     ## removing probes with Log2Ratio=NaN 
     LRRData = cgh@cnSet
     cgh@cnSet = dplyr::filter(LRRData, !is.na(LRRData["Log2Ratio"]))
+    print("- adjusting signal -")
     if (silent) {
         cghAdj <- hush(rCGH::adjustSignal(cgh, nCores=1, suppOutliers=T, verbose=F, Scale=T))
     } else {
@@ -82,6 +84,7 @@ pipeline_rCGH = function(sampleName, silent = FALSE) {
 
 
     ## ----SegmentCGH---------------------------------------------------------------
+    print("- segmenting -")
     cghSeg <- rCGH::segmentCGH(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
     
     # source(file.path(working_dir, "rCGH_dev.R"))
@@ -92,6 +95,7 @@ pipeline_rCGH = function(sampleName, silent = FALSE) {
     # head(segTable_rCGH)
 
     ## ----EMnormalize--------------------------------------------------------------
+    print("- normalizing -")
     cghNorm <- rCGH::EMnormalize(cghSeg)
     after = Sys.time()
     setInfo(cghNorm, "runTime") = difftime(after, before, units="secs")

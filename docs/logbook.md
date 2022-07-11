@@ -3046,11 +3046,24 @@ Le problème vient certainement du fait que l'input de CGHcall doit être de la 
     -> ds alldiff plot: oui
     -> ds autre plot: non
 
-* [ ] 
+* [ ] retirer les if() superflus de get_seg_table()
+* [ ] retirer les ``$End`` dans getSeg e`t les remplacer par des ``$Start``
 
+## rCGH
+* [ ] écrire le sampleName en dur et résoudre ça plus tard. pour débugger ces 2 tâches, j'aurai besoin de visualiser l'output; je vais donc d'abord relier les résultats à des boîtes et ensuite faire ces tâches.
+    * [ ] mettre en place un objet de paramètres et le passer au pipeline
+    * [ ] le pipeline prend actuellement en input  le sampleName et récupère le fichier à partir de ça. changer le pipeline pour que le pipeline rCGH prenne en input un df rawprobesData.
+* [ ] relier les résultats de rCGH aux boîtes.
+    Je sais ce qui se trouve dans rCGHobj@cnSet. J'en sélectionne les colonnes utiles de façon à avoir un objet de segments par sondes dont les colonnes sont comme CGHcall_segments, et j'envoie ça dans get_seg_table(), comme pour CGHcall.
+
+* [ ] utiliser ces plots de rCGH:
+    ```
+    plotProfile(cghNorm, symbol = c("egfr", "erbb2"))
+    ### also plotting LOH
+    plotLOH(cghNorm)
+    ```
 
 
 * [ ] Faire un dépôt clean ce soir
 
 
-<!-- Transmettre l'info à Claire: société MC2, M. Bayle, dans la salle des hybridizers -->

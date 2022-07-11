@@ -37,7 +37,8 @@ server <- function(input, output, session) { ##session is required for condition
     source(file.path(GI_scripts_dir, "OncoscanR_functions.R")) # calcGI()
 
     source(file.path(working_dir_shiny, "gendex_functions.R"))
-    source(file.path(GI_scripts_dir, "rCGH.R")) # for genes table
+    source(file.path(GI_scripts_dir, "rCGH.R")) # for rCGH pane
+    source(file.path(GI_scripts_dir, "rCGH_functions.R")) # for several rCGH.R functions to work
     
     ######## HOME PANE
     output$probesetContent <- DT::renderDataTable({
@@ -139,11 +140,11 @@ server <- function(input, output, session) { ##session is required for condition
         print("calculating pipeline result")
         probesData = probesData()
         params = params()
-        print(c("params used in pipeline: ", params))
-        print(c("probesData to be used in pipeline: ", probesData))
+        # print(c("params used in pipeline: ", params))
+        # print(c("probesData to be used in pipeline: ", probesData))
         ### removing AllelicDifference since it will be interpreted as another sample's LRR values by CGHcall.
         probesData = dplyr::select(probesData, -"AllelicDifference")
-        print(c("probesData used in pipeline: ", probesData))
+        # print(c("probesData used in pipeline: ", probesData))
 
         # print(c("probesData() used in pipeline: ", probesData))
         # print(c("colnames(probesData()): ", colnames(probesData())))
@@ -175,7 +176,7 @@ server <- function(input, output, session) { ##session is required for condition
         params_obj = params()
         CGHcall_segments = CGHcall_segments()
         # print("======================================================")
-        # print(c("(CGHcall_segments): ", (CGHcall_segments)))
+        print(c("(CGHcall_segments): ", (CGHcall_segments)))
         # print("======================================================")
         # CGHcall_segments = prepareSegtableByProbe(CGHcall_segments)
         segtab = get_seg_table(CGHcall_segments)
@@ -255,8 +256,6 @@ server <- function(input, output, session) { ##session is required for condition
         # # print(c("class(LRRcol): ", class(LRRcol)))
         # # print(c("class(absPoscol): ", class(absPoscol)))
         # plot(y=LRRcol, x=absPoscol)
-
-
         # plot(c(9,2,5,6))
     })
 
@@ -270,7 +269,7 @@ server <- function(input, output, session) { ##session is required for condition
 
         parsed.str <- parse(text=paste0("dplyr::filter(segtabToDisplay,", input$selectCN, ")"))
         segtabToDisplay = eval(parsed.str)
-        # print(c("segtabToDisplay: ", segtabToDisplay))
+        print(c("segtabToDisplay: ", segtabToDisplay))
         segtabToDisplay
     })
     output$CGHcall_segTable <- DT::renderDataTable(
@@ -285,8 +284,10 @@ server <- function(input, output, session) { ##session is required for condition
     output$CGHcall_download_segTable <- downloadHandler(
         filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_segTable")),
         content = function(fileST) {
-            print(c("segTable_calculated(): ", segTable_calculated()))
-            write.table(segTable_calculated(), fileST, quote=FALSE, row.names=FALSE, sep=";")
+            # print(c("segTable_calculated(): ", segTable_calculated()))
+            parsed.str <- parse(text=paste0("dplyr::filter(segtabToDisplay,", input$selectCN, ")"))
+            segtabToSave = eval(parsed.str)
+            write.table(segtabToSave, fileST, quote=FALSE, row.names=FALSE, sep=";")
         }
     )    
     ### Gene table
@@ -323,7 +324,7 @@ server <- function(input, output, session) { ##session is required for condition
     output$CGHcall_GItext <- renderText({
         req(!is.null(input$probeset_txt))
         segTab = segTable_calculated()
-        print(c("segTable_calculated() according to output$CGHcall_GItext", segTab))
+        # print(c("segTable_calculated() according to output$CGHcall_GItext", segTab))
         # segTab$CN = segTab$CN-2
         # colnames(segTab$seg.mean) = "CN"
         resGI = calcGI_CGHcall(segTab) 
@@ -334,18 +335,7 @@ server <- function(input, output, session) { ##session is required for condition
     ###### panel that says "load a probeset.txt" and disappears when it is done
     # output$test_warnPanel = renderUI({
     output$test_warnPanel = renderText({
-        # req(input$probeset_txt != "")
-        # req( is.null(input$probeset_txt))
         req( is.null(input$probeset_txt$name))
-        # print(c("input$probeset_txt: ", input$probeset_txt))
-        # print(c("input$probeset_txt$name: ", input$probeset_txt$name))
-        # fileName = input$probeset_txt$name
-        # fileExt = substr(fileName, nchar(fileName)-12+1, nchar(fileName))
-        # print(c("file extension: ", fileExt)) # 12 = nb of char in "probeset.txt"
-        
-        # if(exists("fileName")){ print(c("fileName: ", fileName))} else {print("no 'name' attribute to input$probeset_txt")}
-        # paste0("input file given is currently ", input$probeset_txt$name, " .")
-        
         "Please load a probeset.txt from Home pane"
     })
 
@@ -416,37 +406,43 @@ server <- function(input, output, session) { ##session is required for condition
     #     baseparams$sampleNames = colnames(probesData())[dim(probesData())[2]]
     #     return(baseparams)
     # })
-    # # resPipeline = reactive({  
-    # resPipeline = eventReactive(input$go, { 
-    #     print("calculating pipeline result")
-    #     # pipelineCGHcall(probesData(), params())
-    #     # print(c("colnames(probesData()): ", colnames(probesData())))
-    #     suppressMessages(suppressWarnings(pipelineCGHcall(probesData(), params())))
-    # })
-    # CGHcall_segments = reactive({
-    #     print("Extracting probe-level segments from CGHcall result")
-    #     # print(c("resPipeline(): ", resPipeline()))
-    #     # print(c("class(resPipeline()): ", class(resPipeline())))
-    #     # prbLvSegs = getPrbLvSegmentsFromCallObj(resPipeline(), segsType="both")  
-    #     prbLvSegs = getPrbLvSegments(resPipeline(), segsType="both")
-    #     prbLvSegs
-    # })
-    # segTable_calculated = reactive({
-    #     print("Extracting segments table from probe-level segments")
-    #     params_obj = params()
-    #     CGHcall_segments = CGHcall_segments()
-    #     # CGHcall_segments = prepareSegtableByProbe(CGHcall_segments)
-    #     segtab = get_seg_table(CGHcall_segments)
-    #     # print(c("colnames(CGHcall_segments): ", colnames(CGHcall_segments)))
-    #     # print(c("colnames(segtab): ", colnames(segtab)))
-    #     # print(c("segtab: ", segtab))
-    #     segtab$CN = segtab$CN + 2
+
+    # resrCGHpipeline = reactive({  
+    resrCGHpipeline = eventReactive(input$go_rCGH, { 
+        print("calculating rCGH pipeline result")
+        # print(c("colnames(probesData()): ", colnames(probesData())))
+        res = pipeline_rCGH("1-RV", silent=TRUE)
+        print(c("res: ", res))
+        print(c("res@cnSet: ", res@cnSet))
+        res
+    })
+
+    rCGH_segments = reactive({
+        print("Extracting probe-level segments from rCGH result")
+        # print(c("resrCGHpipeline(): ", resrCGHpipeline()))
+        # print(c("class(resrCGHpipeline()): ", class(resrCGHpipeline())))
+        # prbLvSegs = getPrbLvSegmentsFromCallObj(resrCGHpipeline(), segsType="both")  
+        prbLvSegs = getPrbLvSegments_rCGH(resrCGHpipeline())
+        prbLvSegs
+    })
+    segTable_rCGH = reactive({
+        # print("Extracting segments table from probe-level segments")
+        params_obj = params()
+        rCGH_segments = rCGH_segments()
+        # rCGH_segments = prepareSegtableByProbe(rCGH_segments)
+        segtab = get_seg_table(rCGH_segments)
+        # print(c("colnames(rCGH_segments): ", colnames(rCGH_segments)))
+        # print(c("colnames(segtab): ", colnames(segtab)))
+        # print(c("segtab: ", segtab))
+        segtab$CN = segtab$CN + 2
         
-    #     segtab
-    # })
+        segtab
+    })
     
 
     ### plot
+    
+
     rCGH_chosenPlot <- reactive({
     # rCGH_chosenPlot <- eventReactive(input$goPlot, {
         switch(input$rCGH_plotChoice,
@@ -456,34 +452,45 @@ server <- function(input, output, session) { ##session is required for condition
                 # colnames(probeData)[c(2:3)] = c("ChrNum", "ChrStart")
                 probeData = getAbspos_probeset(probeData)
                 # colnames(probeData)[c(2:3)] = c("CHROMOSOME", "START_POS")
-                print(c("probeData after getAbspos_probeset : ", probeData))
+                # print(c("probeData after getAbspos_probeset : ", probeData))
                 currSampleName = params$sampleNames
                 colnames(probeData)[which(colnames(probeData)==currSampleName)] <- "Log2Ratio"
                 removePoints=10
-                print(c("probeData after renaming : ", probeData))
-                plotSegTableForWGV_GG(segTable_calculated(), probeData, removePoints)
-                # plotSegTable(segTable_calculated(),params$sampleNames,savePlot=FALSE)
+                # print(c("probeData after renaming : ", probeData))
+                plotSegTableForWGV_GG(segTable_rCGH(), probeData, removePoints)
+                # plotSegTable(segTable_rCGH(),params$sampleNames,savePlot=FALSE)
                 # plot(c(5,5,5,5,5,5,5,5,6,5))
             },
             proba = {
-                rCGH_obj = resPipeline()
-                # print(c("rCGH_obj: ", rCGH_obj))
-                plot(rCGH_obj)
+                plot(rnorm(20))
             }
         )
     })
 
     output$rCGH_profilePlot = renderPlot(rCGH_chosenPlot())
-    # output$rCGH_profilePlot = eventReactive(input$goPlot, {renderPlot(rCGH_chosenPlot())})
 
     output$rCGH_allDiffPlot = reactive({
-
+        print("Allele Difference Plot")
+        probeData = probesData()
+        # print(c("probeData: ", probeData))
+        probeData = dplyr::filter(probeData, CHROMOSOME<23)
+        probeData = getAbspos_probeset(probeData)
+        # print(c("probeData for alldiff plot: ", probeData))
+        ggAllDiff = ggplot(data=probeData, aes(y=AllelicDifference, x=absPos))
+        ggAllDiff = ggAllDiff + geom_point(aes(color=factor(CHROMOSOME)), size=0.01, shape=20, show.legend = FALSE)
+        # colrVec = rep(c("pink", "green", "orange"), 7); colrVec = c (colrVec, "pink")
+        colrVec = rep(c("#fc99d1", "#88ff88", "#fca355"), 7); colrVec = c (colrVec, "#fc99d1")
+        names(colrVec) = unique(probeData$CHROMOSOME)
+        ggAllDiff = ggAllDiff + scale_color_manual(values = colrVec)
+        # print("Allele Difference Plot DONE")
+        ggAllDiff = ggAllDiff + theme_bw()
+        ggAllDiff
     })
 
 
     ### Segments table
     segtabToDisplay = reactive({
-        segtabToDisplay = segTable_calculated() 
+        segtabToDisplay = segTable_rCGH() 
         # segtabToDisplay = dplyr::select(segtab, -contains("abs"))
         colnames(segtabToDisplay)[colnames(segtabToDisplay)=="Log2Ratio"] = "seg.mean"
         # segtabToDisplay$CN = segtabToDisplay$CN + 2
@@ -505,8 +512,8 @@ server <- function(input, output, session) { ##session is required for condition
     output$rCGH_download_segTable <- downloadHandler(
         filename = buildFileName(res_dir=results_dir, prefix=paste0(input$prefix,"_segTable")),
         content = function(fileST) {
-            print(c("segTable_calculated(): ", segTable_calculated()))
-            write.table(segTable_calculated(), fileST, quote=FALSE, row.names=FALSE, sep=";")
+            print(c("segTable_rCGH(): ", segTable_rCGH()))
+            write.table(segTable_rCGH(), fileST, quote=FALSE, row.names=FALSE, sep=";")
         }
     )    
     ### Gene table
@@ -514,7 +521,7 @@ server <- function(input, output, session) { ##session is required for condition
     #     gene_id = c("BRCA1","CDK12","p53"), nb_breakpoints = c(0, 1, 0), nb_segments = c(1, 2, 1), copynumber = c(2,1,2)
     # )
     # geneTableToDisplay = reactive({
-    #     segTable = segTable_calculated()
+    #     segTable = segTable_rCGH()
     #     segTable = dplyr::select(segTable, -c("absStart", "absEnd"))
     #     # print(c("colnames(segTable): ", colnames(segTable)))
     #     segTable = segTable[c("Chromosome", "Start", "End", "nbProbes", "Log2Ratio", "seg.med", "probes.Sd", "CN")]
@@ -542,8 +549,8 @@ server <- function(input, output, session) { ##session is required for condition
     ### GI output as text
     output$rCGH_GItext <- renderText({
         req(!is.null(input$probeset_txt))
-        # print(c("segTable_calculated() according to output$rCGH_GItext", segTable_calculated()))
-        segTab = segTable_calculated()
+        # print(c("segTable_rCGH() according to output$rCGH_GItext", segTable_rCGH()))
+        segTab = segTable_rCGH()
         segTab$CN = segTab$CN-2
         resGI = calcGI_CGHcall(segTab) 
         paste0(resGI[[2]], " alterations were found on ", resGI[[3]], " chromosomes. Genomic Index=", round(resGI[[1]],1) )

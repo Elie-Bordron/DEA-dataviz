@@ -20,7 +20,7 @@ if(TRUE){ # set this to TRUE on bergo PC
     #C
     working_dir_shiny = "C:/Users/warew/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
     GI_scripts_dir = "C:/Users/warew/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
-}
+} 
 
 
 
@@ -232,7 +232,7 @@ ui <- fluidPage( #useShinyjs(),
                                     # verticalLayout(
                                     wellPanel(
                                         h2("Segments table"),
-                                        selectInput("selectCN",
+                                        selectInput("selectCN_rCGH",
                                                 "", 
                                                 choices = c('Altered (Loss & Gain)'='CN!=2', 'Loss (CN<2)'='CN<2', 'Gain (CN>2)'='CN>2', 'All'='is.numeric(CN)')),
                                         DT::dataTableOutput("rCGH_segTable"),

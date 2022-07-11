@@ -53,7 +53,7 @@ nameprobeset = function(probesetDf) {
     probesetDf
 }
 
-  
+
 getSeg = function(currSampleSegs, s){
     ### name of value column must be "Log2Ratio"       # previously "CN"
     lengthOfChrs = c(247249719, 242951149, 199501827, 191273063, 180857866, 170899992, 158821424, 146274826, 140273252, 135374737, 134452384, 132349534, 114142980, 106368585, 100338915, 88827254, 78774742, 76117153, 63811651, 62435964, 46944323, 49691432, 154913754, 57772954)
@@ -172,7 +172,8 @@ getSegTables = function(segTableByProbe, sampleNames) {
     for(sample in sampleNames) {
         print(paste0("==================================== sample = ", sample," ===================================="))
         currSample_SegTableByProbe = dplyr::select(segTableByProbe, all_of(c( "Chromosome", "Start", "End", sample)))
-        # currSample_SegTableByProbe = prepareSegtableByProbe(currSample_SegTableByProbe)
+        ## currSample_SegTableByProbe = prepareSegtableByProbe(currSample_SegTableByProbe)
+        # currSample_SegTableByProbe = getAbspos_probeset(currSample_SegTableByProbe) #If needed, use this line rather than the line above
         currSegTable = get_seg_table(currSample_SegTableByProbe)
         segTablesList = append(segTablesList, list(currSegTable))
     }
@@ -325,7 +326,7 @@ plotSegTableForWGV_GG = function(currSegTable,probesData, segColor="#3e9643", yl
         # gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=Log2Ratio, yend=Log2Ratio), size=1, color=segColor)  # to set one color for all segments
         gg = gg + geom_segment(data = currSegTable, aes(x=absStart, xend=absEnd, y=seg.mean, yend=seg.mean, color=factor(CN)), size=1, show.legend = FALSE) # to change color of segments according to CN value
         # segColrVec = c("dark red", "dark green", "grey")
-        segColrVec = c("#ad1813", "#13ad18", "cccccc")
+        segColrVec = c("#ad1813", "#13ad18", "#555555")
         names(segColrVec) = c("1", "3", "2")
         gg = gg + scale_color_manual(values = segColrVec)
     }

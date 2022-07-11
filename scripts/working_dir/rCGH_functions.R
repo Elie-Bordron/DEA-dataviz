@@ -74,6 +74,16 @@ plotSeg_rCGH = function(seg_df, value_col, indivSeg=FALSE, segColor="dark blue",
     }
 }
 
+getPrbLvSegments_rCGH = function(cghNorm) {
+    ### extract LRR & CN
+    print(c("cghNorm@cnSet: ", cghNorm@cnSet))
+    # print(c("class(cghNorm@cnSet): ", class(cghNorm@cnSet)))
+    cghNorm@cnSet = cghNorm@cnSet[c("ProbeName", "ChrNum", "ChrStart", "Log2Ratio", "Segm", "estimCopy")] # absPos not needed for get_seg_table()
+    print(c("cghNorm@cnSet after selecting columns: ", cghNorm@cnSet))
+    colnames(cghNorm@cnSet) = c("probeID", "Chromosome", "Start", "absPos", "rawLRR", "Log2Ratio", "CN")
+    print(c("cghNorm@cnSet after renaming columns: ", cghNorm@cnSet))
+    cghNorm@cnSet
+}
 
 
 hush=function(code){ ## function to silence another function's prints while still returning its output
@@ -83,12 +93,6 @@ hush=function(code){ ## function to silence another function's prints while stil
     return(tmp)
 }
 
-# foo=function(){
-#     print("BAR!")
-#     return(42)
-# }
-
-# x = hush(foo())
 
 #################################### calculate GI
 
