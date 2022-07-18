@@ -29,12 +29,12 @@ pipelineCGHcall = function(osData, params) {
     # osData = s2Probes # to run on one sample
     if(is.null(params$tumor_prop)) {params$tumor_prop=1}
     # ACGH_data <- make_cghRaw(Wilting)
-    ACGH_data <- make_cghRaw(osData)
+    ACGH_data <- CGHbase::make_cghRaw(osData)
     # print(c("checking ACGH_data for a second sampleName: ", ACGH_data))
     # we want to apply fewest changes possible to data, so we want to do our own preprocess if we have time
     # cghdata = removedNaNProbes = dplyr::filter(ACGH_data, !is.na(ACGH_data[5]))
     print("- preprocess -")
-    cghdata <- preprocess(ACGH_data, maxmiss=params$Maxmiss, nchrom=22) # because we don't need sex chromosomes data for GI.
+    cghdata <- CGHcall::preprocess(ACGH_data, maxmiss=params$Maxmiss, nchrom=22) # because we don't need sex chromosomes data for GI.
     # plot(cghdata)
     print("- normalize -")
     norm.cghdata <- normalize(cghdata, method=params$NormMethod, smoothOutliers=params$SmoothOutliers)

@@ -18,7 +18,7 @@ server <- function(input, output, session) { ##session is required for condition
     # working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
 
 
-    if(FALSE){ # set this to TRUE on bergo PC 
+    if(TRUE){ # set this to TRUE on bergo PC 
         print("bergo path")
         working_dir_shiny = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
         GI_scripts_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
@@ -82,31 +82,22 @@ server <- function(input, output, session) { ##session is required for condition
         rawProbesData = dplyr::select(rawProbesData, -contains(c("BAF")))
         rawProbesData = dplyr::select(rawProbesData, -contains(c("WeightedLog2Ratio")))
         rawProbesData = dplyr::select(rawProbesData, -contains(c("NormalDiploid")))
-        # print(c("rawProbesData with trimmed columns: ", rawProbesData))
         ### remove NA probes on AllelicDifference and Log2Ratio columns
-        ###rename AllDiff column
+        ### rename AllDiff column
         name_col_allDiff = colnames(dplyr::select(rawProbesData, contains("AllelicDifference")))
-        # print(c("name_col_allDiff: ", name_col_allDiff))
         colnames(rawProbesData)[which(colnames(rawProbesData)==name_col_allDiff)] = "AllelicDifference"
         ### get sampleName
-        # sampleName_within_colName = colnames(dplyr::select(ProbeDataWithEndPos, starts_with("Log2Ratio")))
         name_col_LRR = colnames(dplyr::select(rawProbesData, starts_with("Log2Ratio")))
         split_by_leftBracket = stringr::str_split(name_col_LRR, "\\(") [[1]]
-        # print(c("split_by_leftBracket: ", split_by_leftBracket))
         split_by_brackets = stringr::str_split(split_by_leftBracket[2], "\\)")[[1]]
-        # print(c("split_by_brackets: ", split_by_brackets))
         sampleName = stringr::str_replace(split_by_brackets[1], ".OSCHP", "")
-        # print(c("name_col_LRR: ", name_col_LRR))
         ###rename LRR column
         colnames(rawProbesData)[which(colnames(rawProbesData)==name_col_LRR)] = sampleName
         ### remove NA probes on AllelicDifference and Log2Ratio columns
-        # print(c("rawProbesData with log2ratio renamed as sampleName: ", rawProbesData))
         rawProbesData = dplyr::filter(rawProbesData, !is.na(AllelicDifference))
         rawProbesData = dplyr::filter(rawProbesData, !is.na(get(sampleName)))
 
-        # print(c("rawProbesData without NA on AllelicDifference col: ", rawProbesData))
         ProbeData_filtered = dplyr::select(rawProbesData, c("ProbeSetName", "Chromosome", "Position", sampleName, "AllelicDifference") )
-        # print(c("ProbeData_filtered: ", ProbeData_filtered))
         
         ### check if there are any NA's in the df
         # where_NA = colSums(is.na(ProbeData_filtered))
@@ -114,11 +105,8 @@ server <- function(input, output, session) { ##session is required for condition
 
         ### add ENDPOS
         ProbeDataWithEndPos = mutate(ProbeData_filtered, END_POS=Position+20)
-        # print(c("ProbeDataWithEndPos after mutating: ", ProbeDataWithEndPos))
         colnames(ProbeDataWithEndPos) = c("probeID", "CHROMOSOME", "START_POS", sampleName, "AllelicDifference", "END_POS" )
         ProbeData_renamed = dplyr::select(ProbeDataWithEndPos, c("probeID", "CHROMOSOME", "START_POS", "END_POS", sampleName, "AllelicDifference"))
-        # print(c("ProbeData_renamed: ", ProbeData_renamed))
-        # print(c("colnames(ProbeData_renamed): ", colnames(ProbeData_renamed)))
         ProbeData_renamed
     })
     params <- reactive({
@@ -129,7 +117,6 @@ server <- function(input, output, session) { ##session is required for condition
         baseparams$Prior = input$prior
         baseparams$UndoSD = input$undoSD
         baseparams$Minlsforfit = input$minSegLenForFit
-        # baseparams$sampleNames = colnames(sampleName())[dim(probesData())[2]]
         baseparams$sampleNames = colnames(probesData())[5]
         return(baseparams)
     })
@@ -193,7 +180,7 @@ server <- function(input, output, session) { ##session is required for condition
 
     ### plot
     CGHcall_chosenPlot <- reactive({
-    # CGHcall_chosenPlot <- eventReactive(input$goPlot, {
+    # CGHcall_chosenPlot <- eventReactive(input$go, {
         switch(input$CGHcall_plotChoice,
             profile={
                 params = params()
@@ -226,6 +213,9 @@ server <- function(input, output, session) { ##session is required for condition
     # output$CGHcall_profilePlot = eventReactive(input$goPlot, {renderPlot(CGHcall_chosenPlot())})
 
     output$CGHcall_allDiffPlot = renderPlot({
+        CGHcall_allDiffPlot_reactive()
+    })
+    CGHcall_allDiffPlot_reactive <- eventReactive(input$go, {
         print("Allele Difference Plot")
         probeData = probesData()
         # print(c("probeData: ", probeData))
@@ -407,14 +397,17 @@ server <- function(input, output, session) { ##session is required for condition
     #     return(baseparams)
     # })
 
-    # resrCGHpipeline = reactive({  
+    
+
+    # resrCGHpipeline = reactive({
     resrCGHpipeline = eventReactive(input$go_rCGH, { 
         print("calculating rCGH pipeline result")
         # print(c("colnames(probesData()): ", colnames(probesData())))
         file <- input$probeset_txt
         pathToProbeset_txt = file$datapath
         # res = pipeline_rCGH("1-RV", silent=TRUE)
-        res = pipeline_rCGH(pathToProbeset_txt, silent=TRUE)
+        params_rCGH = getDefParamsrCGH()
+        res = pipeline_rCGH(pathToProbeset_txt, silent=TRUE, params_rCGH)
         # print(c("res: ", res))
         # print(c("res@cnSet: ", res@cnSet))
         res
@@ -425,7 +418,9 @@ server <- function(input, output, session) { ##session is required for condition
         # print(c("resrCGHpipeline(): ", resrCGHpipeline()))
         # print(c("class(resrCGHpipeline()): ", class(resrCGHpipeline())))
         # prbLvSegs = getPrbLvSegmentsFromCallObj(resrCGHpipeline(), segsType="both")  
-        prbLvSegs = getPrbLvSegments_rCGH(resrCGHpipeline())
+        resPipe = resrCGHpipeline()
+        print(c("resPipe used to create rCGH_segments: ", resPipe))
+        prbLvSegs = getPrbLvSegments_rCGH(resPipe)
         prbLvSegs
     })
     segTable_rCGH = reactive({
@@ -446,8 +441,8 @@ server <- function(input, output, session) { ##session is required for condition
     ### plot
     rCGH_chosenPlot <- reactive({
     # rCGH_chosenPlot <- eventReactive(input$goPlot, {
-        switch(input$rCGH_plotChoice,
-            profile={
+        # switch(input$rCGH_plotChoice,
+            # profile={
                 params = params()
                 probeData = probesData()
                 # colnames(probeData)[c(2:3)] = c("ChrNum", "ChrStart")
@@ -461,18 +456,24 @@ server <- function(input, output, session) { ##session is required for condition
                 plotSegTableForWGV_GG(segTable_rCGH(), probeData, removePoints)
                 # plotSegTable(segTable_rCGH(),params$sampleNames,savePlot=FALSE)
                 # plot(c(5,5,5,5,5,5,5,5,6,5))
-            },
-            proba = {
-                # plot(rnorm(20))
-                # plotProfile(resrCGHpipeline()) # profile plot
-                plotLOH(resrCGHpipeline()) # AllelicDifference plot
-            }
-        )
+            # },
+            # proba = {
+            #     # plot(rnorm(20))
+            #     # plotProfile(resrCGHpipeline()) # profile plot
+            #     plotLOH(resrCGHpipeline()) # AllelicDifference plot
+            # }
+        # )
     })
 
     output$rCGH_profilePlot = renderPlot(rCGH_chosenPlot())
 
+
     output$rCGH_allDiffPlot = renderPlot({
+        rCGH_allDiffPlot_reactive()
+    })
+
+    #  = renderPlot({
+    rCGH_allDiffPlot_reactive <- eventReactive(input$go_rCGH, {
         print("Allele Difference Plot")
         probeData = probesData()
         # print(c("probeData: ", probeData))
@@ -493,6 +494,7 @@ server <- function(input, output, session) { ##session is required for condition
 
     ### Segments table
     segtabToDisplay_rCGH = reactive({
+    # segtabToDisplay_rCGH <- eventReactive(input$go_rCGH, {
         segtabToDisplay_rCGH = segTable_rCGH() 
         # segtabToDisplay_rCGH = dplyr::select(segtab, -contains("abs"))
         colnames(segtabToDisplay_rCGH)[colnames(segtabToDisplay_rCGH)=="Log2Ratio"] = "seg.mean"
@@ -558,7 +560,7 @@ server <- function(input, output, session) { ##session is required for condition
     }) 
     
     output$rCGH_GItext <- renderText({
-        resGI = rCGH_GI_res
+        resGI = rCGH_GI_res()
         paste0(resGI[[2]], " alterations were found on ", resGI[[3]], " chromosomes. Genomic Index=", round(resGI[[1]],1) )
     }) 
 

@@ -3048,6 +3048,7 @@ Le problème vient certainement du fait que l'input de CGHcall doit être de la 
 
 * [ ] retirer les if() superflus de get_seg_table()
 * [ ] retirer les ``$End`` dans getSeg et les remplacer par des ``$Start``
+* [ ] retirer les ``getAbspos_probeset(probeData)`` de gendex_server.R et en mettre un dans probesData = reactive({...}).
 
 ## rCGH
 * [X] ~~*écrire le sampleName en dur et résoudre ça plus tard. pour débugger ces 2 tâches, j'aurai besoin de visualiser l'output; je vais donc d'abord relier les résultats à des boîtes et ensuite faire ces tâches.*~~ [2022-07-11]
@@ -3062,9 +3063,19 @@ Le problème vient certainement du fait que l'input de CGHcall doit être de la 
     plotLOH(cghNorm)
     ```
 * [ ] dans Summary, récaps du GI obtenu sur les différents outils.
-* [ ] rCGH: afficher les paramètres.
-* [ ] Faire un dépôt clean ce soir
+* [X] ~~*rCGH: afficher les paramètres.*~~ [2022-07-12]
 
 * [ ] ``multiplot(cghNorm)`` affiche les segments *et* l'allele diff. ça peut être intéressant d'afficher soit le multiplot, soit mon plot de segments + le plot allele diff dessous (comme pour CGHcall). à voir + tard.
 
-Le message ``Warning: Error in <Anonymous>: erreur d'ï¿½valuation de l'argument 'object' lors de la sï¿½lection d'une mï¿½thode pour la fonction 'plotLOH' : `` existe mais n'empêche pas le plot de se faire plus tard. Ce warning apparaît aussi quand je tente de faire profilePlot() mais alors, l'erreur unclass(x) apparaît.
+Le message ``Warning: Error in <Anonymous>: erreur d'ï¿½valuation de l'argument 'object' lors de la sï¿½lection d'une mï¿½thode pour la fonction 'plotLOH' : `` existe mais n'empêche pas le plot de se faire plus tard. Ce warning apparaît aussi quand je tente de faire profilePlot() mais pour ce plot, l'erreur unclass(x) apparaît.
+
+# <span style="color:#999900"> mardi 12/07/202
+arr 9h15; 45 min pause; 
+Objectif: laisser l'outil tel qu'il est et le documenter au mieux pour que les bioinformaticiens puissent reprendre le projet facilement.
+
+
+* [ ] Faire un dépôt clean 
+* [ ] donc nettoyer le code et ne garder que les fonctions utiles.
+Faire un docker, ... cf. cahier à anneaux au 12/07/2022
+
+# Je continue logbook sur le dépôt gendex

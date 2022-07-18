@@ -8,9 +8,9 @@ if(exists("working_dir_shiny")) {
 } else {
     print("in rCGH.R; working_dir_shiny doesn't exist")
     ## Bergo
-    # working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    working_dir = "C:/Users/e.bordron/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
     ## Cass
-    working_dir = "C:/Users/warew/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
+    # working_dir = "C:/Users/warew/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/working_dir"
     setwd(working_dir)
     ## open working directory in Files tab
     # rstudioapi::filesPaneNavigate(working_dir)
@@ -35,9 +35,20 @@ if(F) {
     s1 = readRDS(paste0("rCGH_", sampleName, ".RDS"))
 }
 
+getDefParamsrCGH = function(){
+    params = list()
+    params$hg = "hg19"
+    params$aPrioriPloidy = 2
+    params$scale=FALSE
+    params$suppOutliers=TRUE
+    params$smooth = TRUE
+    params$undoSD=NULL
+    params$minLen=10
+    return(params)
+}
 
 # pipeline_rCGH = function(sampleName, silent = FALSE) {
-pipeline_rCGH = function(probesetPath, silent = FALSE) {
+pipeline_rCGH = function(probesetPath, silent = FALSE, params) {
     # sampleName="3-ES"
     # sampleName="2-AD"
     sampleName="1-RV"
@@ -51,10 +62,10 @@ pipeline_rCGH = function(probesetPath, silent = FALSE) {
         probesetTxtFolder = "C:/Users/warew/Desktop/CGH-scoring/M2_internship_Bergonie/scripts/test_r_shiny/scuttle"
     }
     # probesetPath = paste0(probesetTxtFolder,"/",sampleName,".probeset.txt")
-    print(probesetPath)
+    # print(probesetPath)
     before = Sys.time()
     print("- rawProbesData to rCGH object -")
-    cgh = rCGH::readAffyOncoScan(probesetPath, sampleName=sampleName)
+    cgh = rCGH::readAffyOncoScan(probesetPath, sampleName=sampleName, genome=params$hg, ploidy=params$aPrioriPloidy)
     ## remove sex chromosomes data
     cgh@cnSet = dplyr::filter(cgh@cnSet, ChrNum<23)
     ##-- create a column "absolute position" for better plots
@@ -73,9 +84,9 @@ pipeline_rCGH = function(probesetPath, silent = FALSE) {
     cgh@cnSet = dplyr::filter(LRRData, !is.na(LRRData["Log2Ratio"]))
     print("- adjusting signal -")
     if (silent) {
-        cghAdj <- hush(rCGH::adjustSignal(cgh, nCores=1, suppOutliers=T, verbose=F, Scale=T))
+        cghAdj <- hush(rCGH::adjustSignal(cgh, nCores=1, suppOutliers=params$suppOutliers, verbose=F, Scale=params$scale))
     } else {
-        cghAdj <- rCGH::adjustSignal(cgh, nCores=1, suppOutliers=T, verbose=F, Scale=T)
+        cghAdj <- rCGH::adjustSignal(cgh, nCores=1, suppOutliers=params$suppOutliers, verbose=F, Scale=params$scale)
     }
 
     if (F) {
@@ -91,7 +102,8 @@ pipeline_rCGH = function(probesetPath, silent = FALSE) {
 
     ## ----SegmentCGH---------------------------------------------------------------
     print("- segmenting -")
-    cghSeg <- rCGH::segmentCGH(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
+    # cghSeg <- rCGH::segmentCGH(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
+    cghSeg <- rCGH::segmentCGH(cghAdj, Smooth=params$smooth, nCores=1, minLen=params$minLen, UndoSD=params$undoSD, verbose=FALSE)
     
     # source(file.path(working_dir, "rCGH_dev.R"))
     # cghSeg <- segmentCGH_custom(cghAdj, Smooth=TRUE, nCores=1, minLen=10, verbose=TRUE)
@@ -114,61 +126,6 @@ pipeline_rCGH = function(probesetPath, silent = FALSE) {
         plot(y=segDfNorm$Segm , x=segDfNorm$absPos, pch=20, main=paste0(sampleName," Normalized segmented data"), cex=0.01, xlab="Genomic position (bp)", ylab="Log Ratio", ylim=c(-6,2))
     }
 
-    ## ----plotDensity, fig.width=7, fig.height=5, fig.show='hide'------------------
-    # plotDensity(cghNorm)
-
-    
-    if(F) {
-        ## plot gene positions on genome
-        segTable_rCGH <- getSegTable(cghSeg)
-        source(file.path(working_dir, "rCGH_dev.R"))
-        geneTable <- byGeneTable_custom(segTable_rCGH, genome="hg19")
-        # geneTable <- byGeneTable(segTable_rCGH)
-        head(geneTable, n=3)
-        colTransitoire = colnames(geneTable)
-        index_chr = which(colTransitoire=="chr")
-        index_start = which(colTransitoire=="chrStart")
-        index_end = which(colTransitoire=="chrEnd")
-        colTransitoire[index_chr] = "chrom"
-        colTransitoire[index_start] = "loc.start"
-        colTransitoire[index_end] = "loc.end"
-        colnames(geneTable) = colTransitoire
-        generateGrid("gene table", mode="LRR")
-        apply(geneTable, 1, plotSeg, "Log2Ratio")
-        }
-
-    if (F) {
-        ############ possibilities of the package
-        ## ----byGeneTable2-------------------------------------------------------------
-        byGeneTable(segTable_rCGH, "erbb2", genome = "hg19")[,1:6]
-        byGeneTable(segTable_rCGH, "erbb2", genome = "hg18")[,1:6]
-    
-        ## ----getParams----------------------------------------------------------------
-        paramsAfterRecenter = getParam(cghNorm)
-        # getParam(cghNorm)[1:3] ## K params
-    
-        ## ----getProfile, fig.width=7.7, fig.height=9.5, fig.show='hide'---------------
-        multiplot(cghNorm, symbol = c("egfr", "erbb2"))
-    
-        ## ----recenter, fig.width=7.5, fig.height=4, fig.show='hide'-------------------
-        # Recentering on peak #2
-        recenter(cghNorm) <- 3 ## this does not change the parameters, although the R help on this function says different
-        
-        plotProfile(cghNorm, symbol = c("egfr", "erbb2"))
-    
-        ### also plotting LOH
-        plotLOH(cghNorm)
-    
-        ## ----view, eval=FALSE, echo=TRUE----------------------------------------------
-        view(cghNorm)
-    
-        ## ----exampleFiles-------------------------------------------------------------
-        list.files(system.file("extdata", package = "rCGH"))
-    
-        ## ----session------------------------------------------------------------------
-        sessionInfo()
-    }
-    
     return(cghNorm)
 }
 

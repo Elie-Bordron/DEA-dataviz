@@ -78,6 +78,78 @@ EMnormalize_custom = function (object, G = 2:6, priorScale = 5, peakThresh = 0.5
 
 
 
+if(F) {
+    ## plot gene positions on genome
+    segTable_rCGH <- getSegTable(cghSeg)
+    source(file.path(working_dir, "rCGH_dev.R"))
+    geneTable <- byGeneTable_custom(segTable_rCGH, genome="hg19")
+    # geneTable <- byGeneTable(segTable_rCGH)
+    head(geneTable, n=3)
+    colTransitoire = colnames(geneTable)
+    index_chr = which(colTransitoire=="chr")
+    index_start = which(colTransitoire=="chrStart")
+    index_end = which(colTransitoire=="chrEnd")
+    colTransitoire[index_chr] = "chrom"
+    colTransitoire[index_start] = "loc.start"
+    colTransitoire[index_end] = "loc.end"
+    colnames(geneTable) = colTransitoire
+    generateGrid("gene table", mode="LRR")
+    apply(geneTable, 1, plotSeg, "Log2Ratio")
+    }
+
+if (F) {
+    ############ possibilities of the package
+    plotDensity(cghNorm)
+
+    ## ----byGeneTable2-------------------------------------------------------------
+    byGeneTable(segTable_rCGH, "erbb2", genome = "hg19")[,1:6]
+    byGeneTable(segTable_rCGH, "erbb2", genome = "hg18")[,1:6]
+
+    ## ----getParams----------------------------------------------------------------
+    paramsAfterRecenter = getParam(cghNorm)
+    # getParam(cghNorm)[1:3] ## K params
+
+    ## ----getProfile, fig.width=7.7, fig.height=9.5, fig.show='hide'---------------
+    multiplot(cghNorm, symbol = c("egfr", "erbb2"))
+
+    ## ----recenter, fig.width=7.5, fig.height=4, fig.show='hide'-------------------
+    # Recentering on peak #2
+    recenter(cghNorm) <- 3 ## this does not change the parameters, although the R help on this function says different
+    
+    plotProfile(cghNorm, symbol = c("egfr", "erbb2"))
+
+    ### also plotting LOH
+    plotLOH(cghNorm)
+
+
+
+    ## ----view, eval=FALSE, echo=TRUE----------------------------------------------
+    view(cghNorm)
+
+    ## ----exampleFiles-------------------------------------------------------------
+    list.files(system.file("extdata", package = "rCGH"))
+
+    ## ----session------------------------------------------------------------------
+    sessionInfo()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -451,7 +523,7 @@ mergeLevels = function (vecObs, vecPred, pv.thres = 1e-04, ansari.sign = 0.05,
             else {
                 thresAbs = signif(thresAbs - s.step, 3)
                 if (thresAbs <= thresMin) {
-                  thresAbs = thresMin
+                    thresAbs = thresMin
                 }
             }
         }
